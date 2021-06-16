@@ -1,0 +1,80 @@
+name: Release Charts
+
+on:
+    pull_request:
+        types: [closed]
+
+jobs:
+  release:
+    name: Bump version based on PR label
+    runs-on: ubuntu-20.04
+    if: |
+        github.event.pull_request.merged
+        && (
+            contains(github.event.pull_request.labels.*.name, 'bump patch')
+            || contains(github.event.pull_request.labels.*.name, 'bump minor')
+            || contains(github.event.pull_request.labels.*.name, 'bump major')
+        )
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Detect version bump type
+        id: bump-type
+        run: |
+            BUMP_TYPE=null
+            if [[ $BUMP_PATCH_PRESENT == 'true' ]]; then
+                BUMP_TYPE=patch
+            fi
+            if [[ $BUMP_MINOR_PRESENT == 'true' ]]; then
+                BUMP_TYPE=minor
+            fi
+            if [[ $BUMP_MAJOR_PRESENT == 'true' ]]; then
+                BUMP_TYPE=major
+            fi
+            echo "::set-output name=bump-type::$BUMP_TYPE"
+        env:
+            BUMP_PATCH_PRESENT: ${{ contains(github.event.pull_request.labels.*.name, 'bump patch') }}
+            BUMP_MINOR_PRESENT: ${{ contains(github.event.pull_request.labels.*.name, 'bump minor') }}
+            BUMP_MAJOR_PRESENT: ${{ contains(github.event.pull_request.labels.*.name, 'bump major') }}
+
+      - name: Determine new version
+        id: new-version
+        if: steps.bump-type.outputs.bump-type != 'null'
+        run: |
+            OLD_VERSION=$(cat charts/posthog/Chart.yaml | sed -n 's/^version: \(.*\)$/\1/p')
+            NEW_VERSION=$(npx semver $OLD_VERSION -i ${{ steps.bump-type.outputs.bump-type }})
+            echo "::set-output name=new-version::$NEW_VERSION"
+
+      - name: Update version in charts/posthog/Chart.yaml
+        if: steps.bump-type.outputs.bump-type != 'null'
+        run: |
+          sed -i 's/^version: \(.*\)$/version: ${{ steps.new-version.outputs.new-version }}/g' charts/posthog/Chart.yaml
+          cat charts/posthog/Chart.yaml
+
+      - name: Commit bump
+        if: steps.bump-type.outputs.bump-type != 'null'
+        uses: EndBug/add-and-commit@v7
+        with:
+            branch: ${{ github.event.pull_request.base.ref }}
+            message: 'Bump version to ${{ steps.new-version.outputs.new-version }}'
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        if: steps.bump-type.outputs.bump-type != 'null'
+        with:
+          version: v3.4.0
+
+      - name: Release a new chart
+        if: steps.bump-type.outputs.bump-type != 'null'
+        env:
+          AWS_ACCESS_KEY_ID: "${{ secrets.CHART_RELEASER_AWS_ACCESS_KEY_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets.CHART_RELEASER_AWS_SECRET_ACCESS_KEY }}"
+          AWS_DEFAULT_REGION: "us-east-2"
+        run: |
+          helm plugin install https://github.com/hypnoglow/helm-s3.git
+          helm repo add posthog-vpc s3://posthog-vpc-helm/charts
+          helm package charts/posthog/
+          helm s3 push --acl="public-read" ./*.tgz posthog-vpc
