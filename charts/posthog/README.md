@@ -111,6 +111,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.enabled | bool | `true` | Install kafka on kubernetes |
 | kafka.host | string | `nil` | Host for kafka. Only set when internal kafka is disabled |
 | kafka.logRetentionBytes | string | `"_68_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, ideally 70-80% |
+| kafka.logRetentionHours | int | `72` | The minimum age of a log file to be eligible for deletion due to age |
 | kafka.nameOverride | string | `"posthog-kafka"` | Name override for kafka app |
 | kafka.persistence.enabled | bool | `true` | Enable persistence using PVC |
 | kafka.persistence.size | string | `"80Gi"` | PVC Storage Request for kafka volume |
@@ -182,6 +183,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | serviceAccount.annotations | object | `{}` | Configures annotation for the ServiceAccount |
 | serviceAccount.create | bool | `true` | Configures if a ServiceAccount with this name should be created |
 | serviceAccount.name | string | `nil` |  |
+| statsd | object | `{"enabled":false,"podAnnotations":{"prometheus.io/path":"/metrics","prometheus.io/port":"9102","prometheus.io/scrape":"true"}}` | Prometheus StatsD configuration, see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter |
 | web.affinity | object | `{}` | Affinity settings for web pod assignment |
 | web.env[0] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_KEY","value":null}` | Set google oauth 2 key. Requires posthog ee license. |
 | web.env[1] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET","value":null}` | Set google oauth 2 secret. Requires posthog ee license. |
