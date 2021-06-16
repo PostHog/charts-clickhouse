@@ -106,7 +106,7 @@ jobs:
 
       # GitHub Action reference: https://github.com/k6io/action
       - name: Run ingestion test using k6
-        uses: k6io/action@v0.1
+        uses: k6io/action@v0.2.0
         with:
           filename: ci/k6-ingestion-test.js
 
