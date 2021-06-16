@@ -1,1 +1,1 @@
-# charts-clickhouse
+charts/posthog/README.md
