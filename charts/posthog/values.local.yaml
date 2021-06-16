@@ -17,7 +17,7 @@ postgresql:
   postgresqlPassword: postgres
 
 redis:
-  password: 'some-stable-password'
+  password: "some-stable-password"
 
 ingress:
   enabled: true

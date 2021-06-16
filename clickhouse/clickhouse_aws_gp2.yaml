@@ -22,12 +22,12 @@ spec:
       dataVolumeClaimTemplate: data-volumeclaim-template
   configuration:
     users:
-      admin/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9 
-      admin/networks/ip: "0.0.0.0/0" 
+      admin/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+      admin/networks/ip: "0.0.0.0/0"
       admin/profile: default
       admin/quota: default
-      default/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9 
-      default/networks/ip: "0.0.0.0/0" 
+      default/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+      default/networks/ip: "0.0.0.0/0"
     clusters:
       - name: "posthog"
         templates:
@@ -38,7 +38,7 @@ spec:
     settings:
       format_schema_path: /etc/clickhouse-server/config.d/
     files:
-      events.proto: | 
+      events.proto: |
         syntax = "proto3";
         message Event {
           string uuid = 1;
@@ -49,7 +49,7 @@ spec:
           string distinct_id = 6;
           string created_at = 7;
           string elements_chain = 8;
-        } 
+        }
   templates:
     podTemplates:
       - name: pod-template-with-volumes
@@ -65,12 +65,12 @@ spec:
                 - name: interserver
                   containerPort: 9009
               volumeMounts:
-                - name: data-volumeclaim-template 
+                - name: data-volumeclaim-template
                   mountPath: /var/lib/clickhouse
               resources:
                 requests:
                   memory: "8Gi"
-                  cpu: "2" 
+                  cpu: "2"
                 limits:
                   memory: "16Gi"
                   cpu: "4"
