@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "posthog.fullname" . }}-pgbouncer
+  labels:
+    app: {{ template "posthog.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  selector:
+    matchLabels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: pgbouncer 
+  replicas: {{ .Values.pgbouncer.replicacount }}
+  template:
+    metadata:
+      annotations:
+        metrics-enabled: {{ .Values.metrics.enabled | quote }}
+        checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+      labels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: pgbouncer 
+        {{- if .Values.pgbouncer.podLabels }}
+{{ toYaml .Values.pgbouncer.podLabels | indent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+      {{- if .Values.pgbouncer.affinity }}
+      affinity:
+{{ toYaml .Values.pgbouncer.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.pgbouncer.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.pgbouncer.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.pgbouncer.tolerations }}
+      tolerations:
+{{ toYaml .Values.pgbouncer.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.pgbouncer.schedulerName }}
+      schedulerName: "{{ .Values.pgbouncer.schedulerName }}"
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}-pgbouncer
+      {{- if .Values.pgbouncer.image }} 
+        image: "{{ default "edoburu/pgbouncer" .Values.pgbouncer.image.repository }}:{{ default "1.12.0" .Values.pgbouncer.image.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .Values.pgbouncer.image.pullPolicy }}
+      {{- else }}
+        image: "edoburu/pgbouncer:1.12.0"
+        imagePullPolicy: "IfNotPresent"
+      {{- end }}
+        ports:
+        - containerPort: 6543
+        env:
+        - name: DATABASE_URL 
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "posthog.fullname" . }}
+              key: postgresql-url
+        - name: LISTEN_PORT
+          value: "6543"
+        - name: MAX_CLIENT_CONN 
+          value: "1000"
+        - name: POOL_MODE 
+          value: "transaction"
+        readinessProbe:
+          tcpSocket:
+            port: 6543
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 6543
+          initialDelaySeconds: 15
+          periodSeconds: 20

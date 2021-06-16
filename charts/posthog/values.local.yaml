@@ -1,0 +1,24 @@
+# helm install --timeout 20m -f ./values.local.yaml posthog .
+# helm upgrade --timeout 20m -f ./values.local.yaml posthog .
+
+web:
+  replicacount: 2
+worker:
+  replicacount: 2
+plugins:
+  ingestion:
+    enabled: false
+  replicacount: 4
+
+postgresql:
+  enabled: true
+  postgresqlDatabase: posthog
+  postgresqlUsername: postgres
+  postgresqlPassword: postgres
+
+redis:
+  password: 'some-stable-password'
+
+ingress:
+  enabled: true
+  hostname: posthog.127.0.0.1.nip.io

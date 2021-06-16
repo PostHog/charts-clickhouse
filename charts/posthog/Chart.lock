@@ -1,0 +1,24 @@
+dependencies:
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 8.6.1
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 9.3.2
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.6.0
+- name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 3.25.0
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.2.0
+- name: prometheus
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 14.1.1
+- name: prometheus-statsd-exporter
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 0.3.1
+digest: sha256:994ff8de33da5177f30d49e8d032141e9a0255b606a0e7b93a7e1072a97912cb
+generated: "2021-06-14T14:44:56.271274188+03:00"

@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "posthog.fullname" . }}-plugins
+  labels:
+    app: {{ template "posthog.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  selector:
+    matchLabels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: plugins
+  replicas: {{ .Values.plugins.replicacount }}
+  template:
+    metadata:
+      annotations:
+        metrics-enabled: {{ .Values.metrics.enabled | quote }}
+        checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+      {{- if .Values.plugins.podAnnotations }}
+{{ toYaml .Values.plugins.podAnnotations | indent 8 }}
+      {{- end }}
+      labels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: plugins
+        {{- if (eq (default .Values.image.tag "none") "latest") }}
+        date: "{{ now | unixEpoch }}"
+        {{- end }}
+        {{- if .Values.plugins.podLabels }}
+{{ toYaml .Values.plugins.podLabels | indent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+      {{- if .Values.plugins.affinity }}
+      affinity:
+{{ toYaml .Values.plugins.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.plugins.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.plugins.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.plugins.tolerations }}
+      tolerations:
+{{ toYaml .Values.plugins.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.plugins.schedulerName }}
+      schedulerName: "{{ .Values.plugins.schedulerName }}"
+      {{- end }}
+      {{- if .Values.plugins.priorityClassName }}
+      priorityClassName: "{{ .Values.plugins.priorityClassName }}"
+      {{- end }}
+      {{- if .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}-plugins
+        image: {{ template "posthog.image.fullPath" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+          - /bin/sh
+          - -c
+          - |
+            ./bin/plugin-server --no-restart-loop
+        ports:
+        - containerPort: {{ .Values.service.internalPort }}
+        env:
+        - name: SENTRY_DSN
+          value: {{ .Values.sentryDSN | quote }}
+        - name: DEPLOYMENT
+          value: {{ template "posthog.deploymentEnv" . }}
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "posthog.fullname" . }}
+              key: posthog-secret
+        - name: DATABASE_URL
+          value: {{ template "posthog.pgbouncer.url" . }}
+          {{- if or (.Values.redis.enabled) (.Values.redis.password) }}
+        - name: REDIS_PASSWORD
+          value: {{ .Values.redis.password | quote }}
+        - name: REDIS_URL
+          value: "redis://:$(REDIS_PASSWORD)@{{- template "posthog.redis.host" . -}}:{{-  template "posthog.redis.port" . -}}"
+          # valueFrom:
+          #   secretKeyRef:
+          #     name: {{ template "posthog.fullname" . }}
+          #     key: redis-url
+        {{- end }}
+        {{- if .Values.statsd.enabled }}
+        - name: STATSD_HOST
+          value: {{ template "posthog.statsd.host" . }}
+        - name: STATSD_PORT
+          value: "9125"
+        {{- end }}
+        {{- if .Values.clickhouse.enabled }}
+        - name: CLICKHOUSE_DATABASE
+          value: {{ .Values.clickhouse.database | quote }}
+        - name: CLICKHOUSE_HOST
+          {{- if .Values.clickhouse.host }}
+          value: {{ .Values.clickhouse.host | quote }}
+          {{- else }}
+          value: {{ template "posthog.clickhouse.fullname" . }}
+          {{- end }}
+        - name: CLICKHOUSE_USER
+          value: {{ .Values.clickhouse.user | quote }}
+        - name: CLICKHOUSE_PASSWORD
+          value: {{ .Values.clickhouse.password | quote }}
+        - name: CLICKHOUSE_REPLICATION
+          value: {{ .Values.clickhouse.replication | quote }}
+        - name: CLICKHOUSE_SECURE
+          value: {{ .Values.clickhouse.secure | quote }}
+        - name: CLICKHOUSE_VERIFY
+          value: {{ .Values.clickhouse.verify | quote }}
+        - name: CLICKHOUSE_ASYNC
+          value: {{ .Values.clickhouse.async| quote }}
+        - name: CAPTURE_INTERNAL_METRICS
+          value: {{ .Values.web.internalMetrics.capture| quote }}
+        {{- end }}
+        {{- if .Values.kafka.enabled }}
+        - name: KAFKA_ENABLED
+          value: "true"
+        - name: KAFKA_HOSTS
+          value: {{ template "posthog.kafka.url_no_protocol" . }}
+        {{- end }}
+        {{- if .Values.plugins.ingestion.enabled }}
+        - name: PLUGIN_SERVER_INGESTION
+          value: 'true'
+        {{- end }}
+        - name: HELM_INSTALL_INFO
+          value: {{ template "posthog.helmInstallInfo" . }}
+{{- if .Values.env }}
+{{ toYaml .Values.env | indent 8 }}
+{{- end }}
+{{- if .Values.plugins.env }}
+{{ toYaml .Values.plugins.env | indent 8 }}
+{{- end }}
+        resources:
+{{ toYaml .Values.plugins.resources | indent 12 }}
