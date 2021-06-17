@@ -15,8 +15,9 @@ It also optionally packages [Clickhouse](https://clickhouse.tech/), [PostgreSQL]
 ## TL;DR;
 
 ```console
-$ cd chart
-$ helm install --timeout 20m posthog .
+helm repo add posthog https://posthog.github.io/charts-clickhouse/
+helm repo update
+helm install --timeout 20m posthog posthog/posthog
 ```
 
 ## Prerequisites
@@ -31,7 +32,9 @@ $ helm install --timeout 20m posthog .
 To install the chart with the release name `posthog`:
 
 ```console
-$ helm install --timeout 20m posthog .
+helm repo add posthog https://posthog.github.io/charts-clickhouse/
+helm repo update
+helm install --timeout 20m posthog posthog/posthog
 ```
 
 The command deploys PostHog on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
