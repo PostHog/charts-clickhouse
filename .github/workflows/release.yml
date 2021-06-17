@@ -67,14 +67,10 @@ jobs:
         with:
           version: v3.4.0
 
-      - name: Release a new chart
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.2.1
         if: steps.bump-type.outputs.bump-type != 'null'
         env:
-          AWS_ACCESS_KEY_ID: "${{ secrets.CHART_RELEASER_AWS_ACCESS_KEY_ID }}"
-          AWS_SECRET_ACCESS_KEY: "${{ secrets.CHART_RELEASER_AWS_SECRET_ACCESS_KEY }}"
-          AWS_DEFAULT_REGION: "us-east-2"
-        run: |
-          helm plugin install https://github.com/hypnoglow/helm-s3.git
-          helm repo add posthog-vpc s3://posthog-vpc-helm/charts
-          helm package charts/posthog/
-          helm s3 push --acl="public-read" ./*.tgz posthog-vpc
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          charts_repo_url: 'https://posthog.github.io/charts-clickhouse/'

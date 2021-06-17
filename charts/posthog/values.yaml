@@ -9,7 +9,7 @@ image:
   # -- Posthog image tag, e.g. release-1.25.0
   tag:
   # -- Default image or tag
-  default: "@sha256:4d4552abf974c97bed58907fd819214ebd9e1ead220d9ceb40c0714d6cd68a28"
+  default: ":release-1.26.0"
   # -- Image pull policy
   pullPolicy: IfNotPresent
 
