@@ -48,11 +48,18 @@ jobs:
             NEW_VERSION=$(npx semver $OLD_VERSION -i ${{ steps.bump-type.outputs.bump-type }})
             echo "::set-output name=new-version::$NEW_VERSION"
 
-      - name: Update version in charts/posthog/Chart.yaml
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        if: steps.bump-type.outputs.bump-type != 'null'
+        with:
+          version: v3.4.0
+
+      - name: Update version in charts/posthog/Chart.yaml and update Chart.lock
         if: steps.bump-type.outputs.bump-type != 'null'
         run: |
           sed -i 's/^version: \(.*\)$/version: ${{ steps.new-version.outputs.new-version }}/g' charts/posthog/Chart.yaml
           cat charts/posthog/Chart.yaml
+          helm dependency update charts/posthog/
 
       - name: Commit bump
         if: steps.bump-type.outputs.bump-type != 'null'
@@ -60,12 +67,6 @@ jobs:
         with:
             branch: ${{ github.event.pull_request.base.ref }}
             message: 'Bump version to ${{ steps.new-version.outputs.new-version }}'
-
-      - name: Install Helm
-        uses: azure/setup-helm@v1
-        if: steps.bump-type.outputs.bump-type != 'null'
-        with:
-          version: v3.4.0
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.1

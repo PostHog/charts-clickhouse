@@ -1,9 +1,9 @@
-name: Update Chart README
+name: Update docs
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   update-readme:
