@@ -12,7 +12,7 @@ parameters:
 reclaimPolicy: Retain
 #volumeBindingMode: Immediate
 allowVolumeExpansion: true
-{{- else }}
+{{- else if (eq .Values.cloud "aws") }}
 #
 # AWS resizable disk example
 #
@@ -92,7 +92,7 @@ spec:
         spec:
           {{- if (eq .Values.cloud "gcp" )}}
           storageClassName: gce-resizable
-          {{- else }}
+          {{- else if (eq .Values.cloud "aws") }}
           storageClassName: gp2-resizable
           {{- end }}
           accessModes:
