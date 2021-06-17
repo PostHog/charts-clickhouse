@@ -1,4 +1,4 @@
-name: Release Charts
+name: Bump chart version & release
 
 on:
     pull_request:
@@ -68,9 +68,15 @@ jobs:
             branch: ${{ github.event.pull_request.base.ref }}
             message: 'Bump version to ${{ steps.new-version.outputs.new-version }}'
 
+      - name: Add helm repositories
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add kubernetes https://kubernetes.github.io/ingress-nginx
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.1
-        if: steps.bump-type.outputs.bump-type != 'null'
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
