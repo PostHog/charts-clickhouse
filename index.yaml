@@ -3,6 +3,56 @@ entries:
   posthog:
   - apiVersion: v2
     appVersion: 1.25.0
+    created: "2021-06-17T13:54:50.76767659Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 8.6.1
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.3.2
+    - condition: kafka.enable
+      name: kafka
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.6.0
+    - condition: ingress.nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 3.25.0
+    - condition: certManager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: "1.2"
+    - condition: prometheus.enabled
+      name: prometheus
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 14.1.1
+    - alias: statsd
+      condition: statsd.enabled
+      name: prometheus-statsd-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 0.3.1
+    description: "\U0001F994 PostHog is developer-friendly, open-source product analytics."
+    digest: cbe4f312f295a2285a4e89a6268f5e379829d0cb52831c8a9155313f75530b32
+    icon: https://camo.githubusercontent.com/11f72f57f33d7d34807bafc1314844f7a91bcdea/68747470733a2f2f706f7374686f672d7374617469632d66696c65732e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f576562736974652d4173736574732f6769746875622d636f7665722e706e67
+    maintainers:
+    - email: marius@posthog.com
+      name: mariusandra
+    - email: tim@posthog.com
+      name: timgl
+    - email: james.g@posthog.com
+      name: jams
+    - email: karl@posthog.com
+      name: macobo
+    name: posthog
+    type: application
+    urls:
+    - https://github.com/PostHog/charts-clickhouse/releases/download/posthog-1.4.28/posthog-1.4.28.tgz
+    version: 1.4.28
+  - apiVersion: v2
+    appVersion: 1.25.0
     created: "2021-06-17T13:26:02.84037114Z"
     dependencies:
     - condition: postgresql.enabled
@@ -51,4 +101,4 @@ entries:
     urls:
     - https://github.com/PostHog/charts-clickhouse/releases/download/posthog-1.4.26/posthog-1.4.26.tgz
     version: 1.4.26
-generated: "2021-06-17T13:26:02.840386841Z"
+generated: "2021-06-17T13:54:50.76769279Z"
