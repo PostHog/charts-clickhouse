@@ -72,12 +72,12 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cloud | string | `"gcp"` | Cloud service being deployed on. Either `gcp` or `aws` |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
-| clickhouseOperator.enabled | bool | `false` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
+| clickhouseOperator.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouseOperator.namespace | string | `nil` | Which namespace to install clickhouse operator to |
-| clickhouseOperator.storage | string | `"2000Gi"` | How much storage space to preallocate for clickhouse |
+| clickhouseOperator.storage | string | `"200Gi"` | How much storage space to preallocate for clickhouse |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, beat, worker, and plugin server) |
-| pgbouncer | object | `{"replicacount":2}` | PgBouncer setup |
-| pgbouncer.replicacount | int | `2` | How many replicas of pgbouncer to run |
+| pgbouncer | object | `{"replicacount":1}` | PgBouncer setup |
+| pgbouncer.replicacount | int | `1` | How many replicas of pgbouncer to run |
 | web.hpa | object | `{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1}` | Web horizontal pod autoscaler settings |
 | web.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for web |
 | web.hpa.cputhreshold | int | `60` | CPU threshold percent for the web |
@@ -113,7 +113,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.hpa.minpods | int | `3` |  |
 | worker.hpa.maxpods | int | `20` |  |
 | worker.env | list | `[]` |  |
-| worker.replicacount | int | `2` | How many replicas of workers to run |
+| worker.replicacount | int | `1` | How many replicas of workers to run |
 | worker.resources | object | `{}` | Resource limits for workers |
 | worker.nodeSelector | object | `{}` |  |
 | worker.tolerations | list | `[]` |  |
@@ -124,7 +124,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | plugins.hpa.minpods | int | `1` |  |
 | plugins.hpa.maxpods | int | `10` |  |
 | plugins.env | list | `[]` |  |
-| plugins.replicacount | int | `2` | How many replicas of plugin-server to run |
+| plugins.replicacount | int | `1` | How many replicas of plugin-server to run |
 | plugins.resources | object | `{}` |  |
 | plugins.nodeSelector | object | `{}` |  |
 | plugins.tolerations | list | `[]` |  |
@@ -132,7 +132,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | email.from_email | string | `"hey@posthog.com"` | Outbound email sender |
 | email.host | string | `"smtp.eu.mailgun.org"` | STMP host |
 | email.port | int | `587` | STMP port |
-| email.user | string | `"postmaster@mg.posthog.com"` | STMP login user |
+| email.user | string | `nil` | STMP login user |
 | email.password | string | `nil` | STMP password |
 | email.use_tls | bool | `true` | SMTP TLS for security |
 | email.use_tls | string | `nil` | SMTP SSL for security |
@@ -142,9 +142,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | certManager.enabled | bool | `false` |  |
 | ingress.enabled | bool | `true` | Enable ingress controller resource |
 | ingress.type | string | `"clb"` | Ingress handler type. Either `clb` on gcp or `nginx` elsewhere |
-| ingress.hostname | string | `"testk8s.posthog.net"` | URL to address your PostHog installation. You will need to set up DNS after installation |
-| ingress.path | string | `"/*"` |  |
-| ingress.gcp.ip_name | string | `"posthog-ip"` | Specifies the name of the global IP address resource to be associated with the google clb |
+| ingress.hostname | string | `nil` | URL to address your PostHog installation. You will need to set up DNS after installation |
+| ingress.gcp.ip_name | string | `nil` | Specifies the name of the global IP address resource to be associated with the google clb |
 | ingress.gcp.forceHttps | bool | `true` | If true, will force a https redirect when accessed over http |
 | ingress.letsencrypt | bool | `false` | Whether to enable letsencrypt. Set to true for type nginx |
 | ingress.nginx.enabled | bool | `false` | Whether nginx is enabled |
@@ -172,9 +171,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.service.enabled | bool | `false` |  |
 | kafka.service.type | string | `"LoadBalancer"` |  |
 | kafka.persistence.enabled | bool | `true` | Enable persistence using PVC |
-| kafka.persistence.size | string | `"80Gi"` | PVC Storage Request for kafka volume |
-| kafka.logRetentionBytes | string | `"_68_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, ideally 70-80% |
-| kafka.logRetentionHours | int | `72` | The minimum age of a log file to be eligible for deletion due to age |
+| kafka.persistence.size | string | `"30Gi"` | PVC Storage Request for kafka volume |
+| kafka.logRetentionBytes | string | `"_21_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, ideally 70-80% |
+| kafka.logRetentionHours | int | `24` | The minimum age of a log file to be eligible for deletion due to age |
 | clickhouse.enabled | bool | `true` | Use clickhouse as primary database |
 | clickhouse.database | string | `"posthog"` | Clickhouse database |
 | clickhouse.user | string | `"admin"` | Clickhouse user |
