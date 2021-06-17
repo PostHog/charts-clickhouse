@@ -1,1 +1,0 @@
-charts/posthog/README.md
