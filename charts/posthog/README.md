@@ -1,6 +1,16 @@
-# PostHog
+# PostHog Helm Chart
+
+> :warning: **This chart is not ready yet**: Be careful!
 
 🦔 [PostHog](https://posthog.com/) is developer-friendly, open-source product analytics.
+
+## Introduction
+
+This chart bootstraps a [PostHog](https://posthog.com/) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+
+This installation is geared towards larger scalability (> 1M events per month).
+
+It also optionally packages [Clickhouse](https://clickhouse.tech/), [PostgreSQL](https://github.com/kubernetes/charts/tree/master/stable/postgresql), [Redis](https://github.com/kubernetes/charts/tree/master/stable/redis) and [Apache Kafka](https://kafka.apache.org/) which are required for PostHog.
 
 ## TL;DR;
 
@@ -9,26 +19,19 @@ $ cd chart
 $ helm install --timeout 20m posthog .
 ```
 
-## Introduction
-
-This chart bootstraps a [PostHog](https://posthog.com/) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
-
-This installation is intended for larger-scale usage (> 1M events/month) an
-
-It also optionally packages [Clickhouse](https://clickhouse.tech/), [PostgreSQL](https://github.com/kubernetes/charts/tree/master/stable/postgresql), [Redis](https://github.com/kubernetes/charts/tree/master/stable/redis) and [Apache Kafka](https://kafka.apache.org/) which are required for PostHog.
-
 ## Prerequisites
 
+- Google Cloud kubernetes cluster
 - Kubernetes 1.4+ with Beta APIs enabled
 - helm >= v3
 - PV provisioner support in the underlying infrastructure (with persistence storage enabled)
 
 ## Installing the Chart
 
-To install the chart with the release name `my-release`:
+To install the chart with the release name `posthog`:
 
 ```console
-$ helm install --timeout 20m my-release .
+$ helm install --timeout 20m posthog .
 ```
 
 The command deploys PostHog on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
@@ -37,10 +40,10 @@ The command deploys PostHog on the Kubernetes cluster in the default configurati
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `my-release` deployment:
+To uninstall/delete the `posthog` deployment:
 
 ```console
-$ helm delete my-release
+$ helm delete posthog
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -227,13 +230,13 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```console
 $ helm install --timeout 20m \
   --set persistence.enabled=false,email.host=email \
-  my-release .
+  posthog .
 ```
 
 Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
 
 ```console
-$ helm install --timeout 20m -f my-values.yaml my-release .
+$ helm install --timeout 20m -f my-values.yaml posthog .
 ```
 
 ## PostgreSQL
