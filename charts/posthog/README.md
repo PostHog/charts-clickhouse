@@ -92,9 +92,10 @@ Dependent charts can also have values overwritten. Preface values with postgresq
 
 All configuration options can be found in [ALL_VALUES.md](ALL_VALUES.md) or in [values.yaml](values.yaml) file.
 
+### Example `values.yaml` (<1M events/month)
 <details>
   <summary>
-    <h3 style="display: inline-block !important;">Example <code>values.yaml</code> (<1M events/month)</h3>
+    <b>Click to view</b>
   </summary>
     
 <br />
@@ -141,10 +142,10 @@ pgbouncer:
                               
 </details>
 
-  
+### Example `values.yaml` (>1M events/month)
 <details>
   <summary>
-    <h3 style="display: inline-block !important;">Example <code>values.yaml</code> (>1M events/month)</h3>
+    <b>Click to view</b>
   </summary>
     
 <br />
