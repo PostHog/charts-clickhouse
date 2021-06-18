@@ -28,6 +28,22 @@ You can find a example `values.yaml` files as well as an overview of the paramet
 
 > **Tip**: List all releases using `helm list`
 
+### Setting up static IP on google cloud
+
+1. Open google cloud console
+1. Go to VPC Networks > [External IP addresses](https://console.cloud.google.com/networking/addresses/list)
+1. Add new static IP with the name `posthog`
+
+### Setting up DNS
+
+After the chart has started, you can look up the external ip via the following command:
+
+```bash
+kubectl get svc posthog
+```
+
+Create a CNAME record from your desired hostname to the external ip.
+
 ## Upgrading Chart
 
 ```console
@@ -222,6 +238,3 @@ This might be useful when checking out metrics. Figure out your prometheus-serve
 `kubectl --namespace NS port-forward posthog-prometheus-server-XXX 9090`
 
 After this you should be able to access prometheus server on localhost.
-
-TODO:
-- Section on configuring DNS + static IP on google cloud
