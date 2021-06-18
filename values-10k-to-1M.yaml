@@ -1,0 +1,32 @@
+# Minimal settings for scale of 10k to 1M events/month.
+# Note that this is experimental, please let us know how this worked for you.
+
+ingress:
+  # -- URL to address your PostHog installation. You will need to set up DNS after installation. GCP tutorial: https://cloud.google.com/dns/docs/tutorials/create-domain-tutorial
+  hostname: "posthog.yourcloud.net"
+
+# x2 storage
+clickhouseOperator:
+  storage: 60Gi
+
+postgresql:
+  persistence:
+    size: 20Gi
+
+redis:
+  master:
+    size: 10Gi
+
+kafka:
+  persistence:
+    size: 10Gi
+
+# Extra replica for more loaded services
+pgbouncer:
+  replicacount: 2
+
+worker:
+  replicacount: 2
+
+plugins:
+  replicacount: 2

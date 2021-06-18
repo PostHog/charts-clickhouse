@@ -1,0 +1,45 @@
+# Minimal settings for anything beyond 1M events/month scale.
+# Note that this is experimental, please let us know how this worked for you.
+
+ingress:
+  # -- URL to address your PostHog installation. You will need to set up DNS after installation. GCP tutorial: https://cloud.google.com/dns/docs/tutorials/create-domain-tutorial
+  hostname: "posthog.yourcloud.net"
+
+# 10x storage + horizontal autoscaling for everything
+clickhouseOperator:
+  storage: 200Gi
+
+postgresql:
+  persistence:
+    size: 60Gi
+
+redis:
+  master:
+    size: 30Gi
+
+kafka:
+  persistence:
+    size: 30Gi
+
+# Note that this is experimental
+# Also note this issue (https://github.com/kubernetes/kubernetes/issues/25238) that got fixed in 1.19 for Kubernetes
+# Resource limits should be set (for cpu that's used for autoscaling), more info https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+pgbouncer:
+  hpa:
+    enabled: true
+
+web:
+  hpa:
+    enabled: true
+
+beat:
+  hpa:
+    enabled: true
+
+worker:
+  hpa:
+    enabled: true
+
+plugins:
+  hpa:
+    enabled: true

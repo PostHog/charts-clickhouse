@@ -13,7 +13,9 @@ spec:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
         role: beat
+  {{- if not .Values.beat.hpa.enabled }}
   replicas: {{ .Values.beat.replicacount }}
+  {{- end }}
   template:
     metadata:
       annotations:

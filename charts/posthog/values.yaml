@@ -13,7 +13,7 @@ image:
   # -- Image pull policy
   pullPolicy: IfNotPresent
 
-# -- Cloud service being deployed on. Either `gcp` or `aws`
+# -- Cloud service being deployed on. Only `gcp` is supported at the moment.
 cloud: "gcp"
 # -- Sentry endpoint to send errors to
 sentryDSN:
@@ -24,7 +24,7 @@ clickhouseOperator:
   # -- Which namespace to install clickhouse operator to
   namespace:
   # -- How much storage space to preallocate for clickhouse
-  storage: 200Gi
+  storage: 20Gi
 
 # -- Env vars to throw into every deployment (web, beat, worker, and plugin server)
 env:
@@ -35,6 +35,15 @@ env:
 
 # -- PgBouncer setup
 pgbouncer:
+  hpa:
+    # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
+    enabled: false
+    # -- CPU threshold percent for the web
+    cputhreshold: 60
+    # -- Min pods for the web
+    minpods: 1
+    # -- Max pods for the web
+    maxpods: 10
   # -- How many replicas of pgbouncer to run
   replicacount: 1
 
@@ -115,6 +124,12 @@ web:
   # podLabels: []
 
 beat:
+  hpa:
+    # -- Boolean to create a HorizontalPodAutoscaler for beat
+    enabled: false
+    cputhreshold: 60
+    minpods: 1
+    maxpods: 10
   # -- How many posthog 'beat' instances to run
   replicacount: 1
   # -- Resource limits for 'beat' instances
@@ -139,7 +154,7 @@ worker:
     # -- Boolean to create a HorizontalPodAutoscaler for worker
     enabled: false
     cputhreshold: 60
-    minpods: 3
+    minpods: 1
     maxpods: 20
   env: []
   # -- How many replicas of workers to run
@@ -251,7 +266,7 @@ ingress:
   hostname:
   gcp:
     # -- Specifies the name of the global IP address resource to be associated with the google clb
-    ip_name:
+    ip_name: "posthog"
     # -- If true, will force a https redirect when accessed over http
     forceHttps: true
   # -- Whether to enable letsencrypt. Set to true for type nginx
@@ -275,7 +290,7 @@ postgresql:
     # -- Enable persistence using PVC
     enabled: true
     # -- PVC Storage Request for PostgreSQL volume
-    size: 100Gi
+    size: 10Gi
   # -- Host postgres is accessible from. Only set when internal PG is disabled
   postgresqlHost:
   # -- Host postgres is accessible from. Only set when internal PG is disabled
@@ -312,7 +327,7 @@ redis:
       # -- Enable persistence using PVC
       enabled: true
       # -- PVC Storage Request for Redis volume
-      size: 8Gi
+      size: 5Gi
 
 kafka:
   # -- Install kafka on kubernetes
@@ -332,10 +347,10 @@ kafka:
     # -- Enable persistence using PVC
     enabled: true
     # -- PVC Storage Request for kafka volume
-    size: 30Gi
+    size: 5Gi
   # -- A size-based retention policy for logs
   # -- Should be less than kafka.persistence.size, ideally 70-80%
-  logRetentionBytes: _21_000_000_000
+  logRetentionBytes: _4_000_000_000
   # -- The minimum age of a log file to be eligible for deletion due to age
   logRetentionHours: 24
 

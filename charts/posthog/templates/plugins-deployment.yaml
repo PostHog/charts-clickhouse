@@ -13,7 +13,9 @@ spec:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
         role: plugins
+  {{- if not .Values.plugins.hpa.enabled }}
   replicas: {{ .Values.plugins.replicacount }}
+  {{- end }}
   template:
     metadata:
       annotations:
