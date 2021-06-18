@@ -260,7 +260,7 @@ After this you should be able to access prometheus server on `localhost`.
 
 ## Common issues / questions
 
-### "I cannot connect to my PostHog instance after creation"
+### I cannot connect to my PostHog instance after creation
 
 If DNS has been updated properly, check whether the SSL certificate was created successfully.
 
