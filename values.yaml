@@ -4,6 +4,3 @@
 ingress:
   # -- URL to address your PostHog installation. You will need to set up DNS after installation. GCP tutorial: https://cloud.google.com/dns/docs/tutorials/create-domain-tutorial
   hostname: "posthog.yourcloud.net"
-
-# do we need:
-# * email,
