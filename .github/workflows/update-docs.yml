@@ -14,11 +14,11 @@ jobs:
       - name: Run helm-docs
         run: |
           GOBIN=$PWD GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs
-          ./helm-docs --sort-values-order file
+          ./helm-docs --sort-values-order file -t ALL_VALUES.md.gotmpl -o ALL_VALUES.md
           rm helm-docs
 
       - name: Commit bump
         uses: EndBug/add-and-commit@v7
         with:
             branch: ${{ github.event.pull_request.base.ref }}
-            message: 'Regenerate chart README.md'
+            message: 'Regenerate chart ALL_VALUES.md'
