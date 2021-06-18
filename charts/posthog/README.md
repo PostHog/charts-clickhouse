@@ -238,3 +238,25 @@ This might be useful when checking out metrics. Figure out your prometheus-serve
 `kubectl --namespace NS port-forward posthog-prometheus-server-XXX 9090`
 
 After this you should be able to access prometheus server on localhost.
+
+## Common issues / questions
+
+### Cannot connect to my posthog instance after creation
+
+If DNS has been updated properly, check whether the SSL cert was created successfully.
+
+This can be done via
+
+```bash
+gcloud beta --project yourproject compute ssl-certificates list
+```
+
+If this is showing the ssl cert as PROVISIONING, that means that the SSL cert is still being created. [Read more on how to troubleshoot google SSL certificates here](https://cloud.google.com/load-balancing/docs/ssl-certificates/troubleshooting)
+
+As a troubleshooting tool, you can allow http access by setting `ingress.gcp.forceHttps` and `web.secureCookies` both to false, but we recommend always accessing PostHog via https.
+
+### How can I connect to my clickhouse instance
+
+- Get the IP via `kubectl get svc`
+- Username: `admin` or `clickhouse.user`
+- Password: `clickhouse.password`
