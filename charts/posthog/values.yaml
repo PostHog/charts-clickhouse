@@ -13,7 +13,7 @@ image:
   # -- Image pull policy
   pullPolicy: IfNotPresent
 
-# -- Cloud service being deployed on. Only `gcp` is supported at the moment.
+# -- Cloud service being deployed on. Either `gcp` or `aws`
 cloud: "gcp"
 # -- Sentry endpoint to send errors to
 sentryDSN:
@@ -37,6 +37,8 @@ env:
 pgbouncer:
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
+    # -- This experimental and set up based on cpu utilization
+    # -- Adding pgbouncers can cause running out of connections for Postgres
     enabled: false
     # -- CPU threshold percent for pgbouncer
     cputhreshold: 60
@@ -44,13 +46,14 @@ pgbouncer:
     minpods: 1
     # -- Max pods for pgbouncer
     maxpods: 10
-  # -- How many replicas of pgbouncer to run
+  # -- How many replicas of pgbouncer to run. Ignored if hpa is used
   replicacount: 1
 
 web:
   # -- Web horizontal pod autoscaler settings
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for web
+    # -- This experimental
     enabled: false
     # -- CPU threshold percent for the web
     cputhreshold: 60
@@ -58,7 +61,7 @@ web:
     minpods: 1
     # -- Max pods for the web
     maxpods: 10
-  # -- Amount of web pods to run
+  # -- Amount of web pods to run. Ignored if hpa is used
   replicacount: 1
   # -- Resource limits for web service. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container for more
   resources:
@@ -124,12 +127,6 @@ web:
   # podLabels: []
 
 beat:
-  hpa:
-    # -- Boolean to create a HorizontalPodAutoscaler for beat
-    enabled: false
-    cputhreshold: 60
-    minpods: 1
-    maxpods: 10
   # -- How many posthog 'beat' instances to run
   replicacount: 1
   # -- Resource limits for 'beat' instances
@@ -152,12 +149,13 @@ beat:
 worker:
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for worker
+    # -- This experimental
     enabled: false
     cputhreshold: 60
     minpods: 1
     maxpods: 20
   env: []
-  # -- How many replicas of workers to run
+  # -- How many replicas of workers to run. Ignored if hpa is used
   replicacount: 1
   # -- Resource limits for workers
   resources:
@@ -184,12 +182,13 @@ plugins:
     enabled: true
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for plugin server
+    # -- This experimental, based on cpu util which is not necessarilly the bottleneck
     enabled: false
     cputhreshold: 60
     minpods: 1
     maxpods: 10
   env: []
-  # -- How many replicas of plugin-server to run
+  # -- How many replicas of plugin-server to run. Ignored if hpa is used
   replicacount: 1
   resources:
     {}
