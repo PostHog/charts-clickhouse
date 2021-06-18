@@ -38,11 +38,11 @@ pgbouncer:
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
     enabled: false
-    # -- CPU threshold percent for the web
+    # -- CPU threshold percent for pgbouncer
     cputhreshold: 60
-    # -- Min pods for the web
+    # -- Min pods for pgbouncer
     minpods: 1
-    # -- Max pods for the web
+    # -- Max pods for pgbouncer
     maxpods: 10
   # -- How many replicas of pgbouncer to run
   replicacount: 1
