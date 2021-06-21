@@ -1,6 +1,0 @@
-# This file contains the minimal required fields needed to be supplied.
-# Note that this file is optimized for small deployments. If you have more than 10k monthly events we need a bit more resources, see the other values files in this directory.
-
-ingress:
-  # -- URL to address your PostHog installation. You will need to set up DNS after installation. GCP tutorial: https://cloud.google.com/dns/docs/tutorials/create-domain-tutorial
-  hostname: "posthog.yourcloud.net"
