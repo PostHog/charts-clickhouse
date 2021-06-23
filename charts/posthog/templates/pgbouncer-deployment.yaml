@@ -12,8 +12,10 @@ spec:
     matchLabels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: pgbouncer 
+        role: pgbouncer
+  {{- if not .Values.pgbouncer.hpa.enabled }}
   replicas: {{ .Values.pgbouncer.replicacount }}
+  {{- end }}
   template:
     metadata:
       annotations:
@@ -22,7 +24,7 @@ spec:
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: pgbouncer 
+        role: pgbouncer
         {{- if .Values.pgbouncer.podLabels }}
 {{ toYaml .Values.pgbouncer.podLabels | indent 8 }}
         {{- end }}
@@ -45,7 +47,7 @@ spec:
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}-pgbouncer
-      {{- if .Values.pgbouncer.image }} 
+      {{- if .Values.pgbouncer.image }}
         image: "{{ default "edoburu/pgbouncer" .Values.pgbouncer.image.repository }}:{{ default "1.12.0" .Values.pgbouncer.image.tag }}"
         imagePullPolicy: {{ default "IfNotPresent" .Values.pgbouncer.image.pullPolicy }}
       {{- else }}
@@ -55,16 +57,16 @@ spec:
         ports:
         - containerPort: 6543
         env:
-        - name: DATABASE_URL 
+        - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
               name: {{ template "posthog.fullname" . }}
               key: postgresql-url
         - name: LISTEN_PORT
           value: "6543"
-        - name: MAX_CLIENT_CONN 
+        - name: MAX_CLIENT_CONN
           value: "1000"
-        - name: POOL_MODE 
+        - name: POOL_MODE
           value: "transaction"
         readinessProbe:
           tcpSocket:
