@@ -11,20 +11,12 @@ export let options = {
     events_ingested: ['value > 0', 'value > 100']
   },
   stages: [
-    { duration: '2m', target: 100 }, // below normal load
+    { duration: '2m', target: 100 },
     { duration: '2m', target: 100 },
     { duration: '2m', target: 200 }, // Digital Ocean small lb connection limit is 250
     { duration: '2m', target: 200 },
     { duration: '5m', target: 0 }, // scale down. Recovery stage.
   ],
-  //scenarios: {
-  //  captureEvents: {
-  //    exec: 'captureEvents',
-  //    executor: 'shared-iterations',
-  //    iterations: __ENV.CE_ITERATIONS || 10000,
-  //    vus: __ENV.CE_VUS || 20,
-  //  }
-  //}
 }
 
 export default function () {
