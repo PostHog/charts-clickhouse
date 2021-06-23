@@ -20,11 +20,6 @@ postgresql:
   persistence:
     size: 1Gi
 
-redis:
-  master:
-    persistence:
-      size: 1Gi
-
 kafka:
   persistence:
     size: 1Gi
@@ -38,6 +33,9 @@ worker:
 redis:
   usePassword: false
   password: ""
+  master:
+    persistence:
+      size: 1Gi
 
 web:
   secureCookies: false
