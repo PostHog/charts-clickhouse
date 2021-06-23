@@ -17,16 +17,20 @@ The following table lists the configurable parameters of the PostHog chart and t
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
 | clickhouseOperator.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouseOperator.namespace | string | `nil` | Which namespace to install clickhouse operator to |
-| clickhouseOperator.storage | string | `"200Gi"` | How much storage space to preallocate for clickhouse |
+| clickhouseOperator.storage | string | `"20Gi"` | How much storage space to preallocate for clickhouse |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, beat, worker, and plugin server) |
-| pgbouncer | object | `{"replicacount":1}` | PgBouncer setup |
-| pgbouncer.replicacount | int | `1` | How many replicas of pgbouncer to run |
+| pgbouncer | object | `{"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
+| pgbouncer.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for pgbouncer -- This experimental and set up based on cpu utilization -- Adding pgbouncers can cause running out of connections for Postgres |
+| pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for pgbouncer |
+| pgbouncer.hpa.minpods | int | `1` | Min pods for pgbouncer |
+| pgbouncer.hpa.maxpods | int | `10` | Max pods for pgbouncer |
+| pgbouncer.replicacount | int | `1` | How many replicas of pgbouncer to run. Ignored if hpa is used |
 | web.hpa | object | `{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1}` | Web horizontal pod autoscaler settings |
-| web.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for web |
+| web.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for web -- This experimental |
 | web.hpa.cputhreshold | int | `60` | CPU threshold percent for the web |
 | web.hpa.minpods | int | `1` | Min pods for the web |
 | web.hpa.maxpods | int | `10` | Max pods for the web |
-| web.replicacount | int | `1` | Amount of web pods to run |
+| web.replicacount | int | `1` | Amount of web pods to run. Ignored if hpa is used |
 | web.resources | object | `{}` | Resource limits for web service. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container for more |
 | web.env[0] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_KEY","value":null}` | Set google oauth 2 key. Requires posthog ee license. |
 | web.env[1] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET","value":null}` | Set google oauth 2 secret. Requires posthog ee license. |
@@ -51,23 +55,23 @@ The following table lists the configurable parameters of the PostHog chart and t
 | beat.nodeSelector | object | `{}` |  |
 | beat.tolerations | list | `[]` |  |
 | beat.affinity | object | `{}` |  |
-| worker.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for worker |
+| worker.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for worker -- This experimental |
 | worker.hpa.cputhreshold | int | `60` |  |
-| worker.hpa.minpods | int | `3` |  |
+| worker.hpa.minpods | int | `1` |  |
 | worker.hpa.maxpods | int | `20` |  |
 | worker.env | list | `[]` |  |
-| worker.replicacount | int | `1` | How many replicas of workers to run |
+| worker.replicacount | int | `1` | How many replicas of workers to run. Ignored if hpa is used |
 | worker.resources | object | `{}` | Resource limits for workers |
 | worker.nodeSelector | object | `{}` |  |
 | worker.tolerations | list | `[]` |  |
 | worker.affinity | object | `{}` |  |
 | plugins.ingestion.enabled | bool | `true` | Whether to enable plugin-server based ingestion |
-| plugins.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for plugin server |
+| plugins.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for plugin server -- This experimental, based on cpu util which is not necessarilly the bottleneck |
 | plugins.hpa.cputhreshold | int | `60` |  |
 | plugins.hpa.minpods | int | `1` |  |
 | plugins.hpa.maxpods | int | `10` |  |
 | plugins.env | list | `[]` |  |
-| plugins.replicacount | int | `1` | How many replicas of plugin-server to run |
+| plugins.replicacount | int | `1` | How many replicas of plugin-server to run. Ignored if hpa is used |
 | plugins.resources | object | `{}` |  |
 | plugins.nodeSelector | object | `{}` |  |
 | plugins.tolerations | list | `[]` |  |
@@ -86,7 +90,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | ingress.enabled | bool | `true` | Enable ingress controller resource |
 | ingress.type | string | `"clb"` | Ingress handler type. Either `clb` on gcp or `nginx` elsewhere |
 | ingress.hostname | string | `nil` | URL to address your PostHog installation. You will need to set up DNS after installation |
-| ingress.gcp.ip_name | string | `nil` | Specifies the name of the global IP address resource to be associated with the google clb |
+| ingress.gcp.ip_name | string | `"posthog"` | Specifies the name of the global IP address resource to be associated with the google clb |
 | ingress.gcp.forceHttps | bool | `true` | If true, will force a https redirect when accessed over http |
 | ingress.letsencrypt | bool | `false` | Whether to enable letsencrypt. Set to true for type nginx |
 | ingress.nginx.enabled | bool | `false` | Whether nginx is enabled |
@@ -96,7 +100,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | postgresql.postgresqlUsername | string | `"postgres"` | Postgresql database username |
 | postgresql.postgresqlPassword | string | `"postgres"` | Postgresql database password |
 | postgresql.persistence.enabled | bool | `true` | Enable persistence using PVC |
-| postgresql.persistence.size | string | `"100Gi"` | PVC Storage Request for PostgreSQL volume |
+| postgresql.persistence.size | string | `"10Gi"` | PVC Storage Request for PostgreSQL volume |
 | postgresql.postgresqlHost | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
 | postgresql.postgresqlPort | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
 | redis.enabled | bool | `true` | Install redis server on kubernetes (see below) |
@@ -105,7 +109,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | redis.password | string | `nil` | Password for redis. Only set when internal redis is disabled |
 | redis.port | string | `nil` | Port redis is accessible from. Only set when internal redis is disabled |
 | redis.master.persistence.enabled | bool | `true` | Enable persistence using PVC |
-| redis.master.persistence.size | string | `"8Gi"` | PVC Storage Request for Redis volume |
+| redis.master.persistence.size | string | `"5Gi"` | PVC Storage Request for Redis volume |
 | kafka.enabled | bool | `true` | Install kafka on kubernetes |
 | kafka.nameOverride | string | `"posthog-kafka"` | Name override for kafka app |
 | kafka.url | string | `nil` | URL for kafka. Only set when internal kafka is disabled |
@@ -114,8 +118,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.service.enabled | bool | `false` |  |
 | kafka.service.type | string | `"LoadBalancer"` |  |
 | kafka.persistence.enabled | bool | `true` | Enable persistence using PVC |
-| kafka.persistence.size | string | `"30Gi"` | PVC Storage Request for kafka volume |
-| kafka.logRetentionBytes | string | `"_21_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, ideally 70-80% |
+| kafka.persistence.size | string | `"5Gi"` | PVC Storage Request for kafka volume |
+| kafka.logRetentionBytes | string | `"_4_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, ideally 70-80% |
 | kafka.logRetentionHours | int | `24` | The minimum age of a log file to be eligible for deletion due to age |
 | clickhouse.enabled | bool | `true` | Use clickhouse as primary database |
 | clickhouse.database | string | `"posthog"` | Clickhouse database |
