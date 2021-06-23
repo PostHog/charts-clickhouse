@@ -22,7 +22,7 @@ clickhouseOperator:
   # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
   enabled: true
   # -- Which namespace to install clickhouse operator to
-  namespace:
+  namespace: "posthog"
   # -- How much storage space to preallocate for clickhouse
   storage: 20Gi
 
@@ -305,6 +305,8 @@ redis:
   enabled: true
   # -- Name override for redis app
   nameOverride: posthog-redis
+  # Don't require password by default
+  usePassword: false
   # The following variables are only used when internal PG is disabled
   # host: redis
   # Just omit the password field if your redis cluster doesn't use password

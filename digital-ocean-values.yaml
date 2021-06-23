@@ -1,0 +1,24 @@
+cloud: "digital-ocean"
+ingress:
+  enabled: true
+  type: "nginx"
+  hostname: "posthog.click"
+  path: /*
+  letsencrypt: true
+  nginx:
+    enabled: true
+
+hooks:
+  migrate:
+    resources:
+      limits:
+        memory: 500Mi
+      requests:
+        memory: 500Mi
+
+redis:
+  usePassword: false
+  password: ""
+
+certManager:
+  enabled: true
