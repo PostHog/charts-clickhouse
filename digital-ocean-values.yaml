@@ -1,24 +1,8 @@
-cloud: "digital-ocean"
+cloud: "do"
 ingress:
-  enabled: true
-  type: "nginx"
+  type: "nginx" # can make this also come from the tag also
+  # "PROVIDE_YOUR_HOSTNAME"
   hostname: "posthog.click"
-  path: /*
-  letsencrypt: true
-  nginx:
-    enabled: true
 
-hooks:
-  migrate:
-    resources:
-      limits:
-        memory: 500Mi
-      requests:
-        memory: 500Mi
-
-redis:
-  usePassword: false
-  password: ""
-
-certManager:
-  enabled: true
+tags:
+  nginxAndCertmanager: true

@@ -345,3 +345,8 @@ Create the name of the service account to use
 {{- define "posthog.deploymentEnv" -}}
     helm_{{ .Values.cloud }}_ha
 {{- end -}}
+
+{{- define "letsencrypt" -}}
+{{- hasKey .Values.ingress "letsencrypt" | ternary .Values.ingress.letsencrypt .Values.tags.nginxAndCertmanager | default false}}
+}}
+{{- end -}}

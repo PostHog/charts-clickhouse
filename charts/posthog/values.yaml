@@ -13,7 +13,7 @@ image:
   # -- Image pull policy
   pullPolicy: IfNotPresent
 
-# -- Cloud service being deployed on. Either `gcp` or `aws`
+# -- Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean
 cloud: "gcp"
 # -- Sentry endpoint to send errors to
 sentryDSN:
@@ -28,10 +28,10 @@ clickhouseOperator:
 
 # -- Env vars to throw into every deployment (web, beat, worker, and plugin server)
 env:
-- name: ASYNC_EVENT_PROPERTY_USAGE
-  value: "true"
-- name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
-  value: "86400"
+  - name: ASYNC_EVENT_PROPERTY_USAGE
+    value: "true"
+  - name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
+    value: "86400"
 
 # -- PgBouncer setup
 pgbouncer:
@@ -74,15 +74,15 @@ web:
     #   memory: 300Mi
   # -- Env variables for web container
   env:
-  # -- Set google oauth 2 key. Requires posthog ee license.
-  - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
-    value:
-  # -- Set google oauth 2 secret. Requires posthog ee license.
-  - name: SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
-    value:
-  # -- Set google oauth 2 whitelisted domains users can log in from
-  - name: SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS
-    value: "posthog.com"
+    # -- Set google oauth 2 key. Requires posthog ee license.
+    - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
+      value:
+    # -- Set google oauth 2 secret. Requires posthog ee license.
+    - name: SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+      value:
+    # -- Set google oauth 2 whitelisted domains users can log in from
+    - name: SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS
+      value: "posthog.com"
 
   internalMetrics:
     # -- Whether to capture information on operation of posthog into posthog, exposed in /instance/status page
@@ -222,7 +222,7 @@ email:
   # -- SMTP TLS for security
   use_tls: true
   # -- SMTP SSL for security
-  use_tls:
+  use_ssl:
   # -- SMTP password from an existing secret. When defined the `password` field is ignored
   existingSecret:
   # -- Key to get from the `email.existingSecret` secret
@@ -230,7 +230,6 @@ email:
   # When defined the `password` field is ignored
   # existingSecret: secret-name
   # existingSecretKey: smtp-password
-
 
 # -- Name of the service and what port to expose on the pod. Don't change these unless you know what you're doing
 service:
@@ -252,9 +251,8 @@ service:
   # loadBalancerSourceRanges: []
 
 certManager:
-  # :TODO: When should be this true?
-  # -- Whether to install cert-manager
-  enabled: false
+  # -- Whether to install cert-manager. Validates certs for nginx ingress
+  enabled:
 
 ingress:
   # -- Enable ingress controller resource
@@ -268,11 +266,14 @@ ingress:
     ip_name: "posthog"
     # -- If true, will force a https redirect when accessed over http
     forceHttps: true
-  # -- Whether to enable letsencrypt. Set to true for type nginx
-  letsencrypt: false
+  # -- Whether to enable letsencrypt. By default true with nginx-and-certmanager tag and false otherwise
+  letsencrypt:
   nginx:
     # -- Whether nginx is enabled
-    enabled: false
+    enabled:
+
+tags:
+  nginx-and-certmanager: false
 
 postgresql:
   # -- Install postgres server on kubernetes (see below)
@@ -500,7 +501,6 @@ prometheus:
       requests:
         cpu: 50m
 
-
   kubeStateMetrics:
     # -- If false, kube-state-metrics sub-chart will not be installed
     enabled: true
@@ -553,7 +553,8 @@ prometheus:
               labels:
                 severity: warning
               annotations:
-                description: Pod {{$labels.namespace}}/{{$labels.pod}} was restarted {{$value}}
+                description:
+                  Pod {{$labels.namespace}}/{{$labels.pod}} was restarted {{$value}}
                   times within the last hour
                 summary: Pod is restarting frequently
             # Requires nodeExporter.enabled
@@ -563,8 +564,8 @@ prometheus:
               labels:
                 severity: page
               annotations:
-                description: 'Persistent volume claim {{ $labels.persistentvolumeclaim }} disk usage is above 85% for past 5 minutes'
-                summary: 'Kubernetes {{ $labels.persistentvolumeclaim }} is full (host {{ $labels.kubernetes_io_hostname }})'
+                description: "Persistent volume claim {{ $labels.persistentvolumeclaim }} disk usage is above 85% for past 5 minutes"
+                summary: "Kubernetes {{ $labels.persistentvolumeclaim }} is full (host {{ $labels.kubernetes_io_hostname }})"
 
 # -- Prometheus StatsD configuration, see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter
 statsd:

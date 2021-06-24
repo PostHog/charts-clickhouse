@@ -1,4 +1,4 @@
-{{- if .Values.ingress.letsencrypt }}
+{{- if include "letsencrypt" .}}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -6,7 +6,7 @@ metadata:
 spec:
   acme:
     # Email address used for ACME registration
-    email: james.g@posthog.com 
+    email: james.g@posthog.com
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       # Name of a secret used to store the ACME account private key

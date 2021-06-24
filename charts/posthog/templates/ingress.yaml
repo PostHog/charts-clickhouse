@@ -28,7 +28,7 @@ metadata:
    {{- if (eq .Values.ingress.type "nginx") }}
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-   {{- if .Values.ingress.letsencrypt }}
+   {{- if include "letsencrypt" .}}
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
    {{- end }}
    {{- end }}
@@ -38,7 +38,7 @@ metadata:
     {{- end }}
    {{- end }}
 spec:
-  {{- if .Values.ingress.letsencrypt }}
+   {{- if include "letsencrypt" .}}
   tls:
   - hosts:
     - {{ .Values.ingress.hostname }}
