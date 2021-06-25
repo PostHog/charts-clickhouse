@@ -5,7 +5,7 @@ To access your PostHog site from outside the cluster follow the steps below:
 
 {{- if .Values.ingress.enabled }}
 1. Your application will be hosted at http{{ if (or .Values.ingress.tls .Values.ingress.gcp.forceHttps) }}s{{ end }}://{{ .Values.ingress.hostname }}/
-{{- if (and .Values.ingress.gcp (eq .Values.ingress.type "clb") .Values.ingress.gcp.ip_name) }}
+{{- if (and .Values.ingress.gcp (eq (include "ingress.type" .) "clb") .Values.ingress.gcp.ip_name) }}
 2. Get the application IP by running:
   gcloud compute addresses list
 3. Update your DNS

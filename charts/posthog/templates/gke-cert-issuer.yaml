@@ -1,4 +1,4 @@
-{{- if (and .Values.ingress.gcp (eq .Values.ingress.type "clb")) -}}
+{{- if (and .Values.ingress.gcp (eq (include "ingress.type" .) "clb")) -}}
 {{- if .Values.ingress.gcp.ip_name -}}
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate

@@ -330,6 +330,18 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
+{{- define "ingress.type" -}}
+{{- if ne (.Values.ingress.type | toString) "<nil>" -}}
+  {{ .Values.ingress.type }}
+{{- else if .Values.ingress.nginx.enabled -}}
+  nginx
+{{- else if (eq .Values.cloud "gcp") -}}
+  clb
+{{- else -}}
+  undefined
+{{- end -}}
+{{- end -}}
+
 {{- define "posthog.helmInstallInfo" -}}
 {{- $info := dict }}
 {{- $info := set $info "cloud" .Values.cloud -}}
@@ -338,10 +350,20 @@ Create the name of the service account to use
 {{- $info := set $info "release_revision" .Release.Revision -}}
 {{- $info := set $info "hostname" .Values.ingress.hostname -}}
 {{- $info := set $info "operation" (include "posthog.helmOperation" .) -}}
-{{- $info := set $info "ingress_type" .Values.ingress.type -}}
+{{- $info := set $info "ingress_type" (include "ingress.type" .) -}}
 {{ toJson $info | quote }}
 {{- end -}}
 
 {{- define "posthog.deploymentEnv" -}}
     helm_{{ .Values.cloud }}_ha
+{{- end -}}
+
+{{- define "ingress.letsencrypt" -}}
+{{- if ne (.Values.ingress.letsencrypt | toString) "<nil>" -}}
+  {{ .Values.ingress.letsencrypt }}
+{{- else if .Values.ingress.nginx.enabled -}}
+  true
+{{- else -}}
+  false
+{{- end -}}
 {{- end -}}
