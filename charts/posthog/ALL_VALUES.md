@@ -13,10 +13,10 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.tag | string | `nil` | Posthog image tag, e.g. release-1.25.0 |
 | image.default | string | `":release-1.26.0"` | Default image or tag |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| cloud | string | `"gcp"` | Cloud service being deployed on. Either `gcp` or `aws` |
+| cloud | string | `"gcp"` | Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
 | clickhouseOperator.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
-| clickhouseOperator.namespace | string | `nil` | Which namespace to install clickhouse operator to |
+| clickhouseOperator.namespace | string | `"posthog"` | Which namespace to install clickhouse operator to |
 | clickhouseOperator.storage | string | `"20Gi"` | How much storage space to preallocate for clickhouse |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, beat, worker, and plugin server) |
 | pgbouncer | object | `{"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
@@ -82,18 +82,18 @@ The following table lists the configurable parameters of the PostHog chart and t
 | email.user | string | `nil` | STMP login user |
 | email.password | string | `nil` | STMP password |
 | email.use_tls | bool | `true` | SMTP TLS for security |
-| email.use_tls | string | `nil` | SMTP SSL for security |
+| email.use_ssl | string | `nil` | SMTP SSL for security |
 | email.existingSecret | string | `nil` | SMTP password from an existing secret. When defined the `password` field is ignored |
 | email.existingSecretKey | string | `nil` | Key to get from the `email.existingSecret` secret |
 | service | object | `{"annotations":{},"externalPort":8000,"internalPort":8000,"name":"posthog","type":"NodePort"}` | Name of the service and what port to expose on the pod. Don't change these unless you know what you're doing |
-| certManager.enabled | bool | `false` |  |
+| certManager.enabled | bool | `true` | Whether to install cert-manager. Validates certs for nginx ingress |
 | ingress.enabled | bool | `true` | Enable ingress controller resource |
-| ingress.type | string | `"clb"` | Ingress handler type. Either `clb` on gcp or `nginx` elsewhere |
+| ingress.type | string | `nil` | Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp. |
 | ingress.hostname | string | `nil` | URL to address your PostHog installation. You will need to set up DNS after installation |
 | ingress.gcp.ip_name | string | `"posthog"` | Specifies the name of the global IP address resource to be associated with the google clb |
 | ingress.gcp.forceHttps | bool | `true` | If true, will force a https redirect when accessed over http |
-| ingress.letsencrypt | bool | `false` | Whether to enable letsencrypt. Set to true for type nginx |
-| ingress.nginx.enabled | bool | `false` | Whether nginx is enabled |
+| ingress.letsencrypt | string | `nil` | Whether to enable letsencrypt. Defaults to true if nginx enabled and false otherwise. |
+| ingress.nginx.enabled | bool | `true` | Whether nginx is enabled |
 | postgresql.enabled | bool | `true` | Install postgres server on kubernetes (see below) |
 | postgresql.nameOverride | string | `"posthog-postgresql"` | Name override for postgresql app |
 | postgresql.postgresqlDatabase | string | `"posthog"` | Postgresql database name |
@@ -105,6 +105,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | postgresql.postgresqlPort | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
 | redis.enabled | bool | `true` | Install redis server on kubernetes (see below) |
 | redis.nameOverride | string | `"posthog-redis"` | Name override for redis app |
+| redis.usePassword | bool | `false` |  |
 | redis.host | string | `nil` | Host redis is accessible from. Only set when internal redis is disabled |
 | redis.password | string | `nil` | Password for redis. Only set when internal redis is disabled |
 | redis.port | string | `nil` | Port redis is accessible from. Only set when internal redis is disabled |
