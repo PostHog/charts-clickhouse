@@ -9,13 +9,13 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
  annotations:
-   {{- if (eq .Values.ingress.type "clb") }}
+   {{- if (eq (include "ingress.type" .) "clb") }}
     kubernetes.io/ingress.class: "gce"
     networking.gke.io/managed-certificates: "{{ .Release.Name }}-gke-cert"
     networking.gke.io/v1beta1.FrontendConfig: "{{ .Release.Name }}-frontend-config"
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.ip_name | quote }}
    {{- end }}
-   {{- if (eq .Values.ingress.type "alb") }}
+   {{- if (eq (include "ingress.type" .) "alb") }}
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/target-type: ip
     # example: arn:aws:acm:eu-west-1:118330671040:certificate/a6cae86a-47f6-40b8-ab9e-f35bf1b736e0
@@ -25,10 +25,10 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/healthcheck-path: "/_health"
    {{- end }}
-   {{- if (eq .Values.ingress.type "nginx") }}
+   {{- if (eq (include "ingress.type" .) "nginx") }}
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-   {{- if include "letsencrypt" .}}
+   {{- if eq (include "ingress.letsencrypt" .) "true"}}
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
    {{- end }}
    {{- end }}
@@ -38,7 +38,7 @@ metadata:
     {{- end }}
    {{- end }}
 spec:
-   {{- if include "letsencrypt" .}}
+   {{- if eq (include "ingress.letsencrypt" .) "true"}}
   tls:
   - hosts:
     - {{ .Values.ingress.hostname }}

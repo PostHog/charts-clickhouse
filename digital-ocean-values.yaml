@@ -1,8 +1,8 @@
 cloud: "do"
 ingress:
-  type: "nginx" # can make this also come from the tag also
-  # "PROVIDE_YOUR_HOSTNAME"
   hostname: "posthog.click"
 
-tags:
-  nginxAndCertmanager: true
+# smtp login and key ommited as it's a public repo
+# email:
+#   user: # TODO
+#   password: # TODO

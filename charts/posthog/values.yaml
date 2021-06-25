@@ -252,13 +252,13 @@ service:
 
 certManager:
   # -- Whether to install cert-manager. Validates certs for nginx ingress
-  enabled:
+  enabled: true
 
 ingress:
   # -- Enable ingress controller resource
   enabled: true
-  # -- Ingress handler type. Either `clb` on gcp or `nginx` elsewhere
-  type: "clb"
+  # -- Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp.
+  type:
   # -- URL to address your PostHog installation. You will need to set up DNS after installation
   hostname:
   gcp:
@@ -266,14 +266,11 @@ ingress:
     ip_name: "posthog"
     # -- If true, will force a https redirect when accessed over http
     forceHttps: true
-  # -- Whether to enable letsencrypt. By default true with nginx-and-certmanager tag and false otherwise
+  # -- Whether to enable letsencrypt. Defaults to true if nginx enabled and false otherwise.
   letsencrypt:
   nginx:
     # -- Whether nginx is enabled
-    enabled:
-
-tags:
-  nginx-and-certmanager: false
+    enabled: true
 
 postgresql:
   # -- Install postgres server on kubernetes (see below)

@@ -1,4 +1,4 @@
-{{- if include "letsencrypt" .}}
+{{- if eq (include "ingress.letsencrypt" .) "true"}}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
