@@ -1,5 +1,5 @@
-import http from "k6/http";
-import { check, sleep } from "k6";
+import http from "k6/http"
+import { check, sleep } from "k6"
 
 export let options = {
   thresholds: {
@@ -13,7 +13,7 @@ export let options = {
     { duration: "2m", target: 200 },
     { duration: "5m", target: 0 }, // scale down. Recovery stage.
   ],
-};
+}
 
 export default function () {
   const res = http.post(
@@ -23,9 +23,9 @@ export default function () {
       event: "k6s_custom_event",
       distinct_id: __VU,
     })
-  );
+  )
 
-  check(res, { "status 200": (r) => r.status === 200 });
+  check(res, { "status 200": (r) => r.status === 200 })
 
-  sleep(__ENV.CE_SLEEP || 1);
+  sleep(__ENV.CE_SLEEP || 1)
 }
