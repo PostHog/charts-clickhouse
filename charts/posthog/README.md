@@ -280,3 +280,11 @@ As a troubleshooting tool, you can allow HTTP access by setting `ingress.gcp.for
 - Get the IP via `kubectl get svc`
 - Username: `admin` or `clickhouse.user`
 - Password: `clickhouse.password`
+
+
+### Releasing a new version of this helm chart
+
+Simply apply one of the following labels to your PR _before merging_ to bump the version and release it to the helm repo:
+- `bump patch`
+- `bump minor`
+- `bump major`
