@@ -16,14 +16,6 @@ clickhouseOperator:
   namespace: default
   storage: 2Gi
 
-postgresql:
-  persistence:
-    size: 1Gi
-
-kafka:
-  persistence:
-    size: 1Gi
-
 plugins:
   replicacount: 1
 
