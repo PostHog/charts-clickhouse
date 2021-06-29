@@ -331,7 +331,7 @@ Create the name of the service account to use
 {{- end -}}
 
 {{- define "ingress.type" -}}
-{{- if ne (.Values.ingress.type | toString) "<nil>" -}}
+{{- if hasKey .Values.ingress "type" -}}
   {{ .Values.ingress.type }}
 {{- else if .Values.ingress.nginx.enabled -}}
   nginx
