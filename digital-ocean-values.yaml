@@ -2,7 +2,8 @@ cloud: "do"
 ingress:
   redirectToTLS: false
   letsencrypt: false 
-
+web:
+  secureCookies: false
 # smtp login and key ommited as it's a public repo
 # email:
 #   user: # TODO
