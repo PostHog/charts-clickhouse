@@ -1,6 +1,7 @@
 cloud: "do"
 ingress:
-  hostname: "posthog.click"
+  redirectToTLS: false
+  letsencrypt: false 
 
 # smtp login and key ommited as it's a public repo
 # email:
