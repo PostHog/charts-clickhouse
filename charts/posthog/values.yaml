@@ -303,16 +303,18 @@ redis:
   enabled: true
   # -- Name override for redis app
   nameOverride: posthog-redis
-  # Don't require password by default
-  usePassword: false
-  # The following variables are only used when internal PG is disabled
-  # host: redis
-  # Just omit the password field if your redis cluster doesn't use password
-  # password: redis
-  # port: 6379
-  # When defined the `password` field is ignored
-  # existingSecret: secret-name
-  # existingSecretKey: redis-password
+
+  # -- Either standalone or cluster.
+  architecture: standalone
+
+  auth:
+    # -- Don't require password by default
+    enabled: false
+    # Just omit the password field if your redis cluster doesn't use password
+    # password: redis
+    # When defined the `password` field is ignored
+    # existingSecret: secret-name
+    # existingSecretKey: redis-password
 
   # -- Host redis is accessible from. Only set when internal redis is disabled
   host:

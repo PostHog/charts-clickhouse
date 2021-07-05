@@ -55,6 +55,8 @@ helm upgrade -f values.yaml posthog posthog/posthog
 
 > See [the Helm docs](https://helm.sh/docs/helm/helm_upgrade/) for documentation on the `helm upgrade` command.
 
+When upgrading major versions, see [Upgrade notes](#upgrade-notes)
+
 
 ## Uninstalling the Chart
 
@@ -97,9 +99,9 @@ All configuration options can be found in [ALL_VALUES.md](ALL_VALUES.md) or in [
   <summary>
     <b>Click to view</b>
   </summary>
-    
+
 <br />
-    
+
 This `values.yaml` is geared towards minimizing cost on google kubernetes engine. Use it if you have less than 1M events/month.
 
 ```yaml
@@ -139,7 +141,7 @@ plugins:
 pgbouncer:
   replicacount: 1
 ```
-                              
+
 </details>
 
 ### Example `values.yaml` (>1M events/month)
@@ -147,7 +149,7 @@ pgbouncer:
   <summary>
     <b>Click to view</b>
   </summary>
-    
+
 <br />
 
 This `values.yaml` is geared towards larger-scale installations cost on google kubernetes engine. Use it if you have more than 1M events/month.
@@ -197,7 +199,7 @@ plugins:
     enabled: true
 ```
 
-</details>  
+</details>
 
 ### [ClickHouse](https://clickhouse.tech/)
 
@@ -205,8 +207,8 @@ TODO
 
 ### [PostgreSQL](https://www.postgresql.org/)
 
-> While ClickHouse powers the bulk of the analytics if you deploy PostHog using this chart, Postgres is still needed as a data store for PostHog to work. 
-  
+> While ClickHouse powers the bulk of the analytics if you deploy PostHog using this chart, Postgres is still needed as a data store for PostHog to work.
+
 By default, PostgreSQL is installed as part of the chart. To use an external PostgreSQL server set `postgresql.enabled` to `false` and then set `postgresql.postgresHost` and `postgresql.postgresqlPassword`. The other options (`postgresql.postgresqlDatabase`, `postgresql.postgresqlUsername` and `postgresql.postgresqlPort`) may also want changing from their default values.
 
 To avoid issues when upgrading this chart, provide `postgresql.postgresqlPassword` for subsequent upgrades. This is due to an issue in the PostgreSQL chart where password will be overwritten with randomly generated passwords otherwise. See https://github.com/helm/charts/tree/master/stable/postgresql#upgrade for more detail.
@@ -288,3 +290,15 @@ Simply apply one of the following labels to your PR _before merging_ to bump the
 - `bump patch`
 - `bump minor`
 - `bump major`
+
+## Upgrade notes
+
+### Upgrading from 1.x.x
+
+2.0.0 updated redis chart in an incompatible way. If your upgrade fails with
+
+```
+Upgrade "posthog" failed: cannot patch "posthog-posthog-redis-master" with kind StatefulSet: StatefulSet.apps "posthog-posthog-redis-master" is invalid: spec: Forbidden: updates to statefulset spec for fields other than 'replicas', 'template', and 'updateStrategy' are forbidden
+```
+
+Run the following and `helm upgrade` again: `kubectl delete --namespace NAMESPACE sts posthog-posthog-redis-master`

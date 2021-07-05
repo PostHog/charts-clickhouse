@@ -4,7 +4,7 @@ dependencies:
   version: 8.6.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 9.3.2
+  version: 14.6.2
 - name: kafka
   repository: https://charts.bitnami.com/bitnami
   version: 12.6.0
@@ -20,5 +20,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:dd485e2f30f0ea43bcb83c5a6e15fbe54c4b62d710cbb5f3796919096224bd1b
-generated: "2021-06-17T16:05:26.34339941+03:00"
+digest: sha256:018ab7a2248a61d00ed636c8698516aa14f44d47dc0f7e56a1602c4ec06573d0
+generated: "2021-06-29T18:09:51.222129423+03:00"
