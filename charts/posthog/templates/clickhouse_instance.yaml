@@ -72,9 +72,17 @@ spec:
     podTemplates:
       - name: pod-template-with-volumes
         spec:
+          securityContext:
+            runAsUser: 101
+            runAsGroup: 101
+            fsGroup: 101
           containers:
             - name: clickhouse
-              image: yandex/clickhouse-server:20.10.3.30
+              image: yandex/clickhouse-server:21.6.5
+              command:
+                - /bin/bash
+                - -c
+                - /usr/bin/clickhouse-server --config-file=/etc/clickhouse-server/config.xml
               ports:
                 - name: http
                   containerPort: 8123

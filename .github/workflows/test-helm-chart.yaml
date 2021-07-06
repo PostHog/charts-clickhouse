@@ -64,7 +64,7 @@ jobs:
       - name: (Upgrade) Install our helm chart from main branch
         if: matrix.test == 'upgrade'
         run: |
-          helm upgrade --install posthog main/charts/posthog --timeout 20m -f ci/values.yaml
+          helm upgrade --install posthog main/charts/posthog --timeout 20m -f ci/values.yaml --debug
 
       - name: "(Upgrade) Install helm diff"
         if: matrix.test == 'upgrade'
@@ -74,7 +74,7 @@ jobs:
       - name: "(Upgrade) Helm diff ${{ matrix.upgrade-from }} chart with local chart"
         if: matrix.test == 'upgrade'
         run: |
-          helm diff upgrade --install posthog charts/posthog -f ci/values.yaml
+          helm diff upgrade --install posthog charts/posthog -f ci/values.yaml --debug
 
       - name: "(Upgrade) Await chart install"
         if: matrix.test == 'upgrade'
