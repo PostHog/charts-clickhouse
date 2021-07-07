@@ -90,9 +90,9 @@ spec:
             {{- end }}
               key: {{ template "posthog.postgresql.secretKey" . }}
         - name: POSTHOG_POSTGRES_HOST
-          value: {{ template "posthog.postgresql.host" . }}
+          value: {{ template "posthog.pgbouncer.host" . }}
         - name: POSTHOG_POSTGRES_PORT
-          value: {{ include "posthog.postgresql.port" . | quote }}
+          value: {{ include "posthog.pgbouncer.port" . | quote }}
           {{- if or (.Values.redis.enabled) (.Values.redis.password) }}
         - name: POSTHOG_REDIS_PASSWORD
           value: {{ .Values.redis.password | quote }}
