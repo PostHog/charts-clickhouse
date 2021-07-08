@@ -340,13 +340,6 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
-{{/*
-Should we redirect HTTP to TLS?
-*/}}
-{{- define "ingress.redirectToTLS" -}}
-    {{ .Values.ingress.redirectToTLS }}
-{{- end -}}
-
 
 {{- define "posthog.helmInstallInfo" -}}
 {{- $info := dict }}
