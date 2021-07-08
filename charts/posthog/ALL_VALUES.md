@@ -105,7 +105,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | postgresql.postgresqlPort | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
 | redis.enabled | bool | `true` | Install redis server on kubernetes (see below) |
 | redis.nameOverride | string | `"posthog-redis"` | Name override for redis app |
-| redis.usePassword | bool | `false` |  |
+| redis.architecture | string | `"standalone"` | Either standalone or cluster. |
+| redis.auth.enabled | bool | `false` | Don't require password by default |
 | redis.host | string | `nil` | Host redis is accessible from. Only set when internal redis is disabled |
 | redis.password | string | `nil` | Password for redis. Only set when internal redis is disabled |
 | redis.port | string | `nil` | Port redis is accessible from. Only set when internal redis is disabled |
