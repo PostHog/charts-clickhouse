@@ -344,10 +344,10 @@ Create the name of the service account to use
 Should we redirect HTTP to TLS?
 */}}
 {{- define "ingress.redirectToTLS" -}}
-{{- if hasKey .Values.ingress "redirectToTLS" -}}
-    {{ .Values.ingress.redirectToTLS | quote }}
+{{- if ne (.Values.ingress.redirectToTLS | toString) "<nil>" -}}
+    {{ .Values.ingress.redirectToTLS }}
 {{- else -}}
-    "true"
+    true
 {{- end -}}
 {{- end -}}
 
