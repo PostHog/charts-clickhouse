@@ -331,14 +331,12 @@ Create the name of the service account to use
 {{- end -}}
 
 {{- define "ingress.type" -}}
-{{- if hasKey .Values.ingress "type" -}}
+{{- if ne (.Values.ingress.type | toString) "<nil>" -}}
   {{ .Values.ingress.type }}
 {{- else if .Values.ingress.nginx.enabled -}}
   nginx
 {{- else if (eq .Values.cloud "gcp") -}}
   clb
-{{- else -}}
-  undefined
 {{- end -}}
 {{- end -}}
 
