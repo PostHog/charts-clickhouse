@@ -271,8 +271,8 @@ ingress:
   nginx:
     # -- Whether nginx is enabled
     enabled: true
-  # -- Whether to redirect to TLS. Defaults to true.
-  redirectToTLS:
+  # -- Whether to redirect to TLS with nginx ingress.
+  redirectToTLS: true
 
 postgresql:
   # -- Install postgres server on kubernetes (see below)
