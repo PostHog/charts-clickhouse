@@ -14,7 +14,7 @@ metadata:
     "helm.sh/resource-policy": "keep"
     "helm.sh/hook-weight": "1"
 spec:
-  progressDeadlineSeconds: {{ .Values.web.progressDeadlineSeconds }}
+  progressDeadlineSeconds: 1200
   selector:
     matchLabels:
         app: {{ template "posthog.fullname" . }}
