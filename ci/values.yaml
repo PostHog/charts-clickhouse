@@ -16,11 +16,17 @@ clickhouseOperator:
   namespace: default
   storage: 2Gi
 
+web:
+  secureCookies: false
+  progressDeadlineSeconds: 1200
+
 plugins:
   replicacount: 1
+  progressDeadlineSeconds: 1200
 
 worker:
   replicacount: 1
+  progressDeadlineSeconds: 1200
 
 redis:
   usePassword: false
@@ -28,6 +34,3 @@ redis:
   master:
     persistence:
       size: 1Gi
-
-web:
-  secureCookies: false

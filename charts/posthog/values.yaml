@@ -126,6 +126,9 @@ web:
   # Optional extra labels for pod, i.e. redis-client: "true"
   # podLabels: []
 
+  # -- Set spec.progressDeadlineSeconds in deployment. Affects `kubectl rollout status`. Overridden in tests
+  progressDeadlineSeconds: 600
+
 beat:
   # -- How many posthog 'beat' instances to run
   replicacount: 1
@@ -175,6 +178,9 @@ worker:
   # podLabels: []
   # concurrency:
 
+  # -- Set spec.progressDeadlineSeconds in deployment. Affects `kubectl rollout status`. Overridden in tests
+  progressDeadlineSeconds: 600
+
 # How many plugin server instances to run
 plugins:
   ingestion:
@@ -206,6 +212,9 @@ plugins:
   # Optional extra labels for pod, i.e. redis-client: "true"
   # podLabels: []
   # concurrency:
+
+  # -- Set spec.progressDeadlineSeconds in deployment. Affects `kubectl rollout status`. Overridden in tests
+  progressDeadlineSeconds: 600
 
 # Outbound E-mails
 email:

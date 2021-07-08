@@ -11,9 +11,10 @@ metadata:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
     "helm.sh/hook": "post-install,post-upgrade"
-    "helm.sh/resource-policy": "keep" 
+    "helm.sh/resource-policy": "keep"
     "helm.sh/hook-weight": "1"
 spec:
+  progressDeadlineSeconds: {{ .Values.web.progressDeadlineSeconds }}
   selector:
     matchLabels:
         app: {{ template "posthog.fullname" . }}

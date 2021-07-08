@@ -8,6 +8,7 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
+  progressDeadlineSeconds: {{ .Values.worker.progressDeadlineSeconds }}
   selector:
     matchLabels:
         app: {{ template "posthog.fullname" . }}
