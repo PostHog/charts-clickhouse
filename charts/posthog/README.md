@@ -209,7 +209,13 @@ plugins:
 
 ### [ClickHouse](https://clickhouse.tech/)
 
-TODO
+ClickHouse is the database that does the bulk of heavy lifting with regards to storing and analyzing the analytics data.
+
+By default, ClickHouse is installed as a part of the chart, powered by [clickhouse-operator](https://github.com/Altinity/clickhouse-operator/). As such it's important to set the database size to be enough to store the raw data via `clickhouseOperator.size` value.
+
+To use an external `ClickHouse` cluster, set `clickhouseOperator.enabled` to `false` and set `clickhouse.host`, `clickhouse.database`, `clickhouse.user` and `clickhouse.password`.
+
+_See [ALL_VALUES.md](ALL_VALUES.md) for full configuration options._
 
 ### [PostgreSQL](https://www.postgresql.org/)
 
@@ -218,6 +224,8 @@ TODO
 By default, PostgreSQL is installed as part of the chart. To use an external PostgreSQL server set `postgresql.enabled` to `false` and then set `postgresql.postgresHost` and `postgresql.postgresqlPassword`. The other options (`postgresql.postgresqlDatabase`, `postgresql.postgresqlUsername` and `postgresql.postgresqlPort`) may also want changing from their default values.
 
 To avoid issues when upgrading this chart, provide `postgresql.postgresqlPassword` for subsequent upgrades. This is due to an issue in the PostgreSQL chart where password will be overwritten with randomly generated passwords otherwise. See https://github.com/helm/charts/tree/master/stable/postgresql#upgrade for more detail.
+
+_See [ALL_VALUES.md](ALL_VALUES.md) and [PostgreSQL chart](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) for full configuration options._
 
 ### [Redis](https://redis.io/)
 
@@ -229,7 +237,9 @@ _See [ALL_VALUES.md](ALL_VALUES.md) and [redis chart](https://github.com/bitnami
 
 ### [Kafka](https://kafka.apache.org/)
 
-TODO
+By default, Kafka is installed as part of the chart. Kafka is used as a queue between the posthog web application and posthog plugin server to manage data ingestion as well as for ingesting data into ClickHouse.
+
+_See [ALL_VALUES.md](ALL_VALUES.md) and [kafka chart](https://github.com/bitnami/charts/tree/master/bitnami/kafka) for full configuration options._
 
 ### [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
 
