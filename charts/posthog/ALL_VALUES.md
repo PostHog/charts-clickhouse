@@ -94,6 +94,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | ingress.gcp.forceHttps | bool | `true` | If true, will force a https redirect when accessed over http |
 | ingress.letsencrypt | string | `nil` | Whether to enable letsencrypt. Defaults to true if nginx enabled and false otherwise. |
 | ingress.nginx.enabled | bool | `true` | Whether nginx is enabled |
+| ingress.nginx.redirectToTLS | bool | `true` | Whether to redirect to TLS with nginx ingress. |
 | postgresql.enabled | bool | `true` | Install postgres server on kubernetes (see below) |
 | postgresql.nameOverride | string | `"posthog-postgresql"` | Name override for postgresql app |
 | postgresql.postgresqlDatabase | string | `"posthog"` | Postgresql database name |
