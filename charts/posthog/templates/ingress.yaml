@@ -27,7 +27,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/healthcheck-path: "/_health"
    {{- end }}
-   {{- if (and (eq (include "ingress.type" .) "nginx") (eq (include "ingress.redirectToTLS" .) "true" )) }}
+   {{- if (and (eq (include "ingress.type" .) "nginx") .Values.ingress.nginx.redirectToTLS "true") }}
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
    {{- if eq (include "ingress.letsencrypt" .) "true"}}
@@ -47,7 +47,7 @@ spec:
     secretName: nginx-letsencrypt-{{ template "posthog.fullname" . }}
   {{- end }}
   rules:
-  {{- if .Values.ingress.hostname }} 
+  {{- if .Values.ingress.hostname }}
     - host: {{ .Values.ingress.hostname }}
       http:
   {{- else }}
