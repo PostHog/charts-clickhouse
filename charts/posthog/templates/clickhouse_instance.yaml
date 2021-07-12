@@ -47,7 +47,7 @@ spec:
     profiles:
       default/allow_experimental_window_functions: "1"
     clusters:
-      - name: {{ .Values.clickhouse.database | quote }}
+      - name: {{ .Values.clickhouse.database | default "posthog" | quote }}
         templates:
           podTemplate: pod-template-with-volumes
         layout:
