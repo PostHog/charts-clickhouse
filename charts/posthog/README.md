@@ -6,8 +6,6 @@
 [![Slack](https://img.shields.io/badge/PostHog_chat-slack-blue?logo=slack)](https://posthog.com/slack)
 
 
-### :warning: This chart is still under development! Proceed with caution.
-
 -----
 
 🦔 [PostHog](https://posthog.com/) is developer-friendly, open-source product analytics.
@@ -16,47 +14,213 @@ This chart bootstraps a [PostHog](https://posthog.com/) deployment on a [Kuberne
 
 ## Prerequisites
 
-- [Google Cloud Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/)
 - [Kubernetes](https://kubernetes.io/) 1.6+ with Beta APIs enabled
 - [Helm](https://helm.sh/) >= v3
 
-## Installing the chart
+## Click to see details for pre-install steps for your chosen deployment option
 
-To install the chart with the release name `posthog`, run the following:
+<details>
+  <summary>
+    <b>Google Cloud</b>
+  </summary>
+<br />
+
+First we need to set up a Kubernetes Cluster, see [Google Cloud Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine/).
+
+Here's the minimal required `values.yaml` that we'll be using later. You can find an overview of the parameters that can be configured during installation under [configuration](#configuration).
+```yaml
+cloud: "gcp"
+  nginx:
+    enabled: false
+certManager:
+  enabled: false
+```
+
+### Installing the chart
+
+To install the chart with the release name `posthog` in `posthog` namespace, run the following:
 
 ```console
 helm repo add posthog https://posthog.github.io/charts-clickhouse/
 helm repo update
-helm install -f values.yaml --timeout 20m posthog posthog/posthog
+helm install -f values.yaml --timeout 20m --create-namespace --namespace posthog posthog posthog/posthog
 ```
 
-The above command deploys PostHog on the Kubernetes cluster in the default configuration.
-
-You can find an example `values.yaml` file as well as an overview of the parameters that can be configured during installation under [configuration](#configuration).
-
-> **Tip**: List all releases using `helm list`
-
-### Setting up a static IP on Google Cloud
+### Set up a static IP
 
 1. Open the Google Cloud Console
 1. Go to VPC Networks > [External IP addresses](https://console.cloud.google.com/networking/addresses/list)
 1. Add new static IP with the name `posthog`
 
-### Setting up DNS
-
 After the chart has started, you can look up the external ip via the following command:
 
 ```bash
-kubectl get svc posthog
+kubectl get svc posthog --namespace posthog
 ```
 
+### Setting up DNS
+
 Create a `CNAME` record from your desired hostname to the external IP.
+
+### I cannot connect to my PostHog instance after creation
+
+If DNS has been updated properly, check whether the SSL certificate was created successfully.
+
+This can be done via the following command:
+
+```bash
+gcloud beta --project yourproject compute ssl-certificates list
+```
+
+If running the command shows the SSL cert as `PROVISIONING`, that means that the certificate is still being created. [Read more on how to troubleshoot Google SSL certificates here](https://cloud.google.com/load-balancing/docs/ssl-certificates/troubleshooting)
+
+As a troubleshooting tool, you can allow HTTP access by setting `ingress.gcp.forceHttps` and `web.secureCookies` both to false, but we recommend always accessing PostHog via https.
+
+### How can I connect to my ClickHouse instance?
+
+- Get the IP via `kubectl get svc --namespace posthog`
+- Username: `admin` or `clickhouse.user`
+- Password: `clickhouse.password`
+
+
+</details>
+
+<details>
+  <summary>
+    <b>AWS</b>
+  </summary>
+<br />
+
+First we need to set up a Kubernetes Cluster, see [Setup EKS - eksctl](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
+
+Here's the minimal required `values.yaml` that we'll be using later. You can find an overview of the parameters that can be configured during installation under [configuration](#configuration).
+```yaml
+cloud: "aws"
+ingress:
+  hostname: <your-hostname>
+```
+
+### Installing the chart
+
+To install the chart with the release name `posthog` in `posthog` namespace, run the following:
+
+```console
+helm repo add posthog https://posthog.github.io/charts-clickhouse/
+helm repo update
+helm install -f values.yaml --timeout 20m --create-namespace --namespace posthog posthog posthog/posthog
+```
+    
+### Lookup external IP
+
+```bash
+kubectl get svc --namespace posthog posthog-ingress-nginx-controller
+```
+### Setting up DNS
+
+Create a `CNAME` record from your desired hostname to the external IP.
+
+### I cannot connect to my PostHog instance after creation
+As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
+```
+ingress:
+  redirectToTLS: false
+  letsencrypt: false
+web:
+  secureCookies: false
+```
+</details>
+
+<details>
+  <summary>
+    <b>Digital Ocean</b>
+  </summary>
+<br />
+Note that there is a [1-click option to deploy Posthog](https://marketplace.digitalocean.com/apps/posthog-1) on DigitalOcean.
+First we need to set up a Kubernetes Cluster, see [Kubernetes quickstart](https://docs.digitalocean.com/products/kubernetes/quickstart/). Note that the minimum resource requirements to run Posthog are 4vcpu and 4Gi of memory. 
+
+Here's the minimal required `values.yaml` that we'll be using later. You can find an overview of the parameters that can be configured during installation under [configuration](#configuration).
+```yaml
+cloud: "do"
+ingress:
+  hostname: <your-hostname>
+```
+
+### Installing the chart
+
+To install the chart with the release name `posthog` in `posthog` namespace, run the following:
+
+```console
+helm repo add posthog https://posthog.github.io/charts-clickhouse/
+helm repo update
+helm install -f values.yaml --timeout 20m --create-namespace --namespace posthog posthog posthog/posthog
+```
+
+### Lookup external IP
+
+```bash
+kubectl get svc --namespace posthog posthog-ingress-nginx-controller
+```
+### Setting up DNS
+
+Create a `CNAME` record from your desired hostname to the external IP.
+
+### I cannot connect to my PostHog instance after creation
+As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
+```
+ingress:
+  redirectToTLS: false
+  letsencrypt: false
+web:
+  secureCookies: false
+```
+</details>
+
+<details>
+  <summary>
+    <b>Other using nginx ingress controller</b>
+  </summary>
+<br />
+
+Here's the minimal required `values.yaml` that we'll be using later. You can find an overview of the parameters that can be configured during installation under [configuration](#configuration).
+```yaml
+ingress:
+  hostname: <your-hostname>
+```
+
+### Lookup external IP
+
+```bash
+kubectl get svc --namespace posthog posthog-ingress-nginx-controller
+```
+### Setting up DNS
+
+Create a `CNAME` record from your desired hostname to the external IP.
+### I cannot connect to my PostHog instance after creation
+As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
+```
+ingress:
+  redirectToTLS: false
+  letsencrypt: false
+web:
+  secureCookies: false
+```
+
+### Installing the chart
+
+To install the chart with the release name `posthog` in `posthog` namespace, run the following:
+
+```console
+helm repo add posthog https://posthog.github.io/charts-clickhouse/
+helm repo update
+helm install -f values.yaml --timeout 20m --create-namespace --namespace posthog posthog posthog/posthog
+```
+</details>
 
 ## Upgrading the chart
 
 ```console
 helm repo update
-helm upgrade -f values.yaml posthog posthog/posthog
+helm upgrade -f values.yaml --timeout 20m --namespace posthog posthog posthog/posthog
 ```
 
 > See [the Helm docs](https://helm.sh/docs/helm/helm_upgrade/) for documentation on the `helm upgrade` command.
@@ -67,7 +231,7 @@ When upgrading major versions, see [Upgrade notes](#upgrade-notes)
 ## Uninstalling the Chart
 
 ```console
-$ helm uninstall posthog
+$ helm uninstall posthog --namespace posthog
 ```
 
 > See [the Helm docs](https://helm.sh/docs/helm/helm_uninstall/) for documentation on the `helm uninstall` command.
@@ -82,11 +246,11 @@ By default, the chart installs the following dependencies:
 - [bitnami/postgresql](https://github.com/bitnami/charts/tree/master/bitnami/postgresql)
 - [bitnami/redis](https://github.com/bitnami/charts/tree/master/bitnami/redis)
 - [bitnami/kafka](https://github.com/bitnami/charts/tree/master/bitnami/kafka)
+- [kubernetes/ingress-nginx](https://github.com/kubernetes/ingress-nginx/)  (can be disabled)
+- [jetstack/cert-manager](https://github.com/jetstack/cert-manager)  (can be disabled)
 
 There is optional support for the following additional dependencies:
 
-- [kubernetes/ingress-nginx](https://github.com/kubernetes/ingress-nginx/)
-- [jetstack/cert-manager](https://github.com/jetstack/cert-manager)
 - [prometheus-community/prometheus](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus)
 - [prometheus-community/prometheus-statsd-exporter](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter)
 
@@ -94,30 +258,31 @@ See [configuration](#configuration) section for how to enable and configure each
 
 ## Configuration
 
-To install the chart, you need to prepare a `values.yaml` file.
-
 Dependent charts can also have values overwritten. Preface values with postgresql.*, see options for each chart in [ALL_VALUES.md](ALL_VALUES.md) or under each charts repos in [Dependencies](#Dependencies).
 
 All configuration options can be found in [ALL_VALUES.md](ALL_VALUES.md) or in [values.yaml](values.yaml) file.
 
-### Example `values.yaml` (<1M events/month)
+### Setting up email
+Outgoing email is use for password reset for example. For posthog to be able to send emails we need a login and password. Add these settings to your `values.yaml`:
+```
+email:
+  user: <your STMP login user>
+  password:  <your STMP password>
+```
+
+### Scaling up
+The default configuration is geared towards minimizing costs. Here are example extra values overrides to use for scaling up:
 <details>
   <summary>
-    <b>Click to view</b>
+    <b> Additional values to `values.yaml` for <1M events/month</b>
   </summary>
 
 <br />
 
-This `values.yaml` is geared towards minimizing cost on google kubernetes engine. Use it if you have less than 1M events/month.
-
 ```yaml
-# Minimal settings for scale of 10k to 1M events/month.
 # Note that this is experimental, please let us know how this worked for you.
 
-cloud: gcp
-ingress:
-  hostname: "posthog.yourcloud.net"
-
+# More storage space
 clickhouseOperator:
   storage: 60Gi
 
@@ -127,7 +292,7 @@ postgresql:
 
 redis:
   master:
-    size: 2Gi
+    size: 10Gi
 
 kafka:
   persistence:
@@ -143,31 +308,21 @@ worker:
 
 plugins:
   replicacount: 2
-
-pgbouncer:
-  replicacount: 1
 ```
 
 </details>
 
-### Example `values.yaml` (>1M events/month)
 <details>
   <summary>
-    <b>Click to view</b>
+    <b> Additional values to `values.yaml` for >1M events/month</b>
   </summary>
 
 <br />
 
-This `values.yaml` is geared towards larger-scale installations cost on google kubernetes engine. Use it if you have more than 1M events/month.
-
 ```yaml
-# Minimal settings for anything beyond 1M events/month scale.
 # Note that this is experimental, please let us know how this worked for you.
 
-cloud: gcp
-ingress:
-  hostname: "posthog.yourcloud.net"
-
+# More storage space
 clickhouseOperator:
   storage: 200Gi
 
@@ -184,6 +339,7 @@ kafka:
     size: 30Gi
   logRetentionBytes: _22_000_000_000
 
+# Enable horizontal autoscaling for serivces
 pgbouncer:
   hpa:
     enabled: true
@@ -209,13 +365,7 @@ plugins:
 
 ### [ClickHouse](https://clickhouse.tech/)
 
-ClickHouse is the database that does the bulk of heavy lifting with regards to storing and analyzing the analytics data.
-
-By default, ClickHouse is installed as a part of the chart, powered by [clickhouse-operator](https://github.com/Altinity/clickhouse-operator/). As such it's important to set the database size to be enough to store the raw data via `clickhouseOperator.size` value.
-
-To use an external `ClickHouse` cluster, set `clickhouseOperator.enabled` to `false` and set `clickhouse.host`, `clickhouse.database`, `clickhouse.user` and `clickhouse.password`.
-
-_See [ALL_VALUES.md](ALL_VALUES.md) for full configuration options._
+TODO
 
 ### [PostgreSQL](https://www.postgresql.org/)
 
@@ -224,8 +374,6 @@ _See [ALL_VALUES.md](ALL_VALUES.md) for full configuration options._
 By default, PostgreSQL is installed as part of the chart. To use an external PostgreSQL server set `postgresql.enabled` to `false` and then set `postgresql.postgresHost` and `postgresql.postgresqlPassword`. The other options (`postgresql.postgresqlDatabase`, `postgresql.postgresqlUsername` and `postgresql.postgresqlPort`) may also want changing from their default values.
 
 To avoid issues when upgrading this chart, provide `postgresql.postgresqlPassword` for subsequent upgrades. This is due to an issue in the PostgreSQL chart where password will be overwritten with randomly generated passwords otherwise. See https://github.com/helm/charts/tree/master/stable/postgresql#upgrade for more detail.
-
-_See [ALL_VALUES.md](ALL_VALUES.md) and [PostgreSQL chart](https://github.com/bitnami/charts/tree/master/bitnami/postgresql) for full configuration options._
 
 ### [Redis](https://redis.io/)
 
@@ -237,13 +385,11 @@ _See [ALL_VALUES.md](ALL_VALUES.md) and [redis chart](https://github.com/bitnami
 
 ### [Kafka](https://kafka.apache.org/)
 
-By default, Kafka is installed as part of the chart. Kafka is used as a queue between the posthog web application and posthog plugin server to manage data ingestion as well as for ingesting data into ClickHouse.
-
-_See [ALL_VALUES.md](ALL_VALUES.md) and [kafka chart](https://github.com/bitnami/charts/tree/master/bitnami/kafka) for full configuration options._
+TODO
 
 ### [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
 
-This chart provides support for Ingress resource. If you have an available Ingress Controller such as Nginx or Traefik you maybe want to set `ingress.enabled` to true and choose an `ingress.hostname` for the URL. Then, you should be able to access the installation using that address.
+This chart provides support for Ingress resource. By default nginx ingress is enabled (it can be disabled by setting `ingress.nginx.enabled` to false. You maybe want to set an `ingress.hostname` and set up DNS to be able to access the installation using that URL.
 
 ### [Prometheus](https://prometheus.io/docs/introduction/overview/)
 
@@ -277,27 +423,24 @@ This might be useful when checking out metrics. Figure out your `prometheus-serv
 
 After this you should be able to access prometheus server on `localhost`.
 
-## Common issues / questions
+### Hosting costs
 
-### I cannot connect to my PostHog instance after creation
+Charges on various platforms can be confusing to understand as loadbalancers (which the default configuration has 3) and storage (default configuration has 40Gi) are often charged separately from compute.
 
-If DNS has been updated properly, check whether the SSL certificate was created successfully.
+</details>
 
-This can be done via the following command:
+<details>
+  <summary>
+    <b>DigitalOcean (74$/month)</b>
+  </summary>
 
-```bash
-gcloud beta --project yourproject compute ssl-certificates list
-```
+<br />
 
-If running the command shows the SSL cert as `PROVISIONING`, that means that the certificate is still being created. [Read more on how to troubleshoot Google SSL certificates here](https://cloud.google.com/load-balancing/docs/ssl-certificates/troubleshooting)
+See [DigitalOcean Kubernetes pricing](https://www.digitalocean.com/pricing#kubernetes).
+At the time of writing the default setup comes around 
+40$ (2x smalles prod nodes) + 30$ (3x small load balancers) + 4$ (40Gi block storage) = 74$ / month
 
-As a troubleshooting tool, you can allow HTTP access by setting `ingress.gcp.forceHttps` and `web.secureCookies` both to false, but we recommend always accessing PostHog via https.
-
-### How can I connect to my ClickHouse instance?
-
-- Get the IP via `kubectl get svc`
-- Username: `admin` or `clickhouse.user`
-- Password: `clickhouse.password`
+</details>
 
 
 ### Releasing a new version of this helm chart
