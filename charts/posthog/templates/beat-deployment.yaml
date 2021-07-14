@@ -93,6 +93,8 @@ spec:
           value: {{ template "posthog.pgbouncer.host" . }}
         - name: POSTHOG_POSTGRES_PORT
           value: {{ include "posthog.pgbouncer.port" . | quote }}
+        - name: USING_PGBOUNCER
+          value: 'true'
           {{- if or (.Values.redis.enabled) (.Values.redis.password) }}
         - name: POSTHOG_REDIS_PASSWORD
           value: {{ .Values.redis.password | quote }}
