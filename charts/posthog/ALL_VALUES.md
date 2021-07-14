@@ -13,7 +13,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.tag | string | `nil` | Posthog image tag, e.g. release-1.25.0 |
 | image.default | string | `":release-1.26.0"` | Default image or tag |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| cloud | string | `"gcp"` | Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
+| cloud | string | `nil` | Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
 | clickhouseOperator.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouseOperator.namespace | string | `"posthog"` | Which namespace to install clickhouse operator to |
