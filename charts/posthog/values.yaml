@@ -252,7 +252,7 @@ service:
 
 certManager:
   # -- Whether to install cert-manager. Validates certs for nginx ingress
-  enabled: true
+  enabled: false
 
 ingress:
   # -- Enable ingress controller resource
@@ -266,11 +266,11 @@ ingress:
     ip_name: "posthog"
     # -- If true, will force a https redirect when accessed over http
     forceHttps: true
-  # -- Whether to enable letsencrypt. Defaults to true if nginx enabled and false otherwise.
+  # -- Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and certManager are enabled otherwise false.
   letsencrypt:
   nginx:
     # -- Whether nginx is enabled
-    enabled: true
+    enabled: false
     # -- Whether to redirect to TLS with nginx ingress.
     redirectToTLS: true
 
