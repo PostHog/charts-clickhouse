@@ -8,6 +8,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| image | object | `{"default":":release-1.26.0","pullPolicy":"IfNotPresent","repository":"posthog/posthog","sha":null,"tag":null}` |  This is a YAML-formatted file. Declare variables to be passed into your templates. |
 | image.repository | string | `"posthog/posthog"` | Posthog image repository |
 | image.sha | string | `nil` | Posthog image sha |
 | image.tag | string | `nil` | Posthog image tag, e.g. release-1.25.0 |
@@ -32,6 +33,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.hpa.maxpods | int | `10` | Max pods for the web |
 | web.replicacount | int | `1` | Amount of web pods to run. Ignored if hpa is used |
 | web.resources | object | `{}` | Resource limits for web service. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container for more |
+| web.env | list | `[{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_KEY","value":null},{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET","value":null},{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS","value":"posthog.com"}]` | Env variables for web container |
 | web.env[0] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_KEY","value":null}` | Set google oauth 2 key. Requires posthog ee license. |
 | web.env[1] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET","value":null}` | Set google oauth 2 secret. Requires posthog ee license. |
 | web.env[2] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS","value":"posthog.com"}` | Set google oauth 2 whitelisted domains users can log in from |
@@ -52,7 +54,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
 | beat.replicacount | int | `1` | How many posthog 'beat' instances to run |
 | beat.resources | object | `{}` | Resource limits for 'beat' instances |
-| beat.nodeSelector | object | `{}` |  |
+| beat.nodeSelector | object | `{}` |    cpu: 200m   memory: 200Mi requests:   cpu: 100m   memory: 100Mi |
 | beat.tolerations | list | `[]` |  |
 | beat.affinity | object | `{}` |  |
 | worker.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for worker -- This experimental |
@@ -62,7 +64,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.env | list | `[]` |  |
 | worker.replicacount | int | `1` | How many replicas of workers to run. Ignored if hpa is used |
 | worker.resources | object | `{}` | Resource limits for workers |
-| worker.nodeSelector | object | `{}` |  |
+| worker.nodeSelector | object | `{}` |    cpu: 300m   memory: 500Mi requests:   cpu: 100m   memory: 100Mi |
 | worker.tolerations | list | `[]` |  |
 | worker.affinity | object | `{}` |  |
 | plugins.ingestion.enabled | bool | `true` | Whether to enable plugin-server based ingestion |
@@ -73,7 +75,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | plugins.env | list | `[]` |  |
 | plugins.replicacount | int | `1` | How many replicas of plugin-server to run. Ignored if hpa is used |
 | plugins.resources | object | `{}` |  |
-| plugins.nodeSelector | object | `{}` |  |
+| plugins.nodeSelector | object | `{}` |    cpu: 300m   memory: 500Mi requests:   cpu: 100m   memory: 100Mi |
 | plugins.tolerations | list | `[]` |  |
 | plugins.affinity | object | `{}` |  |
 | email.from_email | string | `"hey@posthog.com"` | Outbound email sender |
@@ -134,17 +136,13 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.verify | bool | `false` |  |
 | clickhouse.async | bool | `false` |  |
 | metrics.enabled | bool | `false` | Start an exporter for posthog metrics |
-| metrics.livenessProbe.enabled | bool | `true` |  |
-| metrics.livenessProbe.initialDelaySeconds | int | `30` |  |
-| metrics.livenessProbe.periodSeconds | int | `5` |  |
-| metrics.livenessProbe.timeoutSeconds | int | `2` |  |
-| metrics.livenessProbe.failureThreshold | int | `3` |  |
-| metrics.livenessProbe.successThreshold | int | `1` |  |
+| metrics.livenessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods livenessProbe settings |
 | metrics.readinessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods readinessProbe settings |
 | metrics.resources | object | `{}` | Metrics resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
 | metrics.nodeSelector | object | `{}` | Node labels for metrics pod |
 | metrics.tolerations | list | `[]` | Toleration labels for metrics pod assignment |
 | metrics.affinity | object | `{}` | Affinity settings for metrics pod |
+| metrics.service | object | `{"labels":{},"type":"ClusterIP"}` |  Optional extra labels for pod, i.e. redis-client: "true" podLabels: [] |
 | metrics.service.type | string | `"ClusterIP"` | Kubernetes service type for metrics service |
 | metrics.service.labels | object | `{}` | Additional labels for metrics service |
 | metrics.image.repository | string | `"prom/statsd-exporter"` | Metrics exporter image repository |
@@ -153,7 +151,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | metrics.serviceMonitor.enabled | bool | `false` | if `true`, creates a Prometheus Operator ServiceMonitor (also requires `metrics.enabled` to be `true`) |
 | metrics.serviceMonitor.namespace | string | `nil` | Optional namespace which Prometheus is running in |
 | metrics.serviceMonitor.interval | string | `nil` | How frequently to scrape metrics (use by default, falling back to Prometheus' default) |
-| metrics.serviceMonitor.selector.prometheus | string | `"kube-prometheus"` |  |
+| metrics.serviceMonitor.selector | object | `{"prometheus":"kube-prometheus"}` | Default to kube-prometheus install (CoreOS recommended), but should be set according to Prometheus install |
 | cloudwatch.enabled | bool | `false` | Enable cloudwatch container insights to get logs and metrics on AWS |
 | cloudwatch.region | string | `nil` | AWS region |
 | cloudwatch.clusterName | string | `nil` | AWS EKS cluster name |
@@ -162,7 +160,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | hooks.migrate.env | list | `[]` | Env variables for migate hooks |
 | hooks.migrate.resources | object | `{"limits":{"memory":"1000Mi"},"requests":{"memory":"1000Mi"}}` | Hook job resource limits/requests |
 | serviceAccount.create | bool | `true` | Configures if a ServiceAccount with this name should be created |
-| serviceAccount.name | string | `nil` |  |
+| serviceAccount.name | string | `nil` | name of the ServiceAccount to be used by access-controlled resources. @default autogenerated |
 | serviceAccount.annotations | object | `{}` | Configures annotation for the ServiceAccount |
 | prometheus.enabled | bool | `false` | Whether to enable a minimal prometheus installation for getting alerts/monitoring the stack |
 | prometheus.alertmanager.enabled | bool | `true` | If false, alertmanager will not be installed |
