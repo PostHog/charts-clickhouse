@@ -25,6 +25,8 @@ clickhouseOperator:
   namespace: "posthog"
   # -- How much storage space to preallocate for clickhouse
   storage: 20Gi
+  # -- If enabled, operator will prefer k8s nodes with tag `clickhouse:true`
+  useNodeSelector: false
 
 # -- Env vars to throw into every deployment (web, beat, worker, and plugin server)
 env:
