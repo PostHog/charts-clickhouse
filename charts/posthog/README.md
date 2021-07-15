@@ -5,6 +5,7 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-red.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Slack](https://img.shields.io/badge/PostHog_chat-slack-blue?logo=slack)](https://posthog.com/slack)
 
+### :warning: This chart is still under development! Proceed with caution.
 
 -----
 
@@ -17,7 +18,7 @@ This chart bootstraps a [PostHog](https://posthog.com/) deployment on a [Kuberne
 - [Kubernetes](https://kubernetes.io/) 1.6+ with Beta APIs enabled
 - [Helm](https://helm.sh/) >= v3
 
-## Click to see details for pre-install steps for your chosen deployment option
+## Installing the chart
 
 <details>
   <summary>
@@ -195,6 +196,10 @@ Here's the minimal required `values.yaml` that we'll be using later. You can fin
 ```yaml
 ingress:
   hostname: <your-hostname>
+  nginx:
+    enabled: true
+certManager:
+  enabled: true
 ```
 
 ### Lookup external IP
@@ -273,7 +278,7 @@ Dependent charts can also have values overwritten. Preface values with postgresq
 All configuration options can be found in [ALL_VALUES.md](ALL_VALUES.md) or in [values.yaml](values.yaml) file.
 
 ### Setting up email
-Outgoing email is use for password reset for example. For posthog to be able to send emails we need a login and password. Add these settings to your `values.yaml`:
+Outgoing email is used for password reset for example. For posthog to be able to send emails we need a login and password. Add these settings to your `values.yaml`:
 ```
 email:
   user: <your STMP login user>
@@ -299,10 +304,6 @@ clickhouseOperator:
 postgresql:
   persistence:
     size: 20Gi
-
-redis:
-  master:
-    size: 10Gi
 
 kafka:
   persistence:
@@ -410,7 +411,7 @@ _See [ALL_VALUES.md](ALL_VALUES.md) and [kafka chart](https://github.com/bitnami
 
 ### [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
 
-This chart provides support for Ingress resource. By default nginx ingress is enabled (it can be disabled by setting `ingress.nginx.enabled` to false. You maybe want to set an `ingress.hostname` and set up DNS to be able to access the installation using that URL.
+This chart provides support for Ingress resource. If you have an available Ingress Controller such as Nginx or Traefik you maybe want to set `ingress.nginx.enabled` to true or `ingress.type` and choose an `ingress.hostname` for the URL. Then, you should be able to access the installation using that address.
 
 ### [Prometheus](https://prometheus.io/docs/introduction/overview/)
 
