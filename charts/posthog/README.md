@@ -30,6 +30,8 @@ First we need to set up a Kubernetes Cluster, see [Google Cloud Kubernetes Engin
 Here's the minimal required `values.yaml` that we'll be using later. You can find an overview of the parameters that can be configured during installation under [configuration](#configuration).
 ```yaml
 cloud: "gcp"
+ingress:
+  hostname: <your-hostname>
   nginx:
     enabled: false
 certManager:
@@ -98,6 +100,10 @@ Here's the minimal required `values.yaml` that we'll be using later. You can fin
 cloud: "aws"
 ingress:
   hostname: <your-hostname>
+  nginx:
+    enabled: true
+certManager:
+  enabled: true
 ```
 
 ### Installing the chart
@@ -143,6 +149,10 @@ Here's the minimal required `values.yaml` that we'll be using later. You can fin
 cloud: "do"
 ingress:
   hostname: <your-hostname>
+  nginx:
+    enabled: true
+certManager:
+  enabled: true
 ```
 
 ### Installing the chart
@@ -246,11 +256,11 @@ By default, the chart installs the following dependencies:
 - [bitnami/postgresql](https://github.com/bitnami/charts/tree/master/bitnami/postgresql)
 - [bitnami/redis](https://github.com/bitnami/charts/tree/master/bitnami/redis)
 - [bitnami/kafka](https://github.com/bitnami/charts/tree/master/bitnami/kafka)
-- [kubernetes/ingress-nginx](https://github.com/kubernetes/ingress-nginx/)  (can be disabled)
-- [jetstack/cert-manager](https://github.com/jetstack/cert-manager)  (can be disabled)
 
 There is optional support for the following additional dependencies:
 
+- [kubernetes/ingress-nginx](https://github.com/kubernetes/ingress-nginx/)
+- [jetstack/cert-manager](https://github.com/jetstack/cert-manager)
 - [prometheus-community/prometheus](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus)
 - [prometheus-community/prometheus-statsd-exporter](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter)
 
