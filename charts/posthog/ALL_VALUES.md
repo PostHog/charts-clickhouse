@@ -19,6 +19,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouseOperator.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouseOperator.namespace | string | `"posthog"` | Which namespace to install clickhouse operator to |
 | clickhouseOperator.storage | string | `"20Gi"` | How much storage space to preallocate for clickhouse |
+| clickhouseOperator.useNodeSelector | bool | `false` | If enabled, operator will prefer k8s nodes with tag `clickhouse:true` |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, beat, worker, and plugin server) |
 | pgbouncer | object | `{"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
 | pgbouncer.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for pgbouncer -- This experimental and set up based on cpu utilization -- Adding pgbouncers can cause running out of connections for Postgres |
