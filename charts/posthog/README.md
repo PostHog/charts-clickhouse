@@ -57,7 +57,7 @@ helm install -f values.yaml --timeout 20m --create-namespace --namespace posthog
 
 After the chart has started, you can look up the external ip via the following command:
 
-```bash
+```console
 kubectl get svc posthog --namespace posthog
 ```
 
@@ -71,7 +71,7 @@ If DNS has been updated properly, check whether the SSL certificate was created 
 
 This can be done via the following command:
 
-```bash
+```console
 gcloud beta --project yourproject compute ssl-certificates list
 ```
 
@@ -119,7 +119,7 @@ helm install -f values.yaml --timeout 20m --create-namespace --namespace posthog
     
 ### Lookup external IP
 
-```bash
+```console
 kubectl get svc --namespace posthog posthog-ingress-nginx-controller
 ```
 ### Setting up DNS
@@ -128,7 +128,7 @@ Create a `CNAME` record from your desired hostname to the external IP.
 
 ### I cannot connect to my PostHog instance after creation
 As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
-```
+```yaml
 ingress:
   redirectToTLS: false
   letsencrypt: false
@@ -142,8 +142,10 @@ web:
     <b>Digital Ocean</b>
   </summary>
 <br />
-Note that there is a [1-click option to deploy Posthog](https://marketplace.digitalocean.com/apps/posthog-1) on DigitalOcean.
-First we need to set up a Kubernetes Cluster, see [Kubernetes quickstart](https://docs.digitalocean.com/products/kubernetes/quickstart/). Note that the minimum resource requirements to run Posthog are 4vcpu and 4Gi of memory. 
+
+There is a [1-click option to deploy Posthog](https://marketplace.digitalocean.com/apps/posthog-1) on DigitalOcean. If you'd like to install the chart with `helm` directly continue reading.
+
+First we need to set up a Kubernetes Cluster, see [Kubernetes quickstart](https://docs.digitalocean.com/products/kubernetes/quickstart/). Note that the minimum total resource requirements to run Posthog are 4vcpu and 4G of memory. 
 
 Here's the minimal required `values.yaml` that we'll be using later. You can find an overview of the parameters that can be configured during installation under [configuration](#configuration).
 ```yaml
@@ -168,7 +170,7 @@ helm install -f values.yaml --timeout 20m --create-namespace --namespace posthog
 
 ### Lookup external IP
 
-```bash
+```console
 kubectl get svc --namespace posthog posthog-ingress-nginx-controller
 ```
 ### Setting up DNS
@@ -177,7 +179,7 @@ Create a `CNAME` record from your desired hostname to the external IP.
 
 ### I cannot connect to my PostHog instance after creation
 As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
-```
+```yaml
 ingress:
   redirectToTLS: false
   letsencrypt: false
@@ -202,24 +204,6 @@ certManager:
   enabled: true
 ```
 
-### Lookup external IP
-
-```bash
-kubectl get svc --namespace posthog posthog-ingress-nginx-controller
-```
-### Setting up DNS
-
-Create a `CNAME` record from your desired hostname to the external IP.
-### I cannot connect to my PostHog instance after creation
-As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
-```
-ingress:
-  redirectToTLS: false
-  letsencrypt: false
-web:
-  secureCookies: false
-```
-
 ### Installing the chart
 
 To install the chart with the release name `posthog` in `posthog` namespace, run the following:
@@ -229,6 +213,26 @@ helm repo add posthog https://posthog.github.io/charts-clickhouse/
 helm repo update
 helm install -f values.yaml --timeout 20m --create-namespace --namespace posthog posthog posthog/posthog
 ```
+
+### Lookup external IP
+
+```console
+kubectl get svc --namespace posthog posthog-ingress-nginx-controller
+```
+
+### Setting up DNS
+
+Create a `CNAME` record from your desired hostname to the external IP.
+### I cannot connect to my PostHog instance after creation
+As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
+```yaml
+ingress:
+  redirectToTLS: false
+  letsencrypt: false
+web:
+  secureCookies: false
+```
+
 </details>
 
 ## Upgrading the chart
@@ -251,7 +255,10 @@ $ helm uninstall posthog --namespace posthog
 
 > See [the Helm docs](https://helm.sh/docs/helm/helm_uninstall/) for documentation on the `helm uninstall` command.
 
-The command above removes all the Kubernetes components associated with the chart and deletes the release.
+The command above removes all the Kubernetes components associated with the chart and deletes the release. Sometimes everything doesn't get properly removed, if that happens try deleting the namespace
+```console
+kubectl delete namespace posthog
+```
 
 ## Dependencies
 
@@ -279,7 +286,7 @@ All configuration options can be found in [ALL_VALUES.md](ALL_VALUES.md) or in [
 
 ### Setting up email
 Outgoing email is used for password reset for example. For posthog to be able to send emails we need a login and password. Add these settings to your `values.yaml`:
-```
+```yaml
 email:
   user: <your STMP login user>
   password:  <your STMP password>
@@ -445,7 +452,7 @@ This might be useful when checking out metrics. Figure out your `prometheus-serv
 
 After this you should be able to access prometheus server on `localhost`.
 
-### Hosting costs
+## Hosting costs
 
 Charges on various platforms can be confusing to understand as loadbalancers (which the default configuration has 3) and storage (default configuration has 40Gi) are often charged separately from compute.
 
@@ -465,7 +472,7 @@ At the time of writing the default setup comes around
 </details>
 
 
-### Releasing a new version of this helm chart
+## Releasing a new version of this helm chart
 
 Simply apply one of the following labels to your PR _before merging_ to bump the version and release it to the helm repo:
 - `bump patch`
