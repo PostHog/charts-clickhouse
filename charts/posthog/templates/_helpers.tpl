@@ -350,7 +350,7 @@ Create the name of the service account to use
 {{- $info := set $info "hostname" .Values.ingress.hostname -}}
 {{- $info := set $info "operation" (include "posthog.helmOperation" .) -}}
 {{- $info := set $info "ingress_type" (include "ingress.type" .) -}}
-{{- $info := set $info "deployment_type" (default .Values.deploymentType "helm") -}}
+{{- $info := set $info "deployment_type" (.Values.deploymentType | default "helm") -}}
 {{ toJson $info | quote }}
 {{- end -}}
 
