@@ -13,10 +13,10 @@
 
 This chart bootstraps a [PostHog](https://posthog.com/) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager. The chart uses the scalable [ClickHouse](https://clickhouse.tech/) database for powering analytics.
 
-## Prerequisites
+There are 1-click deployment options available:
+* [DigitalOcean](https://marketplace.digitalocean.com/apps/posthog-1)
 
-- [Kubernetes](https://kubernetes.io/) 1.6+ with Beta APIs enabled
-- [Helm](https://helm.sh/) >= v3
+Alternatively to install the chart manually using [Helm >= v3](https://helm.sh/) continue to the next section.
 
 ## Installing the chart
 
@@ -239,6 +239,8 @@ web:
 
 ## Upgrading the chart
 
+To upgrade the chart using [Helm >= v3](https://helm.sh/) with the release name `posthog` in `posthog` namespace, run the following:
+
 ```console
 helm repo update
 helm upgrade -f values.yaml --timeout 20m --namespace posthog posthog posthog/posthog
@@ -251,6 +253,7 @@ When upgrading major versions, see [Upgrade notes](#upgrade-notes)
 
 ## Uninstalling the Chart
 
+To uninstall the chart using [Helm >= v3](https://helm.sh/) with the release name `posthog` in `posthog` namespace, run the following:
 ```console
 $ helm uninstall posthog --namespace posthog
 ```
@@ -473,6 +476,29 @@ At the time of writing the default setup comes around
 
 </details>
 
+## Troubleshooting
+
+### helm install failed
+
+##### Not enough resources
+
+You might see one of these errors from `helm install`:
+```
+Error: failed post-install: timed out waiting for the condition
+Error: failed pre-install: timed out waiting for the condition
+```
+One of the potential causes is that we couldn't find enough resources to schedule all the services Posthog needs to run. To know if resources are a problem we can check pod status and errors while the `helm install` command is still running.
+1. check the output for `kubectl get pods -n posthog` if you see any pending pods for a long time then that could be the problem
+2. check if the pending pod has scheduling errors `kubectl describe pod <podname> -n posthog`. For example at the end in events section we could see that we didn't have enough memory to schedule the pod.
+```
+Events:
+  Type     Reason             Age                  From                Message
+  ----     ------             ----                 ----                -------
+  Normal   NotTriggerScaleUp  3m23s                cluster-autoscaler  pod didn't trigger scale-up:
+  Warning  FailedScheduling   45s (x5 over 3m47s)  default-scheduler   0/3 nodes are available: 3 Insufficient memory.
+```
+
+**How to fix this**: try installing on a bigger Kubernetes cluster.
 
 ## Releasing a new version of this helm chart
 
