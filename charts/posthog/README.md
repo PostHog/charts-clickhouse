@@ -142,6 +142,8 @@ web:
     <b>Digital Ocean</b>
   </summary>
 <br />
+  
+**Note that the minimum total resource requirements to run Posthog are 4vcpu and 4G of memory.**
 
 There is a [1-click option to deploy Posthog](https://marketplace.digitalocean.com/apps/posthog-1) on DigitalOcean. If you'd like to install the chart with `helm` directly continue reading.
 
