@@ -68,6 +68,10 @@ spec:
           string created_at = 7;
           string elements_chain = 8;
         }
+    zookeeper:
+      nodes:
+        - host: {{ template "posthog.zookeeper.host" . }}
+          port: {{ template "posthog.zookeeper.port" . }}
   templates:
     podTemplates:
       - name: pod-template-with-volumes
