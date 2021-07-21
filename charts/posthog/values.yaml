@@ -7,7 +7,7 @@ image:
   # -- Posthog image sha
   sha:
   # -- Posthog image tag, e.g. release-1.25.0
-  tag: "latest"
+  tag:
   # -- Default image or tag
   default: ":release-1.26.0"
   # -- Image pull policy

@@ -1,3 +1,4 @@
+{{- if .Values.clickhouseOperator.enabled }}
 # Setup Service to provide access to Zookeeper for clients
 apiVersion: v1
 kind: Service
@@ -207,3 +208,4 @@ spec:
         resources:
           requests:
             storage: 25Gi
+{{- end }}
