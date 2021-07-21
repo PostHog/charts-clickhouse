@@ -61,7 +61,7 @@ kubectl get svc posthog --namespace posthog
 
 ### Setting up DNS
 
-Create a `CNAME` record from your desired hostname to the external IP.
+Create a record from your desired hostname to the external IP.
 
 ### I cannot connect to my PostHog instance after creation
 
@@ -175,7 +175,7 @@ kubectl get svc --namespace posthog posthog-ingress-nginx-controller
 ```
 ### Setting up DNS
 
-Create a `CNAME` record from your desired hostname to the external IP.
+Create an `A` record from your desired hostname to the external IP.
 
 ### I cannot connect to my PostHog instance after creation
 As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
@@ -222,7 +222,7 @@ kubectl get svc --namespace posthog posthog-ingress-nginx-controller
 
 ### Setting up DNS
 
-Create a `CNAME` record from your desired hostname to the external IP.
+Create a record from your desired hostname to the external IP.
 ### I cannot connect to my PostHog instance after creation
 As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
 ```yaml
@@ -497,6 +497,14 @@ Events:
 ```
 
 **How to fix this**: try installing on a bigger Kubernetes cluster.
+
+### Connection is not secure
+
+First check that DNS is set up properly
+```console
+nslookup <your-hostname> 1.1.1.1
+```
+Note that when using a browser there are various layers of caching and other logic that could make the resolution work (temporarily) even if its not correctly set up.
 
 ## Releasing a new version of this helm chart
 
