@@ -5,8 +5,6 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-red.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Slack](https://img.shields.io/badge/PostHog_chat-slack-blue?logo=slack)](https://posthog.com/slack)
 
-### :warning: This chart is still under development! Proceed with caution.
-
 -----
 
 🦔 [PostHog](https://posthog.com/) is developer-friendly, open-source product analytics.
