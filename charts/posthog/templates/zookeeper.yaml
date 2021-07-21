@@ -68,7 +68,7 @@ spec:
     matchLabels:
       app: {{ template "posthog.zookeeper.host" . }}
   serviceName: {{ template "posthog.fullname" . }}-zookeepers
-  replicas: 1
+  replicas: 3
   updateStrategy:
     type: RollingUpdate
   podManagementPolicy: Parallel
@@ -122,7 +122,7 @@ spec:
             - -x
             - -c
             - |
-              SERVERS=1 &&
+              SERVERS=3 &&
               HOST=`hostname -s` &&
               DOMAIN=`hostname -d` &&
               CLIENT_PORT=2181 &&
@@ -175,7 +175,7 @@ spec:
                   echo "server.$i=$NAME-$((i-1)).$DOMAIN:$SERVER_PORT:$ELECTION_PORT" >> /conf/zoo.cfg;
               done &&
               chown -Rv zookeeper "$ZOO_DATA_DIR" "$ZOO_DATA_LOG_DIR" "$ZOO_LOG_DIR" "$ZOO_CONF_DIR" &&
-              zkServer.sh start-foreground
+              zkServer.sh start-foreground 
           readinessProbe:
             exec:
               command:

@@ -136,7 +136,7 @@ Set postgres URL
 Set zookeeper host
 */}}
 {{- define "posthog.zookeeper.host" -}}
-    {{- template "posthog.fullname" . }}-zookeeper-clickhouse
+    {{- template "posthog.fullname" . }}-posthog-zookeeper
 {{- end -}}
 
 {{/*
