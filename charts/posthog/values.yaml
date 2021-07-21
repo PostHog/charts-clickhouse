@@ -473,10 +473,7 @@ hooks:
     env: []
     # -- Hook job resource limits/requests
     resources:
-      limits:
-        memory: 1000Mi
-      requests:
-        memory: 1000Mi
+      {}
 
 serviceAccount:
   # -- Configures if a ServiceAccount with this name should be created
