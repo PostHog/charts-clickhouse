@@ -368,6 +368,14 @@ kafka:
     servers: 
     - posthog-posthog-zookeeper:2181
 
+zookeeper:
+  # -- Install zookeeper on kubernetes
+  enabled: true
+  # -- Name override for zookeeper app
+  nameOverride: posthog-zookeeper
+  # -- replica count for zookeeper
+  replicaCount: 3
+
 clickhouse:
   # -- Use clickhouse as primary database
   enabled: true

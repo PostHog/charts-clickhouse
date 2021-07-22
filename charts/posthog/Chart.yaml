@@ -22,6 +22,10 @@ version: 2.0.1
 appVersion: 1.26.0
 
 dependencies:
+  - name: zookeeper
+    version: 7.0.5
+    repository: https://charts.bitnami.com/bitnami
+    condition: zookeeper.enabled
   - name: postgresql
     version: 8.6.1
     repository: https://charts.bitnami.com/bitnami

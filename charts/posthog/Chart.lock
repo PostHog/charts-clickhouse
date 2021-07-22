@@ -1,4 +1,7 @@
 dependencies:
+- name: zookeeper
+  repository: https://charts.bitnami.com/bitnami
+  version: 7.0.5
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 8.6.1
@@ -20,5 +23,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:018ab7a2248a61d00ed636c8698516aa14f44d47dc0f7e56a1602c4ec06573d0
-generated: "2021-06-29T18:09:51.222129423+03:00"
+digest: sha256:9105fdd8d27f5a50fe2563af0a9bfd14e5fd72021218172f4a932a67c28ced64
+generated: "2021-07-21T18:26:06.673558-07:00"
