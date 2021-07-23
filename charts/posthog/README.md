@@ -545,4 +545,5 @@ How to fix?
 - Delete Kafka stateful set `kubectl -n posthog delete sts posthog-posthog-kafka`
 - Delete Kafka pods `kubectl -n posthog delete pod posthog-posthog-kafka-0`
 - Delete old zk pod `kubectl -n posthog delete pod posthog-zookeeper-0`
+- Wait for pods to spin down
 - Upgrade helm chart `helm upgrade -f values.yaml --timeout 20m --namespace posthog posthog posthog/posthog`
