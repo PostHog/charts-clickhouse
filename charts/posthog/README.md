@@ -140,11 +140,19 @@ web:
     <b>Digital Ocean</b>
   </summary>
 <br />
-  
-**Note that the minimum total resource requirements to run Posthog are 4vcpu and 4G of memory.**
+
+### Requirements
+**Required minimum resources to run Posthog are 4vcpu and 4G of memory for cluster nodes.**
 
 There is a [1-click option to deploy Posthog](https://marketplace.digitalocean.com/apps/posthog-1) on DigitalOcean. If you'd like to install the chart with `helm` directly continue reading.
+  
+### `doctl` to install the 1-click stack directly:
+```console
+  doctl kubernetes cluster create posthog-cluster --count=2 --size="s-2vcpu-4gb" --region=sfo3 --1-clicks=posthog
+```
 
+### Setting up K8s cluster manually
+  
 First we need to set up a Kubernetes Cluster, see [Kubernetes quickstart](https://docs.digitalocean.com/products/kubernetes/quickstart/). Note that the minimum total resource requirements to run Posthog are 4vcpu and 4G of memory. 
 
 Here's the minimal required `values.yaml` that we'll be using later. You can find an overview of the parameters that can be configured during installation under [configuration](#configuration).
@@ -524,3 +532,18 @@ Upgrade "posthog" failed: cannot patch "posthog-posthog-redis-master" with kind 
 ```
 
 Run the following and `helm upgrade` again: `kubectl delete --namespace NAMESPACE sts posthog-posthog-redis-master`
+  
+### Upgrading from 2.x.x
+  
+3.0.0 changes the way ZK is run in the chart. ZK has been spun out and is now a cluster being used for Kafka and ClickHouse. An unfortunate side effect of that is that Kafka statefulset must be deleted. The reason for this is because Kafka records the cluster ID in ZooKeeper and when you swap it out it complains that the cluster ID has changed and refuses to start.
+  
+The error you will see from Kafka pod while upgrading:
+```
+  [2021-07-23 14:24:27,143] ERROR Fatal error during KafkaServer startup. Prepare to shutdown (kafka.server.KafkaServer)
+kafka.common.InconsistentClusterIdException: The Cluster ID TYP8xsIWRFWkzSYmO_YWEA doesn't match stored clusterId Some(CizxEcefTou4Ehu65rmpuA) in meta.properties. The broker is trying to join the wrong cluster. Configured zookeeper.connect may be wrong.
+  ```
+How to fix?
+- Delete Kafka stateful set `kubectl -n posthog delete sts posthog-posthog-kafka`
+- Delete Kafka pods `kubectl -n posthog delete pod posthog-posthog-kafka-0`
+- Delete old zk pod `kubectl -n posthog delete pod posthog-zookeeper-0`
+- Upgrade helm chart `helm upgrade -f values.yaml --timeout 20m --namespace posthog posthog posthog/posthog`
