@@ -68,6 +68,14 @@ spec:
           string created_at = 7;
           string elements_chain = 8;
         }
+    zookeeper:
+      nodes:
+      {{- if .Values.clickhouse.externalZookeeper }}
+      {{ toYaml .Values.clickhouse.externalZookeeper.servers | indent 4 }}
+      {{- else }}
+        - host: {{ template "posthog.zookeeper.host" . }}
+          port: {{ template "posthog.zookeeper.port" . }}
+      {{- end }} 
   templates:
     podTemplates:
       - name: pod-template-with-volumes

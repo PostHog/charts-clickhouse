@@ -133,6 +133,20 @@ Set postgres URL
 {{- end -}}
 
 {{/*
+Set zookeeper host
+*/}}
+{{- define "posthog.zookeeper.host" -}}
+    {{- template "posthog.fullname" . }}-posthog-zookeeper
+{{- end -}}
+
+{{/*
+Set zookeeper port
+*/}}
+{{- define "posthog.zookeeper.port" -}}
+    2181
+{{- end -}}
+
+{{/*
 Set pgbouncer host
 */}}
 {{- define "posthog.pgbouncer.host" -}}
@@ -145,7 +159,6 @@ Set pgbouncer port
 {{- define "posthog.pgbouncer.port" -}}
     6543
 {{- end -}}
-
 
 {{/*
 Set pgbouncer URL
