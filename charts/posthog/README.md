@@ -144,12 +144,11 @@ web:
 ### Requirements
 **Required minimum resources to run Posthog are 4vcpu and 4G of memory for cluster nodes.**
 
-There is a [1-click option to deploy Posthog](https://marketplace.digitalocean.com/apps/posthog-1) on DigitalOcean. If you'd like to install the chart with `helm` directly continue reading.
-  
-### `doctl` to install the 1-click stack directly:
+### 1-click install:
+There is a [1-click option to deploy Posthog](https://marketplace.digitalocean.com/apps/posthog-1) on DigitalOcean Marketplace UI or by using `doctl`
+
 ```console
   doctl kubernetes cluster create posthog-cluster --count=2 --size="s-2vcpu-4gb" --region=sfo3 --1-clicks=posthog
-```
 
 ### Setting up K8s cluster manually
   
