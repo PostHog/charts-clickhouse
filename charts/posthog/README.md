@@ -149,6 +149,7 @@ There is a [1-click option to deploy Posthog](https://marketplace.digitalocean.c
 
 ```console
   doctl kubernetes cluster create posthog-cluster --count=2 --size="s-2vcpu-4gb" --region=sfo3 --1-clicks=posthog
+```
 
 ### Setting up K8s cluster manually
   
