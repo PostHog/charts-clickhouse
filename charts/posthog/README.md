@@ -534,7 +534,7 @@ Run the following and `helm upgrade` again: `kubectl delete --namespace NAMESPAC
   
 ### Upgrading from 2.x.x
   
-3.0.0 changes the way ZK is run in the chart. ZK has been spun out and is now a cluster being used for Kafka and ClickHouse. An unfortunate side effect of that is that Kafka statefulset must be deleted. The reason for this is because Kafka records the cluster ID in ZooKeeper and when you swap it out it complains that the cluster ID has changed and refuses to start.
+3.0.0 changes the way ZK is run in the chart. ZK has been spun out and is now a cluster being used for Kafka and ClickHouse. An unfortunate side effect of that is that Kafka statefulset must be deleted. The reason for this is because Kafka records the cluster ID in ZooKeeper and when you swap it out it complains that the cluster ID has changed and refuses to start. Note that when you delete the Kafka stateful set and pod you might lose some events that were in Kafka, but not yet in Clickhouse.
   
 The error you will see from Kafka pod while upgrading:
 ```
