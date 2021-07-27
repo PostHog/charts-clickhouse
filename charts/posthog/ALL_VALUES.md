@@ -8,11 +8,11 @@ The following table lists the configurable parameters of the PostHog chart and t
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| image | object | `{"default":":release-1.26.0","pullPolicy":"IfNotPresent","repository":"posthog/posthog","sha":null,"tag":null}` |  This is a YAML-formatted file. Declare variables to be passed into your templates. |
+| image | object | `{"default":":release-1.27.0","pullPolicy":"IfNotPresent","repository":"posthog/posthog","sha":null,"tag":null}` |  This is a YAML-formatted file. Declare variables to be passed into your templates. |
 | image.repository | string | `"posthog/posthog"` | Posthog image repository |
 | image.sha | string | `nil` | Posthog image sha |
 | image.tag | string | `nil` | Posthog image tag, e.g. release-1.25.0 |
-| image.default | string | `":release-1.26.0"` | Default image or tag |
+| image.default | string | `":release-1.27.0"` | Default image or tag |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cloud | string | `nil` | Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
@@ -128,7 +128,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.logRetentionBytes | string | `"_4_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, ideally 70-80% |
 | kafka.logRetentionHours | int | `24` | The minimum age of a log file to be eligible for deletion due to age |
 | kafka.zookeeper.enabled | bool | `false` | Install zookeeper on kubernetes |
-| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | URL for zookeeper. Only set when internal zookeeper is disabled -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper  |
+| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | URL for zookeeper. Only set when internal zookeeper is disabled -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper |
 | zookeeper.enabled | bool | `true` | Install zookeeper on kubernetes |
 | zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for zookeeper app |
 | zookeeper.replicaCount | int | `3` | replica count for zookeeper |
