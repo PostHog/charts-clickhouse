@@ -7,7 +7,8 @@ labels: bug
 ## Bug description
 
 *Please describe.*
-*If this affects the front-end, screenshots would be of great help.*
+
+*If helm install or upgrade failed include your `values.yaml` (without sensitive data) and output from `kubectl describe nodes`.*
 
 ## Expected behavior
 
@@ -21,6 +22,7 @@ labels: bug
 
 ## Environment
 
+- [ ] Deployment platform (gcp/aws/...): _please provide_
 - [ ] Chart version/commit: _please provide_
 - [ ] Posthog version: _please provide_
 
