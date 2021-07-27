@@ -204,6 +204,7 @@ web:
 
 Here's the minimal required `values.yaml` that we'll be using later. You can find an overview of the parameters that can be configured during installation under [configuration](#configuration).
 ```yaml
+cloud: <your-deployment-platform>
 ingress:
   hostname: <your-hostname>
   nginx:
