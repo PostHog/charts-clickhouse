@@ -543,7 +543,7 @@ The error you will see from Kafka pod while upgrading:
 kafka.common.InconsistentClusterIdException: The Cluster ID TYP8xsIWRFWkzSYmO_YWEA doesn't match stored clusterId Some(CizxEcefTou4Ehu65rmpuA) in meta.properties. The broker is trying to join the wrong cluster. Configured zookeeper.connect may be wrong.
   ```
 How to fix?
-- Delete Kafka stateful set `kubectl -n posthog delete sts posthog-posthog-kafka posthog-posthog-zookeeper`
+- Delete Kafka and Zookeeper stateful set `kubectl -n posthog delete sts posthog-posthog-kafka posthog-posthog-zookeeper`
 - Delete kafka persistent volume claim `kubectl -n posthog delete pvc data-posthog-posthog-kafka-0`
 - Wait for Kafka and Zookeeper pods to spin down (deleting sts in step 1 will also trigger the pods deletion)
 - Upgrade helm chart `helm upgrade -f values.yaml --timeout 20m --namespace posthog posthog posthog/posthog`
