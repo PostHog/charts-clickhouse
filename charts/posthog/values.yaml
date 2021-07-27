@@ -9,7 +9,7 @@ image:
   # -- Posthog image tag, e.g. release-1.25.0
   tag:
   # -- Default image or tag
-  default: ":release-1.26.0"
+  default: ":release-1.27.0"
   # -- Image pull policy
   pullPolicy: IfNotPresent
 
@@ -361,11 +361,11 @@ kafka:
   zookeeper:
     # -- Install zookeeper on kubernetes
     enabled: false
-    # -- Name override for zookeeper app 
+    # -- Name override for zookeeper app
   externalZookeeper:
     # -- URL for zookeeper. Only set when internal zookeeper is disabled
-    # -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper 
-    servers: 
+    # -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper
+    servers:
     - posthog-posthog-zookeeper:2181
 
 zookeeper:
