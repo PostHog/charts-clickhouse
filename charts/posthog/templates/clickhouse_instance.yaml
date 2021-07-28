@@ -1,5 +1,5 @@
 {{- if .Values.clickhouseOperator.enabled }}
-{{ if (eq .Values.cloud "gcp" )}}
+{{ if (eq (.Values.cloud | toString) "gcp" )}}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -12,7 +12,7 @@ parameters:
 reclaimPolicy: Retain
 #volumeBindingMode: Immediate
 allowVolumeExpansion: true
-{{- else if (eq .Values.cloud "aws") }}
+{{- else if (eq (.Values.cloud | toString) "aws") }}
 #
 # AWS resizable disk example
 #
@@ -108,9 +108,9 @@ spec:
     volumeClaimTemplates:
       - name: data-volumeclaim-template
         spec:
-          {{- if (eq .Values.cloud "gcp" )}}
+          {{- if (eq (.Values.cloud | toString) "gcp" )}}
           storageClassName: gce-resizable
-          {{- else if (eq .Values.cloud "aws") }}
+          {{- else if (eq (.Values.cloud | toString) "aws") }}
           storageClassName: gp2-resizable
           {{- end }}
           accessModes:

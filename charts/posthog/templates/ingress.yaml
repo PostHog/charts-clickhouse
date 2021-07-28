@@ -33,7 +33,7 @@ spec:
   {{- if eq (include "ingress.letsencrypt" .) "true"}}
   tls:
   - hosts:
-    - {{ .Values.ingress.hostname }}
+    - {{ .Values.ingress.hostname | toString }}
     secretName: nginx-letsencrypt-{{ template "posthog.fullname" . }}
   {{- end }}
   rules:

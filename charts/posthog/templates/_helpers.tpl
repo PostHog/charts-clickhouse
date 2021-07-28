@@ -348,7 +348,7 @@ Create the name of the service account to use
   {{ .Values.ingress.type }}
 {{- else if .Values.ingress.nginx.enabled -}}
   nginx
-{{- else if (eq .Values.cloud "gcp") -}}
+{{- else if (eq (.Values.cloud | toString) "gcp") -}}
   clb
 {{- end -}}
 {{- end -}}
