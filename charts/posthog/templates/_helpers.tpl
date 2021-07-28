@@ -353,13 +353,10 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
-{{- define "cloud" -}}
-{{- required "'cloud' value is required, e.g. 'gcp', 'aws', 'do', 'private', ..." .Values.cloud -}}
-{{- end -}}
 
 {{- define "posthog.helmInstallInfo" -}}
 {{- $info := dict }}
-{{- $info := set $info "cloud" (include "cloud" .) -}}
+{{- $info := set $info "cloud" (required "'cloud' value is required, e.g. 'gcp', 'aws', 'do', 'private', ..." .Values.cloud) -}}
 {{- $info := set $info "chart_version" .Chart.Version -}}
 {{- $info := set $info "release_name" .Release.Name -}}
 {{- $info := set $info "release_revision" .Release.Revision -}}
