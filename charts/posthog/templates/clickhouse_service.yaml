@@ -8,7 +8,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: clickhouse-operator-metrics
-  namespace: {{ .Values.clickhouseOperator.namespace | quote }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: clickhouse-operator
 spec:

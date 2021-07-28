@@ -124,5 +124,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: clickhouse-operator
-  namespace: {{ .Values.clickhouseOperator.namespace | quote }}
+  namespace: {{ .Release.Namespace }}
 {{- end }}

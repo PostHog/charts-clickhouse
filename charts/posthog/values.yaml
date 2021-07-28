@@ -21,8 +21,6 @@ sentryDSN:
 clickhouseOperator:
   # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
   enabled: true
-  # -- Which namespace to install clickhouse operator to
-  namespace: "posthog"
   # -- How much storage space to preallocate for clickhouse
   storage: 20Gi
   # -- If enabled, operator will prefer k8s nodes with tag `clickhouse:true`

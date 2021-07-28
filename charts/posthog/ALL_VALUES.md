@@ -17,7 +17,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | cloud | string | `nil` | Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
 | clickhouseOperator.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
-| clickhouseOperator.namespace | string | `"posthog"` | Which namespace to install clickhouse operator to |
 | clickhouseOperator.storage | string | `"20Gi"` | How much storage space to preallocate for clickhouse |
 | clickhouseOperator.useNodeSelector | bool | `false` | If enabled, operator will prefer k8s nodes with tag `clickhouse:true` |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, beat, worker, and plugin server) |
