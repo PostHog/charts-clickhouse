@@ -487,7 +487,7 @@ At the time of writing the default setup comes around
 
 ### helm install failed
 
-##### Not enough resources
+#### Not enough resources
 
 You might see one of these errors from `helm install`:
 ```
@@ -507,6 +507,12 @@ Events:
 
 **How to fix this**: try installing on a bigger Kubernetes cluster.
 
+#### Error: failed to create resource: namespaces "posthog" not found
+
+If you want to install Posthog in "posthog" namespace, then make sure you included `-n posthog --create-namespace` in your helm install command.
+
+If you want to install Posthog in a different namespace (not "posthog"), then define `clickhouseOperator.namespace` accordingly in your `values.yaml`.
+  
 ### Connection is not secure
 
 First check that DNS is set up properly
