@@ -11,7 +11,7 @@ metadata:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
     "helm.sh/hook": "post-install,post-upgrade"
-    "helm.sh/resource-policy": "keep" 
+    "helm.sh/resource-policy": "keep"
     "helm.sh/hook-weight": "1"
 spec:
   selector:
@@ -117,7 +117,10 @@ spec:
         - name: CLICKHOUSE_USER
           value: {{ .Values.clickhouse.user | quote }}
         - name: CLICKHOUSE_PASSWORD
-          value: {{ .Values.clickhouse.password | quote }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "posthog.fullname" . }}
+              key: clickhouse-password
         - name: CLICKHOUSE_REPLICATION
           value: {{ .Values.clickhouse.replication | quote }}
         - name: CLICKHOUSE_SECURE
