@@ -128,7 +128,8 @@ Create a `CNAME` record from your desired hostname to the external IP.
 As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
 ```yaml
 ingress:
-  redirectToTLS: false
+  nginx:
+    redirectToTLS: false
   letsencrypt: false
 web:
   secureCookies: false
@@ -144,11 +145,33 @@ web:
 ### Requirements
 **Required minimum resources to run Posthog are 4vcpu and 4G of memory for cluster nodes.**
 
-### 1-click install:
+### 1-click install
 There is a [1-click option to deploy Posthog](https://marketplace.digitalocean.com/apps/posthog-1) on DigitalOcean Marketplace UI or by using `doctl`
 
 ```console
   doctl kubernetes cluster create posthog-cluster --count=2 --size="s-2vcpu-4gb" --region=sfo3 --1-clicks=posthog
+```
+
+#### Securing your 1-click install
+
+Sadly it's not possible to provide parameters to DigitalOcean yet, so we need post-install steps to enable TLS.
+ 
+1. Create a DNS record from your desired hostname to the external IP (`kubectl get --namespace posthog ingress posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}`).
+2. Create `values.yaml`
+```yaml
+cloud: "do"
+ingress:
+  hostname: <your-hostname>
+  nginx:
+    enabled: true
+certManager:
+  enabled: true
+```
+3. Run the upgrade (note that if you used the UI for install, you'll need to follow the getting started guide to setup kubeconfig, if you skipped it earlier use the "Remind me how to do this" link on the Kubernetes cluster tab)
+```
+helm repo add posthog https://posthog.github.io/charts-clickhouse/
+helm repo update
+helm upgrade -f values.yaml --timeout 20m --namespace posthog posthog posthog/posthog
 ```
 
 ### Setting up K8s cluster manually
@@ -189,7 +212,8 @@ Create an `A` record from your desired hostname to the external IP.
 As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
 ```yaml
 ingress:
-  redirectToTLS: false
+  nginx:
+    redirectToTLS: false
   letsencrypt: false
 web:
   secureCookies: false
@@ -232,11 +256,14 @@ kubectl get svc --namespace posthog posthog-ingress-nginx-controller
 ### Setting up DNS
 
 Create a record from your desired hostname to the external IP.
+
 ### I cannot connect to my PostHog instance after creation
+
 As a troubleshooting tool, you can allow HTTP access by setting these values in your `values.yaml`, but we recommend always accessing PostHog via https.
 ```yaml
 ingress:
-  redirectToTLS: false
+  nginx:
+    redirectToTLS: false
   letsencrypt: false
 web:
   secureCookies: false
