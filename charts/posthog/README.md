@@ -541,6 +541,12 @@ First check that DNS is set up properly
 nslookup <your-hostname> 1.1.1.1
 ```
 Note that when using a browser there are various layers of caching and other logic that could make the resolution work (temporarily) even if its not correctly set up.
+  
+## FAQ
+  
+### How can I increase storage size?
+  
+Change the value (e.g. `clickhouseOperator.storage`) and run a `helm upgrade`, which works seamlessly on AWS, GCP and DigitalOcean.
 
 ## Releasing a new version of this helm chart
 
