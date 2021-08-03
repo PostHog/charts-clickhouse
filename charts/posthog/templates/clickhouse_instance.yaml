@@ -36,6 +36,7 @@ spec:
   defaults:
     templates:
       dataVolumeClaimTemplate: data-volumeclaim-template
+      serviceTemplate: chi-service-template
   configuration:
     users:
       admin/password: {{ .Values.clickhouse.password }}
@@ -105,6 +106,16 @@ spec:
               nodeSelector:
                 clickhouse: true
               {{- end }}
+    serviceTemplates:
+      - name: chi-service-template
+        generateName: {{ template "posthog.clickhouse.fullname" . }}
+        spec:
+          ports:
+            - name: http
+              port: 8123
+            - name: tcp
+              port: 9000
+          type: {{ .Values.clickhouseOperator.serviceType }}
     volumeClaimTemplates:
       - name: data-volumeclaim-template
         spec:
