@@ -89,14 +89,14 @@ The following table lists the configurable parameters of the PostHog chart and t
 | email.existingSecret | string | `nil` | SMTP password from an existing secret. When defined the `password` field is ignored |
 | email.existingSecretKey | string | `nil` | Key to get from the `email.existingSecret` secret |
 | service | object | `{"annotations":{},"externalPort":8000,"internalPort":8000,"name":"posthog","type":"NodePort"}` | Name of the service and what port to expose on the pod. Don't change these unless you know what you're doing |
-| certManager.enabled | bool | `true` | Whether to install cert-manager. Validates certs for nginx ingress |
+| certManager.enabled | bool | `false` | Whether to install cert-manager. Validates certs for nginx ingress |
 | ingress.enabled | bool | `true` | Enable ingress controller resource |
 | ingress.type | string | `nil` | Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp. |
 | ingress.hostname | string | `nil` | URL to address your PostHog installation. You will need to set up DNS after installation |
 | ingress.gcp.ip_name | string | `"posthog"` | Specifies the name of the global IP address resource to be associated with the google clb |
 | ingress.gcp.forceHttps | bool | `true` | If true, will force a https redirect when accessed over http |
-| ingress.letsencrypt | string | `nil` | Whether to enable letsencrypt. Defaults to true if nginx enabled and false otherwise. |
-| ingress.nginx.enabled | bool | `true` | Whether nginx is enabled |
+| ingress.letsencrypt | string | `nil` | Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and certManager are enabled otherwise false. |
+| ingress.nginx.enabled | bool | `false` | Whether nginx is enabled |
 | ingress.nginx.redirectToTLS | bool | `true` | Whether to redirect to TLS with nginx ingress. |
 | postgresql.enabled | bool | `true` | Install postgres server on kubernetes (see below) |
 | postgresql.nameOverride | string | `"posthog-postgresql"` | Name override for postgresql app |
