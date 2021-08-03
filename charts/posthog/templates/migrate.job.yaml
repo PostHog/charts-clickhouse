@@ -128,10 +128,7 @@ spec:
         - name: CLICKHOUSE_USER
           value: {{ .Values.clickhouse.user | quote }}
         - name: CLICKHOUSE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "posthog.fullname" . }}
-              key: clickhouse-password
+          value: {{ .Values.clickhouse.password | quote }}
         - name: CLICKHOUSE_REPLICATION
           value: {{ .Values.clickhouse.replication | quote }}
         - name: CLICKHOUSE_SECURE
