@@ -37,13 +37,6 @@ spec:
     templates:
       dataVolumeClaimTemplate: data-volumeclaim-template
   configuration:
-    users:
-      admin/password: {{ .Values.clickhouse.password }}
-      admin/networks/ip: "0.0.0.0/0"
-      admin/profile: default
-      admin/quota: default
-      default/password: {{ .Values.clickhouse.password }}
-      default/networks/ip: "0.0.0.0/0"
     profiles:
       default/allow_experimental_window_functions: "1"
     clusters:
@@ -68,6 +61,19 @@ spec:
           string created_at = 7;
           string elements_chain = 8;
         }
+      users.d/my_users.xml: |
+        <yandex>
+          <users>
+            <admin>
+              <password from_env="CLICKHOUSE_PASSWORD" />
+              <profile>default</profile>
+              <quota>default</quota>
+              <networks>
+                <ip>0.0.0.0/0</ip>
+              </networks>
+            </admin>
+          </users>
+        </yandex>
     zookeeper:
       nodes:
       {{- if .Values.clickhouse.externalZookeeper }}
@@ -105,6 +111,12 @@ spec:
               nodeSelector:
                 clickhouse: true
               {{- end }}
+              env:
+                - name: CLICKHOUSE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ template "posthog.fullname" . }}
+                      key: clickhouse-password
     volumeClaimTemplates:
       - name: data-volumeclaim-template
         spec:
