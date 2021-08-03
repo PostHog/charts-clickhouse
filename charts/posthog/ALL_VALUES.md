@@ -122,7 +122,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.host | string | `nil` | Host for kafka. Only set when internal kafka is disabled |
 | kafka.port | string | `nil` | Port for kafka. Only set when internal kafka is disabled |
 | kafka.service.enabled | bool | `false` |  |
-| kafka.service.type | string | `"LoadBalancer"` |  |
+| kafka.service.type | string | `"NodePort"` |  |
 | kafka.persistence.enabled | bool | `true` | Enable persistence using PVC |
 | kafka.persistence.size | string | `"5Gi"` | PVC Storage Request for kafka volume |
 | kafka.logRetentionBytes | string | `"_4_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, ideally 70-80% |
