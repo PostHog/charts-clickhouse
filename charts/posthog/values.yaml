@@ -27,6 +27,9 @@ clickhouseOperator:
   storage: 20Gi
   # -- If enabled, operator will prefer k8s nodes with tag `clickhouse:true`
   useNodeSelector: false
+  # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
+  serviceType: NodePort
+
 
 # -- Env vars to throw into every deployment (web, beat, worker, and plugin server)
 env:
