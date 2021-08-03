@@ -347,7 +347,7 @@ kafka:
   port:
   service:
     enabled: false
-    type: LoadBalancer
+    type: NodePort
   persistence:
     # -- Enable persistence using PVC
     enabled: true
