@@ -8,7 +8,6 @@ metadata:
 spec:
   domains:
     - {{ .Values.ingress.hostname }}
-    - {{ .Values.ingress.gcp.secretName }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
