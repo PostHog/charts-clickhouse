@@ -11,7 +11,9 @@ metadata:
  annotations:
    {{- if (eq (include "ingress.type" .) "clb") }}
     kubernetes.io/ingress.class: "gce"
+    {{- if not (.Values.ingress.gcp.secretName) }}
     networking.gke.io/managed-certificates: "{{ .Release.Name }}-gke-cert"
+    {{- end }}
     networking.gke.io/v1beta1.FrontendConfig: "{{ .Release.Name }}-frontend-config"
     {{- if .Values.ingress.gcp.ip_name }}
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.ip_name | quote }}
@@ -30,11 +32,15 @@ metadata:
     {{- end }}
    {{- end }}
 spec:
-  {{- if eq (include "ingress.letsencrypt" .) "true"}}
+  {{- if or (eq (include "ingress.letsencrypt" .) "true") (.Values.ingress.gcp.secretName) }}
   tls:
   - hosts:
     - {{ .Values.ingress.hostname }}
+    {{- if eq (include "ingress.letsencrypt" .) "true" }}
     secretName: nginx-letsencrypt-{{ template "posthog.fullname" . }}
+    {{- else }}
+    secretName: {{ .Values.ingress.gcp.secretName }}
+    {{- end }}
   {{- end }}
   rules:
   {{- if .Values.ingress.hostname }}
