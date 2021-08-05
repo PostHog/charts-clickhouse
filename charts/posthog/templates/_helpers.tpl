@@ -228,13 +228,6 @@ Set redis port
 {{- end -}}
 
 {{/*
-Set redis URL
-*/}}
-{{- define "posthog.redis.url" -}}
-    redis://:${REDIS_PASSWORD}@{{- template "posthog.redis.host" . -}}:{{-  template "posthog.redis.port" . -}}/
-{{- end -}}
-
-{{/*
 Set clickhouse fullname
 */}}
 {{- define "posthog.clickhouse.fullname" -}}
