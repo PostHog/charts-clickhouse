@@ -96,7 +96,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | ingress.hostname | string | `nil` | URL to address your PostHog installation. You will need to set up DNS after installation |
 | ingress.gcp.ip_name | string | `"posthog"` | Specifies the name of the global IP address resource to be associated with the google clb |
 | ingress.gcp.forceHttps | bool | `true` | If true, will force a https redirect when accessed over http |
-| ingress.gcp.secretName | string | `nil` | Specifies the name of the tls secret to be used by the ingress. If not specified a managed certificate will be generated. |
+| ingress.gcp.secretName | string | `""` | Specifies the name of the tls secret to be used by the ingress. If not specified a managed certificate will be generated. |
 | ingress.letsencrypt | string | `nil` | Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and certManager are enabled otherwise false. |
 | ingress.nginx.enabled | bool | `false` | Whether nginx is enabled |
 | ingress.nginx.redirectToTLS | bool | `true` | Whether to redirect to TLS with nginx ingress. |
