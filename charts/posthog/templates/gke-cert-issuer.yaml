@@ -1,5 +1,6 @@
 {{- if (and .Values.ingress.gcp (eq (include "ingress.type" .) "clb")) -}}
-{{- if .Values.ingress.gcp.ip_name -}}
+{{- if (.Values.ingress.gcp.ip_name) -}}
+{{- if not (.Values.ingress.gcp.secretName) }}
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
@@ -7,6 +8,7 @@ metadata:
 spec:
   domains:
     - {{ .Values.ingress.hostname }}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
