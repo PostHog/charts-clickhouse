@@ -17,7 +17,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | cloud | string | `nil` | Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
 | clickhouseOperator.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
-| clickhouseOperator.namespace | string | `""` | Which namespace to install clickhouse operator to (defaults to namespace chart is installed to) |
+| clickhouseOperator.namespace | string | `nil` | Which namespace to install clickhouse operator to (defaults to namespace chart is installed to) |
 | clickhouseOperator.storage | string | `"20Gi"` | How much storage space to preallocate for clickhouse |
 | clickhouseOperator.useNodeSelector | bool | `false` | If enabled, operator will prefer k8s nodes with tag `clickhouse:true` |
 | clickhouseOperator.serviceType | string | `"NodePort"` | Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost) |
