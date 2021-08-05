@@ -3,7 +3,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: clickhouse-operator
-  namespace: {{ .Values.clickhouseOperator.namespace | quote }}
+  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
   labels:
     app: clickhouse-operator
 spec:
