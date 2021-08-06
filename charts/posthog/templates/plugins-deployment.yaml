@@ -11,7 +11,7 @@ metadata:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
     "helm.sh/hook": "post-install,post-upgrade"
-    "helm.sh/resource-policy": "keep" 
+    "helm.sh/resource-policy": "keep"
     "helm.sh/hook-weight": "1"
 spec:
   selector:
@@ -93,11 +93,7 @@ spec:
         - name: POSTHOG_REDIS_PASSWORD
           value: {{ .Values.redis.password | quote }}
         - name: REDIS_URL
-          value: "redis://:$(REDIS_PASSWORD)@{{- template "posthog.redis.host" . -}}:{{-  template "posthog.redis.port" . -}}"
-          # valueFrom:
-          #   secretKeyRef:
-          #     name: {{ template "posthog.fullname" . }}
-          #     key: redis-url
+          value: "redis://:$(POSTHOG_REDIS_PASSWORD)@{{- template "posthog.redis.host" . -}}:{{-  template "posthog.redis.port" . -}}"
         {{- end }}
         - name: POSTHOG_REDIS_HOST
           value: {{ template "posthog.redis.host" . }}
