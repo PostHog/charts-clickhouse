@@ -31,7 +31,7 @@ spec:
 {{- end }}
   selector:
     app: {{ template "posthog.fullname" . }}
-    role: web
+    role: app
   {{- with .Values.service.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
     {{- toYaml . | nindent 4 }}

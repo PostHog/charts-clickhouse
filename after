@@ -1,0 +1,2529 @@
+---
+# Source: posthog/charts/zookeeper/templates/poddisruptionbudget.yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: posthog-posthog-zookeeper
+  namespace: posthog
+  labels:
+    app.kubernetes.io/name: posthog-zookeeper
+    helm.sh/chart: zookeeper-7.0.5
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: zookeeper
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: posthog-zookeeper
+      app.kubernetes.io/instance: posthog
+      app.kubernetes.io/component: zookeeper
+  maxUnavailable: 1
+---
+# Source: posthog/charts/kafka/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: posthog-posthog-kafka
+  labels:
+    app.kubernetes.io/name: posthog-kafka
+    helm.sh/chart: kafka-12.6.0
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: kafka
+---
+# Source: posthog/charts/redis/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: true
+metadata:
+  name: posthog-posthog-redis
+  namespace: "posthog"
+  labels:
+    app.kubernetes.io/name: posthog-redis
+    helm.sh/chart: redis-14.6.2
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: posthog/templates/clickhouse_service_account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: clickhouse-operator
+  namespace: posthog
+---
+# Source: posthog/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: posthog
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+---
+# Source: posthog/charts/postgresql/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: posthog-posthog-postgresql
+  labels:
+    app: posthog-postgresql
+    chart: postgresql-8.6.1
+    release: "posthog"
+    heritage: "Helm"
+type: Opaque
+data:
+  postgresql-password: "cG9zdGdyZXM="
+---
+# Source: posthog/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: posthog
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+type: Opaque
+data:
+  posthog-secret: "S2dZTlpxQ3Z5TDNNWk8xRE9iRUJWaTlobjFPRWpEWDdYQ28zaHlrVA=="
+  postgresql-url: cG9zdGdyZXM6Ly9wb3N0Z3Jlczpwb3N0Z3Jlc0Bwb3N0aG9nLXBvc3Rob2ctcG9zdGdyZXNxbDo1NDMyL3Bvc3Rob2c=
+  smtp-password: ""
+---
+# Source: posthog/charts/kafka/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: posthog-posthog-kafka-scripts
+  labels:
+    app.kubernetes.io/name: posthog-kafka
+    helm.sh/chart: kafka-12.6.0
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+data:
+  setup.sh: |-
+    #!/bin/bash
+
+    if [[ -f "/bitnami/kafka/data/meta.properties" ]]; then
+        export KAFKA_CFG_BROKER_ID="$(grep "broker.id" /bitnami/kafka/data/meta.properties | awk -F '=' '{print $2}')"
+    else
+        ID="${MY_POD_NAME#"posthog-posthog-kafka-"}"
+        export KAFKA_CFG_BROKER_ID="$((ID + 0))"
+    fi
+
+    exec /entrypoint.sh /run.sh
+---
+# Source: posthog/charts/redis/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: posthog-posthog-redis-configuration
+  namespace: "posthog"
+  labels:
+    app.kubernetes.io/name: posthog-redis
+    helm.sh/chart: redis-14.6.2
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+data:
+  redis.conf: |-
+    # User-supplied common configuration:
+    # Enable AOF https://redis.io/topics/persistence#append-only-file
+    appendonly yes
+    # Disable RDB persistence, AOF persistence already enabled.
+    save ""
+    # End of common configuration
+  master.conf: |-
+    dir /data
+    # User-supplied master configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of master configuration
+  replica.conf: |-
+    dir /data
+    slave-read-only yes
+    # User-supplied replica configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of replica configuration
+---
+# Source: posthog/charts/redis/templates/health-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: posthog-posthog-redis-health
+  namespace: "posthog"
+  labels:
+    app.kubernetes.io/name: posthog-redis
+    helm.sh/chart: redis-14.6.2
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+data:
+  ping_readiness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    export REDISCLI_AUTH="$REDIS_PASSWORD"
+    response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    export REDISCLI_AUTH="$REDIS_PASSWORD"
+    response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$response" != "PONG" ] && [ "$response" != "LOADING Redis is loading the dataset in memory" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
+    export REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
+    response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h $REDIS_MASTER_HOST \
+        -p $REDIS_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
+    export REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
+    response=$(
+      timeout -s 3 $1 \
+      redis-cli \
+        -h $REDIS_MASTER_HOST \
+        -p $REDIS_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$response" != "PONG" ] && [ "$response" != "LOADING Redis is loading the dataset in memory" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_readiness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_readiness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_liveness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+---
+# Source: posthog/charts/redis/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: posthog-posthog-redis-scripts
+  namespace: "posthog"
+  labels:
+    app.kubernetes.io/name: posthog-redis
+    helm.sh/chart: redis-14.6.2
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+data:
+  start-master.sh: |
+    #!/bin/bash
+
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    if [[ ! -f /opt/bitnami/redis/etc/master.conf ]];then
+        cp /opt/bitnami/redis/mounted-etc/master.conf /opt/bitnami/redis/etc/master.conf
+    fi
+    if [[ ! -f /opt/bitnami/redis/etc/redis.conf ]];then
+        cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
+    fi
+    ARGS=("--port" "${REDIS_PORT}")
+    ARGS+=("--protected-mode" "no")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/master.conf")
+    exec redis-server "${ARGS[@]}"
+---
+# Source: posthog/templates/clickhouse_config_map.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: etc-clickhouse-operator-files
+  namespace: posthog 
+  labels:
+    app: clickhouse-operator
+data:
+  config.yaml: |
+    ################################################
+    ##
+    ## Watch Namespaces Section
+    ##
+    ################################################
+    
+    # List of namespaces where clickhouse-operator watches for events.
+    # Concurrently running operators should watch on different namespaces
+    #watchNamespaces:
+    #  - dev
+    #  - test
+    #  - info
+    #  - onemore
+    
+    ################################################
+    ##
+    ## Additional Configuration Files Section
+    ##
+    ################################################
+    
+    # Path to folder where ClickHouse configuration files common for all instances within CHI are located.
+    chCommonConfigsPath: config.d
+    
+    # Path to folder where ClickHouse configuration files unique for each instance (host) within CHI are located.
+    chHostConfigsPath: conf.d
+    
+    # Path to folder where ClickHouse configuration files with users settings are located.
+    # Files are common for all instances within CHI
+    chUsersConfigsPath: users.d
+    
+    # Path to folder where ClickHouseInstallation .yaml manifests are located.
+    # Manifests are applied in sorted alpha-numeric order
+    chiTemplatesPath: templates.d
+    
+    ################################################
+    ##
+    ## Cluster Create/Update/Delete Objects Section
+    ##
+    ################################################
+    
+    # How many seconds to wait for created/updated StatefulSet to be Ready
+    statefulSetUpdateTimeout: 300
+    
+    # How many seconds to wait between checks for created/updated StatefulSet status
+    statefulSetUpdatePollPeriod: 5
+    
+    # What to do in case created StatefulSet is not in Ready after `statefulSetUpdateTimeout` seconds
+    # Possible options:
+    # 1. abort - do nothing, just break the process and wait for admin
+    # 2. delete - delete newly created problematic StatefulSet
+    # 3. ignore - ignore error, pretend nothing happened and move on to the next StatefulSet
+    onStatefulSetCreateFailureAction: ignore
+    
+    # What to do in case updated StatefulSet is not in Ready after `statefulSetUpdateTimeout` seconds
+    # Possible options:
+    # 1. abort - do nothing, just break the process and wait for admin
+    # 2. rollback - delete Pod and rollback StatefulSet to previous Generation.
+    # Pod would be recreated by StatefulSet based on rollback-ed configuration
+    # 3. ignore - ignore error, pretend nothing happened and move on to the next StatefulSet
+    onStatefulSetUpdateFailureAction: rollback
+    
+    ################################################
+    ##
+    ## ClickHouse Settings Section
+    ##
+    ################################################
+    
+    # Default values for ClickHouse user configuration
+    # 1. user/profile - string
+    # 2. user/quota - string
+    # 3. user/networks/ip - multiple strings
+    # 4. user/password - string
+    chConfigUserDefaultProfile: default
+    chConfigUserDefaultQuota: default
+    chConfigUserDefaultNetworksIP:
+      - "::1"
+      - "127.0.0.1"
+    chConfigUserDefaultPassword: "default"
+    
+    # Default host_regexp to limit network connectivity from outside
+    chConfigNetworksHostRegexpTemplate: "(chi-{chi}-[^.]+\\d+-\\d+|clickhouse\\-{chi})\\.{namespace}\\.svc\\.cluster\\.local$"
+    
+    ################################################
+    ##
+    ## Access to ClickHouse instances
+    ##
+    ################################################
+    
+    # ClickHouse credentials (username, password and port) to be used by operator to connect to ClickHouse instances for:
+    # 1. Metrics requests
+    # 2. Schema maintenance
+    # 3. DROP DNS CACHE
+    # User with such credentials can be specified in additional ClickHouse .xml config files,
+    # located in `chUsersConfigsPath` folder
+    chUsername: clickhouse_operator
+    chPassword: clickhouse_operator_password
+    chPort: 8123
+    
+    ################################################
+    ##
+    ## Log parameters
+    ##
+    ################################################
+    
+    logtostderr: "true"
+    alsologtostderr: "false"
+    v: "1"
+    stderrthreshold: ""
+    vmodule: ""
+    log_backtrace_at: ""
+    
+    ################################################
+    ##
+    ## Runtime parameters
+    ##
+    ################################################
+    
+    # Max number of concurrent reconciles in progress
+    reconcileThreadsNumber: 10
+    reconcileWaitExclude: false
+    reconcileWaitInclude: false
+---
+# Source: posthog/templates/clickhouse_config_map.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: etc-clickhouse-operator-confd-files
+  namespace: posthog
+  labels:
+    app: clickhouse-operator
+data:
+---
+# Source: posthog/templates/clickhouse_config_map.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: etc-clickhouse-operator-configd-files
+  namespace: posthog
+  labels:
+    app: clickhouse-operator
+data:
+  01-clickhouse-listen.xml: |
+    <yandex>
+        <!-- Listen wildcard address to allow accepting connections from other containers and host network. -->
+        <listen_host>::</listen_host>
+        <listen_host>0.0.0.0</listen_host>
+        <listen_try>1</listen_try>
+    </yandex>
+
+  02-clickhouse-logger.xml: |
+    <yandex>
+        <logger>
+            <!-- Possible levels: https://github.com/pocoproject/poco/blob/develop/Foundation/include/Poco/Logger.h#L105 -->
+            <level>debug</level>
+            <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+            <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+            <size>1000M</size>
+            <count>10</count>
+            <!-- Default behavior is autodetection (log to console if not daemon mode and is tty) -->
+            <console>1</console>
+        </logger>
+    </yandex>
+
+  03-clickhouse-querylog.xml: |
+    <yandex>
+    <query_log replace="1">
+        <database>system</database>
+        <table>query_log</table>
+        <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + interval 30 day</engine>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </query_log>
+    <query_thread_log remove="1"/>
+    </yandex>
+  04-clickhouse-partlog.xml: |
+    <yandex>
+    <part_log replace="1">
+        <database>system</database>
+        <table>part_log</table>
+        <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + interval 30 day</engine>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </part_log>
+    </yandex>
+---
+# Source: posthog/templates/clickhouse_config_map.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: etc-clickhouse-operator-templatesd-files
+  namespace: posthog
+  labels:
+    app: clickhouse-operator
+data:
+  001-templates.json.example: |
+    {
+      "apiVersion": "clickhouse.altinity.com/v1",
+      "kind": "ClickHouseInstallationTemplate",
+      "metadata": {
+        "name": "01-default-volumeclaimtemplate"
+      },
+      "spec": {
+        "templates": {
+          "volumeClaimTemplates": [
+            {
+              "name": "chi-default-volume-claim-template",
+              "spec": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "resources": {
+                  "requests": {
+                    "storage": "2Gi"
+                  }
+                }
+              }
+            }
+          ],
+          "podTemplates": [
+            {
+              "name": "chi-default-oneperhost-pod-template",
+              "distribution": "OnePerHost",
+              "spec": {
+                "containers" : [
+                  {
+                    "name": "clickhouse",
+                    "image": "yandex/clickhouse-server:19.3.7",
+                    "ports": [
+                      {
+                        "name": "http",
+                        "containerPort": 8123
+                      },
+                      {
+                        "name": "client",
+                        "containerPort": 9000
+                      },
+                      {
+                        "name": "interserver",
+                        "containerPort": 9009
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+
+  default-pod-template.yaml.example: |
+    apiVersion: "clickhouse.altinity.com/v1"
+    kind: "ClickHouseInstallationTemplate"
+    metadata:
+      name: "default-oneperhost-pod-template"
+    spec:
+      templates:
+        podTemplates:
+          - name: default-oneperhost-pod-template
+            distribution: "OnePerHost"
+  default-storage-template.yaml.example: |
+    apiVersion: "clickhouse.altinity.com/v1"
+    kind: "ClickHouseInstallationTemplate"
+    metadata:
+      name: "default-storage-template-2Gi"
+    spec:
+      templates:
+        volumeClaimTemplates:
+          - name: default-storage-template-2Gi
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 2Gi
+
+  readme: |
+    Templates in this folder are packaged with an operator and available via 'useTemplate'
+---
+# Source: posthog/templates/clickhouse_config_map.yaml
+# Possible Template Parameters:
+#
+# $OPERATOR_NAMESPACE
+# $OPERATOR_IMAGE
+# etc-clickhouse-operator-usersd-files
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: etc-clickhouse-operator-usersd-files
+  namespace: posthog
+  labels:
+    app: clickhouse-operator
+data:
+  01-clickhouse-user.xml: |
+    <yandex>
+        <users>
+            <clickhouse_operator>
+                <networks>
+                    <ip>127.0.0.1</ip>
+                    <ip>0.0.0.0/0</ip>
+                    <ip>::/0</ip>
+                </networks>
+                <password_sha256_hex>716b36073a90c6fe1d445ac1af85f4777c5b7a155cea359961826a030513e448</password_sha256_hex>
+                <profile>clickhouse_operator</profile>
+                <quota>default</quota>
+            </clickhouse_operator>
+        </users>
+        <profiles>
+            <clickhouse_operator>
+                <log_queries>0</log_queries>
+                <skip_unavailable_shards>1</skip_unavailable_shards>
+                <http_connection_timeout>10</http_connection_timeout>
+            </clickhouse_operator>
+        </profiles>
+    </yandex>
+
+  02-clickhouse-default-profile.xml: |
+    <yandex>
+      <profiles>
+        <default>
+          <log_queries>1</log_queries>
+          <connect_timeout_with_failover_ms>1000</connect_timeout_with_failover_ms>
+          <distributed_aggregation_memory_efficient>1</distributed_aggregation_memory_efficient>
+          <parallel_view_processing>1</parallel_view_processing>
+        </default>
+      </profiles>
+    </yandex>
+  03-database-ordinary.xml: |
+    <!--  Remove it for ClickHouse versions before 20.4 -->
+    <yandex>
+        <profiles>
+            <default>
+                <default_database_engine>Ordinary</default_database_engine>
+            </default>
+        </profiles>
+    </yandex>
+---
+# Source: posthog/templates/clickhouse_cluster_role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clickhouse-operator-posthog
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  - pods
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - clickhouse.altinity.com
+  resources:
+  - clickhouseinstallations
+  verbs:
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - apps
+  resourceNames:
+  - clickhouse-operator
+  resources:
+  - deployments
+  verbs:
+  - get
+  - patch
+  - update
+  - delete
+- apiGroups:
+  - apps
+  resources:
+  - replicasets
+  verbs:
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - endpoints
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - clickhouse.altinity.com
+  resources:
+  - clickhouseinstallations
+  - clickhouseinstallationtemplates
+  - clickhouseoperatorconfigurations
+  verbs:
+  - get
+  - list
+  - watch
+---
+# Source: posthog/templates/clickhouse_cluster_role.yaml
+# Setup ClusterRoleBinding between ClusterRole and ServiceAccount.
+# ClusterRoleBinding is namespace-less and must have unique name
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: clickhouse-operator-posthog-cr
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: clickhouse-operator-posthog
+subjects:
+- kind: ServiceAccount
+  name: clickhouse-operator
+  namespace: posthog
+---
+# Source: posthog/charts/kafka/templates/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-posthog-kafka-headless
+  labels:
+    app.kubernetes.io/name: posthog-kafka
+    helm.sh/chart: kafka-12.6.0
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: kafka
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: tcp-client
+      port: 9092
+      protocol: TCP
+      targetPort: kafka-client
+    - name: tcp-internal
+      port: 9093
+      protocol: TCP
+      targetPort: kafka-internal
+  selector:
+    app.kubernetes.io/name: posthog-kafka
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/component: kafka
+---
+# Source: posthog/charts/kafka/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-posthog-kafka
+  labels:
+    app.kubernetes.io/name: posthog-kafka
+    helm.sh/chart: kafka-12.6.0
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: kafka
+spec:
+  type: NodePort
+  ports:
+    - name: tcp-client
+      port: 9092
+      protocol: TCP
+      targetPort: kafka-client
+  selector:
+    app.kubernetes.io/name: posthog-kafka
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/component: kafka
+---
+# Source: posthog/charts/postgresql/templates/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-posthog-postgresql-headless
+  labels:
+    app: posthog-postgresql
+    chart: postgresql-8.6.1
+    release: "posthog"
+    heritage: "Helm"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app: posthog-postgresql
+    release: "posthog"
+---
+# Source: posthog/charts/postgresql/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-posthog-postgresql
+  labels:
+    app: posthog-postgresql
+    chart: postgresql-8.6.1
+    release: "posthog"
+    heritage: "Helm"
+spec:
+  type: ClusterIP
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app: posthog-postgresql
+    release: "posthog"
+    role: master
+---
+# Source: posthog/charts/redis/templates/headless-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-posthog-redis-headless
+  namespace: "posthog"
+  labels:
+    app.kubernetes.io/name: posthog-redis
+    helm.sh/chart: redis-14.6.2
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: tcp-redis
+      port: 6379
+      targetPort: redis
+  selector:
+    app.kubernetes.io/name: posthog-redis
+    app.kubernetes.io/instance: posthog
+---
+# Source: posthog/charts/redis/templates/master/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-posthog-redis-master
+  namespace: "posthog"
+  labels:
+    app.kubernetes.io/name: posthog-redis
+    helm.sh/chart: redis-14.6.2
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: master
+spec:
+  type: ClusterIP
+  
+  ports:
+    - name: tcp-redis
+      port: 6379
+      targetPort: redis
+      nodePort: null
+  selector:
+    app.kubernetes.io/name: posthog-redis
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/component: master
+---
+# Source: posthog/charts/zookeeper/templates/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-posthog-zookeeper-headless
+  namespace: posthog
+  labels:
+    app.kubernetes.io/name: posthog-zookeeper
+    helm.sh/chart: zookeeper-7.0.5
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: zookeeper
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    
+    - name: tcp-client
+      port: 2181
+      targetPort: client
+    
+    
+    - name: follower
+      port: 2888
+      targetPort: follower
+    - name: tcp-election
+      port: 3888
+      targetPort: election
+  selector:
+    app.kubernetes.io/name: posthog-zookeeper
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/component: zookeeper
+---
+# Source: posthog/charts/zookeeper/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-posthog-zookeeper
+  namespace: posthog
+  labels:
+    app.kubernetes.io/name: posthog-zookeeper
+    helm.sh/chart: zookeeper-7.0.5
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: zookeeper
+spec:
+  type: ClusterIP
+  ports:
+    
+    - name: tcp-client
+      port: 2181
+      targetPort: client
+      nodePort: null
+    
+    
+    - name: follower
+      port: 2888
+      targetPort: follower
+    - name: tcp-election
+      port: 3888
+      targetPort: election
+  selector:
+    app.kubernetes.io/name: posthog-zookeeper
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/component: zookeeper
+---
+# Source: posthog/templates/clickhouse_service.yaml
+# Setup ClusterIP Service to provide monitoring metrics for Prometheus
+# Service would be created in kubectl-specified namespace
+# In order to get access outside of k8s it should be exposed as:
+# kubectl --namespace prometheus port-forward service/prometheus 9090
+# and point browser to localhost:9090
+kind: Service
+apiVersion: v1
+metadata:
+  name: clickhouse-operator-metrics
+  namespace: posthog
+  labels:
+    app: clickhouse-operator
+spec:
+  ports:
+    - port: 8888
+      name: clickhouse-operator-metrics
+  selector:
+    app: clickhouse-operator
+---
+# Source: posthog/templates/pgbouncer-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog-pgbouncer
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+spec:
+  type: "ClusterIP" 
+  ports:
+  - port: 6543 
+    targetPort: 6543 
+    protocol: TCP
+    name: posthog-pgbouncer
+  selector:
+    app: posthog
+    role: pgbouncer
+---
+# Source: posthog/templates/web-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: posthog
+  annotations:
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+    name: posthog
+  selector:
+    app: posthog
+    role: app
+---
+# Source: posthog/templates/beat-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posthog-beat
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+        app: posthog
+        release: "posthog"
+        role: beat
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        metrics-enabled: "false"
+        checksum/secrets.yaml: 3881cd9d133577e801a3e7e27179df0972e9beb5da8def6ce825ace539d059a3
+      labels:
+        app: posthog
+        release: "posthog"
+        role: beat
+    spec:
+      serviceAccountName: posthog
+      containers:
+      - name: posthog-beat
+        image: "posthog/posthog@sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4"
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            ./bin/docker-worker-beat
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SITE_URL
+          value: "http://127.0.0.1:8000"
+        - name: DEPLOYMENT
+          value: helm_x_ha
+        - name: SENTRY_DSN
+          value: 
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: posthog-secret
+        - name: POSTHOG_DB_USER
+          value: "postgres"
+        - name: POSTHOG_DB_NAME
+          value: "posthog"
+        - name: POSTHOG_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: posthog-posthog-postgresql
+              key: "postgresql-password"
+        - name: POSTHOG_POSTGRES_HOST
+          value: posthog-pgbouncer
+        - name: POSTHOG_POSTGRES_PORT
+          value: "6543"
+        - name: USING_PGBOUNCER
+          value: 'true'
+        - name: POSTHOG_REDIS_PASSWORD
+          value: 
+        - name: POSTHOG_REDIS_HOST
+          value: posthog-posthog-redis-master
+        - name: POSTHOG_REDIS_PORT
+          value: "6379"
+        - name: EMAIL_HOST
+          value: "smtp.eu.mailgun.org"
+        - name: EMAIL_PORT
+          value: "587"
+        - name: EMAIL_HOST_USER
+          value: ""
+        - name: EMAIL_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: smtp-password
+        - name: EMAIL_USE_TLS
+          value: "true"
+        - name: EMAIL_USE_SSL
+          value: "false"
+        - name: DEFAULT_FROM_EMAIL
+          value: "hey@posthog.com"
+        - name: PRIMARY_DB
+          value: clickhouse
+        - name: CLICKHOUSE_DATABASE
+          value: "posthog"
+        - name: CLICKHOUSE_HOST
+          value: clickhouse-posthog
+        - name: CLICKHOUSE_USER
+          value: "admin"
+        - name: CLICKHOUSE_PASSWORD
+          value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
+        - name: CLICKHOUSE_REPLICATION
+          value: "false"
+        - name: CLICKHOUSE_SECURE
+          value: "false"
+        - name: CLICKHOUSE_VERIFY
+          value: "false"
+        - name: CLICKHOUSE_ASYNC
+          value: "false"
+        - name: CAPTURE_INTERNAL_METRICS
+          value: "true"
+        - name: KAFKA_URL
+          value: "kafka://posthog-posthog-kafka:9092"
+        - name: PLUGIN_SERVER_INGESTION
+          value: 'true'
+        - name: HELM_INSTALL_INFO
+          value: "{\"chart_version\":\"3.3.1\",\"cloud\":\"x\",\"deployment_type\":\"helm\",\"hostname\":null,\"ingress_type\":\"\",\"operation\":\"install\",\"release_name\":\"posthog\",\"release_revision\":1}"
+        resources:
+            {}
+---
+# Source: posthog/templates/clickhouse_deployment.yaml
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: clickhouse-operator
+  namespace: posthog
+  labels:
+    app: clickhouse-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clickhouse-operator
+  template:
+    metadata:
+      labels:
+        app: clickhouse-operator
+      annotations:
+        prometheus.io/port: '8888'
+        prometheus.io/scrape: 'true'
+    spec:
+      serviceAccountName: clickhouse-operator
+      volumes:
+        - name: etc-clickhouse-operator-folder
+          configMap:
+            name: etc-clickhouse-operator-files
+        - name: etc-clickhouse-operator-confd-folder
+          configMap:
+            name: etc-clickhouse-operator-confd-files
+        - name: etc-clickhouse-operator-configd-folder
+          configMap:
+            name: etc-clickhouse-operator-configd-files
+        - name: etc-clickhouse-operator-templatesd-folder
+          configMap:
+            name: etc-clickhouse-operator-templatesd-files
+        - name: etc-clickhouse-operator-usersd-folder
+          configMap:
+            name: etc-clickhouse-operator-usersd-files
+      containers:
+        - name: clickhouse-operator
+          image: altinity/clickhouse-operator:latest 
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: etc-clickhouse-operator-folder
+              mountPath: /etc/clickhouse-operator
+            - name: etc-clickhouse-operator-confd-folder
+              mountPath: /etc/clickhouse-operator/conf.d
+            - name: etc-clickhouse-operator-configd-folder
+              mountPath: /etc/clickhouse-operator/config.d
+            - name: etc-clickhouse-operator-templatesd-folder
+              mountPath: /etc/clickhouse-operator/templates.d
+            - name: etc-clickhouse-operator-usersd-folder
+              mountPath: /etc/clickhouse-operator/users.d
+          env:
+            # Pod-specific
+            # spec.nodeName: ip-172-20-52-62.ec2.internal
+            - name: OPERATOR_POD_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            # metadata.name: clickhouse-operator-6f87589dbb-ftcsf
+            - name: OPERATOR_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            # metadata.namespace: kube-system
+            - name: OPERATOR_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # status.podIP: 100.96.3.2
+            - name: OPERATOR_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            # spec.serviceAccount: clickhouse-operator
+            # spec.serviceAccountName: clickhouse-operator
+            - name: OPERATOR_POD_SERVICE_ACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+
+            # Container-specific
+            - name: OPERATOR_CONTAINER_CPU_REQUEST
+              valueFrom:
+                resourceFieldRef:
+                  containerName: clickhouse-operator
+                  resource: requests.cpu
+            - name: OPERATOR_CONTAINER_CPU_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  containerName: clickhouse-operator
+                  resource: limits.cpu
+            - name: OPERATOR_CONTAINER_MEM_REQUEST
+              valueFrom:
+                resourceFieldRef:
+                  containerName: clickhouse-operator
+                  resource: requests.memory
+            - name: OPERATOR_CONTAINER_MEM_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  containerName: clickhouse-operator
+                  resource: limits.memory
+
+        - name: metrics-exporter
+          image: altinity/metrics-exporter:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: etc-clickhouse-operator-folder
+              mountPath: /etc/clickhouse-operator
+            - name: etc-clickhouse-operator-confd-folder
+              mountPath: /etc/clickhouse-operator/conf.d
+            - name: etc-clickhouse-operator-configd-folder
+              mountPath: /etc/clickhouse-operator/config.d
+            - name: etc-clickhouse-operator-templatesd-folder
+              mountPath: /etc/clickhouse-operator/templates.d
+            - name: etc-clickhouse-operator-usersd-folder
+              mountPath: /etc/clickhouse-operator/users.d
+---
+# Source: posthog/templates/pgbouncer-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posthog-pgbouncer
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+        app: posthog
+        release: "posthog"
+        role: pgbouncer
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        metrics-enabled: "false"
+        checksum/secrets.yaml: 4b57668f5aff65f251b95198608c6b44fb51847bb429162c121dc391a62904e9
+      labels:
+        app: posthog
+        release: "posthog"
+        role: pgbouncer
+    spec:
+      serviceAccountName: posthog
+      containers:
+      - name: posthog-pgbouncer
+        image: "edoburu/pgbouncer:1.12.0"
+        imagePullPolicy: "IfNotPresent"
+        ports:
+        - containerPort: 6543
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: postgresql-url
+        - name: LISTEN_PORT
+          value: "6543"
+        - name: MAX_CLIENT_CONN
+          value: "1000"
+        - name: POOL_MODE
+          value: "transaction"
+        readinessProbe:
+          tcpSocket:
+            port: 6543
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 6543
+          initialDelaySeconds: 15
+          periodSeconds: 20
+---
+# Source: posthog/charts/kafka/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: posthog-posthog-kafka
+  labels:
+    app.kubernetes.io/name: posthog-kafka
+    helm.sh/chart: kafka-12.6.0
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: kafka
+spec:
+  podManagementPolicy: Parallel
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: posthog-kafka
+      app.kubernetes.io/instance: posthog
+      app.kubernetes.io/component: kafka
+  serviceName: posthog-posthog-kafka-headless
+  updateStrategy:
+    type: "RollingUpdate"
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: posthog-kafka
+        helm.sh/chart: kafka-12.6.0
+        app.kubernetes.io/instance: posthog
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: kafka
+    spec:      
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: posthog-kafka
+                    app.kubernetes.io/instance: posthog
+                namespaces:
+                  - posthog
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      serviceAccountName: posthog-posthog-kafka
+      containers:
+        - name: kafka
+          image: docker.io/bitnami/kafka:2.7.0-debian-10-r1
+          imagePullPolicy: "IfNotPresent"
+          command:
+            - /scripts/setup.sh
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: "posthog-posthog-zookeeper:2181"
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME
+              value: "INTERNAL"
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "INTERNAL:PLAINTEXT,CLIENT:PLAINTEXT"
+            - name: KAFKA_CFG_LISTENERS
+              value: "INTERNAL://:9093,CLIENT://:9092"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "INTERNAL://$(MY_POD_NAME).posthog-posthog-kafka-headless.posthog.svc.cluster.local:9093,CLIENT://$(MY_POD_NAME).posthog-posthog-kafka-headless.posthog.svc.cluster.local:9092"
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+            - name: KAFKA_VOLUME_DIR
+              value: "/bitnami/kafka"
+            - name: KAFKA_LOG_DIR
+              value: "/opt/bitnami/kafka/logs"
+            - name: KAFKA_CFG_DELETE_TOPIC_ENABLE
+              value: "false"
+            - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"
+            - name: KAFKA_HEAP_OPTS
+              value: "-Xmx1024m -Xms1024m"
+            - name: KAFKA_CFG_LOG_FLUSH_INTERVAL_MESSAGES
+              value: "10000"
+            - name: KAFKA_CFG_LOG_FLUSH_INTERVAL_MS
+              value: "1000"
+            - name: KAFKA_CFG_LOG_RETENTION_BYTES
+              value: "4000000000"
+            - name: KAFKA_CFG_LOG_RETENTION_CHECK_INTERVALS_MS
+              value: "300000"
+            - name: KAFKA_CFG_LOG_RETENTION_HOURS
+              value: "24"
+            - name: KAFKA_CFG_MESSAGE_MAX_BYTES
+              value: "1000012"
+            - name: KAFKA_CFG_LOG_SEGMENT_BYTES
+              value: "1073741824"
+            - name: KAFKA_CFG_LOG_DIRS
+              value: "/bitnami/kafka/data"
+            - name: KAFKA_CFG_DEFAULT_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR
+              value: "1"
+            - name: KAFKA_CFG_NUM_IO_THREADS
+              value: "8"
+            - name: KAFKA_CFG_NUM_NETWORK_THREADS
+              value: "3"
+            - name: KAFKA_CFG_NUM_PARTITIONS
+              value: "1"
+            - name: KAFKA_CFG_NUM_RECOVERY_THREADS_PER_DATA_DIR
+              value: "1"
+            - name: KAFKA_CFG_SOCKET_RECEIVE_BUFFER_BYTES
+              value: "102400"
+            - name: KAFKA_CFG_SOCKET_REQUEST_MAX_BYTES
+              value: "104857600"
+            - name: KAFKA_CFG_SOCKET_SEND_BUFFER_BYTES
+              value: "102400"
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECTION_TIMEOUT_MS
+              value: "6000"
+          ports:
+            - name: kafka-client
+              containerPort: 9092
+            - name: kafka-internal
+              containerPort: 9093
+          livenessProbe:
+            tcpSocket:
+              port: kafka-client
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 
+            periodSeconds: 
+            successThreshold: 
+          readinessProbe:
+            tcpSocket:
+              port: kafka-client
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 6
+            periodSeconds: 
+            successThreshold: 
+          resources:
+            limits: {}
+            requests: {}
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/kafka
+            - name: logs
+              mountPath: /opt/bitnami/kafka/logs
+            - name: scripts
+              mountPath: /scripts/setup.sh
+              subPath: setup.sh
+      volumes:
+        - name: scripts
+          configMap:
+            name: posthog-posthog-kafka-scripts
+            defaultMode: 0755
+        - name: logs
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "5Gi"
+---
+# Source: posthog/charts/postgresql/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: posthog-posthog-postgresql
+  labels:
+    app: posthog-postgresql
+    chart: postgresql-8.6.1
+    release: "posthog"
+    heritage: "Helm"
+spec:
+  serviceName: posthog-posthog-postgresql-headless
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: posthog-postgresql
+      release: "posthog"
+      role: master
+  template:
+    metadata:
+      name: posthog-posthog-postgresql
+      labels:
+        app: posthog-postgresql
+        chart: postgresql-8.6.1
+        release: "posthog"
+        heritage: "Helm"
+        role: master
+    spec:      
+      securityContext:
+        fsGroup: 1001
+      initContainers:
+        # - name: do-something
+        #   image: busybox
+        #   command: ['do', 'something']
+        
+      containers:
+        - name: posthog-posthog-postgresql
+          image: docker.io/bitnami/postgresql:11.7.0-debian-10-r9
+          imagePullPolicy: "IfNotPresent"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/bitnami/postgresql"
+            - name: PGDATA
+              value: "/bitnami/postgresql/data"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: posthog-posthog-postgresql
+                  key: postgresql-password
+            - name: POSTGRES_DB
+              value: "posthog"
+            - name: POSTGRESQL_ENABLE_LDAP
+              value: "no"
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "postgres" -d "posthog" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - |
+                  exec pg_isready -U "postgres" -d "posthog" -h 127.0.0.1 -p 5432
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              mountPath: /bitnami/postgresql
+              subPath: 
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "10Gi"
+---
+# Source: posthog/charts/redis/templates/master/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: posthog-posthog-redis-master
+  namespace: "posthog"
+  labels:
+    app.kubernetes.io/name: posthog-redis
+    helm.sh/chart: redis-14.6.2
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: master
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: posthog-redis
+      app.kubernetes.io/instance: posthog
+      app.kubernetes.io/component: master
+  serviceName: posthog-posthog-redis-headless
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: posthog-redis
+        helm.sh/chart: redis-14.6.2
+        app.kubernetes.io/instance: posthog
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: master
+      annotations:
+        checksum/configmap: 9636273ca6ce05b19591da5a96947efacf1888c46b18d5bde8ece47468463c20
+        checksum/health: 4825747279e2e5f8cff9c6e865a4e0920417d425ad4f063f7e3ad04f2787ae8b
+        checksum/scripts: bd130c37da62d466d9c1fc57e8d4f6c1b580ee6423fdfcc92cc666933846c99b
+        checksum/secret: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    spec:
+      
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: posthog-posthog-redis
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: posthog-redis
+                    app.kubernetes.io/instance: posthog
+                    app.kubernetes.io/component: master
+                namespaces:
+                  - posthog
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: redis
+          image: docker.io/bitnami/redis:6.2.4-debian-10-r13
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          command:
+            - /bin/bash
+          args:
+            - -c
+            - /opt/bitnami/scripts/start-scripts/start-master.sh
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: REDIS_REPLICATION_MODE
+              value: master
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: REDIS_TLS_ENABLED
+              value: "no"
+            - name: REDIS_PORT
+              value: "6379"
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            # One second longer than command timeout should prevent generation of zombie processes.
+            timeoutSeconds: 6
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local.sh 1
+          resources:
+            limits: {}
+            requests: {}
+          volumeMounts:
+            - name: start-scripts
+              mountPath: /opt/bitnami/scripts/start-scripts
+            - name: health
+              mountPath: /health
+            - name: redis-data
+              mountPath: /data
+              subPath: 
+            - name: config
+              mountPath: /opt/bitnami/redis/mounted-etc
+            - name: redis-tmp-conf
+              mountPath: /opt/bitnami/redis/etc/
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: start-scripts
+          configMap:
+            name: posthog-posthog-redis-scripts
+            defaultMode: 0755
+        - name: health
+          configMap:
+            name: posthog-posthog-redis-health
+            defaultMode: 0755
+        - name: config
+          configMap:
+            name: posthog-posthog-redis-configuration
+        - name: redis-tmp-conf
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+        labels:
+          app.kubernetes.io/name: posthog-redis
+          app.kubernetes.io/instance: posthog
+          app.kubernetes.io/component: master
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "5Gi"
+---
+# Source: posthog/charts/zookeeper/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: posthog-posthog-zookeeper
+  namespace: posthog
+  labels:
+    app.kubernetes.io/name: posthog-zookeeper
+    helm.sh/chart: zookeeper-7.0.5
+    app.kubernetes.io/instance: posthog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: zookeeper
+    role: zookeeper
+spec:
+  serviceName: posthog-posthog-zookeeper-headless
+  replicas: 3
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: posthog-zookeeper
+      app.kubernetes.io/instance: posthog
+      app.kubernetes.io/component: zookeeper
+  template:
+    metadata:
+      name: posthog-posthog-zookeeper
+      labels:
+        app.kubernetes.io/name: posthog-zookeeper
+        helm.sh/chart: zookeeper-7.0.5
+        app.kubernetes.io/instance: posthog
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: zookeeper
+    spec:
+      
+      serviceAccountName: default
+      securityContext:
+        fsGroup: 1001
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: posthog-zookeeper
+                    app.kubernetes.io/instance: posthog
+                    app.kubernetes.io/component: zookeeper
+                namespaces:
+                  - posthog
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      containers:
+        - name: zookeeper
+          image: docker.io/bitnami/zookeeper:3.7.0-debian-10-r70
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            runAsUser: 1001
+          command:
+            - bash
+            - -ec
+            - |
+                # Execute entrypoint as usual after obtaining ZOO_SERVER_ID
+                # check ZOO_SERVER_ID in persistent volume via myid
+                # if not present, set based on POD hostname
+                if [[ -f "/bitnami/zookeeper/data/myid" ]]; then
+                  export ZOO_SERVER_ID="$(cat /bitnami/zookeeper/data/myid)"
+                else
+                  HOSTNAME=`hostname -s`
+                  if [[ $HOSTNAME =~ (.*)-([0-9]+)$ ]]; then
+                    ORD=${BASH_REMATCH[2]}
+                    export ZOO_SERVER_ID=$((ORD + 1 ))
+                  else
+                    echo "Failed to get index from hostname $HOST"
+                    exit 1
+                  fi
+                fi
+                exec /entrypoint.sh /run.sh
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          env:
+            - name: ZOO_DATA_LOG_DIR
+              value: ""
+            - name: ZOO_PORT_NUMBER
+              value: "2181"
+            - name: ZOO_TICK_TIME
+              value: "2000"
+            - name: ZOO_INIT_LIMIT
+              value: "10"
+            - name: ZOO_SYNC_LIMIT
+              value: "5"
+            - name: ZOO_MAX_CLIENT_CNXNS
+              value: "60"
+            - name: ZOO_4LW_COMMANDS_WHITELIST
+              value: "srvr, mntr, ruok"
+            - name: ZOO_LISTEN_ALLIPS_ENABLED
+              value: "no"
+            - name: ZOO_AUTOPURGE_INTERVAL
+              value: "0"
+            - name: ZOO_AUTOPURGE_RETAIN_COUNT
+              value: "3"
+            - name: ZOO_MAX_SESSION_TIMEOUT
+              value: "40000"
+            - name: ZOO_SERVERS
+              value: posthog-posthog-zookeeper-0.posthog-posthog-zookeeper-headless.posthog.svc.cluster.local:2888:3888::1 posthog-posthog-zookeeper-1.posthog-posthog-zookeeper-headless.posthog.svc.cluster.local:2888:3888::2 posthog-posthog-zookeeper-2.posthog-posthog-zookeeper-headless.posthog.svc.cluster.local:2888:3888::3 
+            - name: ZOO_ENABLE_AUTH
+              value: "no"
+            - name: ZOO_HEAP_SIZE
+              value: "1024"
+            - name: ZOO_LOG_LEVEL
+              value: "ERROR"
+            - name: ALLOW_ANONYMOUS_LOGIN
+              value: "yes"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          ports:
+            - name: client
+              containerPort: 2181
+            - name: follower
+              containerPort: 2888
+            - name: election
+              containerPort: 3888
+          livenessProbe:
+            exec:
+              command: ['/bin/bash', '-c', 'echo "ruok" | timeout 2 nc -w 2 localhost 2181 | grep imok']
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command: ['/bin/bash', '-c', 'echo "ruok" | timeout 2 nc -w 2 localhost 2181 | grep imok']
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/zookeeper
+      volumes:
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        annotations:
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: posthog/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+ name: posthog
+ labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+ annotations:
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              serviceName: posthog
+              servicePort: 8000
+---
+# Source: posthog/templates/clickhouse_instance.yaml
+apiVersion: "clickhouse.altinity.com/v1"
+kind: "ClickHouseInstallation"
+metadata:
+  name: "posthog"
+spec:
+  defaults:
+    templates:
+      dataVolumeClaimTemplate: data-volumeclaim-template
+      serviceTemplate: chi-service-template
+  configuration:
+    users:
+      admin/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+      admin/networks/ip: "0.0.0.0/0"
+      admin/profile: default
+      admin/quota: default
+      default/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+      default/networks/ip: "0.0.0.0/0"
+    profiles:
+      default/allow_experimental_window_functions: "1"
+    clusters:
+      - name: "posthog"
+        templates:
+          podTemplate: pod-template-with-volumes
+        layout:
+          shardsCount: 1
+          replicasCount: 1
+    settings:
+      format_schema_path: /etc/clickhouse-server/config.d/
+    files:
+      events.proto: |
+        syntax = "proto3";
+        message Event {
+          string uuid = 1;
+          string event = 2;
+          string properties = 3;
+          string timestamp = 4;
+          uint64 team_id = 5;
+          string distinct_id = 6;
+          string created_at = 7;
+          string elements_chain = 8;
+        }
+    zookeeper:
+      nodes:
+        - host: posthog-posthog-zookeeper
+          port: 2181
+  templates:
+    podTemplates:
+      - name: pod-template-with-volumes
+        spec:
+          securityContext:
+            runAsUser: 101
+            runAsGroup: 101
+            fsGroup: 101
+          containers:
+            - name: clickhouse
+              image: yandex/clickhouse-server:21.6.5
+              command:
+                - /bin/bash
+                - -c
+                - /usr/bin/clickhouse-server --config-file=/etc/clickhouse-server/config.xml
+              ports:
+                - name: http
+                  containerPort: 8123
+                - name: client
+                  containerPort: 9000
+                - name: interserver
+                  containerPort: 9009
+              volumeMounts:
+                - name: data-volumeclaim-template
+                  mountPath: /var/lib/clickhouse
+    serviceTemplates:
+      - name: chi-service-template
+        generateName: clickhouse-posthog
+        spec:
+          ports:
+            - name: http
+              port: 8123
+            - name: tcp
+              port: 9000
+          type: NodePort
+    volumeClaimTemplates:
+      - name: data-volumeclaim-template
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: "20Gi"
+---
+# Source: posthog/templates/plugins-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posthog-plugins
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/resource-policy": "keep"
+    "helm.sh/hook-weight": "1"
+spec:
+  selector:
+    matchLabels:
+        app: posthog
+        release: "posthog"
+        role: plugins
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        metrics-enabled: "false"
+        checksum/secrets.yaml: 2b2ce668e40669e348da17379b934d5c4a473e29e94bb6c41b87c2accf7420e9
+      labels:
+        app: posthog
+        release: "posthog"
+        role: plugins
+    spec:
+      serviceAccountName: posthog
+      containers:
+      - name: posthog-plugins
+        image: "posthog/posthog@sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4"
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            ./bin/plugin-server --no-restart-loop
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SENTRY_DSN
+          value: 
+        - name: DEPLOYMENT
+          value: helm_x_ha
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: posthog-secret
+        - name: DATABASE_URL
+          value: postgres://postgres:postgres@posthog-pgbouncer:6543/posthog
+        - name: USING_PGBOUNCER
+          value: 'true'
+        - name: POSTHOG_REDIS_PASSWORD
+          value: 
+        - name: REDIS_URL
+          value: "redis://:$(POSTHOG_REDIS_PASSWORD)@posthog-posthog-redis-master:6379"
+        - name: POSTHOG_REDIS_HOST
+          value: posthog-posthog-redis-master
+        - name: POSTHOG_REDIS_PORT
+          value: "6379"
+        - name: CLICKHOUSE_DATABASE
+          value: "posthog"
+        - name: CLICKHOUSE_HOST
+          value: clickhouse-posthog
+        - name: CLICKHOUSE_USER
+          value: "admin"
+        - name: CLICKHOUSE_PASSWORD
+          value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
+        - name: CLICKHOUSE_REPLICATION
+          value: "false"
+        - name: CLICKHOUSE_SECURE
+          value: "false"
+        - name: CLICKHOUSE_VERIFY
+          value: "false"
+        - name: CLICKHOUSE_ASYNC
+          value: "false"
+        - name: CAPTURE_INTERNAL_METRICS
+          value: "true"
+        - name: KAFKA_ENABLED
+          value: "true"
+        - name: KAFKA_HOSTS
+          value: "posthog-posthog-kafka:9092"
+        - name: PLUGIN_SERVER_INGESTION
+          value: 'true'
+        - name: HELM_INSTALL_INFO
+          value: "{\"chart_version\":\"3.3.1\",\"cloud\":\"x\",\"deployment_type\":\"helm\",\"hostname\":null,\"ingress_type\":\"\",\"operation\":\"install\",\"release_name\":\"posthog\",\"release_revision\":1}"
+        - name: ASYNC_EVENT_PROPERTY_USAGE
+          value: "true"
+        - name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
+          value: "86400"
+        resources:
+            {}
+---
+# Source: posthog/templates/web-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata: &metadata
+  name: posthog-app
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/resource-policy": "keep"
+    "helm.sh/hook-weight": "1"
+spec: &spec
+  selector:
+    matchLabels:
+        app: posthog
+        release: "posthog"
+        role: app
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        metrics-enabled: "false"
+        checksum/secrets.yaml: 0f53dcb6b60ba4aad89df5d97c7e80378a682c26136575fe045636211424e9e1
+      labels:
+        app: posthog
+        release: "posthog"
+        role: web
+    spec:
+      serviceAccountName: posthog
+      containers:
+      - name: posthog-web
+        image: "posthog/posthog@sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4"
+        command:
+          - /bin/sh
+          - -c
+          - |
+            ./bin/docker-server
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SITE_URL
+          value: "http://127.0.0.1:8000"
+        - name: DEPLOYMENT
+          value: helm_x_ha
+        - name: SENTRY_DSN
+          value: 
+        - name: DISABLE_SECURE_SSL_REDIRECT
+          value: '1'
+        - name: IS_BEHIND_PROXY
+          value: '1'
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: posthog-secret
+        - name: POSTHOG_DB_USER
+          value: "postgres"
+        - name: POSTHOG_DB_NAME
+          value: "posthog"
+        - name: POSTHOG_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: posthog-posthog-postgresql
+              key: "postgresql-password"
+        - name: POSTHOG_POSTGRES_HOST
+          value: posthog-pgbouncer
+        - name: POSTHOG_POSTGRES_PORT
+          value: "6543"
+        - name: USING_PGBOUNCER
+          value: 'true'
+        - name: POSTHOG_REDIS_PASSWORD
+          value: 
+        - name: POSTHOG_REDIS_HOST
+          value: posthog-posthog-redis-master
+        - name: POSTHOG_REDIS_PORT
+          value: "6379"
+        - name: EMAIL_HOST
+          value: "smtp.eu.mailgun.org"
+        - name: EMAIL_PORT
+          value: "587"
+        - name: EMAIL_HOST_USER
+          value: ""
+        - name: EMAIL_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: smtp-password
+        - name: EMAIL_USE_TLS
+          value: "true"
+        - name: EMAIL_USE_SSL
+          value: "false"
+        - name: DEFAULT_FROM_EMAIL
+          value: "hey@posthog.com"
+        - name: PRIMARY_DB
+          value: clickhouse
+        - name: CLICKHOUSE_DATABASE
+          value: "posthog"
+        - name: CLICKHOUSE_HOST
+          value: clickhouse-posthog
+        - name: CLICKHOUSE_USER
+          value: "admin"
+        - name: CLICKHOUSE_PASSWORD
+          value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
+        - name: CLICKHOUSE_REPLICATION
+          value: "false"
+        - name: CLICKHOUSE_SECURE
+          value: "false"
+        - name: CLICKHOUSE_VERIFY
+          value: "false"
+        - name: CLICKHOUSE_ASYNC
+          value: "false"
+        - name: CAPTURE_INTERNAL_METRICS
+          value: "true"
+        - name: KAFKA_URL
+          value: "kafka://posthog-posthog-kafka:9092"
+        - name: PLUGIN_SERVER_INGESTION
+          value: 'true'
+        - name: HELM_INSTALL_INFO
+          value: "{\"chart_version\":\"3.3.1\",\"cloud\":\"x\",\"deployment_type\":\"helm\",\"hostname\":null,\"ingress_type\":\"\",\"operation\":\"install\",\"release_name\":\"posthog\",\"release_revision\":1}"
+        - name: ASYNC_EVENT_PROPERTY_USAGE
+          value: "true"
+        - name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
+          value: "86400"
+        - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
+          value: null
+        - name: SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+          value: null
+        - name: SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS
+          value: posthog.com
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /_health/
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /_health/
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 50
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
+        resources:
+            {}
+---
+# Source: posthog/templates/workers-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posthog-worker
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/resource-policy": "keep" 
+    "helm.sh/hook-weight": "1"
+spec:
+  selector:
+    matchLabels:
+        app: posthog
+        release: "posthog"
+        role: worker
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        metrics-enabled: "false"
+        checksum/secrets.yaml: 63c0eef31a69cb4ad13e82cac21bc6e2e29cfe7e46ebdb5b6d953d1b91351385
+      labels:
+        app: posthog
+        release: "posthog"
+        role: worker
+    spec:
+      serviceAccountName: posthog
+      containers:
+      - name: posthog-workers
+        image: "posthog/posthog@sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4"
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -c
+          - |
+            ./bin/docker-worker-celery
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SITE_URL
+          value: "http://127.0.0.1:8000"
+        - name: DEPLOYMENT
+          value: helm_x_ha
+        - name: SENTRY_DSN
+          value: 
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: posthog-secret
+        - name: POSTHOG_DB_USER
+          value: "postgres"
+        - name: POSTHOG_DB_NAME
+          value: "posthog"
+        - name: POSTHOG_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: posthog-posthog-postgresql
+              key: "postgresql-password"
+        - name: POSTHOG_POSTGRES_HOST
+          value: posthog-pgbouncer
+        - name: POSTHOG_POSTGRES_PORT
+          value: "6543"
+        - name: USING_PGBOUNCER
+          value: 'true'
+        - name: POSTHOG_REDIS_PASSWORD
+          value: 
+        - name: POSTHOG_REDIS_HOST
+          value: posthog-posthog-redis-master
+        - name: POSTHOG_REDIS_PORT
+          value: "6379"
+        - name: EMAIL_HOST
+          value: "smtp.eu.mailgun.org"
+        - name: EMAIL_PORT
+          value: "587"
+        - name: EMAIL_HOST_USER
+          value: ""
+        - name: EMAIL_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: smtp-password
+        - name: EMAIL_USE_TLS
+          value: "true"
+        - name: EMAIL_USE_SSL
+          value: "false"
+        - name: DEFAULT_FROM_EMAIL
+          value: "hey@posthog.com"
+        - name: PRIMARY_DB
+          value: clickhouse
+        - name: CLICKHOUSE_DATABASE
+          value: "posthog"
+        - name: CLICKHOUSE_HOST
+          value: clickhouse-posthog
+        - name: CLICKHOUSE_USER
+          value: "admin"
+        - name: CLICKHOUSE_PASSWORD
+          value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
+        - name: CLICKHOUSE_REPLICATION
+          value: "false"
+        - name: CLICKHOUSE_SECURE
+          value: "false"
+        - name: CLICKHOUSE_VERIFY
+          value: "false"
+        - name: CLICKHOUSE_ASYNC
+          value: "false"
+        - name: CAPTURE_INTERNAL_METRICS
+          value: "true"
+        - name: KAFKA_URL
+          value: "kafka://posthog-posthog-kafka:9092"
+        - name: PLUGIN_SERVER_INGESTION
+          value: 'true'
+        - name: HELM_INSTALL_INFO
+          value: "{\"chart_version\":\"3.3.1\",\"cloud\":\"x\",\"deployment_type\":\"helm\",\"hostname\":null,\"ingress_type\":\"\",\"operation\":\"install\",\"release_name\":\"posthog\",\"release_revision\":1}"
+        - name: ASYNC_EVENT_PROPERTY_USAGE
+          value: "true"
+        - name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
+          value: "86400"
+        resources:
+            {}
+---
+# Source: posthog/templates/migrate.job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "posthog-migrate"
+  labels:
+    app: posthog
+    chart: "posthog-3.3.1"
+    release: "posthog"
+    heritage: "Helm"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-delete-policy": "hook-succeeded"
+    "helm.sh/hook-weight": "0"
+spec:
+  template:
+    metadata:
+      name: "posthog-migrate"
+      annotations:
+        checksum/secrets.yaml: 4a25e41490abd5ecaf5d80fa2eb4ca04e5c36db74fc7817118f7163ecd91e91d
+      labels:
+        app: posthog
+        release: "posthog"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: migrate-job
+        image: "posthog/posthog@sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4"
+        command:
+          - /bin/sh
+          - -c
+          - |
+            python manage.py notify_helm_install || true
+            python manage.py migrate
+            python manage.py migrate_clickhouse
+        env:
+        - name: SENTRY_DSN
+          value: 
+        - name: ASYNC_EVENT_PROPERTY_USAGE
+          value: "true"
+        - name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
+          value: "86400"
+        - name: SITE_URL
+          value: "http://127.0.0.1:8000"
+        - name: DEPLOYMENT
+          value: helm_x_ha
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: posthog-secret
+        - name: POSTHOG_DB_USER
+          value: "postgres"
+        - name: POSTHOG_DB_NAME
+          value: "posthog"
+        - name: POSTHOG_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: posthog-posthog-postgresql
+              key: "postgresql-password"
+        - name: POSTHOG_POSTGRES_HOST
+          value: posthog-pgbouncer
+        - name: POSTHOG_POSTGRES_PORT
+          value: "6543"
+        - name: USING_PGBOUNCER
+          value: 'true'
+        - name: POSTHOG_REDIS_PASSWORD
+          value: 
+        - name: POSTHOG_REDIS_HOST
+          value: posthog-posthog-redis-master
+        - name: POSTHOG_REDIS_PORT
+          value: "6379"
+        - name: EMAIL_HOST
+          value: "smtp.eu.mailgun.org"
+        - name: EMAIL_PORT
+          value: "587"
+        - name: EMAIL_HOST_USER
+          value: ""
+        - name: EMAIL_HOST_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: posthog
+              key: smtp-password
+        - name: CLICKHOUSE_INITIAL_MIGRATIONS
+          value: '1'
+        - name: PRIMARY_DB
+          value: clickhouse
+        - name: CLICKHOUSE_DATABASE
+          value: "posthog"
+        - name: CLICKHOUSE_HOST
+          value: clickhouse-posthog
+        - name: CLICKHOUSE_USER
+          value: "admin"
+        - name: CLICKHOUSE_PASSWORD
+          value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
+        - name: CLICKHOUSE_REPLICATION
+          value: "false"
+        - name: CLICKHOUSE_SECURE
+          value: "false"
+        - name: CLICKHOUSE_VERIFY
+          value: "false"
+        - name: CLICKHOUSE_ASYNC
+          value: "false"
+        - name: CAPTURE_INTERNAL_METRICS
+          value: "true"
+        - name: KAFKA_URL
+          value: "kafka://posthog-posthog-kafka:9092"
+        - name: EMAIL_USE_TLS
+          value: "true"
+        - name: EMAIL_USE_SSL
+          value: "false"
+        - name: DEFAULT_FROM_EMAIL
+          value: "hey@posthog.com"
+        - name: HELM_INSTALL_INFO
+          value: "{\"chart_version\":\"3.3.1\",\"cloud\":\"x\",\"deployment_type\":\"helm\",\"hostname\":null,\"ingress_type\":\"\",\"operation\":\"install\",\"release_name\":\"posthog\",\"release_revision\":1}"
+        resources:
+          {}
