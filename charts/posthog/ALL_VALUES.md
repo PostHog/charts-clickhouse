@@ -80,9 +80,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | plugins.nodeSelector | object | `{}` |    cpu: 300m   memory: 500Mi requests:   cpu: 100m   memory: 100Mi |
 | plugins.tolerations | list | `[]` |  |
 | plugins.affinity | object | `{}` |  |
-| email.from_email | string | `"hey@posthog.com"` | Outbound email sender |
-| email.host | string | `"smtp.eu.mailgun.org"` | STMP host |
-| email.port | int | `587` | STMP port |
+| email.from_email | string | `nil` | Outbound email sender |
+| email.host | string | `nil` | STMP host |
+| email.port | string | `nil` | STMP port |
 | email.user | string | `nil` | STMP login user |
 | email.password | string | `nil` | STMP password |
 | email.use_tls | bool | `true` | SMTP TLS for security |
