@@ -215,11 +215,11 @@ plugins:
 # Outbound E-mails
 email:
   # -- Outbound email sender
-  from_email: hey@posthog.com
+  from_email:
   # -- STMP host
-  host: smtp.eu.mailgun.org
+  host:
   # -- STMP port
-  port: 587
+  port:
   # -- STMP login user
   user:
   # -- STMP password
