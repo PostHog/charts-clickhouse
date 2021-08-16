@@ -43,8 +43,6 @@ spec:
       admin/networks/ip: "0.0.0.0/0"
       admin/profile: default
       admin/quota: default
-      default/password: {{ .Values.clickhouse.password }}
-      default/networks/ip: "0.0.0.0/0"
     profiles:
       default/allow_experimental_window_functions: "1"
     clusters:
