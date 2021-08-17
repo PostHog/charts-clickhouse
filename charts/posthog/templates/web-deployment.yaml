@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "posthog.fullname" . }}-app
+  name: {{ template "posthog.fullname" . }}-web
   labels:
     app: {{ template "posthog.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
@@ -18,7 +18,7 @@ spec:
     matchLabels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: app
+        role: web
   {{- if not .Values.web.hpa.enabled }}
   replicas: {{ .Values.web.replicacount }}
   {{- end }}
@@ -33,7 +33,7 @@ spec:
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: app
+        role: web
         {{- if (eq (default .Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
@@ -62,7 +62,7 @@ spec:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}-app
+      - name: {{ .Chart.Name }}-web
         image: {{ template "posthog.image.fullPath" . }}
         command:
           - /bin/sh
@@ -211,18 +211,6 @@ spec:
         resources:
 {{ toYaml .Values.web.resources | indent 12 }}
 ---
-## TODO: figure out how I can share the code and not rewrite everything
-# there's a few more of those
-##apiVersion: apps/v1
-##kind: Deployment
-##metadata:
-##  <<: *metadata
-##  name: {{ template "posthog.fullname" . }}-events
-##spec:
-##  <<: *spec
-##  selector:
-##    matchLabels:
-##        role: events
 apiVersion: apps/v1
 kind: Deployment
 metadata:
