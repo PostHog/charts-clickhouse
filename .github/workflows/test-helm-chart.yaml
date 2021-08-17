@@ -96,7 +96,7 @@ jobs:
 
       - name: Setup for ingestion test
         run: |
-          export WEB_POD=$(kubectl get pods -l role=app -o jsonpath="{.items[].metadata.name}")
+          export WEB_POD=$(kubectl get pods -l role=web -o jsonpath="{.items[].metadata.name}")
           kubectl exec $WEB_POD -- python manage.py setup_dev --no-data
 
           echo "POSTHOG_WEB_HOSTNAME=$(kubectl get svc posthog-web -o jsonpath="{.spec.clusterIP}")" >> $GITHUB_ENV
