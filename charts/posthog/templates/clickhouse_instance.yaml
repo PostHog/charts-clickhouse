@@ -85,7 +85,9 @@ spec:
             fsGroup: 101
           containers:
             - name: clickhouse
-              image: yandex/clickhouse-server:21.6.5
+              # KEEP CLICKHOUSE-SERVER VERSION IN SYNC WITH
+              # https://github.com/PostHog/posthog/edit/master/ee/docker-compose.ch.yml#L17
+              image: yandex/clickhouse-server:21.6.5.37
               command:
                 - /bin/bash
                 - -c
