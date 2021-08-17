@@ -86,7 +86,7 @@ spec:
           containers:
             - name: clickhouse
               # KEEP CLICKHOUSE-SERVER VERSION IN SYNC WITH
-              # https://github.com/PostHog/posthog/edit/master/ee/docker-compose.ch.yml#L17
+              # https://github.com/PostHog/posthog/tree/master/ee/docker-compose.ch.yml#L17
               image: yandex/clickhouse-server:21.6.5
               command:
                 - /bin/bash
