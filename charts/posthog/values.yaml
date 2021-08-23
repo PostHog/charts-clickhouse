@@ -55,6 +55,10 @@ pgbouncer:
   replicacount: 1
   # -- Additional env vars to be added to the pgbouncer deployment
   env: []
+  # -- Additional volumeMounts to be added to the pgbouncer deployment
+  extraVolumeMounts: []
+  # -- Additional volumes to be added to the pgbouncer deployment
+  extraVolumes: []
 
 web:
   # -- Web horizontal pod autoscaler settings

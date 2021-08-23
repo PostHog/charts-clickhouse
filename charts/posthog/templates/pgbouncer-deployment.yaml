@@ -81,3 +81,9 @@ spec:
             port: 6543
           initialDelaySeconds: 15
           periodSeconds: 20
+      {{- if .Values.pgbouncer.extraVolumeMounts }}
+        volumeMounts: {{- toYaml .Values.pgbouncer.extraVolumeMounts | nindent 8 }}
+      {{- end }}
+    {{- if .Values.pgbouncer.extraVolumes }}
+      volumes: {{- toYaml .Values.pgbouncer.extraVolumes | nindent 6 }}
+    {{- end }}
