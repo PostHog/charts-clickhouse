@@ -53,6 +53,8 @@ pgbouncer:
     maxpods: 10
   # -- How many replicas of pgbouncer to run. Ignored if hpa is used
   replicacount: 1
+  # -- Additional env vars to be added to the pgbouncer deployment
+  env: []
 
 web:
   # -- Web horizontal pod autoscaler settings
