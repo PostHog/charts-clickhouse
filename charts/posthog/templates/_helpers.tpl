@@ -54,6 +54,19 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
+{{- define "posthog.zookeeper.fullname" -}}
+{{- if .Values.zookeeper.fullnameOverride -}}
+{{- .Values.zookeeper.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default .Chart.Name .Values.zookeeper.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Set the posthog image
 */}}
@@ -136,7 +149,7 @@ Set postgres URL
 Set zookeeper host
 */}}
 {{- define "posthog.zookeeper.host" -}}
-    {{- template "posthog.fullname" . }}-posthog-zookeeper
+    {{- template "posthog.zookeeper.fullname" . }}
 {{- end -}}
 
 {{/*
