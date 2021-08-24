@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "posthog.fullname" . }}-web
+  name: {{ template "posthog.fullname" . }}-events
   annotations:
    {{- range $key, $value := .Values.service.annotations }}
      {{ $key }}: {{ $value | quote }}
@@ -31,7 +31,7 @@ spec:
 {{- end }}
   selector:
     app: {{ template "posthog.fullname" . }}
-    role: web
+    role: events
   {{- with .Values.service.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
     {{- toYaml . | nindent 4 }}
