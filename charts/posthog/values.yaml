@@ -474,6 +474,11 @@ clickhouse:
   #   requests:
   #     cpu: 4000m
   #     memory: 16Gi
+  securityContext:
+    enabled: true
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
 
 ## Prometheus Exporter / Metrics
 ##

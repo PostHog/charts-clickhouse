@@ -101,6 +101,9 @@ spec:
               persistentVolumeClaim:
                 claimName: {{ .Values.clickhouse.persistentVolumeClaim }}
           {{- end }}
+          {{- if .Values.clickhouse.securityContext.enabled }}
+          securityContext: {{- omit .Values.clickhouse.securityContext "enabled" | toYaml | nindent 10 }}
+          {{- end }}
           containers:
             - name: clickhouse
               # KEEP CLICKHOUSE-SERVER VERSION IN SYNC WITH
