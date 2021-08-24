@@ -82,12 +82,13 @@ spec:
               name: {{ template "posthog.postgresql.secret" . }}
             {{- end }}
               key: {{ template "posthog.postgresql.secretKey" . }}
+        # Connect directly to postgres (without pgbouncer) to avoid statement_timeout for longer-running queries
         - name: POSTHOG_POSTGRES_HOST
-          value: {{ template "posthog.pgbouncer.host" . }}
+          value: {{ template "posthog.postgresql.host" . }}
         - name: POSTHOG_POSTGRES_PORT
-          value: {{ include "posthog.pgbouncer.port" . | quote }}
+          value: {{ include "posthog.postgresql.port" . | quote }}
         - name: USING_PGBOUNCER
-          value: 'true'
+          value: 'false'
           {{- if or (.Values.redis.enabled) (.Values.redis.password) }}
         - name: POSTHOG_REDIS_PASSWORD
           value: {{ .Values.redis.password | quote }}
