@@ -57,11 +57,7 @@ spec:
       - name: {{ .Chart.Name }}-beat
         image: {{ template "posthog.image.fullPath" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command:
-          - /bin/sh
-          - -c
-          - |
-            ./bin/docker-worker-beat
+        command: {{- toYaml .Values.beat.command | nindent 8 }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
         env:

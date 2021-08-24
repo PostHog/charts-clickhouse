@@ -150,6 +150,12 @@ beat:
   # schedulerName:
   # Optional extra labels for pod, i.e. redis-client: "true"
   # podLabels: []
+  # -- Command to run in beat deployment
+  command:
+  - /bin/sh
+  - -c
+  - |
+    ./bin/docker-worker-beat
 
 worker:
   hpa:
