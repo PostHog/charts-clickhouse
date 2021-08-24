@@ -402,6 +402,11 @@ clickhouse:
     # servers:
       # - host: posthog-posthog-zookeeper
         # port: 2181
+  securityContext:
+    enabled: true
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
 
 
 ## Prometheus Exporter / Metrics

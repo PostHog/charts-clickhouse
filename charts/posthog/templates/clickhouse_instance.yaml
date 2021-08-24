@@ -79,10 +79,9 @@ spec:
     podTemplates:
       - name: pod-template-with-volumes
         spec:
-          securityContext:
-            runAsUser: 101
-            runAsGroup: 101
-            fsGroup: 101
+          {{- if .Values.clickhouse.securityContext.enabled }}
+          securityContext: {{- omit .Values.clickhouse.securityContext "enabled" | toYaml | nindent 10 }}
+          {{- end }}
           containers:
             - name: clickhouse
               # KEEP CLICKHOUSE-SERVER VERSION IN SYNC WITH
