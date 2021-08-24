@@ -256,13 +256,10 @@ Set kafka fullname
 {{- define "posthog.kafka.fullname" -}}
 {{- if .Values.kafka.fullnameOverride -}}
 {{- .Values.kafka.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else if .Values.kafka.nameOverride -}}
+{{- printf "%s-%s" .Release.Name .Values.kafka.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- $name := default .Chart.Name .Values.kafka.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name "posthog-kafka" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
+{{- printf "%s-%s" (include "posthog.fullname" .) "kafka" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 
