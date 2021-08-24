@@ -22,12 +22,15 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouseOperator.useNodeSelector | bool | `false` | If enabled, operator will prefer k8s nodes with tag `clickhouse:true` |
 | clickhouseOperator.serviceType | string | `"NodePort"` | Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost) |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, beat, worker, and plugin server) |
-| pgbouncer | object | `{"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
+| pgbouncer | object | `{"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
 | pgbouncer.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for pgbouncer -- This experimental and set up based on cpu utilization -- Adding pgbouncers can cause running out of connections for Postgres |
 | pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for pgbouncer |
 | pgbouncer.hpa.minpods | int | `1` | Min pods for pgbouncer |
 | pgbouncer.hpa.maxpods | int | `10` | Max pods for pgbouncer |
 | pgbouncer.replicacount | int | `1` | How many replicas of pgbouncer to run. Ignored if hpa is used |
+| pgbouncer.env | list | `[]` | Additional env vars to be added to the pgbouncer deployment |
+| pgbouncer.extraVolumeMounts | list | `[]` | Additional volumeMounts to be added to the pgbouncer deployment |
+| pgbouncer.extraVolumes | list | `[]` | Additional volumes to be added to the pgbouncer deployment |
 | web.hpa | object | `{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1}` | Web horizontal pod autoscaler settings |
 | web.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for web -- This experimental |
 | web.hpa.cputhreshold | int | `60` | CPU threshold percent for the web |
