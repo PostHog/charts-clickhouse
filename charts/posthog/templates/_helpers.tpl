@@ -31,26 +31,30 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "posthog.postgresql.fullname" -}}
 {{- if .Values.postgresql.fullnameOverride -}}
 {{- .Values.postgresql.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else if .Values.postgresql.nameOverride -}}
+{{- printf "%s-%s" .Release.Name .Values.postgresql.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- $name := default .Chart.Name .Values.postgresql.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name "posthog-postgresql" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
+{{- printf "%s-%s" (include "posthog.fullname" .) "postgresql" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "posthog.redis.fullname" -}}
 {{- if .Values.redis.fullnameOverride -}}
 {{- .Values.redis.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else if .Values.redis.nameOverride -}}
+{{- printf "%s-%s" .Release.Name .Values.redis.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
-{{- $name := default .Chart.Name .Values.redis.nameOverride -}}
-{{- if contains $name .Release.Name -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" .Release.Name "posthog-redis" | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" (include "posthog.fullname" .) "redis" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+{{- end -}}
+
+{{- define "posthog.zookeeper.fullname" -}}
+{{- if .Values.zookeeper.fullnameOverride -}}
+{{- .Values.zookeeper.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else if .Values.zookeeper.nameOverride -}}
+{{- printf "%s-%s" .Release.Name .Values.zookeeper.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" (include "posthog.fullname" .) "zookeeper" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 
@@ -136,7 +140,7 @@ Set postgres URL
 Set zookeeper host
 */}}
 {{- define "posthog.zookeeper.host" -}}
-    {{- template "posthog.fullname" . }}-posthog-zookeeper
+{{- include "posthog.zookeeper.fullname" . -}}
 {{- end -}}
 
 {{/*
