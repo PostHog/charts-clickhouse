@@ -99,7 +99,8 @@ jobs:
           export WEB_POD=$(kubectl get pods -l role=web -o jsonpath="{.items[].metadata.name}")
           kubectl exec $WEB_POD -- python manage.py setup_dev --no-data
 
-          echo "POSTHOG_HOSTNAME=$(kubectl get svc posthog -o jsonpath="{.spec.clusterIP}")" >> $GITHUB_ENV
+          echo "POSTHOG_WEB_HOSTNAME=$(kubectl get svc posthog-web -o jsonpath="{.spec.clusterIP}")" >> $GITHUB_ENV
+          echo "POSTHOG_EVENTS_HOSTNAME=$(kubectl get svc posthog-events -o jsonpath="{.spec.clusterIP}")" >> $GITHUB_ENV
 
           # Sleep until web service is ready to respond
           sleep 20

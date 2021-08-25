@@ -50,9 +50,31 @@ spec:
     - http:
   {{- end }}
         paths:
-          - backend:
-              serviceName: {{ template "posthog.fullname" . }}
+          - pathType: Prefix
+            path: "/"
+            backend:
+              serviceName: {{ template "posthog.fullname" . }}-web
               servicePort: {{ .Values.service.externalPort }}
+          - pathType: Prefix
+            path: "/batch"
+            backend: &INGESTION
+              serviceName: {{ template "posthog.fullname" . }}-events
+              servicePort: {{ .Values.service.externalPort }}
+          - pathType: Prefix
+            path: "/capture"
+            backend: *INGESTION
+          - pathType: Prefix
+            path: "/decide"
+            backend: *INGESTION
+          - pathType: Prefix
+            path: "/e"
+            backend: *INGESTION
+          - pathType: Prefix
+            path: "/track"
+            backend: *INGESTION
+          - pathType: Prefix
+            path: "/s"
+            backend: *INGESTION
 {{- if .Values.ingress.tls }}
 {{ toYaml .Values.ingress.tls | indent 4 }}
 {{- end -}}

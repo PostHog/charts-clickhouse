@@ -28,7 +28,7 @@ export let options = {
 }
 
 export function captureEvents() {
-  const res = http.post(`http://${__ENV.POSTHOG_HOSTNAME}:8000/e/`, JSON.stringify({
+  const res = http.post(`http://${__ENV.POSTHOG_EVENTS_HOSTNAME}:8000/e/`, JSON.stringify({
     api_key: 'e2e_token_1239',
     event: 'k6s_custom_event',
     distinct_id: __VU
@@ -40,7 +40,7 @@ export function captureEvents() {
 }
 
 export function checkIngestion() {
-  const res = http.get(`http://${__ENV.POSTHOG_HOSTNAME}:8000/api/insight/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`, {
+  const res = http.get(`http://${__ENV.POSTHOG_WEB_HOSTNAME}:8000/api/insight/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`, {
     headers: {
       Authorization: `Bearer e2e_demo_api_key`
     }
