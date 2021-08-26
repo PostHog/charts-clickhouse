@@ -286,6 +286,10 @@ ingress:
     enabled: false
     # -- Whether to redirect to TLS with nginx ingress.
     redirectToTLS: true
+  # -- Extra annotations
+  annotations: {}
+  # -- TLS secret to be used by the ingress.
+  secretName:
 
 postgresql:
   # -- Install postgres server on kubernetes (see below)

@@ -32,11 +32,13 @@ metadata:
     {{- end }}
    {{- end }}
 spec:
-  {{- if or (eq (include "ingress.letsencrypt" .) "true") (.Values.ingress.gcp.secretName) }}
+  {{- if or (eq (include "ingress.letsencrypt" .) "true") (or (.Values.ingress.secretName) (.Values.ingress.gcp.secretName)) }}
   tls:
   - hosts:
     - {{ .Values.ingress.hostname }}
-    {{- if eq (include "ingress.letsencrypt" .) "true" }}
+    {{- if .Values.ingress.secretName }}
+    secretName: {{ .Values.ingress.secretName }}
+    {{- else if eq (include "ingress.letsencrypt" .) "true" }}
     secretName: nginx-letsencrypt-{{ template "posthog.fullname" . }}
     {{- else }}
     secretName: {{ .Values.ingress.gcp.secretName }}
