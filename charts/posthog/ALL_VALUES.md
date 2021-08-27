@@ -103,6 +103,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | ingress.letsencrypt | string | `nil` | Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and certManager are enabled otherwise false. |
 | ingress.nginx.enabled | bool | `false` | Whether nginx is enabled |
 | ingress.nginx.redirectToTLS | bool | `true` | Whether to redirect to TLS with nginx ingress. |
+| ingress.annotations | object | `{}` | Extra annotations |
+| ingress.secretName | string | `nil` | TLS secret to be used by the ingress. |
 | postgresql.enabled | bool | `true` | Install postgres server on kubernetes (see below) |
 | postgresql.nameOverride | string | `"posthog-postgresql"` | Name override for postgresql app |
 | postgresql.postgresqlDatabase | string | `"posthog"` | Postgresql database name |
