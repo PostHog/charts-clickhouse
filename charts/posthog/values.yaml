@@ -412,6 +412,7 @@ clickhouse:
     # servers:
       # - host: posthog-posthog-zookeeper
         # port: 2181
+  customStorageClass: ""
 
 
 ## Prometheus Exporter / Metrics

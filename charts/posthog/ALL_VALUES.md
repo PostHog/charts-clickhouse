@@ -148,6 +148,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.secure | bool | `false` |  |
 | clickhouse.verify | bool | `false` |  |
 | clickhouse.async | bool | `false` |  |
+| clickhouse.customStorageClass | string | `""` | Custom Storage Class in k8s |
 | metrics.enabled | bool | `false` | Start an exporter for posthog metrics |
 | metrics.livenessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods livenessProbe settings |
 | metrics.readinessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods readinessProbe settings |

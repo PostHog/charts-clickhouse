@@ -119,7 +119,9 @@ spec:
     volumeClaimTemplates:
       - name: data-volumeclaim-template
         spec:
-          {{- if (eq (.Values.cloud | toString) "gcp" )}}
+          {{- if .Values.clickhouse.customStorageClass }}
+          storageClassName: {{ .Values.clickhouse.customStorageClass }}
+          {{- else if (eq (.Values.cloud | toString) "gcp" )}}
           storageClassName: gce-resizable
           {{- else if (eq (.Values.cloud | toString) "aws") }}
           storageClassName: gp2-resizable
