@@ -14,6 +14,7 @@ jobs:
             contains(github.event.pull_request.labels.*.name, 'bump patch')
             || contains(github.event.pull_request.labels.*.name, 'bump minor')
             || contains(github.event.pull_request.labels.*.name, 'bump major')
+            || contains(github.event.pull_request.labels.*.name, 'deploy gh-pages')
         )
     steps:
       - name: Checkout
