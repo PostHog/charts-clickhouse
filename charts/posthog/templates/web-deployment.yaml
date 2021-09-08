@@ -182,8 +182,6 @@ spec:
         {{- end }}
         - name: HELM_INSTALL_INFO
           value: {{ template "posthog.helmInstallInfo" . }}
-        - name: CHART_VERSION
-          value: {{ .Chart.Version | quote }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 8 }}
 {{- end }}
