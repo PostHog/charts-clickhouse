@@ -1,5 +1,9 @@
 {{- if .Values.ingress.enabled -}}
+{{- if semverCompare ">=1.19.0" .Capabilities.KubeVersion.Version -}}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
 apiVersion: networking.k8s.io/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
  name: {{ template "posthog.fullname" . }}
@@ -55,13 +59,27 @@ spec:
           - pathType: Prefix
             path: "/"
             backend:
+              {{- if semverCompare ">=1.19.0" .Capabilities.KubeVersion.Version }}
+              service:
+                name: {{ template "posthog.fullname" . }}-web
+                port:
+                  number: {{ .Values.service.externalPort }}
+              {{- else }}
               serviceName: {{ template "posthog.fullname" . }}-web
               servicePort: {{ .Values.service.externalPort }}
+              {{- end }}
           - pathType: Prefix
             path: "/batch"
             backend: &INGESTION
+              {{- if semverCompare ">=1.19.0" .Capabilities.KubeVersion.Version }}
+              service:
+                name: {{ template "posthog.fullname" . }}-events
+                port:
+                  number: {{ .Values.service.externalPort }}
+              {{- else }}
               serviceName: {{ template "posthog.fullname" . }}-events
               servicePort: {{ .Values.service.externalPort }}
+              {{- end }}
           - pathType: Prefix
             path: "/capture"
             backend: *INGESTION
