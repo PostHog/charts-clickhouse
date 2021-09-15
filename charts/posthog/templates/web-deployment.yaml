@@ -152,6 +152,14 @@ spec:
           value: {{ default "" .Values.saml.acs_url | quote }}
         - name: SAML_X509_CERT
           value: {{ default "" .Values.saml.x509_cert | quote }}
+        - name: SAML_ATTR_PERMANENT_ID
+          value: {{ default "" .Values.saml.attr_permanent_id | quote }}
+        - name: SAML_ATTR_FIRST_NAME
+          value: {{ default "" .Values.saml.attr_first_name | quote }}
+        - name: SAML_ATTR_LAST_NAME
+          value: {{ default "" .Values.saml.attr_last_name | quote }}
+        - name: SAML_ATTR_EMAIL
+          value: {{ default "" .Values.saml.attr_email | quote }}
         {{- if eq .Values.saml.enforced true }}
           - name: SAML_ENFORCED
             value: '1'
