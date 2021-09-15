@@ -71,17 +71,17 @@ spec:
           description: Client access endpoint
           priority: 1 # show in wide view
           jsonPath: .status.endpoint
-      # TODO return to this feature later
-      # Pruning unknown fields. FEATURE STATE: Kubernetes v1.15
-      # Probably full specification may be needed
-      #  preserveUnknownFields: false
       schema:
         openAPIV3Schema:
           type: object
+          # x-kubernetes-preserve-unknown-fields: true
           properties:
-            spec:
+            status:
               type: object
               x-kubernetes-preserve-unknown-fields: true
+            spec:
+              type: object
+              # x-kubernetes-preserve-unknown-fields: true
               properties:
                 taskID:
                   type: string
@@ -105,6 +105,43 @@ spec:
                     - "off"
                     - "On"
                     - "on"
+                    - "Disable"
+                    - "disable"
+                    - "Enable"
+                    - "enable"
+                    - "Disabled"
+                    - "disabled"
+                    - "Enabled"
+                    - "enabled"
+                restart:
+                  type: string
+                  enum:
+                    - ""
+                    - "RollingUpdate"
+                # Need to be StringBool
+                troubleshoot:
+                  type: string
+                  enum:
+                    # List StringBoolXXX constants from model
+                    - ""
+                    - "0"
+                    - "1"
+                    - "False"
+                    - "false"
+                    - "True"
+                    - "true"
+                    - "No"
+                    - "no"
+                    - "Yes"
+                    - "yes"
+                    - "Off"
+                    - "off"
+                    - "On"
+                    - "on"
+                    - "Disable"
+                    - "disable"
+                    - "Enable"
+                    - "enable"
                     - "Disabled"
                     - "disabled"
                     - "Enabled"
@@ -123,6 +160,70 @@ spec:
                   properties:
                     policy:
                       type: string
+                    configMapPropagationTimeout:
+                      type: integer
+                      minimum: 0
+                      maximum: 3600
+                    cleanup:
+                      type: object
+                      nullable: true
+                      properties:
+                        unknownObjects:
+                          type: object
+                          nullable: true
+                          properties:
+                            statefulSet:
+                              type: string
+                              enum:
+                                # List ObjectsCleanupXXX constants from model
+                                - "Retain"
+                                - "Delete"
+                            pvc:
+                              type: string
+                              enum:
+                                # List ObjectsCleanupXXX constants from model
+                                - "Retain"
+                                - "Delete"
+                            configMap:
+                              type: string
+                              enum:
+                                # List ObjectsCleanupXXX constants from model
+                                - "Retain"
+                                - "Delete"
+                            service:
+                              type: string
+                              enum:
+                                # List ObjectsCleanupXXX constants from model
+                                - "Retain"
+                                - "Delete"
+                        reconcileFailedObjects:
+                          type: object
+                          nullable: true
+                          properties:
+                            statefulSet:
+                              type: string
+                              enum:
+                                # List ObjectsCleanupXXX constants from model
+                                - "Retain"
+                                - "Delete"
+                            pvc:
+                              type: string
+                              enum:
+                                # List ObjectsCleanupXXX constants from model
+                                - "Retain"
+                                - "Delete"
+                            configMap:
+                              type: string
+                              enum:
+                                # List ObjectsCleanupXXX constants from model
+                                - "Retain"
+                                - "Delete"
+                            service:
+                              type: string
+                              enum:
+                                # List ObjectsCleanupXXX constants from model
+                                - "Retain"
+                                - "Delete"
                 defaults:
                   type: object
                   nullable: true
@@ -147,6 +248,10 @@ spec:
                         - "off"
                         - "On"
                         - "on"
+                        - "Disable"
+                        - "disable"
+                        - "Enable"
+                        - "enable"
                         - "Disabled"
                         - "disabled"
                         - "Enabled"
@@ -336,6 +441,10 @@ spec:
                                         - "off"
                                         - "On"
                                         - "on"
+                                        - "Disable"
+                                        - "disable"
+                                        - "Enable"
+                                        - "enable"
                                         - "Disabled"
                                         - "disabled"
                                         - "Enabled"
