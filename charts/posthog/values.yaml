@@ -30,7 +30,6 @@ clickhouseOperator:
   # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
   serviceType: NodePort
 
-
 # -- Env vars to throw into every deployment (web, beat, worker, and plugin server)
 env:
   - name: ASYNC_EVENT_PROPERTY_USAGE
@@ -242,6 +241,27 @@ email:
   # existingSecret: secret-name
   # existingSecretKey: smtp-password
 
+# SAML
+saml:
+  # -- Whether password-based login is disabled and users automatically redirected to SAML login. Requires SAML to be properly configured.
+  enforced: false
+  # -- Whether SAML should be completely disabled. If set at build time, this will also prevent SAML dependencies from being installed.
+  disabled: false
+  # -- Entity ID from your SAML IdP.
+  entity_id:
+  # -- Assertion Consumer Service URL from your SAML IdP.
+  acs_url:
+  # -- Public X509 certificate from your SAML IdP to validate SAML assertions
+  x509_cert:
+  # -- Name of attribute that contains the permanent ID of the user in SAML assertions.
+  attr_permanent_id:
+  # -- Name of attribute that contains the first name of the user in SAML assertions.
+  attr_first_name:
+  # -- Name of attribute that contains the last name of the user in SAML assertions.
+  attr_last_name:
+  # -- Name of attribute that contains the email of the user in SAML assertions.
+  attr_email:
+
 # -- Name of the service and what port to expose on the pod. Don't change these unless you know what you're doing
 service:
   name: posthog
@@ -381,7 +401,7 @@ kafka:
     # -- URL for zookeeper. Only set when internal zookeeper is disabled
     # -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper
     servers:
-    - posthog-posthog-zookeeper:2181
+      - posthog-posthog-zookeeper:2181
 
 zookeeper:
   # -- Install zookeeper on kubernetes
@@ -408,11 +428,10 @@ clickhouse:
   verify: false
   async: false
   # externalZookeeper:
-    # -- URL for zookeeper.
-    # servers:
-      # - host: posthog-posthog-zookeeper
-        # port: 2181
-
+  # -- URL for zookeeper.
+  # servers:
+  # - host: posthog-posthog-zookeeper
+  # port: 2181
 
 ## Prometheus Exporter / Metrics
 ##
@@ -510,8 +529,7 @@ hooks:
     # -- Env variables for migate hooks
     env: []
     # -- Hook job resource limits/requests
-    resources:
-      {}
+    resources: {}
 
 serviceAccount:
   # -- Configures if a ServiceAccount with this name should be created
