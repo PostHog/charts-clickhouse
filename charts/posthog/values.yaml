@@ -248,18 +248,25 @@ saml:
   # -- Whether SAML should be completely disabled. If set at build time, this will also prevent SAML dependencies from being installed.
   disabled: false
   # -- Entity ID from your SAML IdP.
+  # entity_id: id-from-idp-5f9d4e-47ca-5080
   entity_id:
   # -- Assertion Consumer Service URL from your SAML IdP.
+  # acs_url: https://mysamlidp.com/saml2
   acs_url:
   # -- Public X509 certificate from your SAML IdP to validate SAML assertions
+  # x509_cert: MIID3DCCAsSgAwIBAgIUdriHo8qmAU1I0gxsI7cFZHmna38wDQYJKoZIhvcNAQEF\nBQAwRTEQMA4GA1UECgwHUG9zdEhvZzEVMBMGA1UECwwMT25lTG9naW4gSWRQMRow\nGAYDVQQDDBFPbmVMb2dpbiBBY2NvdW50IDAeFw0yMTA4MTYyMTUyMzNaFw0yNjA4\nMTYyMTUyMzNaMEUxEDAOBgNVBAoMB1Bvc3RIb2cxFTATBgNVBAsMDE9uZUxvZ2luIElkUDEaMBgGA1UEAwwRT25lTG9naW4gQWNjb3VudCAwggEiMA0GCSqGSIb3DQEB\nAQUAA4IBDwAwggEKAoIBAQDEfUWFIU38ztF2EgijVsIbnlB8OIwkjZU8c34B9VwZ\nBQQUSxbrkuT9AX/5O27G04TBCHFZsXRId+ABSjVo8daCPu0d38Quo9KS3V3627Nw\nYcTYsje95lB02E/PgfiEQ6ZGCOV0P4xY9C99d26PoYTcoMT1S73jDDMOFtoD5WXG\nZsKqwBks1jbLkv6RYoFBlZX00aGzOXDzUXI59/0c15KR4EzgTad0t6CU7X0HZ2Qf\nxGUiRb7hDLvgSby0SzpQpYUyYDnN9aSNYzpu1hiyIqrhQ7kZNy7LyGBz0UIuIImF\npF6A3bzzrR4wdacFY9U0vmqFXXcepxuT5p2UyAxwbLeDAgMBAAGjgcMwgcAwDAYD\nVR0TAQH/BAIwADAdBgNVHQ4EFgQURLVVKanZPoXGEfYr1HmlaCEoD54wgYAGA1Ud\nIwR5MHeAFES1VSmp2T6FxhH2K9R5pWghKA+eoUmkRzBFMRAwDgYDVQQKDAdQb3N0\nSG9nMRUwEwYDVQQLDAxPbmVMb2dpbiBJZFAxGjAYBgNVBAMMEU9uZUxvZ2luIEFj\nY291bnQgghR2uIejyqYBTUjSDGwjtwVkeadrfzAOBgNVHQ8BAf8EBAMCB4AwDQYJ\nKoZIhvcNAQEFBQADggEBALP5lhlcV8avbnVnqO7PBtlS2mVOJ2B7obm50OaJCbRh\nt0I/dcNssWhT31/zmtNfKtrFicNImlKhdirApxpIp1WLEFY01a40GLmO6FG/WVvB\nEzwXonWP+cP8jYQnqZ15JkuHjP3DYJuOak2GqAJAfaGO67q6IkRZzRq6UwEUgNJD\nTlcsJAFaJDrcw07TY3mRFragdzGC7Xt/CM6r/0seY3+VBwMUMiJlvawcyQxap7om\nEdgmQkJA8Dk6f+geI+U7jV3orkPiofBJi9K6cp5Fd9usut8jwi3GYg2wExNGbhF4\nwlMD1LOhymQGBnTXPk+000nkBnYdqEnqXzVpDiCG1Pc=
   x509_cert:
   # -- Name of attribute that contains the permanent ID of the user in SAML assertions.
+  # attr_permanent_id: nameID
   attr_permanent_id:
   # -- Name of attribute that contains the first name of the user in SAML assertions.
+  # attr_first_name: firstName
   attr_first_name:
   # -- Name of attribute that contains the last name of the user in SAML assertions.
+  # attr_last_name: lastName
   attr_last_name:
   # -- Name of attribute that contains the email of the user in SAML assertions.
+  # attr_email: email
   attr_email:
 
 # -- Name of the service and what port to expose on the pod. Don't change these unless you know what you're doing
