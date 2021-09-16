@@ -429,9 +429,9 @@ clickhouse:
   async: false
   # externalZookeeper:
     # -- URL for zookeeper.
-  # servers:
-    # - host: posthog-posthog-zookeeper
-    # port: 2181
+    # servers:
+      # - host: posthog-posthog-zookeeper
+      # - port: 2181
 
 ## Prometheus Exporter / Metrics
 ##
