@@ -161,12 +161,12 @@ spec:
         - name: SAML_ATTR_EMAIL
           value: {{ default "" .Values.saml.attr_email | quote }}
         {{- if eq .Values.saml.enforced true }}
-          - name: SAML_ENFORCED
-            value: '1'
+        - name: SAML_ENFORCED
+          value: '1'
         {{- end }}
         {{- if eq .Values.saml.disabled true }}
-          - name: SAML_DISABLED
-            value: '1'
+        - name: SAML_DISABLED
+          value: '1'
         {{- end }}
         {{- if .Values.clickhouse.enabled }}
         - name: PRIMARY_DB
