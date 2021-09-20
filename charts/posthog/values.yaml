@@ -248,10 +248,10 @@ saml:
   # -- Whether SAML should be completely disabled. If set at build time, this will also prevent SAML dependencies from being installed.
   disabled: false
   # -- Entity ID from your SAML IdP.
-  # entity_id: id-from-idp-5f9d4e-47ca-5080
+  # entity_id: "id-from-idp-5f9d4e-47ca-5080"
   entity_id:
   # -- Assertion Consumer Service URL from your SAML IdP.
-  # acs_url: https://mysamlidp.com/saml2
+  # acs_url: "https://mysamlidp.com/saml2"
   acs_url:
   # -- Public X509 certificate from your SAML IdP to validate SAML assertions
   # x509_cert: |
@@ -278,16 +278,16 @@ saml:
     # wlMD1LOhymQGBnTXPk+000nkBnYdqEnqXzVpDiCG1Pc=
   x509_cert:
   # -- Name of attribute that contains the permanent ID of the user in SAML assertions.
-  # attr_permanent_id: nameID
+  # attr_permanent_id: "nameID"
   attr_permanent_id:
   # -- Name of attribute that contains the first name of the user in SAML assertions.
-  # attr_first_name: firstName
+  # attr_first_name: "firstName"
   attr_first_name:
   # -- Name of attribute that contains the last name of the user in SAML assertions.
-  # attr_last_name: lastName
+  # attr_last_name: "lastName"
   attr_last_name:
   # -- Name of attribute that contains the email of the user in SAML assertions.
-  # attr_email: email
+  # attr_email: "email"
   attr_email:
 
 # -- Name of the service and what port to expose on the pod. Don't change these unless you know what you're doing
