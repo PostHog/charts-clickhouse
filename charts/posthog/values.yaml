@@ -429,7 +429,7 @@ kafka:
     # -- URL for zookeeper. Only set when internal zookeeper is disabled
     # -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper
     servers:
-        - posthog-posthog-zookeeper:2181
+    - posthog-posthog-zookeeper:2181
 
 zookeeper:
   # -- Install zookeeper on kubernetes
