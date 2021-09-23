@@ -84,6 +84,10 @@ spec:
       {{- if .Values.pgbouncer.extraVolumeMounts }}
         volumeMounts: {{- toYaml .Values.pgbouncer.extraVolumeMounts | nindent 8 }}
       {{- end }}
+{{- if .Values.pgbouncer.resources }}
+        resources:
+{{ toYaml .Values.pgbouncer.resources | indent 12 }}
+{{- end }}
     {{- if .Values.pgbouncer.extraVolumes }}
       volumes: {{- toYaml .Values.pgbouncer.extraVolumes | nindent 6 }}
     {{- end }}
