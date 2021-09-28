@@ -29,6 +29,8 @@ clickhouseOperator:
   useNodeSelector: false
   # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
   serviceType: NodePort
+  # -- Optional: Used to manually specify a persistent volume claim. When specified the cloud specific storage class will not be provisioned
+  persistentVolumeClaim:
 
 # -- Env vars to throw into every deployment (web, beat, worker, and plugin server)
 env:

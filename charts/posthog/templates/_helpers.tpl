@@ -243,6 +243,16 @@ Set clickhouse fullname
 {{- end -}}
 
 {{/*
+Set clickhouse volume claim
+*/}}
+{{- define "clickhouseOperator.persistentVolumeClaim" -}}
+{{- if ne (.Values.clickhouseOperator.persistentVolumeClaim | toString) "<nil>" -}}
+  {{ .Values.clickhouseOperator.persistentVolumeClaim }}
+{{- end -}}
+{{- end -}}
+
+
+{{/*
 Set statsd host
 */}}
 {{- define "posthog.statsd.host" -}}
