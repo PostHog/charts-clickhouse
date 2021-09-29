@@ -1,5 +1,5 @@
 {{- if .Values.clickhouseOperator.enabled }}
-{{- if (eq (include "clickhouse.persistentVolumeClaim" .) "" ) }}
+{{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
 {{ if (eq (.Values.cloud | toString) "gcp" )}}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -37,7 +37,7 @@ metadata:
 spec:
   defaults:
     templates:
-      {{- if (eq (include "clickhouse.persistentVolumeClaim" .) "" ) }}
+      {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
       dataVolumeClaimTemplate: data-volumeclaim-template
       {{- end }}
       serviceTemplate: chi-service-template
@@ -95,7 +95,7 @@ spec:
           tolerations:
 {{ toYaml .Values.clickhouse.tolerations | indent 12 }}
           {{- end }}
-          {{- if not (eq (include "clickhouse.persistentVolumeClaim" . ) "" )  }}
+          {{- if (eq (include "clickhouse.externalVolume" .) "true" ) }}
           volumes:
             - name: clickhouse-storage
               persistentVolumeClaim:
@@ -118,7 +118,7 @@ spec:
                 - name: interserver
                   containerPort: 9009
               volumeMounts:
-              {{- if (eq (include "clickhouse.persistentVolumeClaim" . ) "" ) }}
+              {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
                 - name: data-volumeclaim-template
               {{- else }}
                 - name: clickhouse-storage
@@ -140,7 +140,7 @@ spec:
             - name: tcp
               port: 9000
           type: {{ .Values.clickhouseOperator.serviceType }}
-    {{- if (eq (include "clickhouse.persistentVolumeClaim" . ) "" ) }}
+    {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
     volumeClaimTemplates:
       - name: data-volumeclaim-template
         spec:

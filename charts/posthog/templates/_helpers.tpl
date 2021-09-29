@@ -243,14 +243,15 @@ Set clickhouse fullname
 {{- end -}}
 
 {{/*
-Set clickhouse volume claim
+Set clickhouse external volume
 */}}
-{{- define "clickhouse.persistentVolumeClaim" -}}
+{{- define "clickhouse.externalVolume" -}}
 {{- if ne (.Values.clickhouse.persistentVolumeClaim | toString) "<nil>" -}}
-  {{ .Values.clickhouse.persistentVolumeClaim }}
+  true
+{{- else -}}
+  false
 {{- end -}}
 {{- end -}}
-
 
 {{/*
 Set statsd host
