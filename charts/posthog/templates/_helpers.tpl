@@ -245,9 +245,9 @@ Set clickhouse fullname
 {{/*
 Set clickhouse volume claim
 */}}
-{{- define "clickhouseOperator.persistentVolumeClaim" -}}
-{{- if ne (.Values.clickhouseOperator.persistentVolumeClaim | toString) "<nil>" -}}
-  {{ .Values.clickhouseOperator.persistentVolumeClaim }}
+{{- define "clickhouse.persistentVolumeClaim" -}}
+{{- if ne (.Values.clickhouse.persistentVolumeClaim | toString) "<nil>" -}}
+  {{ .Values.clickhouse.persistentVolumeClaim }}
 {{- end -}}
 {{- end -}}
 

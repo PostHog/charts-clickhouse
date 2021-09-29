@@ -1,5 +1,5 @@
 {{- if .Values.clickhouseOperator.enabled }}
-{{- if (eq (include "clickhouseOperator.persistentVolumeClaim" .) "" ) }}
+{{- if (eq (include "clickhouse.persistentVolumeClaim" .) "" ) }}
 {{ if (eq (.Values.cloud | toString) "gcp" )}}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -37,7 +37,7 @@ metadata:
 spec:
   defaults:
     templates:
-      {{- if (eq (include "clickhouseOperator.persistentVolumeClaim" .) "" ) }}
+      {{- if (eq (include "clickhouse.persistentVolumeClaim" .) "" ) }}
       dataVolumeClaimTemplate: data-volumeclaim-template
       {{- end }}
       serviceTemplate: chi-service-template
@@ -87,11 +87,19 @@ spec:
             runAsUser: 101
             runAsGroup: 101
             fsGroup: 101
-          {{- if not (eq (include "clickhouseOperator.persistentVolumeClaim" . ) "" )  }}
+          {{- if .Values.clickhouse.affinity }}
+          affinity:
+{{ toYaml .Values.clickhouse.affinity | indent 12 }}
+          {{- end }}
+          {{- if .Values.clickhouse.tolerations }}
+          tolerations:
+{{ toYaml .Values.clickhouse.tolerations | indent 12 }}
+          {{- end }}
+          {{- if not (eq (include "clickhouse.persistentVolumeClaim" . ) "" )  }}
           volumes:
             - name: clickhouse-storage
               persistentVolumeClaim:
-                claimName: {{ .Values.clickhouseOperator.persistentVolumeClaim }}
+                claimName: {{ .Values.clickhouse.persistentVolumeClaim }}
           {{- end }}
           containers:
             - name: clickhouse
@@ -110,12 +118,14 @@ spec:
                 - name: interserver
                   containerPort: 9009
               volumeMounts:
-              {{- if (eq (include "clickhouseOperator.persistentVolumeClaim" . ) "" ) }}
+              {{- if (eq (include "clickhouse.persistentVolumeClaim" . ) "" ) }}
                 - name: data-volumeclaim-template
               {{- else }}
                 - name: clickhouse-storage
               {{- end }}
                   mountPath: /var/lib/clickhouse
+              resources:
+{{ toYaml .Values.clickhouse.resources | indent 16 }}
               {{- if .Values.clickhouseOperator.useNodeSelector }}
               nodeSelector:
                 clickhouse: true
@@ -130,7 +140,7 @@ spec:
             - name: tcp
               port: 9000
           type: {{ .Values.clickhouseOperator.serviceType }}
-    {{- if (eq (include "clickhouseOperator.persistentVolumeClaim" . ) "" ) }}
+    {{- if (eq (include "clickhouse.persistentVolumeClaim" . ) "" ) }}
     volumeClaimTemplates:
       - name: data-volumeclaim-template
         spec:
