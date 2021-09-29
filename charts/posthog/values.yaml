@@ -29,8 +29,6 @@ clickhouseOperator:
   useNodeSelector: false
   # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
   serviceType: NodePort
-  # -- Optional: Used to manually specify a persistent volume claim. When specified the cloud specific storage class will not be provisioned
-  persistentVolumeClaim:
 
 # -- Env vars to throw into every deployment (web, beat, worker, and plugin server)
 env:
@@ -462,6 +460,20 @@ clickhouse:
     # servers:
       # - host: posthog-posthog-zookeeper
       #   port: 2181
+  # -- Optional: Used to manually specify a persistent volume claim. When specified the cloud specific storage class will not be provisioned
+  persistentVolumeClaim:
+  # -- Toleration labels for clickhouse pod assignment
+  tolerations: []
+  # -- Affinity settings for clickhouse pod
+  affinity: {}
+  # -- Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/
+  resources: {}
+  #   limits:
+  #     cpu: 1000m
+  #     memory: 16Gi
+  #   requests:
+  #     cpu: 4000m
+  #     memory: 16Gi
 
 ## Prometheus Exporter / Metrics
 ##
