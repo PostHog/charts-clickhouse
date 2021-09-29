@@ -196,3 +196,4 @@ The following table lists the configurable parameters of the PostHog chart and t
 | statsd | object | `{"enabled":false,"podAnnotations":{"prometheus.io/path":"/metrics","prometheus.io/port":"9102","prometheus.io/scrape":"true"}}` | Prometheus StatsD configuration, see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter |
 
 Dependent charts can also have values overwritten. Preface values with postgresql.*
+
