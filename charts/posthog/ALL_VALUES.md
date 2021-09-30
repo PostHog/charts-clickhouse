@@ -157,9 +157,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.secure | bool | `false` |  |
 | clickhouse.verify | bool | `false` |  |
 | clickhouse.async | bool | `false` |  |
-| clickhouse.persistentVolumeClaim | string | `nil` | Service Type: Optional name of an externally managed persistent volume claim. When specified the cloud specific storage class will not be provisioned |
+| clickhouse.persistentVolumeClaim | string | `nil` | URL for zookeeper. servers: - host: posthog-posthog-zookeeper   port: 2181 -- Optional: Used to manually specify a persistent volume claim. When specified the cloud specific storage class will not be provisioned |
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
-| clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod assignment |
+| clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod |
 | clickhouse.resources | object | `{}` | Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
 | metrics.enabled | bool | `false` | Start an exporter for posthog metrics |
 | metrics.livenessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods livenessProbe settings |
