@@ -161,6 +161,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
 | clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod |
 | clickhouse.resources | object | `{}` | Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
+| clickhouse.securityContext | object | `{"enabled":true,"fsGroup":101,"runAsGroup":101,"runAsUser":101}` |      cpu: 1000m     memory: 16Gi   requests:     cpu: 4000m     memory: 16Gi |
 | metrics.enabled | bool | `false` | Start an exporter for posthog metrics |
 | metrics.livenessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods livenessProbe settings |
 | metrics.readinessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods readinessProbe settings |
