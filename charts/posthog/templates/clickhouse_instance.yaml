@@ -1,4 +1,5 @@
 {{- if .Values.clickhouseOperator.enabled }}
+{{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
 {{ if (eq (.Values.cloud | toString) "gcp" )}}
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -27,6 +28,7 @@ reclaimPolicy: Retain
 #volumeBindingMode: Immediate
 allowVolumeExpansion: true
 {{ end }}
+{{- end }}
 ---
 apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallation"
@@ -35,7 +37,9 @@ metadata:
 spec:
   defaults:
     templates:
+      {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
       dataVolumeClaimTemplate: data-volumeclaim-template
+      {{- end }}
       serviceTemplate: chi-service-template
   configuration:
     users:
@@ -83,6 +87,20 @@ spec:
             runAsUser: 101
             runAsGroup: 101
             fsGroup: 101
+          {{- if .Values.clickhouse.affinity }}
+          affinity:
+{{ toYaml .Values.clickhouse.affinity | indent 12 }}
+          {{- end }}
+          {{- if .Values.clickhouse.tolerations }}
+          tolerations:
+{{ toYaml .Values.clickhouse.tolerations | indent 12 }}
+          {{- end }}
+          {{- if (eq (include "clickhouse.externalVolume" .) "true" ) }}
+          volumes:
+            - name: clickhouse-storage
+              persistentVolumeClaim:
+                claimName: {{ .Values.clickhouse.persistentVolumeClaim }}
+          {{- end }}
           containers:
             - name: clickhouse
               # KEEP CLICKHOUSE-SERVER VERSION IN SYNC WITH
@@ -100,8 +118,14 @@ spec:
                 - name: interserver
                   containerPort: 9009
               volumeMounts:
+              {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
                 - name: data-volumeclaim-template
+              {{- else }}
+                - name: clickhouse-storage
+              {{- end }}
                   mountPath: /var/lib/clickhouse
+              resources:
+{{ toYaml .Values.clickhouse.resources | indent 16 }}
               {{- if .Values.clickhouseOperator.useNodeSelector }}
               nodeSelector:
                 clickhouse: true
@@ -116,6 +140,7 @@ spec:
             - name: tcp
               port: 9000
           type: {{ .Values.clickhouseOperator.serviceType }}
+    {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
     volumeClaimTemplates:
       - name: data-volumeclaim-template
         spec:
@@ -129,4 +154,5 @@ spec:
           resources:
             requests:
               storage: {{ .Values.clickhouseOperator.storage | quote }}
+    {{- end }}
 {{- end }}
