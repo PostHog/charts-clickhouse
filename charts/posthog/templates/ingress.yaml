@@ -56,7 +56,7 @@ spec:
     - http:
   {{- end }}
         paths:
-          - pathType: Prefix
+          - pathType: ImplementationSpecific
             path: "/"
             backend:
               {{- if semverCompare ">=1.19.0" .Capabilities.KubeVersion.Version }}
@@ -68,8 +68,8 @@ spec:
               serviceName: {{ template "posthog.fullname" . }}-web
               servicePort: {{ .Values.service.externalPort }}
               {{- end }}
-          - pathType: Prefix
-            path: "/batch"
+          - pathType: ImplementationSpecific
+            path: "/batch/*"
             backend: &INGESTION
               {{- if semverCompare ">=1.19.0" .Capabilities.KubeVersion.Version }}
               service:
@@ -80,20 +80,20 @@ spec:
               serviceName: {{ template "posthog.fullname" . }}-events
               servicePort: {{ .Values.service.externalPort }}
               {{- end }}
-          - pathType: Prefix
-            path: "/capture"
+          - pathType: ImplementationSpecific
+            path: "/capture/*"
             backend: *INGESTION
-          - pathType: Prefix
-            path: "/decide"
+          - pathType: ImplementationSpecific
+            path: "/decide/*"
             backend: *INGESTION
-          - pathType: Prefix
-            path: "/e"
+          - pathType: ImplementationSpecific
+            path: "/e/*"
             backend: *INGESTION
-          - pathType: Prefix
-            path: "/track"
+          - pathType: ImplementationSpecific
+            path: "/track/*"
             backend: *INGESTION
-          - pathType: Prefix
-            path: "/s"
+          - pathType: ImplementationSpecific
+            path: "/s/*"
             backend: *INGESTION
 {{- if .Values.ingress.tls }}
 {{ toYaml .Values.ingress.tls | indent 4 }}
