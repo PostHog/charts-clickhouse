@@ -1,0 +1,80 @@
+name: Bump chart version & release workflow dispatch
+
+on: 
+    workflow_dispatch:
+      inputs:
+        bumptype:
+          description: 'Specify the type "major", "minor" or "patch" (default).'
+          required: true
+          default: 'patch'
+
+jobs:
+  release:
+    name: Bump version based on workflow dispatch input
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Detect version bump type
+        id: bump-type
+        run: |
+            BUMP_TYPE=null
+            if [[ "${{github.event.inputs.bumptype}}" == "patch" ]]; then
+                BUMP_TYPE=patch
+            fi
+            if [[ "${{github.event.inputs.bumptype}}" == "minor" ]]; then
+                BUMP_TYPE=minor
+            fi
+            if [[ "${{github.event.inputs.bumptype}}" == "major" ]]; then
+                BUMP_TYPE=major
+            fi
+            echo "::set-output name=bump-type::$BUMP_TYPE"
+        env:
+            BUMP_PATCH_PRESENT: ${{ contains(github.event.pull_request.labels.*.name, 'bump patch') }}
+            BUMP_MINOR_PRESENT: ${{ contains(github.event.pull_request.labels.*.name, 'bump minor') }}
+            BUMP_MAJOR_PRESENT: ${{ contains(github.event.pull_request.labels.*.name, 'bump major') }}
+
+      - name: Determine new version
+        id: new-version
+        if: steps.bump-type.outputs.bump-type != 'null'
+        run: |
+            OLD_VERSION=$(cat charts/posthog/Chart.yaml | sed -n 's/^version: \(.*\)$/\1/p')
+            NEW_VERSION=$(npx semver $OLD_VERSION -i ${{ steps.bump-type.outputs.bump-type }})
+            echo "::set-output name=new-version::$NEW_VERSION"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        if: steps.bump-type.outputs.bump-type != 'null'
+        with:
+          version: v3.4.0
+
+      - name: Update version in charts/posthog/Chart.yaml and update Chart.lock
+        if: steps.bump-type.outputs.bump-type != 'null'
+        run: |
+          sed -i 's/^version: \(.*\)$/version: ${{ steps.new-version.outputs.new-version }}/g' charts/posthog/Chart.yaml
+          cat charts/posthog/Chart.yaml
+          helm dependency update charts/posthog/
+
+      - name: Commit bump
+        if: steps.bump-type.outputs.bump-type != 'null'
+        uses: EndBug/add-and-commit@v7
+        with:
+            branch: ${{ github.event.pull_request.base.ref }}
+            message: 'Bump version to ${{ steps.new-version.outputs.new-version }}'
+
+      - name: Add helm repositories
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add kubernetes https://kubernetes.github.io/ingress-nginx
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.2.1
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          charts_repo_url: 'https://posthog.github.io/charts-clickhouse/'
