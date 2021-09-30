@@ -83,10 +83,6 @@ spec:
     podTemplates:
       - name: pod-template-with-volumes
         spec:
-          securityContext:
-            runAsUser: 101
-            runAsGroup: 101
-            fsGroup: 101
           {{- if .Values.clickhouse.affinity }}
           affinity:
 {{ toYaml .Values.clickhouse.affinity | indent 12 }}
@@ -102,7 +98,7 @@ spec:
                 claimName: {{ .Values.clickhouse.persistentVolumeClaim }}
           {{- end }}
           {{- if .Values.clickhouse.securityContext.enabled }}
-          securityContext: {{- omit .Values.clickhouse.securityContext "enabled" | toYaml | nindent 10 }}
+          securityContext: {{- omit .Values.clickhouse.securityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
           containers:
             - name: clickhouse
