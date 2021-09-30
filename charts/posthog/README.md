@@ -19,3 +19,5 @@ Simply apply one of the following labels to your PR _before merging_ to bump the
 - `bump patch`
 - `bump minor`
 - `bump major`
+
+👋
