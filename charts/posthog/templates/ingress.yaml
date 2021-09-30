@@ -57,7 +57,7 @@ spec:
   {{- end }}
         paths:
           - pathType: ImplementationSpecific
-            path: "/"
+            path: "/*"
             backend:
               {{- if semverCompare ">=1.19.0" .Capabilities.KubeVersion.Version }}
               service:
