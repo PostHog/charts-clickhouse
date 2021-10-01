@@ -334,6 +334,8 @@ ingress:
     enabled: false
     # -- Whether to redirect to TLS with nginx ingress.
     redirectToTLS: true
+    # -- Whether to allow access from the raw IP with nginx ingress.
+    allowIPAccess: false
   # -- Extra annotations
   annotations: {}
   # -- TLS secret to be used by the ingress.
