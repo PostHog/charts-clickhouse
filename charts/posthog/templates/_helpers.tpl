@@ -378,7 +378,9 @@ Create the name of the service account to use
 {{- end -}}
 
 {{- define "ingress.letsencrypt" -}}
-{{- if ne (.Values.ingress.letsencrypt | toString) "<nil>" -}}
+{{- if not .Values.ingress.unsafeHttpDirectAccess -}}
+  false
+{{- else if ne (.Values.ingress.letsencrypt | toString) "<nil>" -}}
   {{ .Values.ingress.letsencrypt }}
 {{- else if and (and (.Values.ingress.nginx.enabled) (.Values.certManager.enabled)) (ne (.Values.ingress.hostname | toString) "<nil>")  -}}
   true

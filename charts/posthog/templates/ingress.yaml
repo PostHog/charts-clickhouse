@@ -23,7 +23,7 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gcp.ip_name | quote }}
     {{- end }}
    {{- end }}
-   {{- if (and (eq (include "ingress.type" .) "nginx") .Values.ingress.nginx.redirectToTLS "true") }}
+   {{- if (and (eq (include "ingress.type" .) "nginx") (and .Values.ingress.nginx.redirectToTLS (not .Values.ingress.unsafeHttpDirectAccess))) }}
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
    {{- if eq (include "ingress.letsencrypt" .) "true"}}
@@ -49,7 +49,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-  {{- if .Values.ingress.hostname }}
+  {{- if and .Values.ingress.hostname (not .Values.ingress.unsafeHttpDirectAccess)}}
     - host: {{ .Values.ingress.hostname }}
       http:
   {{- else }}

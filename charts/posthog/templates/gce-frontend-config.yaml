@@ -6,5 +6,5 @@ metadata:
   name: "{{ .Release.Name }}-frontend-config"
 spec:
   redirectToHttps:
-    enabled: {{ .Values.ingress.gcp.forceHttps }}
+    enabled: {{ and (.Values.ingress.gcp.forceHttps) (not .Values.ingress.unsafeHttpDirectAccess) }}
 {{- end -}}

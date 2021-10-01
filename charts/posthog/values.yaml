@@ -338,6 +338,8 @@ ingress:
   annotations: {}
   # -- TLS secret to be used by the ingress.
   secretName:
+  # -- Troubleshooting tool to swich to http direct access to the IP. This overrides hostname, nginx.redirectToTLS, gcp.forceHttps, letsencrypt and web.secureCookies to false. Don't use in Production.
+  unsafeHttpDirectAccess: false
 
 postgresql:
   # -- Install postgres server on kubernetes (see below)

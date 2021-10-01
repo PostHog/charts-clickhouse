@@ -83,7 +83,7 @@ spec:
           value: '1'
         - name: IS_BEHIND_PROXY
           value: '1'
-      {{- if eq .Values.web.secureCookies false }}
+      {{- if or (eq .Values.web.secureCookies false) (eq .Values.ingress.unsafeHttpDirectAccess false) }}
         - name: SECURE_COOKIES
           value: '0'
       {{- end }}
