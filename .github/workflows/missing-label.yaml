@@ -2,13 +2,14 @@ name: Probably forgotten bump label
 
 on:
     pull_request:
+      types: [closed]
 
 jobs:
     check-description:
         name: Comment if merged without bump label
         runs-on: ubuntu-20.04
         if: |
-          true &&
+          github.event.pull_request.merged &&
           ((
             contains(github.event.pull_request.labels.*.name, 'bump patch')
             || contains(github.event.pull_request.labels.*.name, 'bump minor')
