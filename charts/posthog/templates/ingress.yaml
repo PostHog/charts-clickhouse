@@ -56,8 +56,13 @@ spec:
     - http:
   {{- end }}
         paths:
+          {{- if (ne (include "ingress.type" .) "clb") }}
+          - pathType: Prefix
+            path: "/"
+          {{- else }}
           - pathType: ImplementationSpecific
             path: "/*"
+          {{- end }}
             backend:
               {{- if semverCompare ">=1.19.0" .Capabilities.KubeVersion.Version }}
               service:
@@ -68,8 +73,13 @@ spec:
               serviceName: {{ template "posthog.fullname" . }}-web
               servicePort: {{ .Values.service.externalPort }}
               {{- end }}
+          {{- if (ne (include "ingress.type" .) "clb") }}
+          - pathType: Prefix
+            path: "/batch"
+          {{- else }}
           - pathType: ImplementationSpecific
             path: "/batch/*"
+          {{- end }}
             backend: &INGESTION
               {{- if semverCompare ">=1.19.0" .Capabilities.KubeVersion.Version }}
               service:
@@ -80,6 +90,23 @@ spec:
               serviceName: {{ template "posthog.fullname" . }}-events
               servicePort: {{ .Values.service.externalPort }}
               {{- end }}
+          {{- if (ne (include "ingress.type" .) "clb") }}
+          - pathType: Prefix
+            path: "/capture"
+            backend: *INGESTION
+          - pathType: Prefix
+            path: "/decide"
+            backend: *INGESTION
+          - pathType: Prefix
+            path: "/e"
+            backend: *INGESTION
+          - pathType: Prefix
+            path: "/track"
+            backend: *INGESTION
+          - pathType: Prefix
+            path: "/s"
+            backend: *INGESTION
+          {{- else }}
           - pathType: ImplementationSpecific
             path: "/capture/*"
             backend: *INGESTION
@@ -95,6 +122,7 @@ spec:
           - pathType: ImplementationSpecific
             path: "/s/*"
             backend: *INGESTION
+          {{- end }}
 {{- if .Values.ingress.tls }}
 {{ toYaml .Values.ingress.tls | indent 4 }}
 {{- end -}}
