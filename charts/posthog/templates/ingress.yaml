@@ -56,7 +56,7 @@ spec:
     - http:
   {{- end }}
         paths:
-          {{- if (eq (include "ingress.type" .) "nginx") }}
+          {{- if (ne (include "ingress.type" .) "clb") }}
           - pathType: Prefix
             path: "/"
           {{- else }}
@@ -73,7 +73,7 @@ spec:
               serviceName: {{ template "posthog.fullname" . }}-web
               servicePort: {{ .Values.service.externalPort }}
               {{- end }}
-          {{- if (eq (include "ingress.type" .) "nginx") }}
+          {{- if (ne (include "ingress.type" .) "clb") }}
           - pathType: Prefix
             path: "/batch"
           {{- else }}
@@ -90,7 +90,7 @@ spec:
               serviceName: {{ template "posthog.fullname" . }}-events
               servicePort: {{ .Values.service.externalPort }}
               {{- end }}
-          {{- if (eq (include "ingress.type" .) "nginx") }}
+          {{- if (ne (include "ingress.type" .) "clb") }}
           - pathType: Prefix
             path: "/capture"
             backend: *INGESTION
