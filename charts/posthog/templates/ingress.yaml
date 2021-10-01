@@ -60,7 +60,7 @@ spec:
           - pathType: Prefix
             path: "/"
           {{- else }}
-          - pathType: ImplementationSpecific 
+          - pathType: ImplementationSpecific
             path: "/*"
           {{- end }}
             backend:
@@ -77,7 +77,7 @@ spec:
           - pathType: Prefix
             path: "/batch"
           {{- else }}
-          - pathType: ImplementationSpecific 
+          - pathType: ImplementationSpecific
             path: "/batch/*"
           {{- end }}
             backend: &INGESTION
@@ -105,7 +105,7 @@ spec:
             backend: *INGESTION
           - pathType: Prefix
             path: "/s"
-            backend: *INGESTION 
+            backend: *INGESTION
           {{- else }}
           - pathType: ImplementationSpecific
             path: "/capture/*"
@@ -121,7 +121,7 @@ spec:
             backend: *INGESTION
           - pathType: ImplementationSpecific
             path: "/s/*"
-            backend: *INGESTION 
+            backend: *INGESTION
           {{- end }}
 {{- if .Values.ingress.tls }}
 {{ toYaml .Values.ingress.tls | indent 4 }}
