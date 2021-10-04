@@ -1,0 +1,23 @@
+name: Probably forgotten bump label
+
+on:
+    pull_request:
+      types: [closed]
+
+jobs:
+    check-description:
+        name: Comment if merged without bump label
+        runs-on: ubuntu-20.04
+        if: |
+          github.event.pull_request.merged &&
+          ((
+            contains(github.event.pull_request.labels.*.name, 'bump patch')
+            || contains(github.event.pull_request.labels.*.name, 'bump minor')
+            || contains(github.event.pull_request.labels.*.name, 'bump major')
+          ) == false)
+        steps:
+            - name: Comment about and link to workflow dispatch option
+              run: |
+                  BODY="We probably forgot to bump the chart with this merge. No worries head over to https://github.com/PostHog/charts-clickhouse/actions/workflows/bump-version-workflow-dispatch.yaml to trigger the chart update."
+                  curl -s -u posthog-bot:${{ secrets.POSTHOG_BOT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }} -X POST -d "{ \"body\": \"$BODY\" }" "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+
