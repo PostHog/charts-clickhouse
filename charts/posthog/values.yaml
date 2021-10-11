@@ -192,7 +192,7 @@ plugins:
     enabled: true
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for plugin server
-    # -- This experimental, based on cpu util which is not necessarilly the bottleneck
+    # -- This experimental, based on cpu util which is not necessarily the bottleneck
     enabled: false
     cputhreshold: 60
     minpods: 1

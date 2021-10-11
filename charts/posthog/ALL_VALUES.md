@@ -73,7 +73,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.tolerations | list | `[]` |  |
 | worker.affinity | object | `{}` |  |
 | plugins.ingestion.enabled | bool | `true` | Whether to enable plugin-server based ingestion |
-| plugins.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for plugin server -- This experimental, based on cpu util which is not necessarilly the bottleneck |
+| plugins.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for plugin server -- This experimental, based on cpu util which is not necessarily the bottleneck |
 | plugins.hpa.cputhreshold | int | `60` |  |
 | plugins.hpa.minpods | int | `1` |  |
 | plugins.hpa.maxpods | int | `10` |  |
