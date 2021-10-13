@@ -147,7 +147,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | URL for zookeeper. Only set when internal zookeeper is disabled -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper |
 | zookeeper.enabled | bool | `true` | Install zookeeper on kubernetes |
 | zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for zookeeper app |
-| zookeeper.replicaCount | int | `3` | replica count for zookeeper |
+| zookeeper.replicaCount | int | `1` | replica count for zookeeper |
 | clickhouse.enabled | bool | `true` | Use clickhouse as primary database |
 | clickhouse.database | string | `"posthog"` | Clickhouse database |
 | clickhouse.user | string | `"admin"` | Clickhouse user |
