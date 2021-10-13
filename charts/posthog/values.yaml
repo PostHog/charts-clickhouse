@@ -312,6 +312,7 @@ service:
 certManager:
   # -- Whether to install cert-manager. Validates certs for nginx ingress
   enabled: false
+  installCRDs: true
 
 ingress:
   # -- Enable ingress controller resource
