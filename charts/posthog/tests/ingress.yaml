@@ -1,4 +1,4 @@
-suite: Posthog ingress definition
+suite: PostHog ingress definition
 templates:
   - templates/ingress.yaml
 
@@ -29,4 +29,6 @@ tests:
       - hasDocuments:
           count: 1
       - matchSnapshot:
+          # Unfortunately we can't match the whole manifest as there are few
+          # metadata values linked to the chart version
           path: spec
