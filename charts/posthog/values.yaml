@@ -437,7 +437,7 @@ zookeeper:
   # -- Name override for zookeeper app
   nameOverride: posthog-zookeeper
   # -- replica count for zookeeper
-  replicaCount: 3
+  replicaCount: 1
 
 clickhouse:
   # -- Use clickhouse as primary database
