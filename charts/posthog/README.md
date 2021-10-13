@@ -13,6 +13,19 @@ This chart bootstraps a [PostHog](https://posthog.com/) deployment on a [Kuberne
 
 See deployment instructions on [posthog.com/docs/self-host](https://posthog.com/docs/self-host).
 
+## Prerequisites
+- Kubernetes 1.19+
+- Helm 3+
+
+## Development
+Add the Helm repositories:
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add kubernetes https://kubernetes.github.io/ingress-nginx
+helm repo add jetstack https://charts.jetstack.io
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+```
+
 ## Releasing a new version of this helm chart
 
 Simply apply one of the following labels to your PR _before merging_ to bump the version and release it to the helm repo:
