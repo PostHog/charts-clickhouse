@@ -1,0 +1,37 @@
+name: Unit tests
+on: push
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          # ct needs history to compare
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v1.1
+        with:
+          version: v3.7.0
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.1.0
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed="$(ct list-changed --config ct.yaml)"
+          if [[ -n "$changed" ]]; then
+            echo "::set-output name=changed::true"
+          fi
+
+      - name: Install Helm unittest plugin
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          helm env
+          helm plugin install https://github.com/quintush/helm-unittest.git --version 0.2.7
+
+      - name: Run test suite
+        if: steps.list-changed.outputs.changed == 'true'
+        run: helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/**/*.yaml' charts/posthog
