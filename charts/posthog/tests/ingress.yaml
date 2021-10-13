@@ -1,0 +1,32 @@
+suite: Posthog ingress definition
+templates:
+  - templates/ingress.yaml
+
+tests:
+  - it: should be empty if ingress.enabled is set to false
+    set:
+      ingress.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should have the correct apiVersion
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: networking.k8s.io/v1
+
+  - it: should be the correct kind
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Ingress
+
+  - it: the "spec" path should match the snapshot when using default values
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot:
+          path: spec
