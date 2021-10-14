@@ -20,4 +20,4 @@ jobs:
           check_filenames: true
           check_hidden: true
           # Don't check the .git folder as well as few files that we get from upstream
-          skip: .git,./charts/posthog/crds/cert-manager.crds.yaml,./charts/posthog/crds/clickhouse_installation.yaml,./charts/posthog/templates/clickhouse_config_map.yaml
+          skip: .git,./charts/posthog/crds/clickhouse_installation.yaml,./charts/posthog/templates/clickhouse_config_map.yaml
