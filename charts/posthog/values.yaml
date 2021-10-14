@@ -75,13 +75,12 @@ web:
   replicacount: 1
   # -- Resource limits for web service. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container for more
   resources:
-    {}
-    # limits:
-    #   cpu: 500m
-    #   memory: 500Mi
-    # requests:
-    #   cpu: 300m
-    #   memory: 300Mi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
   # -- Env variables for web container
   env:
     # -- Set google oauth 2 key. Requires posthog ee license.
@@ -141,13 +140,12 @@ beat:
   replicacount: 1
   # -- Resource limits for 'beat' instances
   resources:
-    {}
-    # limits:
-    #   cpu: 200m
-    #   memory: 200Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 100Mi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -200,14 +198,14 @@ plugins:
   env: []
   # -- How many replicas of plugin-server to run. Ignored if hpa is used
   replicacount: 1
+  # -- Plugins resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/
   resources:
-    {}
-    # limits:
-    #   cpu: 300m
-    #   memory: 500Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 100Mi
+    requests:
+      cpu: 2000m
+      memory: 8Gi
+    limits:
+      cpu: 2000m
+      memory: 8Gi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -467,13 +465,13 @@ clickhouse:
   # -- Affinity settings for clickhouse pod
   affinity: {}
   # -- Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/
-  resources: {}
-  #   limits:
-  #     cpu: 1000m
-  #     memory: 16Gi
-  #   requests:
-  #     cpu: 4000m
-  #     memory: 16Gi
+  resources:
+    requests:
+      cpu: 4000m
+      memory: 8Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
   securityContext:
     enabled: true
     runAsUser: 101
