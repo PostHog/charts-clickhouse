@@ -14,7 +14,7 @@ image:
   pullPolicy: IfNotPresent
 
 # -- Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean
-cloud: do
+cloud:
 # -- Sentry endpoint to send errors to
 sentryDSN:
 
