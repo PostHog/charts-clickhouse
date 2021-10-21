@@ -1,0 +1,109 @@
+the manifest should match the snapshot when using default values:
+  1: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        app: clickhouse-operator
+      name: clickhouse-operator
+      namespace: NAMESPACE
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: clickhouse-operator
+      template:
+        metadata:
+          annotations:
+            prometheus.io/port: "8888"
+            prometheus.io/scrape: "true"
+          labels:
+            app: clickhouse-operator
+        spec:
+          containers:
+          - env:
+            - name: OPERATOR_POD_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: OPERATOR_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: OPERATOR_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: OPERATOR_POD_SERVICE_ACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+            - name: OPERATOR_CONTAINER_CPU_REQUEST
+              valueFrom:
+                resourceFieldRef:
+                  containerName: clickhouse-operator
+                  resource: requests.cpu
+            - name: OPERATOR_CONTAINER_CPU_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  containerName: clickhouse-operator
+                  resource: limits.cpu
+            - name: OPERATOR_CONTAINER_MEM_REQUEST
+              valueFrom:
+                resourceFieldRef:
+                  containerName: clickhouse-operator
+                  resource: requests.memory
+            - name: OPERATOR_CONTAINER_MEM_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  containerName: clickhouse-operator
+                  resource: limits.memory
+            image: altinity/clickhouse-operator:latest
+            imagePullPolicy: IfNotPresent
+            name: clickhouse-operator
+            volumeMounts:
+            - mountPath: /etc/clickhouse-operator
+              name: etc-clickhouse-operator-folder
+            - mountPath: /etc/clickhouse-operator/conf.d
+              name: etc-clickhouse-operator-confd-folder
+            - mountPath: /etc/clickhouse-operator/config.d
+              name: etc-clickhouse-operator-configd-folder
+            - mountPath: /etc/clickhouse-operator/templates.d
+              name: etc-clickhouse-operator-templatesd-folder
+            - mountPath: /etc/clickhouse-operator/users.d
+              name: etc-clickhouse-operator-usersd-folder
+          - image: altinity/metrics-exporter:latest
+            imagePullPolicy: IfNotPresent
+            name: metrics-exporter
+            volumeMounts:
+            - mountPath: /etc/clickhouse-operator
+              name: etc-clickhouse-operator-folder
+            - mountPath: /etc/clickhouse-operator/conf.d
+              name: etc-clickhouse-operator-confd-folder
+            - mountPath: /etc/clickhouse-operator/config.d
+              name: etc-clickhouse-operator-configd-folder
+            - mountPath: /etc/clickhouse-operator/templates.d
+              name: etc-clickhouse-operator-templatesd-folder
+            - mountPath: /etc/clickhouse-operator/users.d
+              name: etc-clickhouse-operator-usersd-folder
+          serviceAccountName: clickhouse-operator
+          volumes:
+          - configMap:
+              name: etc-clickhouse-operator-files
+            name: etc-clickhouse-operator-folder
+          - configMap:
+              name: etc-clickhouse-operator-confd-files
+            name: etc-clickhouse-operator-confd-folder
+          - configMap:
+              name: etc-clickhouse-operator-configd-files
+            name: etc-clickhouse-operator-configd-folder
+          - configMap:
+              name: etc-clickhouse-operator-templatesd-files
+            name: etc-clickhouse-operator-templatesd-folder
+          - configMap:
+              name: etc-clickhouse-operator-usersd-files
+            name: etc-clickhouse-operator-usersd-folder
