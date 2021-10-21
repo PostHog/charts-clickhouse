@@ -27,7 +27,12 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 ```
 
 ### Unit tests
-In order to run the test suite you need to install the `helm-unittest` plugin: (you can do that it by running `helm plugin install https://github.com/quintush/helm-unittest`). For more informations about how it works and how to write test cases, please take a look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md).
+In order to run the test suite you need to install the `helm-unittest` plugin. You can do that by running:
+```
+helm plugin install https://github.com/quintush/helm-unittest`)
+```
+
+For more informations about how it works and how to write test cases, please take a look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md).
 
 #### Commands
 
