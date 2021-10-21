@@ -27,16 +27,12 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 ```
 
 ### Unit tests
+In order to run the test suite you need to install the `helm-unittest` plugin: (you can do that it by running `helm plugin install https://github.com/quintush/helm-unittest`). For more informations about how it works and how to write test cases, please take a look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md).
 
-Prerequisites
-- `helm-unittest` plugin: (you can install it by running `helm plugin install https://github.com/quintush/helm-unittest`
-
-For more informations about `helm-unittest` and how to write tests, please take a look at the official upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md).
-
-Run the test suite:
-```
-helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/**/*.yaml' charts/posthog
-```
+* Run tests:
+    ```
+    helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/**/*.yaml' charts/posthog
+    ```
 
 ## Releasing a new version of this helm chart
 
