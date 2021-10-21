@@ -32,7 +32,7 @@ In order to run the test suite you need to install the `helm-unittest` plugin. Y
 helm plugin install https://github.com/quintush/helm-unittest
 ```
 
-For more informations about how it works and how to write test cases, please take a look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md).
+For more information about how it works and how to write test cases, please take a look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md).
 
 **Run test suite**
 ```
