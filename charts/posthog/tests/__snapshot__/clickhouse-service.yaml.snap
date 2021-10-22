@@ -1,0 +1,15 @@
+the manifest should match the snapshot when using default values:
+  1: |
+    apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: clickhouse-operator
+      name: clickhouse-operator-metrics
+      namespace: NAMESPACE
+    spec:
+      ports:
+      - name: clickhouse-operator-metrics
+        port: 8888
+      selector:
+        app: clickhouse-operator
