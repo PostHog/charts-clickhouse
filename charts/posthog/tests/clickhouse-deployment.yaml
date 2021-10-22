@@ -1,0 +1,43 @@
+suite: ClickHouse deployment definition
+templates:
+  - templates/clickhouse_deployment.yaml
+
+tests:
+  - it: should be empty if clickhouseOperator.enabled is set to false
+    set:
+      clickhouseOperator.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: the manifest should match the snapshot when using default values
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot: {}
+
+  - it: metadata.namespace override via clickhouseOperator.namespace should work
+    set:
+      clickhouseOperator.namespace: custom-namespace
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata
+          value:
+            name: clickhouse-operator
+            namespace: custom-namespace
+            labels: { app: clickhouse-operator }
+
+  - it: metadata.namespace override via Release.Namespace should work
+    release:
+      namespace: custom-namespace-from-release
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata
+          value:
+            name: clickhouse-operator
+            namespace: custom-namespace-from-release
+            labels: { app: clickhouse-operator }

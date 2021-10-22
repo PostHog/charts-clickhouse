@@ -26,6 +26,19 @@ helm repo add jetstack https://charts.jetstack.io
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 ```
 
+### Unit tests
+In order to run the test suite you need to install the `helm-unittest` plugin. You can do that by running:
+```
+helm plugin install https://github.com/quintush/helm-unittest
+```
+
+For more information about how it works and how to write test cases, please take a look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md).
+
+**Run test suite**
+```
+helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/**/*.yaml' charts/posthog
+```
+
 ## Releasing a new version of this helm chart
 
 Simply apply one of the following labels to your PR _before merging_ to bump the version and release it to the helm repo:
