@@ -50,7 +50,7 @@ dependencies:
   - name: cert-manager
     version: 1.2
     repository: https://charts.jetstack.io
-    condition: certManager.enabled
+    condition: cert-manager.enabled
     namespace: cert-manager
   - name: prometheus
     version: 14.1.1

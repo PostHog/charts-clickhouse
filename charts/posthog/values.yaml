@@ -309,9 +309,11 @@ service:
   ## Load Balancer allow-list
   # loadBalancerSourceRanges: []
 
-certManager:
+cert-manager:
   # -- Whether to install cert-manager. Validates certs for nginx ingress
   enabled: false
+  # -- Whether to install cert-manager CRDs.
+  installCRDs: true
 
 ingress:
   # -- Enable ingress controller resource
@@ -327,7 +329,7 @@ ingress:
     forceHttps: true
     # -- Specifies the name of the tls secret to be used by the ingress. If not specified a managed certificate will be generated.
     secretName: ""
-  # -- Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and certManager are enabled otherwise false.
+  # -- Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and cert-manager are enabled otherwise false.
   letsencrypt:
   nginx:
     # -- Whether nginx is enabled
