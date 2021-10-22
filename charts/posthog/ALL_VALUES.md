@@ -102,14 +102,15 @@ The following table lists the configurable parameters of the PostHog chart and t
 | saml.attr_last_name | string | `nil` | Name of attribute that contains the last name of the user in SAML assertions. attr_last_name: "lastName" |
 | saml.attr_email | string | `nil` | Name of attribute that contains the email of the user in SAML assertions. attr_email: "email" |
 | service | object | `{"annotations":{},"externalPort":8000,"internalPort":8000,"name":"posthog","type":"NodePort"}` | Name of the service and what port to expose on the pod. Don't change these unless you know what you're doing |
-| certManager.enabled | bool | `false` | Whether to install cert-manager. Validates certs for nginx ingress |
+| cert-manager.enabled | bool | `false` | Whether to install cert-manager. Validates certs for nginx ingress |
+| cert-manager.installCRDs | bool | `true` | Whether to install cert-manager CRDs. |
 | ingress.enabled | bool | `true` | Enable ingress controller resource |
 | ingress.type | string | `nil` | Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp. |
 | ingress.hostname | string | `nil` | URL to address your PostHog installation. You will need to set up DNS after installation |
 | ingress.gcp.ip_name | string | `"posthog"` | Specifies the name of the global IP address resource to be associated with the google clb |
 | ingress.gcp.forceHttps | bool | `true` | If true, will force a https redirect when accessed over http |
 | ingress.gcp.secretName | string | `""` | Specifies the name of the tls secret to be used by the ingress. If not specified a managed certificate will be generated. |
-| ingress.letsencrypt | string | `nil` | Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and certManager are enabled otherwise false. |
+| ingress.letsencrypt | string | `nil` | Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and cert-manager are enabled otherwise false. |
 | ingress.nginx.enabled | bool | `false` | Whether nginx is enabled |
 | ingress.nginx.redirectToTLS | bool | `true` | Whether to redirect to TLS with nginx ingress. |
 | ingress.annotations | object | `{}` | Extra annotations |
