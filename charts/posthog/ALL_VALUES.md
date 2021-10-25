@@ -8,11 +8,11 @@ The following table lists the configurable parameters of the PostHog chart and t
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| image | object | `{"default":":release-1.29.0","pullPolicy":"IfNotPresent","repository":"posthog/posthog","sha":null,"tag":null}` |  This is a YAML-formatted file. Declare variables to be passed into your templates. |
+| image | object | `{"default":":release-1.29.1","pullPolicy":"IfNotPresent","repository":"posthog/posthog","sha":null,"tag":null}` |  This is a YAML-formatted file. Declare variables to be passed into your templates. |
 | image.repository | string | `"posthog/posthog"` | Posthog image repository |
 | image.sha | string | `nil` | Posthog image sha, e.g. sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4 |
 | image.tag | string | `nil` | Posthog image tag, e.g. release-1.29.0 |
-| image.default | string | `":release-1.29.0"` | Default image or tag, e.g. :release-1.29.0 |
+| image.default | string | `":release-1.29.1"` | Default image or tag, e.g. :release-1.29.0 |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cloud | string | `nil` | Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
