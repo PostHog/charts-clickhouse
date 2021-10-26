@@ -1,0 +1,96 @@
+suite: ClusterIssuer definition
+templates:
+  - templates/cert-issuer.yaml
+
+tests:
+  - it: should be empty if no arguments are passed
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if ingress.letsencrypt is set to false
+    set:
+      ingress.letsencrypt: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if ingress.letsencrypt is empty
+    set:
+      ingress.letsencrypt:
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if ingress.letsencrypt is set to something that is not true
+    set:
+      ingress.letsencrypt: trueeeeeeeeeeee
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: shouldn't be empty if ingress.letsencrypt is set to true
+    set:
+      ingress.letsencrypt: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: shouldn't be empty if ingress.letsencrypt is set to "true" (string)
+    set:
+      ingress.letsencrypt: "true"
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: |
+      shouldn't be empty if:
+        ingress.nginx.enabled is true
+        cert-manager.enabled is true
+        ingress.hostname is not null
+    set:
+      ingress.nginx.enabled: true
+      cert-manager.enabled: true
+      ingress.hostname: "test"
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: |
+      should be empty if:
+        ingress.nginx.enabled is false
+        cert-manager.enabled is true
+        ingress.hostname is not null
+    set:
+      ingress.nginx.enabled: false
+      cert-manager.enabled: true
+      ingress.hostname: "test"
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: |
+      should be empty if:
+        ingress.nginx.enabled is true
+        cert-manager.enabled is false
+        ingress.hostname is not null
+    set:
+      ingress.nginx.enabled: true
+      cert-manager.enabled: false
+      ingress.hostname: "test"
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: |
+      should be empty if:
+        ingress.nginx.enabled is true
+        cert-manager.enabled is true
+        ingress.hostname is null
+    set:
+      ingress.nginx.enabled: true
+      cert-manager.enabled: true
+      ingress.hostname:
+    asserts:
+      - hasDocuments:
+          count: 0
