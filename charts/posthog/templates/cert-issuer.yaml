@@ -3,6 +3,9 @@ apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "99"
 spec:
   acme:
     # Email address used for ACME registration
