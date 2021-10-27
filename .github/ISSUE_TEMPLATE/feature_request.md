@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a feature for PostHog
+about: Suggest a feature
 labels: enhancement, feature
 
 ---
