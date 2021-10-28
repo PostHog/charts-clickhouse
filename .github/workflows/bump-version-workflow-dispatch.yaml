@@ -1,6 +1,6 @@
 name: Bump chart version & release workflow dispatch
 
-on: 
+on:
     workflow_dispatch:
       inputs:
         bumptype:
@@ -77,4 +77,4 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
-          charts_repo_url: 'https://posthog.github.io/charts-clickhouse/'
+          charts_repo_url: 'https://github.com/PostHog/charts-clickhouse'
