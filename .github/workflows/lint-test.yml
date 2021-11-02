@@ -4,7 +4,7 @@ on: push
 
 jobs:
   helm-lint:
-    name: Run 'helm lint'
+    name: helm lint
     runs-on: ubuntu-20.04
     strategy:
       matrix:
