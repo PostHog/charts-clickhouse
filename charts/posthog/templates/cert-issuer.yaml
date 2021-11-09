@@ -4,8 +4,13 @@ kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
   annotations:
+    # Install this semi-last as we need 'cert-manager's CDRs API
+    # in order to work.
+    #
+    # see: https://github.com/PostHog/charts-clickhouse/issues/168
+    #
     "helm.sh/hook": post-install
-    "helm.sh/hook-weight": "99"
+    "helm.sh/hook-weight": "98"
 spec:
   acme:
     # Email address used for ACME registration
