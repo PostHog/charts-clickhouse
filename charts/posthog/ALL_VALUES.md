@@ -141,8 +141,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.service.enabled | bool | `false` |  |
 | kafka.service.type | string | `"NodePort"` |  |
 | kafka.persistence.enabled | bool | `true` | Enable persistence using PVC |
-| kafka.persistence.size | string | `"5Gi"` | PVC Storage Request for kafka volume |
-| kafka.logRetentionBytes | string | `"_4_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, ideally 70-80% |
+| kafka.persistence.size | string | `"20Gi"` | PVC Storage Request for kafka volume |
+| kafka.logRetentionBytes | string | `"_15_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, minimum 1GB |
 | kafka.logRetentionHours | int | `24` | The minimum age of a log file to be eligible for deletion due to age |
 | kafka.zookeeper.enabled | bool | `false` | Install zookeeper on kubernetes |
 | kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | URL for zookeeper. Only set when internal zookeeper is disabled -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper |
