@@ -4,6 +4,5 @@ deploymentType: "DigitalOcean 1-click"
 ingress:
   nginx:
     enabled: true
-    redirectToTLS: false
-web:
-  secureCookies: false
+cert-manager:
+  enabled: true
