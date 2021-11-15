@@ -4,7 +4,7 @@ kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
   annotations:
-    # Install this semi-last as we need 'cert-manager's CDRs API
+    # Install this "semi-last" as we need cert-manager CDRs API
     # in order to work.
     #
     # see: https://github.com/PostHog/charts-clickhouse/issues/168

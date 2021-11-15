@@ -3,18 +3,18 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
  name: {{ template "posthog.fullname" . }}
-  annotations:
-    # Install this last as when we run with 'ingress.hostname' && 'ingress.nginx.enabled' && 'cert-manager.enabled'
-    # or when we run with 'ingress.letsencrypt' we need to have the 'letsencrypt-prod' cluster-issuer installed
-    # otherwise it will not be installed.
-    "helm.sh/hook": post-install
-    "helm.sh/hook-weight": "99"
  labels:
     app: {{ template "posthog.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
  annotations:
+    # Install this last as when we run with 'ingress.hostname' and 'ingress.nginx.enabled' and 'cert-manager.enabled'
+    # or when we run with 'ingress.letsencrypt' we need to have the 'letsencrypt-prod' cluster-issuer installed
+    # otherwise it will not be installed.
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "99"
+
    {{- if (eq (include "ingress.type" .) "clb") }}
     kubernetes.io/ingress.class: "gce"
     {{- if not (.Values.ingress.gcp.secretName) }}
