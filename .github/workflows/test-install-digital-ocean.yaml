@@ -1,6 +1,6 @@
 name: e2e - DigitalOcean 1-click (install)
 
-on: [push, pull_request]
+on: push
 
 jobs:
   do-install:
