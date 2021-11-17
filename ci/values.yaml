@@ -1,15 +1,16 @@
 cloud: k3s
 
 ingress:
-  type: nginx
-  hostname: test.yourcloud.net
-  path: /*
-  letsencrypt: false
   nginx:
-    enabled: false
+    enabled: true
+    redirectToTLS: false
+  letsencrypt: false
+
+web:
+  secureCookies: false
 
 clickhouseOperator:
-  storage: 2Gi
+  storage: 1Gi
 
 redis:
   usePassword: false
@@ -17,6 +18,3 @@ redis:
   master:
     persistence:
       size: 1Gi
-
-web:
-  secureCookies: false

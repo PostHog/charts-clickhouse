@@ -56,7 +56,7 @@ jobs:
       - name: (Upgrade) Install our helm chart from main branch
         if: matrix.test == 'upgrade'
         run: |
-          helm upgrade --install -f ci/values.yaml --timeout 10m --create-namespace --namespace posthog posthog ./main/charts/posthog
+          helm upgrade --install -f ci/values.yaml --timeout 10m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs
 
       - name: "(Upgrade) Install helm diff"
         if: matrix.test == 'upgrade'
@@ -77,7 +77,7 @@ jobs:
 
       - name: Install our helm chart
         run: |
-          helm upgrade --install -f ci/values.yaml --timeout 10m --create-namespace --namespace posthog posthog ./charts/posthog
+          helm upgrade --install -f ci/values.yaml --timeout 10m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs
 
       # GitHub Action reference: https://github.com/jupyterhub/action-k8s-await-workloads
       - name: Await all deployments to start
