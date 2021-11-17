@@ -1,24 +1,12 @@
 ---
-name: Feature request
-about: Suggest a feature
+name: "\U0001F680 Feature request"
+about: Suggest a new feature or change
 labels: enhancement, feature
 
 ---
 
-## Is your feature request related to a problem?
+### Proposed change
+<!-- Use this section to describe the feature you'd like to be added. -->
 
-*Please describe.*
-
-## Describe the solution you'd like
-
-
-
-## Describe alternatives you've considered
-
-
-
-## Additional context
-
-
-
-#### *Thank you* for your feature request – we love each and every one!
+### Alternative options
+<!-- Use this section to describe alternative options and why you've decided on the proposed feature above. -->
