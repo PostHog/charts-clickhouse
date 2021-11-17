@@ -29,7 +29,7 @@ jobs:
           --version 1.21.5-do.0 \
           --tag="provisioned_by:github_action" \
           --size s-2vcpu-2gb \
-          --count 3 \
+          --count 2 \
           --wait \
           --1-clicks \
           posthog
