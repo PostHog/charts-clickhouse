@@ -1,7 +1,7 @@
 import http from 'k6/http'
 import {check, sleep, fail} from 'k6'
 import { Gauge } from 'k6/metrics'
-import { URL } from 'https://jslib.k6.io/url/1.0.0/index.js';
+import { URL } from 'https://jslib.k6.io/url/1.0.0/index.js'
 
 const POSTHOG_API_ENDPOINT = __ENV.POSTHOG_API_ENDPOINT
 const POSTHOG_EVENT_ENDPOINT = __ENV.POSTHOG_EVENT_ENDPOINT
