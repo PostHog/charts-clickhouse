@@ -10,3 +10,6 @@ labels: enhancement, feature
 
 ### Alternative options
 <!-- Use this section to describe alternative options and why you've decided on the proposed feature above. -->
+
+## Additional context
+<!-- Add additional information here, if any -->
