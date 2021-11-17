@@ -1,0 +1,83 @@
+name: e2e - DigitalOcean 1-click (install)
+
+on: push
+
+jobs:
+  do-install:
+    runs-on: ubuntu-latest
+    if: github.repository == 'PostHog/charts-clickhouse'
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Declare variables that we can share across steps
+      id: vars
+      run: |
+        echo "::set-output name=k8s_cluster_name::helm-e2e-testing-do-1-click-$(git rev-parse --short HEAD)"
+
+    - name: Deploy a new k8s cluster
+      run: |
+        doctl k8s clusters create \
+          ${{ steps.vars.outputs.k8s_cluster_name }} \
+          --region fra1 \
+          --version 1.21.5-do.0 \
+          --tag="provisioned_by:github_action" \
+          --size s-2vcpu-2gb \
+          --count 2 \
+          --wait \
+          --1-clicks \
+          posthog
+
+    # Wait for the DigitalOcean marketplace to complete the installation
+    #
+    # Despite the --wait flag used in the command above
+    # there is no guarantee the PostHog app will be deployed
+    # when the command returns. With this workaround we wait
+    # until the Kubernetes keyspace is created.
+    #
+    # ref: https://github.com/digitalocean/doctl/issues/1063
+    #
+    # Why can't we directly use the 'action-k8s-await-workloads' step below?
+    # Because it's not working for this use case
+    #
+    # ref: https://github.com/jupyterhub/action-k8s-await-workloads/issues/38
+    #
+    - name: Workaround - wait until the 'posthog' pods are ready
+      timeout-minutes: 15
+      run: |
+        echo "Waiting for pods to be ready..."
+        while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
+        do
+          echo "  sleeping 10 seconds"
+          sleep 10
+        done
+        echo "All pods are now ready!"
+
+    - name: Wait until all the resources are fully deployed in k8s
+      uses: jupyterhub/action-k8s-await-workloads@main
+      with:
+        namespace: "posthog"
+        timeout: 300
+        max-restarts: 10
+
+    # TODO
+    # - setup ingestion test
+    # - run ingestion test
+    # - run k8s spec test
+
+    - name: Emit k8s namespace report
+      uses: jupyterhub/action-k8s-namespace-report@v1
+      if: always()
+      with:
+        namespace: "posthog"
+
+    - name: Delete the k8s cluster and all associated resources (LB, volumes, ...)
+      if: always()
+      run: |
+        doctl k8s cluster delete --dangerous --force ${{ steps.vars.outputs.k8s_cluster_name }}
