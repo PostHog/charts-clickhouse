@@ -1,8 +1,5 @@
 cloud: k3s
 
-image:
-  tag: latest
-
 ingress:
   type: nginx
   hostname: test.yourcloud.net
@@ -12,15 +9,7 @@ ingress:
     enabled: false
 
 clickhouseOperator:
-  enabled: true
-  namespace: default
   storage: 2Gi
-
-plugins:
-  replicacount: 1
-
-worker:
-  replicacount: 1
 
 redis:
   usePassword: false
