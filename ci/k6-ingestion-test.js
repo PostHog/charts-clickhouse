@@ -3,15 +3,14 @@ import {check, sleep, fail} from 'k6'
 import { Gauge } from 'k6/metrics'
 import { URL } from 'https://jslib.k6.io/url/1.0.0/index.js';
 
-const POSTHOG_ENDPOINT = __ENV.POSTHOG_ENDPOINT
-const POSTHOG_API_ENDPOINT = __ENV.POSTHOG_API_ENDPOINT || POSTHOG_ENDPOINT
-const POSTHOG_EVENT_ENDPOINT = __ENV.POSTHOG_EVENT_ENDPOINT || POSTHOG_ENDPOINT
+const POSTHOG_API_ENDPOINT = __ENV.POSTHOG_API_ENDPOINT
+const POSTHOG_EVENT_ENDPOINT = __ENV.POSTHOG_EVENT_ENDPOINT
 
 const captureURL = new URL(`${POSTHOG_EVENT_ENDPOINT}/e/`);
 const apiURL = new URL(`${POSTHOG_API_ENDPOINT}/api/insight/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`);
 
 if (POSTHOG_EVENT_ENDPOINT == null && POSTHOG_API_ENDPOINT == null) {
-  fail("Please specify env variable POSTHOG_ENDPOINT or POSTHOG_EVENT_ENDPOINT and POSTHOG_API_ENDPOINT")
+  fail("Please specify env variables POSTHOG_EVENT_ENDPOINT and POSTHOG_API_ENDPOINT")
 }
 
 let eventsIngested = new Gauge('events_ingested')
