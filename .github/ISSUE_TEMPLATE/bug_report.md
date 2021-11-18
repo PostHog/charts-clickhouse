@@ -26,7 +26,8 @@ Please include information about how you installed or updated
 -->
 
 - [ ] Deployment platform (AWS/Azure/DigitalOcean/GCP/...): _please provide_
-- [ ] Chart version/commit: _please provide_
+- [ ] k8s version (server version from `kubectl version`): _please provide_
+- [ ] Chart version/commit (`helm list -n posthog`): _please provide_
 - [ ] Posthog version: _please provide_
 
 ## Additional context
