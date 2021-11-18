@@ -344,6 +344,8 @@ ingress:
 postgresql:
   # -- Install postgres server on kubernetes (see below)
   enabled: true
+  # -- sslmode for connection - defaults to prefer
+  sslmode: prefer
   # -- Name override for postgresql app
   nameOverride: posthog-postgresql
   # -- Postgresql database name
