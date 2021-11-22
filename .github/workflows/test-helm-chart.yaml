@@ -89,7 +89,7 @@ jobs:
       - name: Setup PostHog for the ingestion test
         run: ./ci/setup_ingestion_test.sh
 
-      - name: Fetch PostHog endpoints to use for the ingestion test
+      - name: Set PostHog endpoints to use for the ingestion test
         run: |
           POSTHOG_API_ADDRESS=$(kubectl get svc -n posthog posthog-web -o jsonpath="{.spec.clusterIP}")
           POSTHOG_EVENTS_ADDRESS=$(kubectl get svc -n posthog posthog-events -o jsonpath="{.spec.clusterIP}")
