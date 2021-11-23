@@ -17,8 +17,8 @@ let eventsIngested = new Gauge('events_ingested')
 
 export let options = {
   thresholds: {
-    http_req_failed: ['rate<0.01'],   // http errors should be less than 1%
-    http_req_duration: ['p(95)<500'], // 95% of requests should be below 500ms
+    http_req_failed: ['rate < 0.01'],   // http errors should be less than 1%
+    http_req_duration: ['p(90) < 1000'], // 90% of requests should be below 1s
     events_ingested: ['value > 0', 'value > 100']
   },
   scenarios: {

@@ -81,8 +81,8 @@ jobs:
         load_balancer_external_ip=""
         while [ -z "$load_balancer_external_ip" ];
         do
+          echo "  sleeping 10 seconds" && sleep 10
           load_balancer_external_ip=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
-          [ -z "$load_balancer_external_ip" ] && echo "  sleeping 10 seconds" && sleep 10
         done
         echo "The DigitalOcean Load Balancer is now ready!"
 
@@ -108,6 +108,7 @@ jobs:
           --record-data "$load_balancer_external_ip"
 
     - name: Wait for the Let's Encrypt certificate to be issued and deployed
+      id: tls_certificate_creation
       run: |
         echo "Wait for the Let's Encrypt certificate to be issued and deployed..."
         while ! kubectl wait --for=condition=Ready --timeout=60s certificaterequest --all -n posthog > /dev/null 2>&1
@@ -129,13 +130,19 @@ jobs:
       with:
         filename: ci/k6-ingestion-test.js
 
-    - name: Delete the k8s cluster and all associated resources (LB, volumes, ...)
+    - name: Delete the k8s cluster and all the associated resources
       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
       run: |
-        doctl k8s cluster delete --dangerous --force ${{ steps.vars.outputs.k8s_cluster_name }}
+        doctl k8s cluster delete \
+          --dangerous \
+          --force \
+          ${{ steps.vars.outputs.k8s_cluster_name }}
 
     - name: Delete the DNS record
       if: ${{ always() && steps.dns_creation.outcome == 'success' }}
       run: |
         DNS_RECORD_ID=$(doctl compute domain records list posthog.cc --no-header --format ID,Name | grep ${{ steps.vars.outputs.dns_record }} | awk '{print $1}')
-        doctl compute domain records delete --force posthog.cc "$DNS_RECORD_ID"
+        doctl compute domain records delete \
+          posthog.cc \
+          --force \
+          "$DNS_RECORD_ID"
