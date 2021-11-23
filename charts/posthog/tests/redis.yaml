@@ -1,0 +1,63 @@
+suite: Redis
+templates:
+  - templates/plugins-deployment.yaml
+  - templates/secrets.yaml
+release:
+  name: my-release
+  namespace: my-namespace
+
+tests:
+  - it: should have correct envs setup with default setup
+    template: templates/plugins-deployment.yaml
+    set:
+      cloud: "other"
+    asserts:
+      - equal:
+          path: kind
+          value: Deployment
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            {"name": "REDIS_URL", "value": "redis://:$(POSTHOG_REDIS_PASSWORD)@$(POSTHOG_REDIS_HOST):$(POSTHOG_REDIS_PORT)"}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+             {"name": "POSTHOG_REDIS_HOST", "value": "my-release-posthog-redis-master"}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+             {"name": "POSTHOG_REDIS_PORT", "value": "6379"}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+             {"name": "POSTHOG_REDIS_PASSWORD", "value": null}
+  - it: should have correct envs setup with external redis
+    template: templates/plugins-deployment.yaml
+    set:
+      cloud: "other"
+      redis.enabled: false
+      redis.host: my-redis-host
+      redis.port: 12345
+      redis.password: my-redis-pass
+    asserts:
+      - equal:
+          path: kind
+          value: Deployment
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            {"name": "REDIS_URL", "value": "redis://:$(POSTHOG_REDIS_PASSWORD)@$(POSTHOG_REDIS_HOST):$(POSTHOG_REDIS_PORT)"}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+             {"name": "POSTHOG_REDIS_HOST", "value": "my-redis-host"}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+             {"name": "POSTHOG_REDIS_PORT", "value": "12345"}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+             {"name": "POSTHOG_REDIS_PASSWORD", "value": "my-redis-pass"}
+
+
