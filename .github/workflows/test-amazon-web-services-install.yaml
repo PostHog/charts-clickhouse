@@ -41,6 +41,7 @@ jobs:
       with:
         role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_TO_ASSUME }}
         aws-region: us-east-1
+        role-duration-seconds: 7200
 
     - name: Install doctl to manage 'posthog.cc' DNS
       uses: digitalocean/action-doctl@v2
