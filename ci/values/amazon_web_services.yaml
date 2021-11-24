@@ -1,0 +1,7 @@
+cloud: "aws"
+ingress:
+  hostname: <your-hostname>
+  nginx:
+    enabled: true
+cert-manager:
+  enabled: true

@@ -1,11 +1,11 @@
 #
-# This is an e2e test to deploy PostHog on DigitalOcean using Helm.
+# This is an e2e test to deploy PostHog on Amazon Web Services using Helm.
 #
 # TODO:
 # - run k8s spec test
 # - run action only when necessary
 #
-name: e2e - DigitalOcean (install)
+name: e2e - Amazon Web Services (install)
 
 on:
   workflow_dispatch:
@@ -13,26 +13,49 @@ on:
     paths:
       - ci/**
       - charts/**
-      - .github/workflows/test-digital-ocean-install.yaml
+      - .github/workflows/test-amazon-web-services-install.yaml
 
 jobs:
-  do-install:
+  aws-install:
     runs-on: ubuntu-20.04
     if: github.repository == 'PostHog/charts-clickhouse'
+
+    #
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    # We use OpenID Connect (OIDC) to allow this GitHub Action to access and manage
+    # AWS resources without needing to store the AWS credentials as long-lived GitHub secrets.
+    #
+    # see: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
+    #
+    permissions:
+      id-token: write
+      contents: write
+
     steps:
 
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_TO_ASSUME }}
+        aws-region: us-east-1
 
     - name: Install doctl to manage 'posthog.cc' DNS
       uses: digitalocean/action-doctl@v2
       with:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+    - name: Install eksctl to easily manage EKS clusters
+      run: |
+        curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz
+        ./eksctl version
+
     - name: Declare variables that we can share across steps
       id: vars
       run: |
-        TEST_NAME="helm-test-e2e-do-install-$(git rev-parse --short HEAD)"
+        TEST_NAME="helm-test-e2e-aws-install-$(git rev-parse --short HEAD)"
         echo "::set-output name=k8s_cluster_name::${TEST_NAME}"
         echo "::set-output name=dns_record::${TEST_NAME}"
         echo "::set-output name=fqdn_record::${TEST_NAME}.posthog.cc"
@@ -40,18 +63,32 @@ jobs:
     - name: Deploy a new k8s cluster
       id: k8s_cluster_creation
       run: |
-        doctl k8s clusters create \
-          ${{ steps.vars.outputs.k8s_cluster_name }} \
-          --version 1.21.5-do.0 \
-          --tag="provisioned_by:github_action" \
-          --size s-2vcpu-4gb \
-          --count 2 \
-          --wait
+        # note: we manually specify all the AZs in the region to reduce the
+        # possibility AWS runs out of capacity in a single one, making this
+        # test fail.
+        ./eksctl create cluster \
+          --name ${{ steps.vars.outputs.k8s_cluster_name }} \
+          --region=us-east-1 \
+          --zones="us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1f" \
+          --instance-types="t3.medium" \
+          --tags="provisioned_by=github_action" \
+          --version 1.21 \
+          --nodes 3 \
+          --fargate
+
+        # uncomment the command below if you want to temporary create an IAM identity
+        # to K8s user mapping. Useful if you want to troubleshoot an issue.
+        #
+        # ./eksctl create iamidentitymapping \
+        #   --cluster ${{ steps.vars.outputs.k8s_cluster_name }} \
+        #   --arn arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/OrganizationAccountAccessRole \
+        #   --group system:masters \
+        #   --username admin
 
     - name: Install PostHog using the Helm chart
       run: |
         helm upgrade --install \
-          -f ci/values/digital_ocean.yaml \
+          -f ci/values/amazon_web_services.yaml \
           --set "ingress.hostname=${{ steps.vars.outputs.fqdn_record }}" \
           --timeout 20m \
           --create-namespace \
@@ -83,14 +120,14 @@ jobs:
         done
         echo "All pods are now ready!"
 
-        echo "Waiting for the DigitalOcean Load Balancer to be ready..."
-        load_balancer_external_ip=""
-        while [ -z "$load_balancer_external_ip" ];
+        echo "Waiting for the AWS Load Balancer to be ready..."
+        load_balancer_external_hostname=""
+        while [ -z "$load_balancer_external_hostname" ];
         do
           echo "  sleeping 10 seconds" && sleep 10
-          load_balancer_external_ip=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+          load_balancer_external_hostname=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
         done
-        echo "The DigitalOcean Load Balancer is now ready!"
+        echo "The AWS Load Balancer is now ready!"
 
     - name: Wait until all the resources are fully deployed in k8s
       uses: jupyterhub/action-k8s-await-workloads@main
@@ -103,15 +140,15 @@ jobs:
       id: dns_creation
       run: |
         # Get the Load Balancer IP address
-        load_balancer_external_ip=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        load_balancer_external_hostname=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
 
         # Create the DNS record
         doctl compute domain records create \
           posthog.cc \
-          --record-type A \
+          --record-type CNAME \
           --record-ttl 60 \
           --record-name "${{ steps.vars.outputs.dns_record }}" \
-          --record-data "$load_balancer_external_ip"
+          --record-data "$load_balancer_external_hostname"
 
     - name: Wait for the Let's Encrypt certificate to be issued and deployed
       id: tls_certificate_creation
@@ -139,10 +176,18 @@ jobs:
     - name: Delete the k8s cluster and all the associated resources
       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
       run: |
-        doctl k8s cluster delete \
-          --dangerous \
+        # TODO: delete this
+        ./eksctl delete cluster \
+          --region=us-east-1 \
+          --name=helm-test-e2e-aws-install-ed47c90 \
           --force \
-          ${{ steps.vars.outputs.k8s_cluster_name }}
+          --wait
+
+        ./eksctl delete cluster \
+          --region=us-east-1 \
+          --name=${{ steps.vars.outputs.k8s_cluster_name }} \
+          --force \
+          --wait
 
     - name: Delete the DNS record
       if: ${{ always() && steps.dns_creation.outcome == 'success' }}
