@@ -73,8 +73,7 @@ jobs:
           --instance-types="t3.medium" \
           --tags="provisioned_by=github_action" \
           --version 1.21 \
-          --nodes 3 \
-          --fargate
+          --nodes 3
 
         # uncomment the command below if you want to temporary create an IAM identity
         # to K8s user mapping. Useful if you want to troubleshoot an issue.
@@ -176,13 +175,6 @@ jobs:
     - name: Delete the k8s cluster and all the associated resources
       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
       run: |
-        # TODO: delete this
-        ./eksctl delete cluster \
-          --region=us-east-1 \
-          --name=helm-test-e2e-aws-install-ed47c90 \
-          --force \
-          --wait
-
         ./eksctl delete cluster \
           --region=us-east-1 \
           --name=${{ steps.vars.outputs.k8s_cluster_name }} \
