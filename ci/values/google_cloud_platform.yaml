@@ -1,0 +1,3 @@
+cloud: "gcp"
+ingress:
+  hostname: <your-hostname>

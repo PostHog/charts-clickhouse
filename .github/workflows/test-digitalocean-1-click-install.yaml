@@ -106,7 +106,7 @@
 #       with:
 #         filename: ci/k6-ingestion-test.js
 
-#     - name: Delete the k8s cluster and all associated resources (LB, volumes, ...)
+#     - name: Delete the k8s cluster and all the associated resources
 #       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
 #       run: |
 #         doctl k8s cluster delete --dangerous --force ${{ steps.vars.outputs.k8s_cluster_name }}
