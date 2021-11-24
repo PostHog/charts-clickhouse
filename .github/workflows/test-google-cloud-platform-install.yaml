@@ -155,10 +155,6 @@ jobs:
     #
     # see: https://stackoverflow.com/questions/44584270/
     #
-    - name: Run ingestion test using k6
-      run: |
-        sleep 30
-
     # - name: Run ingestion test using k6
     #   uses: k6io/action@v0.2.0
     #   with:
