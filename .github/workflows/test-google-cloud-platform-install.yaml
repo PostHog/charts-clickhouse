@@ -7,7 +7,7 @@
 #
 name: e2e - Google Cloud Platform (install)
 
-on: push
+on: [push, workflow_dispatch]
 
 jobs:
   gcp-install:
@@ -25,7 +25,7 @@ jobs:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
-    - name: Install doctl
+    - name: Install doctl to manage 'posthog.cc' DNS
       uses: digitalocean/action-doctl@v2
       with:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
@@ -44,7 +44,7 @@ jobs:
         gcloud container clusters create \
           ${{ steps.vars.outputs.k8s_cluster_name }} \
           --project ${{ secrets.GCP_PROJECT_ID }} \
-          --region europe-west4 \
+          --region us-central1 \
           --cluster-version 1.21 \
           --labels="provisioned_by=github_action" \
           --machine-type e2-medium \
@@ -169,7 +169,7 @@ jobs:
       run: |
         gcloud container clusters delete \
           --project ${{ secrets.GCP_PROJECT_ID }} \
-          --region europe-west4 \
+          --region us-central1 \
           --quiet \
           ${{ steps.vars.outputs.k8s_cluster_name }}
 

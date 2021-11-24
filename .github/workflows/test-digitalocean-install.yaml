@@ -7,7 +7,7 @@
 #
 name: e2e - DigitalOcean (install)
 
-on: push
+on: [push, workflow_dispatch]
 
 jobs:
   do-install:
@@ -18,7 +18,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Install doctl
+    - name: Install doctl to manage 'posthog.cc' DNS
       uses: digitalocean/action-doctl@v2
       with:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
