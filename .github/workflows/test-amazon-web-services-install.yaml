@@ -75,15 +75,6 @@ jobs:
           --version 1.21 \
           --nodes 3
 
-        # uncomment the command below if you want to temporary create an IAM identity
-        # to K8s user mapping. Useful if you want to troubleshoot an issue.
-        #
-        # ./eksctl create iamidentitymapping \
-        #   --cluster ${{ steps.vars.outputs.k8s_cluster_name }} \
-        #   --arn arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/OrganizationAccountAccessRole \
-        #   --group system:masters \
-        #   --username admin
-
     - name: Install PostHog using the Helm chart
       run: |
         helm upgrade --install \
@@ -147,7 +138,7 @@ jobs:
           --record-type CNAME \
           --record-ttl 60 \
           --record-name "${{ steps.vars.outputs.dns_record }}" \
-          --record-data "$load_balancer_external_hostname"
+          --record-data "${load_balancer_external_hostname}."
 
     - name: Wait for the Let's Encrypt certificate to be issued and deployed
       id: tls_certificate_creation
