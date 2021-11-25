@@ -7,7 +7,13 @@
 #
 name: e2e - Google Cloud Platform (install)
 
-on: [push, workflow_dispatch]
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ci/**
+      - charts/**
+      - .github/workflows/test-google-cloud-platform-install.yaml
 
 jobs:
   gcp-install:

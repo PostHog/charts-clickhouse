@@ -3,7 +3,13 @@
 #
 name: Test chart
 
-on: [push]
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ci/**
+      - charts/**
+      - .github/workflows/test-helm-chart.yaml
 
 jobs:
   test-chart:
