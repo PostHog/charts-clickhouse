@@ -1,0 +1,22 @@
+name: Lint test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.js'
+      - '**.jsx'
+      - '**.ts'
+      - '**.tsx'
+      - .github/workflows/test-lint-eslint.yaml
+
+jobs:
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn
+      - name: Run ESLint
+        run: yarn run eslint . --ext .js,.jsx,.ts,.tsx

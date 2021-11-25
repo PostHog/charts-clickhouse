@@ -1,6 +1,12 @@
 name: Lint test
 
-on: push
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ci/**
+      - charts/**
+      - .github/workflows/test-lint-helm.yaml
 
 jobs:
   helm-lint:
@@ -12,13 +18,3 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: helm lint --strict --set "cloud=${{ matrix.cloud }}" charts/posthog
-
-  eslint:
-    name: ESLint
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install modules
-        run: yarn
-      - name: Run ESLint
-        run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
