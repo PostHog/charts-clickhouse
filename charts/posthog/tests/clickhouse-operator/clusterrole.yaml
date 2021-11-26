@@ -13,27 +13,27 @@ tests:
   - it: the manifest should match the snapshot when using default values
     asserts:
       - hasDocuments:
-          count: 2
+          count: 1
       - matchSnapshot: {}
 
-  - it: ClusterRoleBinding/clickhouse-operator-posthog-cr subjects[0].namespace override via clickhouseOperator.namespace should work
+  - it: ClusterRole/clickhouse-operator-posthog metadata.namespace override via clickhouseOperator.namespace should work
     set:
       clickhouseOperator.namespace: "custom-namespace"
-    documentIndex: 1
+    documentIndex: 0
     asserts:
       - hasDocuments:
-          count: 2
+          count: 1
       - equal:
-          path: subjects[0].namespace
+          path: metadata.namespace
           value: custom-namespace
 
-  - it: ClusterRoleBinding/clickhouse-operator-posthog-cr subjects[0].namespace override via Release.Namespace should work
+  - it: ClusterRole/clickhouse-operator-posthog metadata.namespace override via Release.Namespace should work
     release:
       namespace: custom-namespace-from-release
-    documentIndex: 1
+    documentIndex: 0
     asserts:
       - hasDocuments:
-          count: 2
+          count: 1
       - equal:
-          path: subjects[0].namespace
+          path: metadata.namespace
           value: custom-namespace-from-release
