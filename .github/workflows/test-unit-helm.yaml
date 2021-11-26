@@ -1,0 +1,26 @@
+name: Unit tests
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ci/**
+      - charts/**
+      - ct.yaml
+      - .github/workflows/test-unit-helm.yaml
+
+jobs:
+  helm-unittest:
+    name: Helm unittest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Helm unittest plugin
+        run: |
+          helm env
+          helm plugin install https://github.com/quintush/helm-unittest.git --version 0.2.7
+
+      - name: Run test suite
+        run: helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/**/*.yaml' charts/posthog
