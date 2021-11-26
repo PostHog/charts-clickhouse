@@ -1,0 +1,183 @@
+#
+# This is an e2e test to deploy PostHog on Microsoft Azure using Helm.
+#
+# TODO:
+# - run k8s spec test
+# - run action only when necessary
+#
+name: e2e - Microsoft Azure (install)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ci/**
+      - charts/**
+      - .github/workflows/test-microsoft-azure-install.yaml
+
+jobs:
+  azure-install:
+    runs-on: ubuntu-20.04
+    if: github.repository == 'PostHog/charts-clickhouse'
+
+    #
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    # We use OpenID Connect (OIDC) to allow this GitHub Action to access and manage
+    # Azure resources without needing to store the Azure credentials as long-lived GitHub secrets.
+    #
+    # see: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
+    #
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: 'Configure Azure Credentials'
+      uses: azure/login@v1
+      with:
+          client-id: ${{ secrets.AZURE_CLIENTID }}
+          tenant-id: ${{ secrets.AZURE_TENANTID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTIONID }}
+
+    - name: Install doctl to manage 'posthog.cc' DNS
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Declare variables that we can share across steps
+      id: vars
+      run: |
+        TEST_NAME="helm-test-e2e-az-install-$(git rev-parse --short HEAD)"
+        echo "::set-output name=k8s_cluster_name::${TEST_NAME}"
+        echo "::set-output name=dns_record::${TEST_NAME}"
+        echo "::set-output name=fqdn_record::${TEST_NAME}.posthog.cc"
+
+    - name: Deploy a new k8s cluster
+      id: k8s_cluster_creation
+      run: |
+        # let's first create an Azure Resources Group
+        # (logical collection of virtual machines, storage accounts, virtual networks,
+        # web apps, databases, and/or database servers)
+        az group create \
+          --location westus2 \
+          --name ${{ steps.vars.outputs.k8s_cluster_name }}
+
+        az aks create \
+          --resource-group ${{ steps.vars.outputs.k8s_cluster_name }} \
+          --name ${{ steps.vars.outputs.k8s_cluster_name }}  \
+          --kubernetes-version 1.21.2 \
+          --node-count 3 \
+          --node-vm-size Standard_DS2_v2 \
+          --tags="provisioned_by=github_action" \
+          --generate-ssh-keys
+
+        az aks get-credentials \
+          --resource-group ${{ steps.vars.outputs.k8s_cluster_name }} \
+          --name ${{ steps.vars.outputs.k8s_cluster_name }}
+
+    - name: Install PostHog using the Helm chart
+      run: |
+        helm upgrade --install \
+          -f ci/values/microsoft_azure.yaml \
+          --set "ingress.hostname=${{ steps.vars.outputs.fqdn_record }}" \
+          --timeout 20m \
+          --create-namespace \
+          --namespace posthog \
+          posthog ./charts/posthog \
+          --wait-for-jobs \
+          --wait
+
+    #
+    # Wait for all k8s resources to be ready.
+    #
+    # Despite the --wait flag used in the command above
+    # there is no guarantee that all the resources will be deployed
+    # when the command returns.
+    #
+    #
+    # Why can't we directly use the 'action-k8s-await-workloads' step below?
+    # Because it's not working for this use case
+    #
+    # ref: https://github.com/jupyterhub/action-k8s-await-workloads/issues/38
+    #
+    - name: Workaround - wait for all the k8s resources to be ready
+      timeout-minutes: 15
+      run: |
+        echo "Waiting for pods to be ready..."
+        while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
+        do
+          echo "  pods are not yet ready"
+        done
+        echo "All pods are now ready!"
+
+        echo "Waiting for the Azure Load Balancer to be ready..."
+        load_balancer_external_ip=""
+        while [ -z "$load_balancer_external_ip" ];
+        do
+          echo "  sleeping 10 seconds" && sleep 10
+          load_balancer_external_ip=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        done
+        echo "The Azure Load Balancer is now ready!"
+
+    - name: Wait until all the resources are fully deployed in k8s
+      uses: jupyterhub/action-k8s-await-workloads@main
+      with:
+        namespace: "posthog"
+        timeout: 300
+        max-restarts: 10
+
+    - name: Create the DNS record
+      id: dns_creation
+      run: |
+        # Get the Load Balancer IP address
+        load_balancer_external_ip=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+
+        # Create the DNS record
+        doctl compute domain records create \
+          posthog.cc \
+          --record-type A \
+          --record-ttl 60 \
+          --record-name "${{ steps.vars.outputs.dns_record }}" \
+          --record-data "$load_balancer_external_ip"
+
+    - name: Wait for the Let's Encrypt certificate to be issued and deployed
+      id: tls_certificate_creation
+      run: |
+        echo "Wait for the Let's Encrypt certificate to be issued and deployed..."
+        while ! kubectl wait --for=condition=Ready --timeout=60s certificaterequest --all -n posthog > /dev/null 2>&1
+        do
+          echo "  certificate hasn't been yet issued and deployed"
+        done
+        echo "The certificate has been issued and it has been deployed!"
+
+    - name: Setup PostHog for the ingestion test
+      run: ./ci/setup_ingestion_test.sh
+
+    - name: Set PostHog endpoints to use for the ingestion test
+      run: |
+        echo "POSTHOG_API_ENDPOINT=https://${{ steps.vars.outputs.fqdn_record }}" | tee -a "$GITHUB_ENV"
+        echo "POSTHOG_EVENT_ENDPOINT=https://${{ steps.vars.outputs.fqdn_record }}" | tee -a "$GITHUB_ENV"
+
+    - name: Run ingestion test using k6
+      uses: k6io/action@v0.2.0
+      with:
+        filename: ci/k6-ingestion-test.js
+
+    - name: Delete the k8s cluster and all the associated resources
+      if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
+      run: |
+        az group delete \
+          --name ${{ steps.vars.outputs.k8s_cluster_name }} \
+          --yes
+
+    - name: Delete the DNS record
+      if: ${{ always() && steps.dns_creation.outcome == 'success' }}
+      run: |
+        DNS_RECORD_ID=$(doctl compute domain records list posthog.cc --no-header --format ID,Name | grep ${{ steps.vars.outputs.dns_record }} | awk '{print $1}')
+        doctl compute domain records delete \
+          posthog.cc \
+          --force \
+          "$DNS_RECORD_ID"
