@@ -1,6 +1,6 @@
 suite: ClickHouse service definition
 templates:
-  - templates/clickhouse_service.yaml
+  - templates/clickhouse-operator/service.yaml
 
 tests:
   - it: should be empty if clickhouseOperator.enabled is set to false

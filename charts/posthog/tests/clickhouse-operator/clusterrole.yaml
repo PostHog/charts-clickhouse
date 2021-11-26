@@ -1,6 +1,6 @@
 suite: ClickHouse cluster role definition
 templates:
-  - templates/clickhouse_cluster_role.yaml
+  - templates/clickhouse-operator/clusterrole.yaml
 
 tests:
   - it: should be empty if clickhouseOperator.enabled is set to false
