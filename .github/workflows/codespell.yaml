@@ -19,5 +19,6 @@ jobs:
         with:
           check_filenames: true
           check_hidden: true
+          ignore_words_list: aks
           # Don't check the .git folder as well as few files that we get from upstream
           skip: .git,./charts/posthog/tests/__snapshot__,./charts/posthog/crds/clickhouse_installation.yaml,./charts/posthog/templates/clickhouse_config_map.yaml
