@@ -1,136 +1,157 @@
 {{- if .Values.clickhouseOperator.enabled }}
+# Template Parameters:
+#
+# NAMESPACE=posthog
+# COMMENT=#
+# ROLE_KIND=ClusterRole
+# ROLE_NAME=clickhouse-operator-posthog
+# ROLE_BINDING_KIND=ClusterRoleBinding
+# ROLE_BINDING_NAME=clickhouse-operator-posthog
+#
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: clickhouse-operator-posthog
+  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
 rules:
 - apiGroups:
-  - ""
+    - ""
   resources:
-  - configmaps
-  - services
+    - configmaps
+    - services
   verbs:
-  - create
-  - delete
-  - get
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - patch
+    - update
+    - list
+    - watch
 - apiGroups:
-  - ""
+    - ""
   resources:
-  - events
+    - endpoints
   verbs:
-  - create
+    - get
+    - list
+    - watch
 - apiGroups:
-  - ""
+    - ""
   resources:
-  - persistentvolumeclaims
+    - events
   verbs:
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
+    - create
 - apiGroups:
-  - ""
+    - ""
   resources:
-  - persistentvolumes
-  - pods
+    - persistentvolumeclaims
   verbs:
-  - get
-  - list
-  - patch
-  - update
-  - watch
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
 - apiGroups:
-  - apps
+    - ""
   resources:
-  - statefulsets
+    - persistentvolumes
+    - pods
   verbs:
-  - create
-  - delete
-  - get
-  - patch
-  - update
+    - get
+    - list
+    - patch
+    - update
+    - watch
 - apiGroups:
-  - clickhouse.altinity.com
+    - apps
   resources:
-  - clickhouseinstallations
+    - statefulsets
   verbs:
-  - delete
-  - get
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - patch
+    - update
+    - list
+    - watch
 - apiGroups:
-  - apps
+    - apps
+  resources:
+    - replicasets
+  verbs:
+    - delete
+    - get
+    - patch
+    - update
+- apiGroups:
+    - apps
   resourceNames:
-  - clickhouse-operator
+    - clickhouse-operator
   resources:
-  - deployments
+    - deployments
   verbs:
-  - get
-  - patch
-  - update
-  - delete
+    - get
+    - patch
+    - update
+    - delete
 - apiGroups:
-  - apps
+    - policy
   resources:
-  - replicasets
+    - poddisruptionbudgets
   verbs:
-  - delete
-  - get
-  - patch
-  - update
+    - create
+    - delete
+    - get
+    - patch
+    - update
+    - list
+    - watch
 - apiGroups:
-  - ""
+    - clickhouse.altinity.com
   resources:
-  - configmaps
-  - endpoints
-  - services
+    - clickhouseinstallations
   verbs:
-  - get
-  - list
-  - watch
+    - delete
+    - get
+    - patch
+    - update
 - apiGroups:
-  - apps
+    - clickhouse.altinity.com
   resources:
-  - statefulsets
+    - clickhouseinstallations
+    - clickhouseinstallationtemplates
+    - clickhouseoperatorconfigurations
   verbs:
-  - get
-  - list
-  - watch
+    - get
+    - list
+    - watch
 - apiGroups:
-  - clickhouse.altinity.com
+    - clickhouse.altinity.com
   resources:
-  - clickhouseinstallations
-  - clickhouseinstallationtemplates
-  - clickhouseoperatorconfigurations
+    - clickhouseinstallations/finalizers
+    - clickhouseinstallationtemplates/finalizers
+    - clickhouseoperatorconfigurations/finalizers
   verbs:
-  - get
-  - list
-  - watch
+    - update
 - apiGroups:
-  - clickhouse.altinity.com
-  verbs:
-  - update
+    - clickhouse.altinity.com
   resources:
-  - clickhouseinstallations/finalizers
-  - clickhouseinstallationtemplates/finalizers
-  - clickhouseoperatorconfigurations/finalizers
----
-# Setup ClusterRoleBinding between ClusterRole and ServiceAccount.
-# ClusterRoleBinding is namespace-less and must have unique name
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: clickhouse-operator-posthog-cr
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: clickhouse-operator-posthog
-subjects:
-- kind: ServiceAccount
-  name: clickhouse-operator
-  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }} 
+    - clickhouseinstallations/status
+    - clickhouseinstallationtemplates/status
+    - clickhouseoperatorconfigurations/status
+  verbs:
+    - create
+    - delete
+    - get
+    - update
+    - patch
+- apiGroups:
+    - ""
+  resources:
+    - secrets
+  verbs:
+    - get
+    - list
+
 {{- end }}

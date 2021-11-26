@@ -1,4 +1,13 @@
 {{- if .Values.clickhouseOperator.enabled }}
+# Template Parameters:
+#
+# NAMESPACE=posthog
+# COMMENT=
+# OPERATOR_IMAGE=altinity/clickhouse-operator:latest
+# METRICS_EXPORTER_IMAGE=altinity/metrics-exporter:latest
+#
+# Setup Deployment for clickhouse-operator
+# Deployment would be created in kubectl-specified namespace
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -38,8 +47,8 @@ spec:
             name: etc-clickhouse-operator-usersd-files
       containers:
         - name: clickhouse-operator
-          image: altinity/clickhouse-operator:latest 
-          imagePullPolicy: IfNotPresent
+          image: altinity/clickhouse-operator:latest
+          imagePullPolicy: Always
           volumeMounts:
             - name: etc-clickhouse-operator-folder
               mountPath: /etc/clickhouse-operator
@@ -104,7 +113,7 @@ spec:
 
         - name: metrics-exporter
           image: altinity/metrics-exporter:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           volumeMounts:
             - name: etc-clickhouse-operator-folder
               mountPath: /etc/clickhouse-operator
@@ -116,4 +125,5 @@ spec:
               mountPath: /etc/clickhouse-operator/templates.d
             - name: etc-clickhouse-operator-usersd-folder
               mountPath: /etc/clickhouse-operator/users.d
+
 {{- end }}

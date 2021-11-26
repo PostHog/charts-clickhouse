@@ -1,4 +1,9 @@
 {{- if .Values.clickhouseOperator.enabled }}
+# Template Parameters:
+#
+# NAMESPACE=posthog
+# COMMENT=
+#
 # Setup ClusterIP Service to provide monitoring metrics for Prometheus
 # Service would be created in kubectl-specified namespace
 # In order to get access outside of k8s it should be exposed as:
@@ -17,4 +22,5 @@ spec:
       name: clickhouse-operator-metrics
   selector:
     app: clickhouse-operator
+
 {{- end }}

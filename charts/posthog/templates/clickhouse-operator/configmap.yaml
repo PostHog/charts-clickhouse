@@ -1,9 +1,15 @@
 {{- if .Values.clickhouseOperator.enabled }}
+# Template Parameters:
+#
+# NAME=etc-clickhouse-operator-files
+# NAMESPACE=posthog
+# COMMENT=
+#
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-files
-  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }} 
+  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
   labels:
     app: clickhouse-operator
 data:
@@ -16,11 +22,8 @@ data:
     
     # List of namespaces where clickhouse-operator watches for events.
     # Concurrently running operators should watch on different namespaces
-    #watchNamespaces:
-    #  - dev
-    #  - test
-    #  - info
-    #  - onemore
+    #watchNamespaces: ["dev", "test"]
+    watchNamespaces: []
     
     ################################################
     ##
@@ -96,14 +99,22 @@ data:
     ##
     ################################################
     
-    # ClickHouse credentials (username, password and port) to be used by operator to connect to ClickHouse instances for:
+    # ClickHouse credentials (username, password and port) to be used by operator to connect to ClickHouse instances
+    # for:
     # 1. Metrics requests
     # 2. Schema maintenance
     # 3. DROP DNS CACHE
     # User with such credentials can be specified in additional ClickHouse .xml config files,
     # located in `chUsersConfigsPath` folder
-    chUsername: clickhouse_operator
-    chPassword: clickhouse_operator_password
+    chUsername: "clickhouse_operator"
+    chPassword: "clickhouse_operator_password"
+    
+    # Location of k8s Secret with username and password to be used by operator to connect to ClickHouse instances
+    # Can be used instead of explicitly specified username and password
+    chCredentialsSecretNamespace: ""
+    chCredentialsSecretName: ""
+    
+    # Port where to connect to ClickHouse instances to
     chPort: 8123
     
     ################################################
@@ -127,9 +138,54 @@ data:
     
     # Max number of concurrent reconciles in progress
     reconcileThreadsNumber: 10
-    reconcileWaitExclude: false
+    reconcileWaitExclude: true
     reconcileWaitInclude: false
+    
+    ################################################
+    ##
+    ## Labels management parameters
+    ##
+    ################################################
+    
+    # When propagating labels from the chi's `metadata.labels` section to child objects' `metadata.labels`,
+    # exclude labels from the following list:
+    #excludeFromPropagationLabels:
+    #  - "labelA"
+    #  - "labelB"
+    
+    # Whether to append *Scope* labels to StatefulSet and Pod.
+    # Full list of available *scope* labels check in labeler.go
+    #  LabelShardScopeIndex
+    #  LabelReplicaScopeIndex
+    #  LabelCHIScopeIndex
+    #  LabelCHIScopeCycleSize
+    #  LabelCHIScopeCycleIndex
+    #  LabelCHIScopeCycleOffset
+    #  LabelClusterScopeIndex
+    #  LabelClusterScopeCycleSize
+    #  LabelClusterScopeCycleIndex
+    #  LabelClusterScopeCycleOffset
+    appendScopeLabels: "no"
+    
+    ################################################
+    ##
+    ## Pod management parameters
+    ##
+    ################################################
+    # Grace period for Pod termination.
+    # How many seconds to wait between sending
+    # SIGTERM and SIGKILL during Pod termination process.
+    # Increase this number is case of slow shutdown.
+    terminationGracePeriod: 30
+
 ---
+
+# Template Parameters:
+#
+# NAME=etc-clickhouse-operator-confd-files
+# NAMESPACE=posthog
+# COMMENT=
+#
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -138,7 +194,15 @@ metadata:
   labels:
     app: clickhouse-operator
 data:
+
 ---
+
+# Template Parameters:
+#
+# NAME=etc-clickhouse-operator-configd-files
+# NAMESPACE=posthog
+# COMMENT=
+#
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -147,7 +211,7 @@ metadata:
   labels:
     app: clickhouse-operator
 data:
-  01-clickhouse-listen.xml: |
+  01-clickhouse-01-listen.xml: |
     <yandex>
         <!-- Listen wildcard address to allow accepting connections from other containers and host network. -->
         <listen_host>::</listen_host>
@@ -155,7 +219,7 @@ data:
         <listen_try>1</listen_try>
     </yandex>
 
-  02-clickhouse-logger.xml: |
+  01-clickhouse-02-logger.xml: |
     <yandex>
         <logger>
             <!-- Possible levels: https://github.com/pocoproject/poco/blob/develop/Foundation/include/Poco/Logger.h#L105 -->
@@ -169,26 +233,35 @@ data:
         </logger>
     </yandex>
 
-  03-clickhouse-querylog.xml: |
+  01-clickhouse-03-query_log.xml: |
     <yandex>
-    <query_log replace="1">
-        <database>system</database>
-        <table>query_log</table>
-        <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + interval 30 day</engine>
-        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
-    </query_log>
-    <query_thread_log remove="1"/>
+        <query_log replace="1">
+            <database>system</database>
+            <table>query_log</table>
+            <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + interval 30 day</engine>
+            <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+        </query_log>
+        <query_thread_log remove="1"/>
     </yandex>
-  04-clickhouse-partlog.xml: |
+
+  01-clickhouse-04-part_log.xml: |
     <yandex>
-    <part_log replace="1">
-        <database>system</database>
-        <table>part_log</table>
-        <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + interval 30 day</engine>
-        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
-    </part_log>
+        <part_log replace="1">
+            <database>system</database>
+            <table>part_log</table>
+            <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + interval 30 day</engine>
+            <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+        </part_log>
     </yandex>
+
 ---
+
+# Template Parameters:
+#
+# NAME=etc-clickhouse-operator-templatesd-files
+# NAMESPACE=posthog
+# COMMENT=
+#
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -281,12 +354,14 @@ data:
 
   readme: |
     Templates in this folder are packaged with an operator and available via 'useTemplate'
+
 ---
-# Possible Template Parameters:
+
+# Template Parameters:
 #
-# $OPERATOR_NAMESPACE
-# $OPERATOR_IMAGE
-# etc-clickhouse-operator-usersd-files
+# NAME=etc-clickhouse-operator-usersd-files
+# NAMESPACE=posthog
+# COMMENT=
 #
 apiVersion: v1
 kind: ConfigMap
@@ -339,4 +414,5 @@ data:
             </default>
         </profiles>
     </yandex>
+
 {{- end }}
