@@ -8,7 +8,7 @@ on: [pull_request]
 jobs:
   codespell:
     name: Check for spelling errors
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
 
       - name: Checkout Code
