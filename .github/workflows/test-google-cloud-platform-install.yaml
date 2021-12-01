@@ -155,16 +155,10 @@ jobs:
         echo "POSTHOG_API_ENDPOINT=https://${{ steps.vars.outputs.fqdn_record }}" | tee -a "$GITHUB_ENV"
         echo "POSTHOG_EVENT_ENDPOINT=https://${{ steps.vars.outputs.fqdn_record }}" | tee -a "$GITHUB_ENV"
 
-    #
-    # TODO: the GCE Ingress is not picking up health check from readiness probe definition and it's using '/'
-    # instead. We need to fix this issue before being able to enable the k6 ingestion test.
-    #
-    # see: https://stackoverflow.com/questions/44584270/
-    #
-    # - name: Run ingestion test using k6
-    #   uses: k6io/action@v0.2.0
-    #   with:
-    #     filename: ci/k6-ingestion-test.js
+    - name: Run ingestion test using k6
+      uses: k6io/action@v0.2.0
+      with:
+        filename: ci/k6-ingestion-test.js
 
     - name: Delete the k8s cluster and all the associated resources
       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}

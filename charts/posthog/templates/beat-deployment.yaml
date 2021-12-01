@@ -63,7 +63,8 @@ spec:
           - |
             ./bin/docker-worker-beat
         ports:
-        - containerPort: {{ .Values.service.internalPort }}
+          - name: http
+            containerPort: {{ .Values.service.internalPort }}
         env:
         - name: SITE_URL
           value: {{ template "posthog.site.url" . }}
