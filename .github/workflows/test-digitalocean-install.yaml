@@ -53,6 +53,7 @@ jobs:
         helm upgrade --install \
           -f ci/values/digital_ocean.yaml \
           --set "ingress.hostname=${{ steps.vars.outputs.fqdn_record }}" \
+          --set "ingress-nginx.controller.service.annotations."service\.beta\.kubernetes\.io/do-loadbalancer-hostname"=${{ steps.vars.outputs.fqdn_record }}" \
           --timeout 20m \
           --create-namespace \
           --namespace posthog \
