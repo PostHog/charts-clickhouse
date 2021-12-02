@@ -104,7 +104,7 @@
 #     - name: Run ingestion test using k6
 #       uses: k6io/action@v0.2.0
 #       with:
-#         filename: ci/k6-ingestion-test.js
+#         filename: ci/k6/ingestion-test.js
 
 #     - name: Delete the k8s cluster and all the associated resources
 #       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
