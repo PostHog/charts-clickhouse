@@ -7,10 +7,11 @@
 # package so we need to collect and bundle the resources by our own.
 #
 
-set -o errexit
-set -o nounset
+set -e
+set -u
+set -o pipefail
 
-CURRENT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+CURRENT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)"
 CHART_PATH_RAW="${CURRENT_DIR}/../charts/posthog"
 CHART_PATH=$(cd "$CHART_PATH_RAW" 2> /dev/null && pwd -P)
 TMP_FOLDER="$(mktemp -d)"
@@ -48,9 +49,11 @@ mkdir -p "${CHART_PATH}/templates/clickhouse-operator"
 kubectl-slice -f "$TMP_FOLDER/clickhouse-operator.yaml" -o "${CHART_PATH}/crds" --include-kind CustomResourceDefinition --template '{{.metadata.name}}.yaml'
 kubectl-slice -f "$TMP_FOLDER/clickhouse-operator.yaml" -o "${CHART_PATH}/templates/clickhouse-operator" --exclude-kind CustomResourceDefinition --template '{{.kind | lower}}.yaml'
 
+#
 # Add a {{- if .Values.clickhouseOperator.enabled }} and {{- end }} at the end of each non-crds resource.
-# Also replace 'namespace: posthog' with {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }} so we can keep
-# customizing where the operator is installed
+# Also replace 'namespace: posthog' and '#namespace: posthog' with
+# {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }} so we can keep customizing where the operator is installed
+#
 FILES="${CHART_PATH}/templates/clickhouse-operator/*"
 for f in $FILES
 do
