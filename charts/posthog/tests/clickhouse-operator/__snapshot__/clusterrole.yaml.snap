@@ -4,6 +4,7 @@ the manifest should match the snapshot when using default values:
     kind: ClusterRole
     metadata:
       name: clickhouse-operator-posthog
+      namespace: NAMESPACE
     rules:
     - apiGroups:
       - ""
@@ -16,6 +17,16 @@ the manifest should match the snapshot when using default values:
       - get
       - patch
       - update
+      - list
+      - watch
+    - apiGroups:
+      - ""
+      resources:
+      - endpoints
+      verbs:
+      - get
+      - list
+      - watch
     - apiGroups:
       - ""
       resources:
@@ -54,10 +65,12 @@ the manifest should match the snapshot when using default values:
       - get
       - patch
       - update
+      - list
+      - watch
     - apiGroups:
-      - clickhouse.altinity.com
+      - apps
       resources:
-      - clickhouseinstallations
+      - replicasets
       verbs:
       - delete
       - get
@@ -75,32 +88,26 @@ the manifest should match the snapshot when using default values:
       - update
       - delete
     - apiGroups:
-      - apps
+      - policy
       resources:
-      - replicasets
+      - poddisruptionbudgets
+      verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - update
+      - list
+      - watch
+    - apiGroups:
+      - clickhouse.altinity.com
+      resources:
+      - clickhouseinstallations
       verbs:
       - delete
       - get
       - patch
       - update
-    - apiGroups:
-      - ""
-      resources:
-      - configmaps
-      - endpoints
-      - services
-      verbs:
-      - get
-      - list
-      - watch
-    - apiGroups:
-      - apps
-      resources:
-      - statefulsets
-      verbs:
-      - get
-      - list
-      - watch
     - apiGroups:
       - clickhouse.altinity.com
       resources:
@@ -119,16 +126,22 @@ the manifest should match the snapshot when using default values:
       - clickhouseoperatorconfigurations/finalizers
       verbs:
       - update
-  2: |
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRoleBinding
-    metadata:
-      name: clickhouse-operator-posthog-cr
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: ClusterRole
-      name: clickhouse-operator-posthog
-    subjects:
-    - kind: ServiceAccount
-      name: clickhouse-operator
-      namespace: NAMESPACE
+    - apiGroups:
+      - clickhouse.altinity.com
+      resources:
+      - clickhouseinstallations/status
+      - clickhouseinstallationtemplates/status
+      - clickhouseoperatorconfigurations/status
+      verbs:
+      - create
+      - delete
+      - get
+      - update
+      - patch
+    - apiGroups:
+      - ""
+      resources:
+      - secrets
+      verbs:
+      - get
+      - list

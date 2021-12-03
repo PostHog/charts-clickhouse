@@ -1,0 +1,61 @@
+suite: ClickHouse cluster role binding definition
+templates:
+  - templates/clickhouse-operator/clusterrolebinding.yaml
+
+tests:
+  - it: should be empty if clickhouseOperator.enabled is set to false
+    set:
+      clickhouseOperator.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: the manifest should match the snapshot when using default values
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot: {}
+
+  - it: ClusterRoleBinding/clickhouse-operator-posthog metadata.namespace override via clickhouseOperator.namespace should work
+    set:
+      clickhouseOperator.namespace: "custom-namespace"
+    documentIndex: 0
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.namespace
+          value: custom-namespace
+
+  - it: ClusterRoleBinding/clickhouse-operator-posthog metadata.namespace override via Release.Namespace should work
+    release:
+      namespace: custom-namespace-from-release
+    documentIndex: 0
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.namespace
+          value: custom-namespace-from-release
+
+  - it: ClusterRoleBinding/clickhouse-operator-posthog subjects[0].namespace override via clickhouseOperator.namespace should work
+    set:
+      clickhouseOperator.namespace: "custom-namespace"
+    documentIndex: 0
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: subjects[0].namespace
+          value: custom-namespace
+
+  - it: ClusterRoleBinding/clickhouse-operator-posthog subjects[0].namespace override via Release.Namespace should work
+    release:
+      namespace: custom-namespace-from-release
+    documentIndex: 0
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: subjects[0].namespace
+          value: custom-namespace-from-release

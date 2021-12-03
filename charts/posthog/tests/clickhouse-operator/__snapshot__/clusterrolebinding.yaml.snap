@@ -1,0 +1,15 @@
+the manifest should match the snapshot when using default values:
+  1: |
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: clickhouse-operator-posthog
+      namespace: NAMESPACE
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: clickhouse-operator-posthog
+    subjects:
+    - kind: ServiceAccount
+      name: clickhouse-operator
+      namespace: NAMESPACE
