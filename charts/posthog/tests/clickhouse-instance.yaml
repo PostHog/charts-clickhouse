@@ -1,4 +1,4 @@
-suite: ClickHouse service account definition
+suite: ClickHouse instance
 templates:
   - templates/clickhouse_instance.yaml
 
@@ -11,10 +11,30 @@ tests:
           count: 0
 
   - it: the manifest should match the snapshot when using default values
+    set:
+      clickhouseOperator.enabled: true
     asserts:
       - hasDocuments:
           count: 1
       - matchSnapshot: {}
+
+  - it: should have the correct apiVersion
+    set:
+      clickhouseOperator.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: clickhouse.altinity.com/v1
+
+  - it: should be the correct kind
+    set:
+      clickhouseOperator.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ClickHouseInstallation
 
   - it: nodeSelector override via 'clickhouse.nodeSelector' works
     set:
