@@ -1,0 +1,89 @@
+the manifest should match the snapshot when using default values:
+  1: |
+    apiVersion: clickhouse.altinity.com/v1
+    kind: ClickHouseInstallation
+    metadata:
+      name: posthog
+    spec:
+      configuration:
+        clusters:
+        - layout:
+            replicasCount: 1
+            shardsCount: 1
+          name: posthog
+          templates:
+            podTemplate: pod-template-with-volumes
+        files:
+          events.proto: |
+            syntax = "proto3";
+            message Event {
+              string uuid = 1;
+              string event = 2;
+              string properties = 3;
+              string timestamp = 4;
+              uint64 team_id = 5;
+              string distinct_id = 6;
+              string created_at = 7;
+              string elements_chain = 8;
+            }
+        profiles:
+          default/allow_experimental_window_functions: "1"
+        settings:
+          format_schema_path: /etc/clickhouse-server/config.d/
+        users:
+          admin/networks/ip: 0.0.0.0/0
+          admin/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+          admin/profile: default
+          admin/quota: default
+        zookeeper:
+          nodes:
+          - host: RELEASE-NAME-posthog-zookeeper
+            port: 2181
+      defaults:
+        templates:
+          dataVolumeClaimTemplate: data-volumeclaim-template
+          serviceTemplate: chi-service-template
+      templates:
+        podTemplates:
+        - name: pod-template-with-volumes
+          spec:
+            containers:
+            - command:
+              - /bin/bash
+              - -c
+              - /usr/bin/clickhouse-server --config-file=/etc/clickhouse-server/config.xml
+              image: yandex/clickhouse-server:21.6.5
+              name: clickhouse
+              ports:
+              - containerPort: 8123
+                name: http
+              - containerPort: 9000
+                name: client
+              - containerPort: 9009
+                name: interserver
+              resources: {}
+              volumeMounts:
+              - mountPath: /var/lib/clickhouse
+                name: data-volumeclaim-template
+            securityContext:
+              fsGroup: 101
+              runAsGroup: 101
+              runAsUser: 101
+        serviceTemplates:
+        - generateName: clickhouse-RELEASE-NAME
+          name: chi-service-template
+          spec:
+            ports:
+            - name: http
+              port: 8123
+            - name: tcp
+              port: 9000
+            type: NodePort
+        volumeClaimTemplates:
+        - name: data-volumeclaim-template
+          spec:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 20Gi

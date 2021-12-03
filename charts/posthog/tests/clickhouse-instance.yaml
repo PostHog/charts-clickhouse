@@ -1,0 +1,42 @@
+suite: ClickHouse service account definition
+templates:
+  - templates/clickhouse_instance.yaml
+
+tests:
+  - it: should be empty if clickhouseOperator.enabled is set to false
+    set:
+      clickhouseOperator.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: the manifest should match the snapshot when using default values
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot: {}
+
+  - it: nodeSelector override via 'clickhouse.nodeSelector' works
+    set:
+      clickhouse.nodeSelector:
+        diskType: ssd
+        nodeType: fast
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.containers[0].nodeSelector
+          value:
+            diskType: ssd
+            nodeType: fast
+
+  - it: nodeSelector override via 'clickhouseOperator.useNodeSelector' works
+    set:
+      clickhouseOperator.useNodeSelector: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.containers[0].nodeSelector
+          value:
+            clickhouse: true
