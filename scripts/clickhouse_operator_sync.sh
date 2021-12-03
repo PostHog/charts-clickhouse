@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# This tool fetch and format 'Altinity/clickhouse-operator'
+# This tool fetchs and formats 'Altinity/clickhouse-operator'
 # k8s resource definitions into our chart.
 #
 # Why do we need this? The 'clickhouse-operator' doesn't expose a Helm
