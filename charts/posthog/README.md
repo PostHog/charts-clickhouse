@@ -14,7 +14,7 @@ This chart bootstraps a [PostHog](https://posthog.com/) deployment on a [Kuberne
 See deployment instructions on [posthog.com/docs/self-host](https://posthog.com/docs/self-host).
 
 ## Prerequisites
-- Kubernetes >=1.19.0 < 1.22.0
+- Kubernetes >=1.19.0 <= 1.22.0
 - Helm 3+
 
 ## Development
