@@ -143,11 +143,11 @@ spec:
           annotations:
             # For more details on Internal Load Balancer check
             # https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
-            cloud.google.com/load-balancer-type: {{ if .Values.clickhouse.exposedExternally "External" "Internal" }}
-            service.beta.kubernetes.io/aws-load-balancer-internal: {{ if .Values.clickhouse.exposedExternally "false" "true" }}
-            service.beta.kubernetes.io/azure-load-balancer-internal: {{ if .Values.clickhouse.exposedExternally "false" "true" }}
-            service.beta.kubernetes.io/openstack-internal-load-balancer: {{ if .Values.clickhouse.exposedExternally "false" "true" }}
-            service.beta.kubernetes.io/cce-load-balancer-internal-vpc: {{ if .Values.clickhouse.exposedExternally "false" "true" }}
+            cloud.google.com/load-balancer-type: {{ if .Values.clickhouse.exposedExternally }} "External" {{ else }} "Internal" {{ end }} 
+            service.beta.kubernetes.io/aws-load-balancer-internal: {{ if .Values.clickhouse.exposedExternally }} "false" {{ else }} "true" {{ end }} 
+            service.beta.kubernetes.io/azure-load-balancer-internal: {{ if .Values.clickhouse.exposedExternally }} "false" {{ else }} "true" {{ end }}
+            service.beta.kubernetes.io/openstack-internal-load-balancer: {{ if .Values.clickhouse.exposedExternally }} "false" {{ else }} "true"{{ end }}
+            service.beta.kubernetes.io/cce-load-balancer-internal-vpc: {{ if .Values.clickhouse.exposedExternally }} "false" {{ else }} "true" {{ end }}
     {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
     volumeClaimTemplates:
       - name: data-volumeclaim-template
