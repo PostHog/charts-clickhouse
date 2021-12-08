@@ -115,3 +115,5 @@ jobs:
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
         if: always()
+        with:
+          namespace: posthog
