@@ -453,6 +453,8 @@ clickhouse:
   # -- Set if not installing clickhouse operator
   host:
   # :TODO:
+  # -- Set exposedExternally to true if you want to be able to reach CH from outside the cluster 
+  exposedExternally: false
   replication: false
   secure: false
   verify: false
