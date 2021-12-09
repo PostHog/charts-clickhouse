@@ -85,7 +85,7 @@ jobs:
 
       - name: Install our helm chart
         run: |
-          helm upgrade --debug --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs
+          helm upgrade --debug --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
 
       # GitHub Action reference: https://github.com/jupyterhub/action-k8s-await-workloads
       - name: Await all deployments to start
