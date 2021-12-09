@@ -64,7 +64,7 @@ jobs:
       - name: (Upgrade) Install our helm chart from main branch
         if: matrix.test == 'upgrade'
         run: |
-          helm upgrade --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs
+          helm upgrade --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs --debug 
 
       - name: "(Upgrade) Install helm diff"
         if: matrix.test == 'upgrade'
@@ -74,7 +74,7 @@ jobs:
       - name: "(Upgrade) Helm diff ${{ matrix.upgrade-from }} chart with local chart"
         if: matrix.test == 'upgrade'
         run: |
-          helm diff upgrade --install -f ci/values/k3s.yaml --namespace posthog posthog ./charts/posthog
+          helm diff upgrade --install -f ci/values/k3s.yaml --namespace posthog posthog ./charts/posthog --debug 
 
       - name: "(Upgrade) Await chart install"
         if: matrix.test == 'upgrade'
@@ -85,7 +85,7 @@ jobs:
 
       - name: Install our helm chart
         run: |
-          helm upgrade --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs
+          helm upgrade --debug --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
 
       # GitHub Action reference: https://github.com/jupyterhub/action-k8s-await-workloads
       - name: Await all deployments to start
@@ -115,3 +115,5 @@ jobs:
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
         if: always()
+        with:
+          namespace: posthog
