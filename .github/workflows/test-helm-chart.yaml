@@ -74,7 +74,7 @@ jobs:
       - name: "(Upgrade) Helm diff ${{ matrix.upgrade-from }} chart with local chart"
         if: matrix.test == 'upgrade'
         run: |
-          helm diff upgrade --debug --install -f ci/values/k3s.yaml --namespace posthog posthog ./charts/posthog
+          helm diff upgrade --install -f ci/values/k3s.yaml --namespace posthog posthog ./charts/posthog --debug 
 
       - name: "(Upgrade) Await chart install"
         if: matrix.test == 'upgrade'
