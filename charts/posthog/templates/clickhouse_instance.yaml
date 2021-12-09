@@ -91,6 +91,9 @@ spec:
           tolerations:
 {{ toYaml .Values.clickhouse.tolerations | indent 12 }}
           {{- end }}
+          {{- if .Values.clickhouse.nodeSelector }}
+          nodeSelector: {{ toYaml .Values.clickhouse.nodeSelector | nindent 12 }}
+          {{- end }}
           {{- if (eq (include "clickhouse.externalVolume" .) "true" ) }}
           volumes:
             - name: clickhouse-storage
@@ -125,9 +128,6 @@ spec:
                   mountPath: /var/lib/clickhouse
               resources:
 {{ toYaml .Values.clickhouse.resources | indent 16 }}
-              {{- if .Values.clickhouse.nodeSelector }}
-              nodeSelector: {{- .Values.clickhouse.nodeSelector | toYaml | nindent 16 }}
-              {{- end }}
               {{- if .Values.clickhouseOperator.useNodeSelector }}
               nodeSelector:
                 clickhouse: true

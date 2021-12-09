@@ -45,18 +45,7 @@ tests:
       - hasDocuments:
           count: 1
       - equal:
-          path: spec.templates.podTemplates[0].spec.containers[0].nodeSelector
+          path: spec.templates.podTemplates[0].spec.nodeSelector
           value:
             diskType: ssd
             nodeType: fast
-
-  - it: nodeSelector override via 'clickhouseOperator.useNodeSelector' works
-    set:
-      clickhouseOperator.useNodeSelector: true
-    asserts:
-      - hasDocuments:
-          count: 1
-      - equal:
-          path: spec.templates.podTemplates[0].spec.containers[0].nodeSelector
-          value:
-            clickhouse: true
