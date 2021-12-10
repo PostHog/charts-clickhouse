@@ -9,7 +9,10 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
  annotations:
-   {{- if (eq (include "ingress.type" .) "clb") }}
+    {{- if (eq (include "ingress.type" .) "nginx") }}
+    kubernetes.io/ingress.class: "nginx"
+    {{- end }}
+    {{- if (eq (include "ingress.type" .) "clb") }}
     kubernetes.io/ingress.class: "gce"
     {{- if not (.Values.ingress.gcp.secretName) }}
     networking.gke.io/managed-certificates: "{{ .Release.Name }}-gke-cert"
