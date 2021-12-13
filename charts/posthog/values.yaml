@@ -169,7 +169,8 @@ worker:
   replicacount: 1
   # -- Resource limits for workers
   resources:
-    {}
+    requests:
+      cpu: 3000m
     # limits:
     #   cpu: 300m
     #   memory: 500Mi
