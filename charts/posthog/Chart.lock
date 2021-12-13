@@ -13,15 +13,15 @@ dependencies:
   version: 12.6.0
 - name: ingress-nginx
   repository: https://kubernetes.github.io/ingress-nginx
-  version: 3.25.0
+  version: 4.0.13
 - name: cert-manager
   repository: https://charts.jetstack.io
-  version: v1.2.0
+  version: v1.6.1
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 14.1.1
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:7dd6504181deefad569c0104a24a4971364b0e38f1d6464cdd88b997521e2cf0
-generated: "2021-10-22T08:19:51.168354377Z"
+digest: sha256:ccab4418b09d515e2c094b43d4932e3eb0ecbeaf5359e2e211de2e15a9947d83
+generated: "2021-12-10T16:01:43.582712+01:00"
