@@ -16,12 +16,12 @@ dependencies:
   version: 4.0.13
 - name: cert-manager
   repository: https://charts.jetstack.io
-  version: v1.2.0
+  version: v1.6.1
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 14.1.1
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:9f812192be4a31877405f6f2ebf7083e742e0698a1f961fa32e87b526139e04f
-generated: "2021-12-09T13:36:34.492501+01:00"
+digest: sha256:ccab4418b09d515e2c094b43d4932e3eb0ecbeaf5359e2e211de2e15a9947d83
+generated: "2021-12-10T16:01:43.582712+01:00"

@@ -48,7 +48,7 @@ dependencies:
     condition: ingress.nginx.enabled
     namespace: ingress-nginx
   - name: cert-manager
-    version: 1.2
+    version: 1.6.1
     repository: https://charts.jetstack.io
     condition: cert-manager.enabled
     namespace: cert-manager
