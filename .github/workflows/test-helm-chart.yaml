@@ -64,7 +64,7 @@ jobs:
       - name: (Upgrade) Install our helm chart from main branch
         if: matrix.test == 'upgrade'
         run: |
-          helm upgrade --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs --debug 
+          helm upgrade --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs --debug
 
       - name: "(Upgrade) Install helm diff"
         if: matrix.test == 'upgrade'
@@ -74,7 +74,7 @@ jobs:
       - name: "(Upgrade) Helm diff ${{ matrix.upgrade-from }} chart with local chart"
         if: matrix.test == 'upgrade'
         run: |
-          helm diff upgrade --install -f ci/values/k3s.yaml --namespace posthog posthog ./charts/posthog --debug 
+          helm diff upgrade --install -f ci/values/k3s.yaml --namespace posthog posthog ./charts/posthog --debug
 
       - name: "(Upgrade) Await chart install"
         if: matrix.test == 'upgrade'
@@ -102,6 +102,7 @@ jobs:
       #
       - name: Workaround - wait for all the k8s resources to be ready
         timeout-minutes: 15
+
         run: |
           echo "Waiting for pods to be ready..."
           while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
