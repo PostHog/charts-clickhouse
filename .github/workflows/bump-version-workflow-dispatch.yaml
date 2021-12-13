@@ -1,6 +1,6 @@
 name: Bump chart version & release workflow dispatch
 
-on: 
+on:
     workflow_dispatch:
       inputs:
         bumptype:
@@ -49,7 +49,7 @@ jobs:
         uses: azure/setup-helm@v1
         if: steps.bump-type.outputs.bump-type != 'null'
         with:
-          version: v3.4.0
+          version: v3.7.1
 
       - name: Update version in charts/posthog/Chart.yaml and update Chart.lock
         if: steps.bump-type.outputs.bump-type != 'null'

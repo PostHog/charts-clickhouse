@@ -91,6 +91,9 @@ spec:
           tolerations:
 {{ toYaml .Values.clickhouse.tolerations | indent 12 }}
           {{- end }}
+          {{- if .Values.clickhouse.nodeSelector }}
+          nodeSelector: {{ toYaml .Values.clickhouse.nodeSelector | nindent 12 }}
+          {{- end }}
           {{- if (eq (include "clickhouse.externalVolume" .) "true" ) }}
           volumes:
             - name: clickhouse-storage

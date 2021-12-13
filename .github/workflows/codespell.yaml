@@ -8,7 +8,7 @@ on: [pull_request]
 jobs:
   codespell:
     name: Check for spelling errors
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
 
       - name: Checkout Code
@@ -20,4 +20,4 @@ jobs:
           check_filenames: true
           check_hidden: true
           # Don't check the .git folder as well as few files that we get from upstream
-          skip: .git,./charts/posthog/tests/__snapshot__,./charts/posthog/crds/clickhouse_installation.yaml,./charts/posthog/templates/clickhouse_config_map.yaml
+          skip: .git,./charts/posthog/crds/*,./charts/posthog/tests/clickhouse-operator/__snapshot__/*,./charts/posthog/templates/clickhouse-operator/*

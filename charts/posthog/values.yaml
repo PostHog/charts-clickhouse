@@ -315,6 +315,26 @@ cert-manager:
   # -- Whether to install cert-manager CRDs.
   installCRDs: true
 
+  #
+  # [Workaround] - do not use the local DNS for the 'cert-manager' pods since it would return local IPs
+  # and break self checks.
+  #
+  # For more info see:
+  #   - https://github.com/jetstack/cert-manager/issues/1292
+  #   - https://github.com/jetstack/cert-manager/issues/3238
+  #   - https://github.com/jetstack/cert-manager/issues/4286
+  #   - https://github.com/compumike/hairpin-proxy
+  #
+  # This has some side effects, like 'cert-manager' pods not being able to resolve cluster-local names,
+  # but so far this has not caused issues (and we don't expect it to do so).
+  #
+  podDnsPolicy: None
+  podDnsConfig:
+    nameservers:
+      - 1.1.1.1
+      - 8.8.8.8
+      - 208.67.222.222
+
 ingress:
   # -- Enable ingress controller resource
   enabled: true
