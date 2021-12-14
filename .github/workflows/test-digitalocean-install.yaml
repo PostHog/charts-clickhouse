@@ -53,6 +53,7 @@ jobs:
         helm upgrade --install \
           -f ci/values/digital_ocean.yaml \
           --set ingress.hostname="${{ steps.vars.outputs.fqdn_record }}" \
+          --set ingress-nginx.controller.service.annotations."kubernetes\.digitalocean\.com/load-balancer-id"="${{ steps.vars.outputs.k8s_cluster_name }}" \
           --set ingress-nginx.controller.service.annotations."service\.beta\.kubernetes\.io/do-loadbalancer-hostname"="${{ steps.vars.outputs.fqdn_record }}" \
           --timeout 20m \
           --create-namespace \
@@ -103,16 +104,20 @@ jobs:
     - name: Create the DNS record
       id: dns_creation
       run: |
-        # Get the Load Balancer IP address
-        load_balancer_external_hostname=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
+        #
+        # We need to get the Load Balancer IP address from 'doctl' instead of 'kubectl' as if we provision the LB with
+        # the 'service.beta.kubernetes.io/do-loadbalancer-hostnamed' annotation, the ".status.loadBalancer.ingress" value
+        # will default to the value of if (and we can't create a DNS record pointing to the same record)
+        #
+        load_balancer_external_ip=$(doctl compute load-balancer list --no-header --format ID,IP | grep ${{ steps.vars.outputs.steps.vars.outputs.k8s }} | awk '{print $2}')
 
         # Create the DNS record
         doctl compute domain records create \
           posthog.cc \
-          --record-type CNAME \
+          --record-type A \
           --record-ttl 60 \
           --record-name "${{ steps.vars.outputs.dns_record }}" \
-          --record-data "${load_balancer_external_hostname}."
+          --record-data "${load_balancer_external_ip}"
 
     - name: Wait for the Let's Encrypt certificate to be issued and deployed
       id: tls_certificate_creation
