@@ -103,6 +103,30 @@ spec:
           {{- if .Values.clickhouse.securityContext.enabled }}
           securityContext: {{- omit .Values.clickhouse.securityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
+          {{- if .Values.clickhouse.volumePermissions.enabled }}
+          initContainers:
+            - name: volume-permissions
+              image: docker.io/bitnami/minideb:buster
+              imagePullPolicy: "Always"
+              command:
+                - /bin/bash
+              args:
+                - -ec
+                - |
+                  chown -R "{{ .Values.clickhouseOperator.securityContext.runAsUser }}:{{ .Values.clickhouseOperator.securityContext.runAsGroup }}" "/var/lib/clickhouse"
+              securityContext:
+                runAsUser: 0
+              resources:
+                limits: {}
+                requests: {}
+              volumeMounts:
+              {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
+                - name: data-volumeclaim-template
+              {{- else }}
+                - name: clickhouse-storage
+              {{- end }}
+                  mountPath: /var/lib/clickhouse
+          {{- end }}
           containers:
             - name: clickhouse
               # KEEP CLICKHOUSE-SERVER VERSION IN SYNC WITH
