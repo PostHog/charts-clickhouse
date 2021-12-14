@@ -85,11 +85,11 @@ jobs:
         echo "All pods are now ready!"
 
         echo "Waiting for the DigitalOcean Load Balancer to be ready..."
-        load_balancer_external_ip=""
-        while [ -z "$load_balancer_external_ip" ];
+        load_balancer_external_hostname=""
+        while [ -z "$load_balancer_external_hostname" ];
         do
           echo "  sleeping 10 seconds" && sleep 10
-          load_balancer_external_ip=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+          load_balancer_external_hostname=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
         done
         echo "The DigitalOcean Load Balancer is now ready!"
 
@@ -104,15 +104,15 @@ jobs:
       id: dns_creation
       run: |
         # Get the Load Balancer IP address
-        load_balancer_external_ip=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+        load_balancer_external_hostname=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
 
         # Create the DNS record
         doctl compute domain records create \
           posthog.cc \
-          --record-type A \
+          --record-type CNAME \
           --record-ttl 60 \
           --record-name "${{ steps.vars.outputs.dns_record }}" \
-          --record-data "$load_balancer_external_ip"
+          --record-data "${load_balancer_external_hostname}."
 
     - name: Wait for the Let's Encrypt certificate to be issued and deployed
       id: tls_certificate_creation
