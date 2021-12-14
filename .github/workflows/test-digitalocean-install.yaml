@@ -109,7 +109,7 @@ jobs:
         # the 'service.beta.kubernetes.io/do-loadbalancer-hostnamed' annotation, the ".status.loadBalancer.ingress" value
         # will default to the value of if (and we can't create a DNS record pointing to the same record)
         #
-        load_balancer_external_ip=$(doctl compute load-balancer list --no-header --format ID,IP | grep ${{ steps.vars.outputs.steps.vars.outputs.k8s }} | awk '{print $2}')
+        load_balancer_external_ip=$(doctl compute load-balancer list --no-header --format ID,IP | grep ${{ steps.vars.outputs.k8s_cluster_name }} | awk '{print $2}')
 
         # Create the DNS record
         doctl compute domain records create \
