@@ -8,10 +8,8 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
   annotations:
-    # This is what defines this resource as a hook. Without this line, the
-    # job is considered part of the release.
     "helm.sh/hook": "post-install,post-upgrade"
-    "helm.sh/hook-delete-policy": "hook-succeeded"
+    "helm.sh/hook-delete-policy": "hook-succeeded,hook-failed"
     "helm.sh/hook-weight": "0"
 spec:
   template:
