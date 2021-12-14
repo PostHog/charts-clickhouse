@@ -53,7 +53,7 @@ jobs:
         helm upgrade --install \
           -f ci/values/digital_ocean.yaml \
           --set ingress.hostname="${{ steps.vars.outputs.fqdn_record }}" \
-          --set ingress-nginx.controller.service.annotations."kubernetes\.digitalocean\.com/load-balancer-id"="${{ steps.vars.outputs.k8s_cluster_name }}" \
+          --set ingress-nginx.controller.service.annotations."service\.beta\.kubernetes\.io/do-loadbalancer-name"="${{ steps.vars.outputs.k8s_cluster_name }}" \
           --set ingress-nginx.controller.service.annotations."service\.beta\.kubernetes\.io/do-loadbalancer-hostname"="${{ steps.vars.outputs.fqdn_record }}" \
           --timeout 20m \
           --create-namespace \
@@ -106,10 +106,10 @@ jobs:
       run: |
         #
         # We need to get the Load Balancer IP address from 'doctl' instead of 'kubectl' as if we provision the LB with
-        # the 'service.beta.kubernetes.io/do-loadbalancer-hostnamed' annotation, the ".status.loadBalancer.ingress" value
+        # the 'service.beta.kubernetes.io/do-loadbalancer-hostname' annotation, the ".status.loadBalancer.ingress" value
         # will default to the value of if (and we can't create a DNS record pointing to the same record)
         #
-        load_balancer_external_ip=$(doctl compute load-balancer list --no-header --format ID,IP | grep ${{ steps.vars.outputs.k8s_cluster_name }} | awk '{print $2}')
+        load_balancer_external_ip=$(doctl compute load-balancer list --no-header --format Name,IP | grep ${{ steps.vars.outputs.k8s_cluster_name }} | awk '{print $2}')
 
         # Create the DNS record
         doctl compute domain records create \
