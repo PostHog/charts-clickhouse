@@ -64,7 +64,7 @@ jobs:
       - name: (Upgrade) Install our helm chart from main branch
         if: matrix.test == 'upgrade'
         run: |
-          helm upgrade --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs --debug 
+          helm upgrade --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs --debug
 
       - name: "(Upgrade) Install helm diff"
         if: matrix.test == 'upgrade'
@@ -74,7 +74,7 @@ jobs:
       - name: "(Upgrade) Helm diff ${{ matrix.upgrade-from }} chart with local chart"
         if: matrix.test == 'upgrade'
         run: |
-          helm diff upgrade --install -f ci/values/k3s.yaml --namespace posthog posthog ./charts/posthog --debug 
+          helm diff upgrade --install -f ci/values/k3s.yaml --namespace posthog posthog ./charts/posthog --debug
 
       - name: "(Upgrade) Await chart install"
         if: matrix.test == 'upgrade'
@@ -87,12 +87,36 @@ jobs:
         run: |
           helm upgrade --debug --install -f ci/values/k3s.yaml --timeout 10m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
 
-      # GitHub Action reference: https://github.com/jupyterhub/action-k8s-await-workloads
-      - name: Await all deployments to start
+      #
+      # Wait for all k8s resources to be ready.
+      #
+      # Despite the --wait flag used in the command above
+      # there is no guarantee that all the resources will be deployed
+      # when the command returns.
+      #
+      #
+      # Why can't we directly use the 'action-k8s-await-workloads' step below?
+      # Because it's not working for this use case
+      #
+      # ref: https://github.com/jupyterhub/action-k8s-await-workloads/issues/38
+      #
+      - name: Workaround - wait for all the k8s resources to be ready
+        timeout-minutes: 15
+
+        run: |
+          echo "Waiting for pods to be ready..."
+          while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
+          do
+            echo "  pods are not yet ready"
+          done
+          echo "All pods are now ready!"
+
+      - name: Wait until all the resources are fully deployed in k8s
         uses: jupyterhub/action-k8s-await-workloads@main
         with:
-          timeout: 900
-          max-restarts: 15
+          namespace: "posthog"
+          timeout: 300
+          max-restarts: 10
 
       - name: Setup PostHog for the ingestion test
         run: ./ci/setup_ingestion_test.sh
@@ -105,11 +129,13 @@ jobs:
           echo "POSTHOG_API_ENDPOINT=http://${POSTHOG_API_ADDRESS}:8000" | tee -a "$GITHUB_ENV"
           echo "POSTHOG_EVENT_ENDPOINT=http://${POSTHOG_EVENTS_ADDRESS}:8000" | tee -a "$GITHUB_ENV"
 
-      # GitHub Action reference: https://github.com/k6io/action
+          # Skip the source ip address check in ingestion-test.js
+          echo "SKIP_SOURCE_IP_ADDRESS_CHECK=true" | tee -a "$GITHUB_ENV"
+
       - name: Run ingestion test using k6
         uses: k6io/action@v0.2.0
         with:
-          filename: ci/k6-ingestion-test.js
+          filename: ci/k6/ingestion-test.js
 
       # GitHub Action reference: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Emit namespace report

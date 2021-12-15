@@ -1,0 +1,101 @@
+import http from 'k6/http'
+import { check, sleep } from 'k6'
+import { Counter } from 'k6/metrics'
+import { URL } from 'https://jslib.k6.io/url/1.0.0/index.js'
+import { describe } from 'https://jslib.k6.io/expect/0.0.5/index.js';
+import { isPrivateIP }  from './utils.js'
+import {
+    POSTHOG_API_ENDPOINT,
+    POSTHOG_EVENT_ENDPOINT,
+    SKIP_SOURCE_IP_ADDRESS_CHECK,
+    checkPrerequisites
+  } from './common.js';
+
+
+checkPrerequisites();
+
+let failedTestCases = new Counter('failedTestCases');
+
+export let options = {
+  scenarios: {
+    generateEvents: {
+      exec: 'generateEvents',
+      executor: 'constant-vus',
+      vus: 20,
+      duration: '30s',
+      gracefulStop: '10s', // wait for iterations to finish in the end
+    },
+    checkEvents: {
+      exec: 'checkEvents',
+      executor: 'per-vu-iterations',
+      vus: 1,           // Number of VUs to run concurrently.
+      iterations: 1,    // only run a single iteration after generateEvents() completes
+      startTime: '40s',  // duration + gracefulStop of the above
+    },
+  },
+  thresholds: {
+    'http_req_failed{scenario:generateEvents}': ['rate < 0.01'],    // HTTP errors of the generateEvents scenario should be less than 1%
+    'http_req_duration{scenario:generateEvents}': ['p(90) < 1000'], // 90% of requests of the generateEvents scenario should be below 1s
+    failedTestCases: [{
+      threshold: 'count===0',
+      abortOnFail: true
+    }],
+  },
+}
+
+export function generateEvents() {
+  const URI = new URL(`${POSTHOG_EVENT_ENDPOINT}/e/`)
+
+  const res = http.post(URI.toString(), JSON.stringify({
+    api_key: 'e2e_token_1239',
+    event: 'k6s_custom_event',
+    distinct_id: __VU
+  }));
+
+  check(res, { 'status 200': (r) => r.status === 200 })
+}
+
+export function checkEvents() {
+  var success;
+
+  success = describe('Check the count of events ingested', (t) => {
+
+    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/insight/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`)
+    const res = http.get(URI.toString(), {
+      headers: {
+        Authorization: `Bearer e2e_demo_api_key`
+      }
+    })
+
+    t.expect(res.status).as('HTTP response status').toEqual(200)
+    t.expect(res).toHaveValidJson()
+
+    var event_count = res.json()["result"][0]["count"]
+    t.expect(event_count).as(`Count of ingested events (${event_count})`).toBeGreaterThan(100)
+  })
+  failedTestCases.add(success === false);
+
+  // This test case doesn't work in all the environments (e.g. k3s) so we made it optional
+  if (!SKIP_SOURCE_IP_ADDRESS_CHECK) {
+    success = describe('Check if the source IP address of a random ingested event is not part of a private range', (t) => {
+
+      const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/2/events/?event=k6s_custom_event`)
+      const res = http.get(URI.toString(), {
+        headers: {
+          Authorization: `Bearer e2e_demo_api_key`
+        }
+      })
+
+      t.expect(res.status).as('HTTP response status').toEqual(200)
+      t.expect(res).toHaveValidJson()
+
+      var random_event = res.json()["results"].pop()
+      var source_ip = random_event["properties"]["$ip"]
+
+      t.expect(! isPrivateIP(source_ip))
+      .as(`The source IP address of a random ingested event (${source_ip}) is not part of a private range`)
+      .toEqual(true)
+    })
+    failedTestCases.add(success === false);
+  }
+}
