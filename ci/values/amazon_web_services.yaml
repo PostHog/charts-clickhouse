@@ -5,3 +5,20 @@ ingress:
     enabled: true
 cert-manager:
   enabled: true
+
+#
+# For AWS ELB in L4 (TCP) mode, we need to enable some additional config
+# in the ingress controller in order to get the proper IP address forwarded
+# to our app. Otherwise we'll get the load balancer nodes addresses instead.
+#
+# ref:
+#   - https://kubernetes.github.io/ingress-nginx/user-guide/miscellaneous/#source-ip-address
+#   - https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-proxy-protocol.html
+#
+ingress-nginx:
+  controller:
+    config:
+      use-proxy-protocol: true
+    service:
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"

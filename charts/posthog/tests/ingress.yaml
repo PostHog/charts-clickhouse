@@ -32,3 +32,119 @@ tests:
           # Unfortunately we can't match the whole manifest as there are few
           # metadata values linked to the chart version
           path: spec
+
+  - it: AWS - 'metadata.annotations' should match the default values
+    set:
+      cloud: "aws"
+      ingress:
+        hostname: <your-hostname>
+        nginx:
+          enabled: true
+      cert-manager:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations
+          value:
+            kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+  - it: DO - 'metadata.annotations' should match the default values
+    set:
+      cloud: "do"
+      ingress:
+        hostname: <your-hostname>
+        nginx:
+          enabled: true
+      cert-manager:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations
+          value:
+            kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+  - it: GCP - 'metadata.annotations' should match the default values
+    set:
+      cloud: "gcp"
+      ingress:
+        hostname: <your-hostname>
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations
+          value:
+            kubernetes.io/ingress.class: gce
+            kubernetes.io/ingress.global-static-ip-name: posthog
+            networking.gke.io/managed-certificates: RELEASE-NAME-gke-cert
+            networking.gke.io/v1beta1.FrontendConfig: RELEASE-NAME-frontend-config
+
+  - it: GCP - 'metadata.annotations' the ingress.gcp.ip_name override should work
+    set:
+      cloud: "gcp"
+      ingress:
+        hostname: <your-hostname>
+        gcp:
+          ip_name: ip_custom_name
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations
+          value:
+            kubernetes.io/ingress.class: gce
+            kubernetes.io/ingress.global-static-ip-name: ip_custom_name
+            networking.gke.io/managed-certificates: RELEASE-NAME-gke-cert
+            networking.gke.io/v1beta1.FrontendConfig: RELEASE-NAME-frontend-config
+
+  - it: NGINX - 'metadata.annotations' should match the default values
+    set:
+      ingress.nginx.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations
+          value:
+            kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+  - it: NGINX with Let's Encrypt - 'metadata.annotations' should match the default values
+    set:
+      ingress.nginx.enabled: true
+      ingress.letsencrypt: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations
+          value:
+            kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+  - it: overrides to 'metadata.annotations' via 'ingress.annotations' should work
+    set:
+      ingress.annotations:
+        key1: value1
+        key2: value2
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations
+          value:
+            key1: value1
+            key2: value2
