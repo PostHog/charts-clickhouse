@@ -74,7 +74,7 @@ jobs:
     # ref: https://github.com/jupyterhub/action-k8s-await-workloads/issues/38
     #
     - name: Workaround - wait for all the k8s resources to be ready
-      timeout-minutes: 15
+      timeout-minutes: 30
       run: |
         echo "Waiting for pods to be ready..."
         while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
