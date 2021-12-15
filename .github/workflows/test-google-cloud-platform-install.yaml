@@ -110,15 +110,10 @@ jobs:
     # ref: https://github.com/jupyterhub/action-k8s-await-workloads/issues/38
     #
     - name: Workaround - wait for all the k8s resources to be ready
-      timeout-minutes: 30
+      timeout-minutes: 15
       run: |
-        # Not sure why but for GCP we need to use ContainersReady instead of Ready.
-        # I'm going to fix this later but I also want to make tests passing again.
-        # and for the purpose of this test Ready vs ContainersReady doesn't matter much.
-        # https://stackoverflow.com/questions/58442634/all-containers-showing-ready-but-pod-is-not-ready
-        #
         echo "Waiting for pods to be ready..."
-        while ! kubectl wait --for=condition=ContainersReady pods --timeout=60s --all -n posthog > /dev/null 2>&1
+        while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
         do
           echo "  pods are not yet ready"
         done
@@ -179,6 +174,10 @@ jobs:
           --region us-central1 \
           --quiet \
           ${{ steps.vars.outputs.k8s_cluster_name }}
+
+    # TODO: fix this!
+    # When a GKE service is deleted, the associated NEG will not be garbage collected if the NEG is still referenced by a backend service. Dereference the NEG from the backend service to allow NEG deletion.
+    # When a cluster is deleted, standalone NEGs are not deleted.
 
     - name: Delete the global static IP address
       if: ${{ always() && steps.static_ip_creation.outcome == 'success' }}
