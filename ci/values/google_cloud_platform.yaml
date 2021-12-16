@@ -1,3 +1,17 @@
 cloud: "gcp"
 ingress:
   hostname: <your-hostname>
+
+# Use small PVC in CI
+clickhouseOperator:
+  storage: 1Gi
+kafka:
+  persistence:
+    size: 1Gi
+postgresql:
+  persistence:
+    size: 1Gi
+redis:
+  master:
+    persistence:
+      size: 1Gi
