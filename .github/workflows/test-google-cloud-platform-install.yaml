@@ -53,7 +53,7 @@ jobs:
           --region us-central1 \
           --cluster-version 1.21 \
           --labels="provisioned_by=github_action" \
-          --machine-type e2-medium \
+          --machine-type e2-small \
           --num-nodes 2
 
         # note: num-nodes will be created in each zone, such that if you specify
@@ -138,6 +138,7 @@ jobs:
 
     - name: Wait for the Google-managed TLS certificate to be issued and deployed
       id: tls_certificate_creation
+      timeout-minutes: 60
       run: |
         echo "Wait for the Google-managed TLS certificate to be issued and deployed..."
         certificate_status=""
@@ -158,9 +159,8 @@ jobs:
 
     #
     # TODO: the GCE Ingress is not picking up health check from readiness probe definition and it's using '/'
-    # instead. We need to fix this issue before being able to enable the k6 ingestion test.
-    #
-    # see: https://stackoverflow.com/questions/44584270/
+    # instead. We need to fix this issue before being able to enable the k6 ingestion test
+    # See WIP at https://github.com/PostHog/charts-clickhouse/pull/209
     #
     # - name: Run ingestion test using k6
     #   uses: k6io/action@v0.2.0
@@ -178,7 +178,7 @@ jobs:
     #
     - name: Fetch the associated NEG (Network Endpoint Groups)
       id: fetch_neg
-      if: ${{ always() && steps.helm_install.outcome == 'success' }}
+      if: ${{ always() }}
       shell: bash
       run: |
         #
@@ -209,7 +209,7 @@ jobs:
           ${{ steps.vars.outputs.k8s_cluster_name }}
 
     - name: Delete the associated NEG (Network Endpoint Groups)
-      if: ${{ always() && steps.helm_install.outcome == 'success' && steps.fetch_neg.outcome == 'success' }}
+      if: ${{ always() && steps.fetch_neg.outcome == 'success' }}
       shell: bash
       run: |
         delete_neg() {
