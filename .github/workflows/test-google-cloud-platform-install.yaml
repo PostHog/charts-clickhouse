@@ -186,18 +186,18 @@ jobs:
         #
         POSTHOG_EVENTS_NEG_INFO=$(kubectl get svc -n posthog posthog-events -o json | jq --raw-output '.["metadata"]["annotations"]["cloud.google.com/neg-status"]')
         POSTHOG_EVENTS_NEG_NAME=$(echo "$POSTHOG_EVENTS_NEG_INFO" | jq --raw-output '.["network_endpoint_groups"]["8000"]')
-        IFS=" " read -r -a POSTHOG_EVENTS_NEG_ZONES <<< "$(echo "$POSTHOG_EVENTS_NEG_INFO" | jq --raw-output '.["zones"] | join(" ")')"
+        IFS=" " read -r -a POSTHOG_EVENTS_NEG_ZONES <<< "$(echo "$POSTHOG_EVENTS_NEG_INFO" | jq --raw-output '.["zones"] | join(",")')"
         echo "::set-output name=posthog_events_neg_name::${POSTHOG_EVENTS_NEG_NAME}"
-        echo "::set-output name=posthog_events_neg_zones::${POSTHOG_EVENTS_NEG_ZONES}"
+        echo "::set-output name=posthog_events_neg_zones::${POSTHOG_EVENTS_NEG_ZONES[@]}"
 
         #
         # posthog-web
         #
         POSTHOG_WEB_NEG_INFO=$(kubectl get svc -n posthog posthog-web -o json | jq --raw-output '.["metadata"]["annotations"]["cloud.google.com/neg-status"]')
         POSTHOG_WEB_NEG_NAME=$(echo "$POSTHOG_WEB_NEG_INFO" | jq --raw-output '.["network_endpoint_groups"]["8000"]')
-        IFS=" " read -r -a POSTHOG_WEB_NEG_ZONES <<< "$(echo "$POSTHOG_WEB_NEG_INFO" | jq --raw-output '.["zones"] | join(" ")')"
+        IFS=" " read -r -a POSTHOG_WEB_NEG_ZONES <<< "$(echo "$POSTHOG_WEB_NEG_INFO" | jq --raw-output '.["zones"] | join(",")')"
         echo "::set-output name=posthog_web_neg_name::${POSTHOG_WEB_NEG_NAME}"
-        echo "::set-output name=posthog_web_neg_zones::${POSTHOG_WEB_NEG_ZONES}"
+        echo "::set-output name=posthog_web_neg_zones::${POSTHOG_WEB_NEG_ZONES[@]}"
 
     - name: Delete the k8s cluster and all the associated resources
       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
@@ -214,7 +214,8 @@ jobs:
       run: |
         delete_neg() {
             local NEG_NAME="$1"
-            local NEG_ZONES="$2"
+            local NEG_ZONES
+            IFS=',' read -r -a NEG_ZONES <<< "$2"
 
             for NEG_ZONE in "${NEG_ZONES[@]}"
             do
@@ -226,8 +227,8 @@ jobs:
             done
         }
 
-        delete_neg ${{ steps.vars.outputs.posthog_events_neg_name }} ${{ steps.vars.outputs.posthog_events_neg_zones }}
-        delete_neg ${{ steps.vars.outputs.posthog_web_neg_name }} ${{ steps.vars.outputs.posthog_web_neg_zones }}
+        delete_neg "${{ steps.vars.outputs.posthog_events_neg_name }}" "${{ steps.vars.outputs.posthog_events_neg_zones }}"
+        delete_neg "${{ steps.vars.outputs.posthog_web_neg_name }}" "${{ steps.vars.outputs.posthog_web_neg_zones }}"
 
     - name: Delete the global static IP address
       if: ${{ always() && steps.static_ip_creation.outcome == 'success' }}
