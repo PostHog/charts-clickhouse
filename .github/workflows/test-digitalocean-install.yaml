@@ -49,6 +49,7 @@ jobs:
           --wait
 
     - name: Install PostHog using the Helm chart
+      id: helm_install
       run: |
         helm upgrade --install \
           -f ci/values/digital_ocean.yaml \

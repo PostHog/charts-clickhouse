@@ -84,6 +84,7 @@ jobs:
           --record-data "$global_static_ip"
 
     - name: Install PostHog using the Helm chart
+      id: helm_install
       run: |
         helm upgrade --install \
           -f ci/values/google_cloud_platform.yaml \
@@ -166,6 +167,38 @@ jobs:
     #   with:
     #     filename: ci/k6/ingestion-test.js
 
+    #
+    # Due to what I consider as a bad design choice from Google, when a GKE cluster is deleted,
+    # standalone NEGs are not so we need to do the cleanup ourself.
+    #
+    # An additional problem is that we can't delete when they are in use but there's also no
+    # easy way to get the NEG associated to a specific GKE cluster using the 'gcloud' CLI.
+    # In order to do so, we need to fetch the NEG info via 'kubectl' in this step, delete
+    # the cluster in another and then, using the output from this step, finally delete the NEG.
+    #
+    - name: Fetch the associated NEG (Network Endpoint Groups)
+      id: fetch_neg
+      if: ${{ always() && steps.helm_install.outcome == 'success' }}
+      shell: bash
+      run: |
+        #
+        # posthog-events
+        #
+        POSTHOG_EVENTS_NEG_INFO=$(kubectl get svc -n posthog posthog-events -o json | jq --raw-output '.["metadata"]["annotations"]["cloud.google.com/neg-status"]')
+        POSTHOG_EVENTS_NEG_NAME=$(echo "$POSTHOG_EVENTS_NEG_INFO" | jq --raw-output '.["network_endpoint_groups"]["8000"]')
+        IFS=" " read -r -a POSTHOG_EVENTS_NEG_ZONES <<< "$(echo "$POSTHOG_EVENTS_NEG_INFO" | jq --raw-output '.["zones"] | join(" ")')"
+        echo "::set-output name=posthog_events_neg_name::${POSTHOG_EVENTS_NEG_NAME}"
+        echo "::set-output name=posthog_events_neg_zones::${POSTHOG_EVENTS_NEG_ZONES}"
+
+        #
+        # posthog-web
+        #
+        POSTHOG_WEB_NEG_INFO=$(kubectl get svc -n posthog posthog-web -o json | jq --raw-output '.["metadata"]["annotations"]["cloud.google.com/neg-status"]')
+        POSTHOG_WEB_NEG_NAME=$(echo "$POSTHOG_WEB_NEG_INFO" | jq --raw-output '.["network_endpoint_groups"]["8000"]')
+        IFS=" " read -r -a POSTHOG_WEB_NEG_ZONES <<< "$(echo "$POSTHOG_WEB_NEG_INFO" | jq --raw-output '.["zones"] | join(" ")')"
+        echo "::set-output name=posthog_web_neg_name::${POSTHOG_WEB_NEG_NAME}"
+        echo "::set-output name=posthog_web_neg_zones::${POSTHOG_WEB_NEG_ZONES}"
+
     - name: Delete the k8s cluster and all the associated resources
       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
       run: |
@@ -175,9 +208,26 @@ jobs:
           --quiet \
           ${{ steps.vars.outputs.k8s_cluster_name }}
 
-    # TODO: fix this!
-    # When a GKE service is deleted, the associated NEG will not be garbage collected if the NEG is still referenced by a backend service. Dereference the NEG from the backend service to allow NEG deletion.
-    # When a cluster is deleted, standalone NEGs are not deleted.
+    - name: Delete the associated NEG (Network Endpoint Groups)
+      if: ${{ always() && steps.helm_install.outcome == 'success' && steps.fetch_neg.outcome == 'success' }}
+      shell: bash
+      run: |
+        delete_neg() {
+            local NEG_NAME="$1"
+            local NEG_ZONES="$2"
+
+            for NEG_ZONE in "${NEG_ZONES[@]}"
+            do
+              gcloud compute network-endpoint-groups delete \
+                  --project ${{ secrets.GCP_PROJECT_ID }} \
+                  --zone "$NEG_ZONE" \
+                  --quiet \
+                  "$NEG_NAME"
+            done
+        }
+
+        delete_neg ${{ steps.vars.outputs.posthog_events_neg_name }} ${{ steps.vars.outputs.posthog_events_neg_zones }}
+        delete_neg ${{ steps.vars.outputs.posthog_web_neg_name }} ${{ steps.vars.outputs.posthog_web_neg_zones }}
 
     - name: Delete the global static IP address
       if: ${{ always() && steps.static_ip_creation.outcome == 'success' }}
