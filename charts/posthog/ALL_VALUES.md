@@ -105,8 +105,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | cert-manager.enabled | bool | `false` | Whether to install cert-manager. Validates certs for nginx ingress |
 | cert-manager.installCRDs | bool | `true` | Whether to install cert-manager CRDs. |
 | cert-manager.podDnsPolicy | string | `"None"` |  [Workaround] - do not use the local DNS for the 'cert-manager' pods since it would return local IPs and break self checks. For more info see:   - https://github.com/jetstack/cert-manager/issues/1292   - https://github.com/jetstack/cert-manager/issues/3238   - https://github.com/jetstack/cert-manager/issues/4286   - https://github.com/compumike/hairpin-proxy This has some side effects, like 'cert-manager' pods not being able to resolve cluster-local names, but so far this has not caused issues (and we don't expect it to do so). |
-| cert-manager.podDnsConfig.nameservers[0] | string | `"1.1.1.1"` |  |
-| cert-manager.podDnsConfig.nameservers[1] | string | `"8.8.8.8"` |  |
+| cert-manager.podDnsConfig.nameservers[0] | string | `"8.8.8.8"` |  |
+| cert-manager.podDnsConfig.nameservers[1] | string | `"1.1.1.1"` |  |
 | cert-manager.podDnsConfig.nameservers[2] | string | `"208.67.222.222"` |  |
 | ingress.enabled | bool | `true` | Enable ingress controller resource |
 | ingress.type | string | `nil` | Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp. |
