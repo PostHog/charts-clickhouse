@@ -9,7 +9,7 @@ image:
   # -- Posthog image tag, e.g. release-1.31.1
   tag:
   # -- Default image or tag, e.g. :release-1.31.1
-  default: ":release-1.31.1"
+  default: ":release-1.31.1-unstable"
   # -- Image pull policy
   pullPolicy: IfNotPresent
 
