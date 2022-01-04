@@ -9,11 +9,6 @@ name: e2e - DigitalOcean (install)
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ci/**
-      - charts/**
-      - .github/workflows/test-digitalocean-install.yaml
 
 jobs:
   do-install:
