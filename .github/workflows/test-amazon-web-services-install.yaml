@@ -9,11 +9,6 @@ name: e2e - Amazon Web Services (install)
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - ci/**
-      - charts/**
-      - .github/workflows/test-amazon-web-services-install.yaml
 
 jobs:
   aws-install:
