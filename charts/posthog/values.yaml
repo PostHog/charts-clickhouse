@@ -30,7 +30,7 @@ clickhouseOperator:
   # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
   serviceType: NodePort
 
-# -- Env vars to throw into every deployment (web, beat, worker, and plugin server)
+# -- Env vars to throw into every deployment (web, worker, and plugin server)
 env:
   - name: ASYNC_EVENT_PROPERTY_USAGE
     value: "true"
@@ -132,26 +132,6 @@ web:
   ## Use an alternate scheduler, e.g. "stork".
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
-  # schedulerName:
-  # Optional extra labels for pod, i.e. redis-client: "true"
-  # podLabels: []
-
-beat:
-  # -- How many posthog 'beat' instances to run
-  replicacount: 1
-  # -- Resource limits for 'beat' instances
-  resources:
-    {}
-    # limits:
-    #   cpu: 200m
-    #   memory: 200Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 100Mi
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  # priorityClassName: ""
   # schedulerName:
   # Optional extra labels for pod, i.e. redis-client: "true"
   # podLabels: []
