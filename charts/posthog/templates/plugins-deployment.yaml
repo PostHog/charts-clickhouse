@@ -80,6 +80,8 @@ spec:
           value: {{ .Values.sentryDSN | quote }}
         - name: DEPLOYMENT
           value: {{ template "posthog.deploymentEnv" . }}
+        - name: DEMO
+          value: {{ .Values.demo | quote }}
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:

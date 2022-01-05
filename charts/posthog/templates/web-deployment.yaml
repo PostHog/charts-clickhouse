@@ -77,6 +77,8 @@ spec:
           value: {{ template "posthog.site.url" . }}
         - name: DEPLOYMENT
           value: {{ template "posthog.deploymentEnv" . }}
+        - name: DEMO
+          value: {{ .Values.demo | quote }}
         - name: SENTRY_DSN
           value: {{ .Values.sentryDSN | quote }}
         - name: DISABLE_SECURE_SSL_REDIRECT

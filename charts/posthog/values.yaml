@@ -17,6 +17,8 @@ image:
 cloud:
 # -- Sentry endpoint to send errors to
 sentryDSN:
+# -- Whether this is a demo instance of PostHog
+demo:
 
 clickhouseOperator:
   # -- Whether to install clickhouse. If false, `clickhouse.host` must be set

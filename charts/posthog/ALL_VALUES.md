@@ -16,6 +16,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cloud | string | `nil` | Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
+| demo | bool | `nil` | Whether this is a demo instance of PostHog |
 | clickhouseOperator.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouseOperator.namespace | string | `nil` | Which namespace to install clickhouse operator to (defaults to namespace chart is installed to) |
 | clickhouseOperator.storage | string | `"20Gi"` | How much storage space to preallocate for clickhouse |
