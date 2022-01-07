@@ -1,0 +1,15 @@
+# Target support for Kubernetes 1.17
+# see: https://github.com/kubernetes-client/python#compatibility
+#
+# We technically don't support K8s version 1.17 in Helm but we need
+# to pin this version as it's the most up to date still working for
+# kubetest. See https://github.com/vapor-ware/kubetest/issues/217
+#
+kubernetes==17.17.0
+
+kubetest==0.9.5
+
+# Lint
+black==21.12b0
+flake8==4.0.1
+isort==5.10.1
