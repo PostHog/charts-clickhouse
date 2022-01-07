@@ -21,13 +21,13 @@ jobs:
         # specified below, these parameters have no meaning on their own and
         # gain meaning on how job steps use them.
         include:
+          - k3s-channel: v1.23
+            test: install
           - k3s-channel: v1.22
             test: install
           - k3s-channel: v1.21
             test: install
           - k3s-channel: v1.20
-            test: install
-          - k3s-channel: v1.19
             test: install
 
           # We run an upgrade test where we first install an already released
@@ -36,7 +36,7 @@ jobs:
           #
           # It can be very useful to see the "Helm diff" step's output from the
           # latest dev version.
-          - k3s-channel: v1.19
+          - k3s-channel: v1.21
             test: upgrade
 
     steps:

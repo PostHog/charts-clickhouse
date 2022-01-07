@@ -2,7 +2,7 @@ apiVersion: v2
 name: posthog
 description: 🦔 PostHog is developer-friendly, open-source product analytics.
 icon: https://camo.githubusercontent.com/11f72f57f33d7d34807bafc1314844f7a91bcdea/68747470733a2f2f706f7374686f672d7374617469632d66696c65732e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f576562736974652d4173736574732f6769746875622d636f7665722e706e67
-kubeVersion: ">= 1.19-0 <= 1.22-0"
+kubeVersion: ">= 1.20-0 <= 1.23-0"
 home: https://posthog.com
 sources:
   - https://github.com/PostHog/charts-clickhouse
