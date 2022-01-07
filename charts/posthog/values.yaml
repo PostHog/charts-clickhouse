@@ -39,6 +39,8 @@ env:
 
 # -- PgBouncer setup
 pgbouncer:
+   # -- Whether to install PGBouncer or not
+  enabled: true
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
     # -- This experimental and set up based on cpu utilization
@@ -59,7 +61,30 @@ pgbouncer:
   # -- Additional volumes to be added to the pgbouncer deployment
   extraVolumes: []
 
+migrate:
+  # -- Whether to install the PostHog migrate job or not
+  enabled: true
+
+events:
+  # -- Whether to install the PostHog events stack or not
+  enabled: true
+  # -- events horizontal pod autoscaler settings
+  hpa:
+    # -- Boolean to create a HorizontalPodAutoscaler for events stack
+    # -- This experimental
+    enabled: false
+    # -- CPU threshold percent for the events stack
+    cputhreshold: 60
+    # -- Min pods for the events stack
+    minpods: 1
+    # -- Max pods for the events stack
+    maxpods: 10
+  # -- Amount of events pods to run. Ignored if hpa is used
+  replicacount: 1
+
 web:
+  # -- Whether to install the PostHog web stack or not
+  enabled: true
   # -- Web horizontal pod autoscaler settings
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for web
@@ -137,6 +162,8 @@ web:
   # podLabels: []
 
 worker:
+   # -- Whether to install the PostHog worker stack or not
+  enabled: true
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for worker
     # -- This experimental
@@ -167,6 +194,8 @@ worker:
 
 # How many plugin server instances to run
 plugins:
+   # -- Whether to install the PostHog plugin stack or not
+  enabled: true
   ingestion:
     # -- Whether to enable plugin-server based ingestion
     enabled: true

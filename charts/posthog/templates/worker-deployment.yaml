@@ -1,3 +1,4 @@
+{{- if .Values.worker.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -185,3 +186,4 @@ spec:
 {{- end }}
         resources:
 {{ toYaml .Values.worker.resources | indent 12 }}
+{{- end }}

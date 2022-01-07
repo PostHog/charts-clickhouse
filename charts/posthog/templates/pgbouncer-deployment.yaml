@@ -1,3 +1,4 @@
+{{- if .Values.pgbouncer.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -91,3 +92,4 @@ spec:
     {{- if .Values.pgbouncer.extraVolumes }}
       volumes: {{- toYaml .Values.pgbouncer.extraVolumes | nindent 6 }}
     {{- end }}
+{{- end }}
