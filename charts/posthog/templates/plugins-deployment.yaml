@@ -1,3 +1,4 @@
+{{- if .Values.plugins.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -149,3 +150,4 @@ spec:
 {{- end }}
         resources:
 {{ toYaml .Values.plugins.resources | indent 12 }}
+{{- end }}

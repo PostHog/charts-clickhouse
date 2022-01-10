@@ -1,3 +1,4 @@
+{{- if .Values.web.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -232,3 +233,4 @@ spec:
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
         resources:
 {{ toYaml .Values.web.resources | indent 12 }}
+{{- end }}

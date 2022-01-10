@@ -1,0 +1,48 @@
+suite: PostHog worker HPA definition
+templates:
+  - templates/worker-hpa.yaml
+
+tests:
+  - it: should be empty if worker.enabled and worker.hpa.enabled are set to false
+    set:
+      worker.enabled: false
+      worker.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if worker.enabled is true and worker.hpa.enabled is set to false
+    set:
+      worker.enabled: true
+      worker.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be not empty if worker.enabled and worker.hpa.enabled are set to true
+    set:
+      worker.enabled: true
+      worker.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should have the correct apiVersion
+    set:
+      worker.enabled: true
+      worker.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: autoscaling/v1
+
+  - it: should be the correct kind
+    set:
+      worker.enabled: true
+      worker.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HorizontalPodAutoscaler

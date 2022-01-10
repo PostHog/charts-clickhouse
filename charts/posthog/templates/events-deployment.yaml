@@ -1,3 +1,4 @@
+{{- if .Values.events.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,8 +20,8 @@ spec:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
         role: events
-  {{- if not .Values.web.hpa.enabled }}
-  replicas: {{ .Values.web.replicacount }}
+  {{- if not .Values.events.hpa.enabled }}
+  replicas: {{ .Values.events.replicacount }}
   {{- end }}
   template:
     metadata:
@@ -210,3 +211,4 @@ spec:
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
         resources:
 {{ toYaml .Values.web.resources | indent 12 }}
+{{- end }}

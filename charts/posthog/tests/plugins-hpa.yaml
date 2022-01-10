@@ -1,0 +1,48 @@
+suite: PostHog plugins HPA definition
+templates:
+  - templates/plugins-hpa.yaml
+
+tests:
+  - it: should be empty if plugins.enabled and plugins.hpa.enabled are set to false
+    set:
+      plugins.enabled: false
+      plugins.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if plugins.enabled is true and plugins.hpa.enabled is set to false
+    set:
+      plugins.enabled: true
+      plugins.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be not empty if plugins.enabled and plugins.hpa.enabled are set to true
+    set:
+      plugins.enabled: true
+      plugins.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should have the correct apiVersion
+    set:
+      plugins.enabled: true
+      plugins.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: autoscaling/v1
+
+  - it: should be the correct kind
+    set:
+      plugins.enabled: true
+      plugins.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HorizontalPodAutoscaler

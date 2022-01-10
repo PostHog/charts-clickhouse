@@ -1,3 +1,4 @@
+{{- if .Values.pgbouncer.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,12 +9,13 @@ metadata:
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 spec:
-  type: "ClusterIP" 
+  type: "ClusterIP"
   ports:
-  - port: 6543 
-    targetPort: 6543 
+  - port: 6543
+    targetPort: 6543
     protocol: TCP
     name: {{ template "posthog.fullname" . }}-pgbouncer
   selector:
     app: {{ template "posthog.fullname" . }}
-    role: pgbouncer 
+    role: pgbouncer
+{{- end }}

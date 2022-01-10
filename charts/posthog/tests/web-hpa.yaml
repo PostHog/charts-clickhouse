@@ -1,0 +1,48 @@
+suite: PostHog web HPA definition
+templates:
+  - templates/web-hpa.yaml
+
+tests:
+  - it: should be empty if web.enabled and web.hpa.enabled are set to false
+    set:
+      web.enabled: false
+      web.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if web.enabled is true and web.hpa.enabled is set to false
+    set:
+      web.enabled: true
+      web.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be not empty if web.enabled and web.hpa.enabled are set to true
+    set:
+      web.enabled: true
+      web.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should have the correct apiVersion
+    set:
+      web.enabled: true
+      web.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: autoscaling/v1
+
+  - it: should be the correct kind
+    set:
+      web.enabled: true
+      web.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HorizontalPodAutoscaler

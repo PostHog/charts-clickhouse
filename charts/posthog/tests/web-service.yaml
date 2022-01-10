@@ -1,0 +1,30 @@
+suite: PostHog web service definition
+templates:
+  - templates/web-service.yaml
+
+tests:
+  - it: should be empty if web.enabled is set to false
+    set:
+      web.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be not empty if web.enabled is set to true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should have the correct apiVersion
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: v1
+
+  - it: should be the correct kind
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Service
