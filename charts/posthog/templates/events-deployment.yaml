@@ -20,8 +20,8 @@ spec:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
         role: events
-  {{- if not .Values.web.hpa.enabled }}
-  replicas: {{ .Values.web.replicacount }}
+  {{- if not .Values.events.hpa.enabled }}
+  replicas: {{ .Values.events.replicacount }}
   {{- end }}
   template:
     metadata:
