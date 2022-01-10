@@ -110,10 +110,6 @@ spec:
               name: {{ template "posthog.fullname" . }}
             {{- end }}
               key: smtp-password
-        {{- if .Release.IsInstall }}
-        - name: CLICKHOUSE_INITIAL_MIGRATIONS
-          value: '1'
-        {{- end }}
         - name: PRIMARY_DB
           value: clickhouse
         - name: CLICKHOUSE_DATABASE
