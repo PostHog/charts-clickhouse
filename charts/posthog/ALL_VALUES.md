@@ -22,7 +22,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouseOperator.useNodeSelector | bool | `false` | If enabled, operator will prefer k8s nodes with tag `clickhouse:true` |
 | clickhouseOperator.serviceType | string | `"NodePort"` | Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost) |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, worker, and plugin server) |
-| pgbouncer | object | `{"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
+| pgbouncer | object | `{"enabled":true,"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
+| pgbouncer.enabled | bool | `true` | Whether to install PGBouncer or not |
 | pgbouncer.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for pgbouncer -- This experimental and set up based on cpu utilization -- Adding pgbouncers can cause running out of connections for Postgres |
 | pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for pgbouncer |
 | pgbouncer.hpa.minpods | int | `1` | Min pods for pgbouncer |
@@ -31,6 +32,15 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pgbouncer.env | list | `[]` | Additional env vars to be added to the pgbouncer deployment |
 | pgbouncer.extraVolumeMounts | list | `[]` | Additional volumeMounts to be added to the pgbouncer deployment |
 | pgbouncer.extraVolumes | list | `[]` | Additional volumes to be added to the pgbouncer deployment |
+| migrate.enabled | bool | `true` | Whether to install the PostHog migrate job or not |
+| events.enabled | bool | `true` | Whether to install the PostHog events stack or not |
+| events.hpa | object | `{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1}` | events horizontal pod autoscaler settings |
+| events.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for events stack -- This experimental |
+| events.hpa.cputhreshold | int | `60` | CPU threshold percent for the events stack |
+| events.hpa.minpods | int | `1` | Min pods for the events stack |
+| events.hpa.maxpods | int | `10` | Max pods for the events stack |
+| events.replicacount | int | `1` | Amount of events pods to run. Ignored if hpa is used |
+| web.enabled | bool | `true` | Whether to install the PostHog web stack or not |
 | web.hpa | object | `{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1}` | Web horizontal pod autoscaler settings |
 | web.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for web -- This experimental |
 | web.hpa.cputhreshold | int | `60` | CPU threshold percent for the web |
@@ -57,6 +67,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.readinessProbe.periodSeconds | int | `10` | The readiness probe period seconds |
 | web.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | web.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
+| worker.enabled | bool | `true` | Whether to install the PostHog worker stack or not |
 | worker.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for worker -- This experimental |
 | worker.hpa.cputhreshold | int | `60` |  |
 | worker.hpa.minpods | int | `1` |  |
@@ -67,6 +78,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.nodeSelector | object | `{}` |    cpu: 300m   memory: 500Mi requests:   cpu: 100m   memory: 100Mi |
 | worker.tolerations | list | `[]` |  |
 | worker.affinity | object | `{}` |  |
+| plugins.enabled | bool | `true` | Whether to install the PostHog plugin stack or not |
 | plugins.ingestion.enabled | bool | `true` | Whether to enable plugin-server based ingestion |
 | plugins.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for plugin server -- This experimental, based on cpu util which is not necessarily the bottleneck |
 | plugins.hpa.cputhreshold | int | `60` |  |
