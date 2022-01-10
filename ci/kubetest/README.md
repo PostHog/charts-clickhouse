@@ -1,11 +1,11 @@
 # Kubetest
-This directory contains the integration tests for our Helm chart. We use [`kubetest`](https://kubetest.readthedocs.io/en/latest/) that is a `pytest` plugin that makes it easier to write integration tests on Kubernetes.
+This directory contains an integration test suite for our Helm chart. We use [`kubetest`](https://kubetest.readthedocs.io/en/latest/) that is a `pytest` plugin that makes it easier to write integration tests on Kubernetes.
 
 ### How-to
 1. `python3 -m venv .venv`
 1. `source .venv/bin/activate`
 1. `pip install -r requirements.txt`
-1. `pytest -s .`
+1. `python -m pytest . -s`
 
 ### Useful links
 - https://github.com/vapor-ware/kubetest/

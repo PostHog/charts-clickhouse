@@ -7,43 +7,49 @@
 
 -----
 
-🦔 [PostHog](https://posthog.com/) is developer-friendly, open-source product analytics.
+🦔 [PostHog](https://posthog.com/) is a developer-friendly, open-source product analytics suite.
 
-This chart bootstraps a [PostHog](https://posthog.com/) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager. The chart uses the scalable [ClickHouse](https://clickhouse.tech/) database for powering analytics.
-
-See deployment instructions on [posthog.com/docs/self-host](https://posthog.com/docs/self-host).
+This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
 - Kubernetes >=1.20 <= 1.23
 - Helm 3+
 
+## Installation
+Deployment instructions for the major cloud service providers and on-premise deploys are available [here](https://posthog.com/docs/self-host).
+
+## Changelog
+We document detailed changes for each major release in the [upgrade notes](https://posthog.com/docs/self-host/deploy/upgrade-notes).
+
 ## Development
-Add the Helm repositories:
-```
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo add kubernetes https://kubernetes.github.io/ingress-nginx
-helm repo add jetstack https://charts.jetstack.io
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-```
+The main purpose of this repository is to continue evolving our Helm chart, making it faster and easier to use. We welcome all contributions to the community and are excited to welcome you aboard.
 
-### Unit tests
-In order to run the test suite you need to install the `helm-unittest` plugin. You can do that by running:
-```
-helm plugin install https://github.com/quintush/helm-unittest
-```
+### Testing
+This repo uses several types of test suite targeting different goals:
 
-For more information about how it works and how to write test cases, please take a look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md).
+- **lint tests**: to verify if the Helm templates can be rendered without errors
+- **unit tests**: to verify if the rendered Helm templates are as we expect
+- **integration tests**: to verify if applying the rendered Helm templates against a Kubernetes target cluster gives us the stack and PostHog installation we expect
 
-**Run test suite**
-```
-helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/**/*.yaml' charts/posthog
-```
+#### Lint tests
+We use `helm lint` that can be invoked via: `helm lint --strict --set “cloud=local” charts/posthog`
 
-## Releasing a new version of this helm chart
+#### Unit tests
+In order to run the test suite, you need to install the `helm-unittest` plugin. You can do that by running: `helm plugin install https://github.com/quintush/helm-unittest`
 
-Simply apply one of the following labels to your PR _before merging_ to bump the version and release it to the helm repo:
+For more information about how it works and how to write test cases, please look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md) or to the [tests already available in this repo](https://github.com/PostHog/charts-clickhouse/tree/main/charts/posthog/tests).
+
+To run the test suite you can execute: `helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/**/*.yaml' charts/posthog`
+
+#### Integration tests
+- [kubetest](https://github.com/PostHog/charts-clickhouse/tree/main/ci/kubetest): to verify if applying the rendered Helm templates against a Kubernetes target cluster gives us the stack we expect (example: are the disks encrypted? Can this pod communicate with this service?)
+- [k6](https://github.com/PostHog/charts-clickhouse/tree/main/ci/k6): HTTP test used to verify the reliability, performance and compliance of the PostHog installation (example: is the PostHog ingestion working correctly?)
+- [e2e - k3s](https://github.com/PostHog/charts-clickhouse/tree/main/.github/workflows/test-helm-chart.yaml): to verify Helm install/upgrade commands on a local k3s cluster
+- [e2e - Amazon Web Services](https://github.com/PostHog/charts-clickhouse/tree/main/.github/workflows/test-amazon-web-services-install.yaml), [e2e - DigitalOcean](https://github.com/PostHog/charts-clickhouse/tree/main/.github/workflows/test-digitalocean-install.yaml), [e2e - Google Cloud Platform](https://github.com/PostHog/charts-clickhouse/tree/main/.github/workflows/test-google-cloud-platform-install.yaml): to verify Helm install command on the officially supported cloud platforms
+
+### Release
+Add one of the following labels to your PR _before merging_ to bump the version and release it to the Helm repository:
+
 - `bump patch`
 - `bump minor`
 - `bump major`
-
-👋
