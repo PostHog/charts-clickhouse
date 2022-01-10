@@ -27,9 +27,9 @@ The main purpose of this repository is to continue evolving our Helm chart, maki
 ### Testing
 This repo uses several types of test suite targeting different goals:
 
-- **lint tests**: verify if the Helm templates can be rendered without errors
-- **unit tests**: verify if the rendered Helm templates are as we expect
-- **integration tests**: verify if applying the rendered Helm templates against a Kubernetes target cluster gives us the stack and PostHog installation we expect
+- **lint tests**: to verify if the Helm templates can be rendered without errors
+- **unit tests**: to verify if the rendered Helm templates are as we expect
+- **integration tests**: to verify if applying the rendered Helm templates against a Kubernetes target cluster gives us the stack and PostHog installation we expect
 
 #### Lint tests
 We use `helm lint` that can be invoked via: `helm lint --strict --set “cloud=local” charts/posthog`
@@ -42,10 +42,10 @@ For more information about how it works and how to write test cases, please look
 To run the test suite you can execute: `helm unittest --helm3 --strict --file ‘tests/*.yaml’ --file ‘tests/**/*.yaml’ charts/posthog`
 
 #### Integration tests
-- [Kubetest](./ci/kubetest): verify if applying the rendered Helm templates against a Kubernetes target cluster gives us the stack we expect (example: are the disks encrypted? Can this pod communicate with this service?)
+- [Kubetest](./ci/kubetest): to verify if applying the rendered Helm templates against a Kubernetes target cluster gives us the stack we expect (example: are the disks encrypted? Can this pod communicate with this service?)
 - [k6](./ci/k6): HTTP test used to verify the reliability, performance and compliance of the PostHog installation (example: is the PostHog ingestion working correctly?)
-- [e2e - k3s](.github/workflows/test-helm-chart.yaml): verify Helm install/upgrade commands on a local k3s cluster
-- [e2e - Amazon Web Services](.github/workflows/test-amazon-web-services-install.yaml), [e2e - DigitalOcean](.github/workflows/test-digitalocean-install.yaml), [e2e - Google Cloud Platform](.github/workflows/test-google-cloud-platform-install.yaml): verify Helm install command on the officially supported cloud platforms
+- [e2e - k3s](.github/workflows/test-helm-chart.yaml): to verify Helm install/upgrade commands on a local k3s cluster
+- [e2e - Amazon Web Services](.github/workflows/test-amazon-web-services-install.yaml), [e2e - DigitalOcean](.github/workflows/test-digitalocean-install.yaml), [e2e - Google Cloud Platform](.github/workflows/test-google-cloud-platform-install.yaml): to verify Helm install command on the officially supported cloud platforms
 
 ### Release
 Add one of the following labels to your PR _before merging_ to bump the version and release it to the Helm repository:
