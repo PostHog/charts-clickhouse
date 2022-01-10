@@ -1,6 +1,5 @@
 # Kubetest
 This directory contains the integration tests for our Helm chart. We use [`kubetest`](https://kubetest.readthedocs.io/en/latest/) that is a `pytest` plugin that makes it easier to write integration tests on Kubernetes.
-x
 
 ### How-to
 1. `python3 -m venv .venv`
