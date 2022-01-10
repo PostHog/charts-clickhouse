@@ -9,7 +9,6 @@ on:
 
 jobs:
   helm-lint:
-    name: Helm lint
     runs-on: ubuntu-20.04
     strategy:
       matrix:
