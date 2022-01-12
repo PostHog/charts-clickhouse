@@ -148,6 +148,26 @@ spec:
 {{- if .Values.plugins.env }}
 {{ toYaml .Values.plugins.env | indent 8 }}
 {{- end }}
+        livenessProbe:
+          failureThreshold: {{ .Values.plugins.livenessProbe.failureThreshold }}
+          httpGet:
+            path: /health
+            port: 5000
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.plugins.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.plugins.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.plugins.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.plugins.livenessProbe.timeoutSeconds }}
+        readinessProbe:
+          failureThreshold: {{ .Values.plugins.readinessProbe.failureThreshold }}
+          httpGet:
+            path: /_health/
+            port: {{ .Values.service.internalPort }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.plugins.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.plugins.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.plugins.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.plugins.readinessProbe.timeoutSeconds }}
         resources:
 {{ toYaml .Values.plugins.resources | indent 12 }}
 {{- end }}
