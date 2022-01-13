@@ -32,6 +32,9 @@ clickhouseOperator:
 
 # -- Env vars to throw into every deployment (web, worker, and plugin server)
 env: []
+# env: 
+#   - name: FOO 
+#     value: bar
 
 # -- PgBouncer setup
 pgbouncer:
