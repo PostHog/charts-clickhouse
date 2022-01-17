@@ -1,63 +1,34 @@
-{{- if .Values.clickhouseOperator.enabled }}
-{{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
-{{ if (eq (.Values.cloud | toString) "gcp" )}}
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: gce-resizable
-provisioner: kubernetes.io/gce-pd
-parameters:
-  type: pd-standard
-  fstype: ext4
-  replication-type: none
-reclaimPolicy: Retain
-#volumeBindingMode: Immediate
-allowVolumeExpansion: true
-{{- else if (eq (.Values.cloud | toString) "aws") }}
-#
-# AWS resizable disk example
-#
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: gp2-resizable
-provisioner: kubernetes.io/aws-ebs
-parameters:
-  type: gp2
-reclaimPolicy: Retain
-#volumeBindingMode: Immediate
-allowVolumeExpansion: true
-{{ end }}
-{{- end }}
----
+{{- if .Values.clickhouse.enabled }}
 apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallation"
 metadata:
   name: "posthog"
 spec:
-  defaults:
-    templates:
-      {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
-      dataVolumeClaimTemplate: data-volumeclaim-template
-      {{- end }}
-      serviceTemplate: chi-service-template
   configuration:
     users:
       admin/password: {{ .Values.clickhouse.password }}
       admin/networks/ip: "0.0.0.0/0"
       admin/profile: default
       admin/quota: default
+
     profiles:
       default/allow_experimental_window_functions: "1"
+
     clusters:
       - name: {{ .Values.clickhouse.database | quote }}
         templates:
-          podTemplate: pod-template-with-volumes
+          podTemplate: pod-template
+          serviceTemplate: service-template
+          {{- if and (.Values.clickhouse.persistence.enabled) (not .Values.clickhouse.persistence.existingClaim) }}
+          dataVolumeClaimTemplate: data-volumeclaim-template
+          {{- end }}
         layout:
           shardsCount: 1
           replicasCount: 1
+
     settings:
       format_schema_path: /etc/clickhouse-server/config.d/
+
     files:
       events.proto: |
         syntax = "proto3";
@@ -71,6 +42,7 @@ spec:
           string created_at = 7;
           string elements_chain = 8;
         }
+
     zookeeper:
       nodes:
       {{- if .Values.clickhouse.externalZookeeper }}
@@ -79,27 +51,34 @@ spec:
         - host: {{ template "posthog.zookeeper.host" . }}
           port: {{ template "posthog.zookeeper.port" . }}
       {{- end }}
+
   templates:
     podTemplates:
-      - name: pod-template-with-volumes
+      - name: pod-template
         spec:
           {{- if .Values.clickhouse.affinity }}
-          affinity:
-{{ toYaml .Values.clickhouse.affinity | indent 12 }}
+          affinity: {{ toYaml .Values.clickhouse.affinity | nindent 12 }}
           {{- end }}
           {{- if .Values.clickhouse.tolerations }}
-          tolerations:
-{{ toYaml .Values.clickhouse.tolerations | indent 12 }}
+          tolerations: {{ toYaml .Values.clickhouse.tolerations | nindent 12 }}
           {{- end }}
           {{- if .Values.clickhouse.nodeSelector }}
           nodeSelector: {{ toYaml .Values.clickhouse.nodeSelector | nindent 12 }}
           {{- end }}
-          {{- if (eq (include "clickhouse.externalVolume" .) "true" ) }}
+
+          {{- if .Values.clickhouse.persistence.enabled }}
           volumes:
-            - name: clickhouse-storage
+          {{- if .Values.clickhouse.persistence.existingClaim }}
+            - name: existing-volumeclaim
               persistentVolumeClaim:
-                claimName: {{ .Values.clickhouse.persistentVolumeClaim }}
+                claimName: {{ .Values.clickhouse.persistence.existingClaim }}
+          {{- else }}
+            - name: data-volumeclaim-template
+              persistentVolumeClaim:
+                claimName: data-volumeclaim-template
           {{- end }}
+          {{- end }}
+
           {{- if .Values.clickhouse.securityContext.enabled }}
           securityContext: {{- omit .Values.clickhouse.securityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
@@ -112,6 +91,7 @@ spec:
                 - /bin/bash
                 - -c
                 - /usr/bin/clickhouse-server --config-file=/etc/clickhouse-server/config.xml
+
               ports:
                 - name: http
                   containerPort: 8123
@@ -119,21 +99,28 @@ spec:
                   containerPort: 9000
                 - name: interserver
                   containerPort: 9009
+
+              {{- if .Values.clickhouse.persistence.enabled }}
               volumeMounts:
-              {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
-                - name: data-volumeclaim-template
+              {{- if .Values.clickhouse.persistence.existingClaim }}
+                - name: existing-volumeclaim
               {{- else }}
-                - name: clickhouse-storage
+                - name: data-volumeclaim-template
               {{- end }}
                   mountPath: /var/lib/clickhouse
-              resources:
-{{ toYaml .Values.clickhouse.resources | indent 16 }}
-              {{- if .Values.clickhouseOperator.useNodeSelector }}
+              {{- end }}
+
+              {{- if .Values.clickhouse.useNodeSelector }}
               nodeSelector:
                 clickhouse: true
               {{- end }}
+
+              {{- if .Values.clickhouse.resources }}
+              resources: {{ toYaml .Values.clickhouse.resources | nindent 16 }}
+              {{- end }}
+
     serviceTemplates:
-      - name: chi-service-template
+      - name: service-template
         generateName: {{ template "posthog.clickhouse.fullname" . }}
         spec:
           ports:
@@ -141,20 +128,20 @@ spec:
               port: 8123
             - name: tcp
               port: 9000
-          type: {{ .Values.clickhouseOperator.serviceType }}
-    {{- if (eq (include "clickhouse.externalVolume" .) "false" ) }}
+          type: {{ .Values.clickhouse.serviceType }}
+
+    {{- if and (.Values.clickhouse.persistence.enabled) (not .Values.clickhouse.persistence.existingClaim) }}
     volumeClaimTemplates:
       - name: data-volumeclaim-template
         spec:
-          {{- if (eq (.Values.cloud | toString) "gcp" )}}
-          storageClassName: gce-resizable
-          {{- else if (eq (.Values.cloud | toString) "aws") }}
-          storageClassName: gp2-resizable
+          {{- if .Values.clickhouse.persistence.storageClass }}
+          storageClassName: {{ .Values.clickhouse.persistence.storageClass }}
           {{- end }}
           accessModes:
             - ReadWriteOnce
           resources:
             requests:
-              storage: {{ .Values.clickhouseOperator.storage | quote }}
+              storage: {{ .Values.clickhouse.persistence.size | quote }}
     {{- end }}
+
 {{- end }}

@@ -3,8 +3,9 @@ ingress:
   hostname: <your-hostname>
 
 # Use small PVC in CI
-clickhouseOperator:
-  storage: 1Gi
+clickhouse:
+  persistence:
+    size: 1Gi
 kafka:
   persistence:
     size: 1Gi

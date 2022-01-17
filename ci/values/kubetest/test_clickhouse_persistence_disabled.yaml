@@ -1,0 +1,36 @@
+cloud: local
+
+clickhouse:
+  enabled: true
+  persistence:
+    enabled: false
+
+#
+# For the purpose of this test, let's disable everything else
+#
+
+# PostHog
+web:
+  enabled: false
+migrate:
+  enabled: false
+events:
+  enabled: false
+beat:
+  enabled: false
+worker:
+  enabled: false
+plugins:
+  enabled: false
+
+# Services
+postgresql:
+  enabled: false
+redis:
+  enabled: false
+kafka:
+  enabled: false
+ingress:
+  enabled: false
+pgbouncer:
+  enabled: false
