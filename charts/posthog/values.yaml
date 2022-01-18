@@ -446,7 +446,7 @@ kafka:
     # -- Enable persistence using PVC
     enabled: true
     # -- PVC Storage Request for kafka volume
-    size: 20Gi
+    size: 80Gi
   # -- A size-based retention policy for logs
   # -- Should be less than kafka.persistence.size, minimum 1GB
   logRetentionBytes: _15_000_000_000
