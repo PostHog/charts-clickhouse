@@ -449,7 +449,7 @@ kafka:
     size: 80Gi
   # -- A size-based retention policy for logs
   # -- Should be less than kafka.persistence.size, minimum 1GB
-  logRetentionBytes: _15_000_000_000
+  logRetentionBytes: _2_333_333_333
   # -- The minimum age of a log file to be eligible for deletion due to age
   logRetentionHours: 24
   # -- The default number of partitions per topic	
