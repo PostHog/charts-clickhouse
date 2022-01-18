@@ -151,7 +151,7 @@ spec:
         livenessProbe:
           failureThreshold: {{ .Values.plugins.livenessProbe.failureThreshold }}
           httpGet:
-            path: /health
+            path: /_health
             port: 5000
             scheme: HTTP
           initialDelaySeconds: {{ .Values.plugins.livenessProbe.initialDelaySeconds }}
