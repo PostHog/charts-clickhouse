@@ -16,11 +16,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cloud | string | `nil` | Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
-| clickhouseOperator.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
-| clickhouseOperator.namespace | string | `nil` | Which namespace to install clickhouse operator to (defaults to namespace chart is installed to) |
-| clickhouseOperator.storage | string | `"20Gi"` | How much storage space to preallocate for clickhouse |
-| clickhouseOperator.useNodeSelector | bool | `false` | If enabled, operator will prefer k8s nodes with tag `clickhouse:true` |
-| clickhouseOperator.serviceType | string | `"NodePort"` | Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost) |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, worker, and plugin server) |
 | pgbouncer | object | `{"enabled":true,"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
 | pgbouncer.enabled | bool | `true` | Whether to install PGBouncer or not |
@@ -160,7 +155,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | zookeeper.enabled | bool | `true` | Install zookeeper on kubernetes |
 | zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for zookeeper app |
 | zookeeper.replicaCount | int | `1` | replica count for zookeeper |
-| clickhouse.enabled | bool | `true` | Use clickhouse as primary database |
+| clickhouse.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
+| clickhouse.namespace | string | `nil` | Which namespace to install clickhouse and the clickhouse-operator to (defaults to namespace chart is installed to) |
 | clickhouse.database | string | `"posthog"` | Clickhouse database |
 | clickhouse.user | string | `"admin"` | Clickhouse user |
 | clickhouse.password | string | `"a1f31e03-c88e-4ca6-a2df-ad49183d15d9"` | Clickhouse password |
@@ -169,11 +165,16 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.secure | bool | `false` |  |
 | clickhouse.verify | bool | `false` |  |
 | clickhouse.async | bool | `false` |  |
-| clickhouse.persistentVolumeClaim | string | `nil` | URL for zookeeper. servers: - host: posthog-posthog-zookeeper   port: 2181 -- Optional: Used to manually specify a persistent volume claim. When specified the cloud specific storage class will not be provisioned |
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
 | clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod |
 | clickhouse.resources | object | `{}` | Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
 | clickhouse.securityContext | object | `{"enabled":true,"fsGroup":101,"runAsGroup":101,"runAsUser":101}` |      cpu: 1000m     memory: 16Gi   requests:     cpu: 4000m     memory: 16Gi |
+| clickhouse.serviceType | string | `"NodePort"` | Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost) |
+| clickhouse.useNodeSelector | bool | `false` | If enabled, operator will prefer k8s nodes with tag `clickhouse:true` |
+| clickhouse.persistence.enabled | bool | `true` |  |
+| clickhouse.persistence.existingClaim | string | `""` |  |
+| clickhouse.persistence.storageClass | string | `nil` |  |
+| clickhouse.persistence.size | string | `"20Gi"` |  |
 | metrics.enabled | bool | `false` | Start an exporter for posthog metrics |
 | metrics.livenessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods livenessProbe settings |
 | metrics.readinessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods readinessProbe settings |
@@ -211,5 +212,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | prometheus.alertmanagerFiles."alertmanager.yml" | object | `{"global":{},"receivers":[{"name":"default-receiver"}],"route":{"group_by":["alertname"],"receiver":"default-receiver"}}` | alertmanager configuration rules. See https://prometheus.io/docs/alerting/latest/configuration/ |
 | prometheus.serverFiles."alerting_rules.yml" | object | `{"groups":[{"name":"Posthog alerts","rules":[{"alert":"PodDown","annotations":{"description":"Pod {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} down for more than 5 minutes.","summary":"Pod {{ $labels.kubernetes_pod_name }} down."},"expr":"up{job=\"kubernetes-pods\"} == 0","for":"1m","labels":{"severity":"alert"}},{"alert":"PodFrequentlyRestarting","annotations":{"description":"Pod {{$labels.namespace}}/{{$labels.pod}} was restarted {{$value}} times within the last hour","summary":"Pod is restarting frequently"},"expr":"increase(kube_pod_container_status_restarts_total[1h]) > 5","for":"10m","labels":{"severity":"warning"}},{"alert":"VolumeRemainingCapacityLowTest","annotations":{"description":"Persistent volume claim {{ $labels.persistentvolumeclaim }} disk usage is above 85% for past 5 minutes","summary":"Kubernetes {{ $labels.persistentvolumeclaim }} is full (host {{ $labels.kubernetes_io_hostname }})"},"expr":"kubelet_volume_stats_used_bytes/kubelet_volume_stats_capacity_bytes >= 0.85","for":"5m","labels":{"severity":"page"}}]}]}` | Alerts configuration, see https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/ |
 | statsd | object | `{"enabled":false,"podAnnotations":{"prometheus.io/path":"/metrics","prometheus.io/port":"9102","prometheus.io/scrape":"true"}}` | Prometheus StatsD configuration, see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter |
+| installCustomStorageClass | bool | `false` |  |
 
 Dependent charts can also have values overwritten. Preface values with postgresql.*
