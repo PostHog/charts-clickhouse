@@ -18,18 +18,6 @@ cloud:
 # -- Sentry endpoint to send errors to
 sentryDSN:
 
-clickhouseOperator:
-  # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
-  enabled: true
-  # -- Which namespace to install clickhouse operator to (defaults to namespace chart is installed to)
-  namespace:
-  # -- How much storage space to preallocate for clickhouse
-  storage: 20Gi
-  # -- If enabled, operator will prefer k8s nodes with tag `clickhouse:true`
-  useNodeSelector: false
-  # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
-  serviceType: NodePort
-
 # -- Env vars to throw into every deployment (web, worker, and plugin server)
 env:
   - name: ASYNC_EVENT_PROPERTY_USAGE
@@ -471,8 +459,10 @@ zookeeper:
   replicaCount: 1
 
 clickhouse:
-  # -- Use clickhouse as primary database
+  # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
   enabled: true
+  # -- Which namespace to install clickhouse and the clickhouse-operator to (defaults to namespace chart is installed to)
+  namespace:
   # -- Clickhouse database
   database: posthog
   # -- Clickhouse user
@@ -491,8 +481,7 @@ clickhouse:
   # servers:
   # - host: posthog-posthog-zookeeper
   #   port: 2181
-  # -- Optional: Used to manually specify a persistent volume claim. When specified the cloud specific storage class will not be provisioned
-  persistentVolumeClaim:
+
   # -- Toleration labels for clickhouse pod assignment
   tolerations: []
   # -- Affinity settings for clickhouse pod
@@ -510,6 +499,37 @@ clickhouse:
     runAsUser: 101
     runAsGroup: 101
     fsGroup: 101
+
+  # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
+  serviceType: NodePort
+
+  # -- If enabled, operator will prefer k8s nodes with tag `clickhouse:true`
+  useNodeSelector: false
+
+  ## @section Persistence parameters
+  ##
+  persistence:
+
+    ## @param persistence.enabled Enable data persistence
+    ##
+    enabled: true
+
+    ## @param persistence.existingClaim A manually managed Persistent Volume and Claim
+    ## If defined, PVC must be created manually before volume will be bound.
+    ##
+    existingClaim: ""
+
+    ## @param persistence.storageClass Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ## set, choosing the default provisioner.
+    ##
+    storageClass: null
+
+    ## @param persistence.size PVC Storage Request for the data volume
+    ##
+    size: 20Gi
 
 ## Prometheus Exporter / Metrics
 ##
@@ -709,3 +729,6 @@ statsd:
     prometheus.io/scrape: "true"
     prometheus.io/path: /metrics
     prometheus.io/port: "9102"
+
+# Misc
+installCustomStorageClass: false

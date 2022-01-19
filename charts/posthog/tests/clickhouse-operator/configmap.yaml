@@ -3,9 +3,9 @@ templates:
   - templates/clickhouse-operator/configmap.yaml
 
 tests:
-  - it: should be empty if clickhouseOperator.enabled is set to false
+  - it: should be empty if clickhouse.enabled is set to false
     set:
-      clickhouseOperator.enabled: false
+      clickhouse.enabled: false
     asserts:
       - hasDocuments:
           count: 0
@@ -16,9 +16,9 @@ tests:
           count: 5
       - matchSnapshot: {}
 
-  - it: ConfigMap/etc-clickhouse-operator-files metadata.namespace override via clickhouseOperator.namespace should work
+  - it: ConfigMap/etc-clickhouse-operator-files metadata.namespace override via clickhouse.namespace should work
     set:
-      clickhouseOperator.namespace: custom-namespace
+      clickhouse.namespace: custom-namespace
     documentIndex: 0
     asserts:
       - hasDocuments:
@@ -44,9 +44,9 @@ tests:
             namespace: custom-namespace-from-release
             labels: { app: clickhouse-operator }
 
-  - it: ConfigMap/etc-clickhouse-operator-confd-files metadata.namespace override via clickhouseOperator.namespace should work
+  - it: ConfigMap/etc-clickhouse-operator-confd-files metadata.namespace override via clickhouse.namespace should work
     set:
-      clickhouseOperator.namespace: custom-namespace
+      clickhouse.namespace: custom-namespace
     documentIndex: 1
     asserts:
       - hasDocuments:
@@ -72,9 +72,9 @@ tests:
             namespace: custom-namespace-from-release
             labels: { app: clickhouse-operator }
 
-  - it: ConfigMap/etc-clickhouse-operator-configd-files metadata.namespace override via clickhouseOperator.namespace should work
+  - it: ConfigMap/etc-clickhouse-operator-configd-files metadata.namespace override via clickhouse.namespace should work
     set:
-      clickhouseOperator.namespace: custom-namespace
+      clickhouse.namespace: custom-namespace
     documentIndex: 2
     asserts:
       - hasDocuments:
@@ -100,9 +100,9 @@ tests:
             namespace: custom-namespace-from-release
             labels: { app: clickhouse-operator }
 
-  - it: ConfigMap/etc-clickhouse-operator-templatesd-files metadata.namespace override via clickhouseOperator.namespace should work
+  - it: ConfigMap/etc-clickhouse-operator-templatesd-files metadata.namespace override via clickhouse.namespace should work
     set:
-      clickhouseOperator.namespace: custom-namespace
+      clickhouse.namespace: custom-namespace
     documentIndex: 3
     asserts:
       - hasDocuments:
@@ -128,9 +128,9 @@ tests:
             namespace: custom-namespace-from-release
             labels: { app: clickhouse-operator }
 
-  - it: ConfigMap/etc-clickhouse-operator-usersd-files metadata.namespace override via clickhouseOperator.namespace should work
+  - it: ConfigMap/etc-clickhouse-operator-usersd-files metadata.namespace override via clickhouse.namespace should work
     set:
-      clickhouseOperator.namespace: custom-namespace
+      clickhouse.namespace: custom-namespace
     documentIndex: 4
     asserts:
       - hasDocuments:
