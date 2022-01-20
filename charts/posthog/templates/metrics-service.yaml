@@ -3,11 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "posthog.fullname" . }}-metrics
-  labels:
-    app: {{ template "posthog.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
 {{- if .Values.metrics.service.labels }}
 {{ toYaml .Values.metrics.service.labels | indent 4 }}
 {{- end }}
@@ -26,4 +22,4 @@ spec:
     app: {{ template "posthog.fullname" . }}
     release: {{ .Release.Name }}
     role: metrics
-{{- end }} 
+{{- end }}

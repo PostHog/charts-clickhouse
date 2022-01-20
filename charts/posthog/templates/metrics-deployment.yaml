@@ -3,11 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "posthog.fullname" . }}-metrics
-  labels:
-    app: {{ template "posthog.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -38,7 +34,7 @@ spec:
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}-metrics
-        args: 
+        args:
           - "--statsd.listen-udp=:9125"
           - "--web.listen-address=:9102"
         image: "{{ .Values.metrics.image.repository }}:{{ .Values.metrics.image.tag }}"
@@ -74,4 +70,4 @@ spec:
 {{- end }}
         resources:
 {{ toYaml .Values.metrics.resources | indent 10 }}
-{{- end }} 
+{{- end }}

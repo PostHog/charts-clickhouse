@@ -2,20 +2,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ .Release.Name }}-migrate"
-  labels:
-    app: {{ template "posthog.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-  annotations:
-    "helm.sh/hook": "post-install,post-upgrade"
-    "helm.sh/hook-delete-policy": "hook-succeeded,hook-failed"
-    "helm.sh/hook-weight": "0"
+  name: {{ printf "%s-migrate-%s" .Release.Name (now | date "2006-01-02-15-04-05") }}
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
 spec:
   template:
     metadata:
-      name: "{{ .Release.Name }}-migrate"
+      name: {{ printf "%s-migrate-%s" .Release.Name (now | date "2006-01-02-15-04-05") }}
       annotations:
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
       labels:
@@ -149,4 +142,6 @@ spec:
           value: {{ template "posthog.helmInstallInfo" . }}
         resources:
 {{ toYaml .Values.hooks.migrate.resources | indent 10 }}
+      initContainers:
+      {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
 {{- end }}

@@ -100,13 +100,26 @@ jobs:
     - name: Workaround - wait for all the k8s resources to be ready
       timeout-minutes: 15
       run: |
-        echo "Waiting for pods to be ready..."
-        while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
+        echo "Waiting for jobs to be ready..."
+        while ! kubectl -n posthog wait --for=condition=Complete jobs --all --timeout 10s > /dev/null 2>&1
         do
-          echo "  pods are not yet ready"
+          sleep 1
         done
-        echo "All pods are now ready!"
+        echo "All jobs are now ready!"
 
+        echo "Waiting for all deployments to be ready..."
+        for deployment in $(kubectl -n posthog get deployments --no-headers -o custom-columns=NAME:.metadata.name)
+        do
+          while ! kubectl -n posthog rollout status deployment "$deployment" > /dev/null 2>&1
+          do
+            sleep 1
+          done
+        done
+        echo "All deployments are now ready!"
+
+    - name: Workaround - wait for the AWS load balancer to be ready
+      timeout-minutes: 15
+      run: |
         echo "Waiting for the AWS Load Balancer to be ready..."
         load_balancer_external_hostname=""
         while [ -z "$load_balancer_external_hostname" ];

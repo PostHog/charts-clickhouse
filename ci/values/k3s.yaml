@@ -14,10 +14,6 @@ redis:
   password: ""
 
 # Use small PVC in CI
-# TODO: remove clickhouseOperator after update CI pass
-clickhouseOperator:
-  storage: 1Gi
-
 clickhouse:
   persistence:
     size: 1Gi
