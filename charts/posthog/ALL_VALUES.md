@@ -8,7 +8,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| image | object | `{"default":":release-1.31.1","pullPolicy":"IfNotPresent","repository":"posthog/posthog","sha":null,"tag":null}` |  This is a YAML-formatted file. Declare variables to be passed into your templates. |
 | image.repository | string | `"posthog/posthog"` | Posthog image repository |
 | image.sha | string | `nil` | Posthog image sha, e.g. sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4 |
 | image.tag | string | `nil` | Posthog image tag, e.g. release-1.31.1 |
@@ -19,7 +18,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, worker, and plugin server) |
 | pgbouncer | object | `{"enabled":true,"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
 | pgbouncer.enabled | bool | `true` | Whether to install PGBouncer or not |
-| pgbouncer.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for pgbouncer -- This experimental and set up based on cpu utilization -- Adding pgbouncers can cause running out of connections for Postgres |
+| pgbouncer.hpa.enabled | bool | `false` | Adding pgbouncers can cause running out of connections for Postgres |
 | pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for pgbouncer |
 | pgbouncer.hpa.minpods | int | `1` | Min pods for pgbouncer |
 | pgbouncer.hpa.maxpods | int | `10` | Max pods for pgbouncer |
@@ -30,14 +29,14 @@ The following table lists the configurable parameters of the PostHog chart and t
 | migrate.enabled | bool | `true` | Whether to install the PostHog migrate job or not |
 | events.enabled | bool | `true` | Whether to install the PostHog events stack or not |
 | events.hpa | object | `{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1}` | events horizontal pod autoscaler settings |
-| events.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for events stack -- This experimental |
+| events.hpa.enabled | bool | `false` | This experimental |
 | events.hpa.cputhreshold | int | `60` | CPU threshold percent for the events stack |
 | events.hpa.minpods | int | `1` | Min pods for the events stack |
 | events.hpa.maxpods | int | `10` | Max pods for the events stack |
 | events.replicacount | int | `1` | Amount of events pods to run. Ignored if hpa is used |
 | web.enabled | bool | `true` | Whether to install the PostHog web stack or not |
 | web.hpa | object | `{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1}` | Web horizontal pod autoscaler settings |
-| web.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for web -- This experimental |
+| web.hpa.enabled | bool | `false` | This experimental |
 | web.hpa.cputhreshold | int | `60` | CPU threshold percent for the web |
 | web.hpa.minpods | int | `1` | Min pods for the web |
 | web.hpa.maxpods | int | `10` | Max pods for the web |
@@ -63,26 +62,26 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | web.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
 | worker.enabled | bool | `true` | Whether to install the PostHog worker stack or not |
-| worker.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for worker -- This experimental |
+| worker.hpa.enabled | bool | `false` | This experimental |
 | worker.hpa.cputhreshold | int | `60` |  |
 | worker.hpa.minpods | int | `1` |  |
 | worker.hpa.maxpods | int | `20` |  |
 | worker.env | list | `[]` |  |
 | worker.replicacount | int | `1` | How many replicas of workers to run. Ignored if hpa is used |
 | worker.resources | object | `{}` | Resource limits for workers |
-| worker.nodeSelector | object | `{}` |    cpu: 300m   memory: 500Mi requests:   cpu: 100m   memory: 100Mi |
+| worker.nodeSelector | object | `{}` |  |
 | worker.tolerations | list | `[]` |  |
 | worker.affinity | object | `{}` |  |
 | plugins.enabled | bool | `true` | Whether to install the PostHog plugin stack or not |
 | plugins.ingestion.enabled | bool | `true` | Whether to enable plugin-server based ingestion |
-| plugins.hpa.enabled | bool | `false` | Boolean to create a HorizontalPodAutoscaler for plugin server -- This experimental, based on cpu util which is not necessarily the bottleneck |
+| plugins.hpa.enabled | bool | `false` | This experimental, based on cpu util which is not necessarily the bottleneck |
 | plugins.hpa.cputhreshold | int | `60` |  |
 | plugins.hpa.minpods | int | `1` |  |
 | plugins.hpa.maxpods | int | `10` |  |
 | plugins.env | list | `[]` |  |
 | plugins.replicacount | int | `1` | How many replicas of plugin-server to run. Ignored if hpa is used |
 | plugins.resources | object | `{}` |  |
-| plugins.nodeSelector | object | `{}` |    cpu: 300m   memory: 500Mi requests:   cpu: 100m   memory: 100Mi |
+| plugins.nodeSelector | object | `{}` |  |
 | plugins.tolerations | list | `[]` |  |
 | plugins.affinity | object | `{}` |  |
 | email.from_email | string | `nil` | Outbound email sender |
@@ -106,7 +105,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | service | object | `{"annotations":{},"externalPort":8000,"internalPort":8000,"name":"posthog","type":"NodePort"}` | Name of the service and what port to expose on the pod. Don't change these unless you know what you're doing |
 | cert-manager.enabled | bool | `false` | Whether to install cert-manager. Validates certs for nginx ingress |
 | cert-manager.installCRDs | bool | `true` | Whether to install cert-manager CRDs. |
-| cert-manager.podDnsPolicy | string | `"None"` |  [Workaround] - do not use the local DNS for the 'cert-manager' pods since it would return local IPs and break self checks. For more info see:   - https://github.com/jetstack/cert-manager/issues/1292   - https://github.com/jetstack/cert-manager/issues/3238   - https://github.com/jetstack/cert-manager/issues/4286   - https://github.com/compumike/hairpin-proxy This has some side effects, like 'cert-manager' pods not being able to resolve cluster-local names, but so far this has not caused issues (and we don't expect it to do so). |
+| cert-manager.podDnsPolicy | string | `"None"` |  |
 | cert-manager.podDnsConfig.nameservers[0] | string | `"8.8.8.8"` |  |
 | cert-manager.podDnsConfig.nameservers[1] | string | `"1.1.1.1"` |  |
 | cert-manager.podDnsConfig.nameservers[2] | string | `"208.67.222.222"` |  |
@@ -148,10 +147,10 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.service.type | string | `"NodePort"` |  |
 | kafka.persistence.enabled | bool | `true` | Enable persistence using PVC |
 | kafka.persistence.size | string | `"20Gi"` | PVC Storage Request for kafka volume |
-| kafka.logRetentionBytes | string | `"_15_000_000_000"` | A size-based retention policy for logs -- Should be less than kafka.persistence.size, minimum 1GB |
+| kafka.logRetentionBytes | string | `"_15_000_000_000"` | Should be less than kafka.persistence.size, minimum 1GB |
 | kafka.logRetentionHours | int | `24` | The minimum age of a log file to be eligible for deletion due to age |
 | kafka.zookeeper.enabled | bool | `false` | Install zookeeper on kubernetes |
-| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | URL for zookeeper. Only set when internal zookeeper is disabled -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper |
+| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper |
 | zookeeper.enabled | bool | `true` | Install zookeeper on kubernetes |
 | zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for zookeeper app |
 | zookeeper.replicaCount | int | `1` | replica count for zookeeper |
@@ -168,7 +167,10 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
 | clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod |
 | clickhouse.resources | object | `{}` | Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
-| clickhouse.securityContext | object | `{"enabled":true,"fsGroup":101,"runAsGroup":101,"runAsUser":101}` |      cpu: 1000m     memory: 16Gi   requests:     cpu: 4000m     memory: 16Gi |
+| clickhouse.securityContext.enabled | bool | `true` |  |
+| clickhouse.securityContext.runAsUser | int | `101` |  |
+| clickhouse.securityContext.runAsGroup | int | `101` |  |
+| clickhouse.securityContext.fsGroup | int | `101` |  |
 | clickhouse.serviceType | string | `"NodePort"` | Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost) |
 | clickhouse.useNodeSelector | bool | `false` | If enabled, operator will prefer k8s nodes with tag `clickhouse:true` |
 | clickhouse.persistence.enabled | bool | `true` |  |
@@ -182,7 +184,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | metrics.nodeSelector | object | `{}` | Node labels for metrics pod |
 | metrics.tolerations | list | `[]` | Toleration labels for metrics pod assignment |
 | metrics.affinity | object | `{}` | Affinity settings for metrics pod |
-| metrics.service | object | `{"labels":{},"type":"ClusterIP"}` |  Optional extra labels for pod, i.e. redis-client: "true" podLabels: [] |
 | metrics.service.type | string | `"ClusterIP"` | Kubernetes service type for metrics service |
 | metrics.service.labels | object | `{}` | Additional labels for metrics service |
 | metrics.image.repository | string | `"prom/statsd-exporter"` | Metrics exporter image repository |
