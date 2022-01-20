@@ -3,19 +3,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "posthog.fullname" . }}-web
-  annotations:
-   {{- range $key, $value := .Values.service.annotations }}
-     {{ $key }}: {{ $value | quote }}
-   {{- end }}
-  labels:
-    app: {{ template "posthog.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-{{- if .Values.service.annotations }}
-  annotations:
-{{ toYaml .Values.service.annotations | indent 4 }}
-{{- end }}
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+  {{- if .Values.service.annotations }}
+  {{ toYaml .Values.service.annotations | indent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:

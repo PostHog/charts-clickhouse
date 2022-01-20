@@ -3,17 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "posthog.fullname" . }}-events
-  labels:
-    app: {{ template "posthog.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-  annotations:
-    # This is what defines this resource as a hook. Without this line, the
-    # job is considered part of the release.
-    "helm.sh/hook": "post-install,post-upgrade"
-    "helm.sh/resource-policy": "keep"
-    "helm.sh/hook-weight": "1"
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -211,4 +202,7 @@ spec:
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
         resources:
 {{ toYaml .Values.web.resources | indent 12 }}
+      initContainers:
+      {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
+      {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
 {{- end }}

@@ -1,4 +1,4 @@
-suite: PostHog events deployment definition
+suite: PostHog migrate job definition
 templates:
   - templates/migrate.job.yaml
   - templates/secrets.yaml
