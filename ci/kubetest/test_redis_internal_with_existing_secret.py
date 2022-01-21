@@ -1,8 +1,4 @@
-import base64
 import logging
-import subprocess
-from dataclasses import Field, fields
-
 import pytest
 
 from utils import (
@@ -32,11 +28,11 @@ helm upgrade \
 
 @pytest.fixture
 def setup(kube):
-    # cleanup_k8s()
+    cleanup_k8s()
     create_namespace_if_not_exists()
-    # install_custom_resources("./custom_k8s_resources/redis_internal_with_existing_secret.yaml")
-    # helm_install(HELM_INSTALL_CMD)
-    # wait_for_pods_to_be_ready(kube)
+    install_custom_resources("./custom_k8s_resources/redis_internal_with_existing_secret.yaml")
+    helm_install(HELM_INSTALL_CMD)
+    wait_for_pods_to_be_ready(kube)
 
 
 def test_helm_install(setup, kube):
