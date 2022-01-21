@@ -15,7 +15,7 @@ helm upgrade \
 """
 
 
-def test_helm_install(setup, kube):
+def test_helm_install(kube):
     cleanup_k8s()
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
