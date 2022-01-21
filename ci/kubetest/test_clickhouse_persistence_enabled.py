@@ -23,7 +23,11 @@ def setup(kube):
     wait_for_pods_to_be_ready(kube)
 
 
-def test_volume_claim(setup, kube):
+def test_helm_install(setup, kube):
+    pass
+
+
+def test_volume_claim(kube):
     statefulset_spec = get_clickhouse_statefulset_spec(kube)
 
     # Verify the spec.volumes configuration

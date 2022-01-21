@@ -21,5 +21,6 @@ def setup(kube):
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
 
+
 def test_helm_install(setup, kube):
     pass
