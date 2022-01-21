@@ -16,3 +16,6 @@ redis:
   master:
     persistence:
       size: 1Gi
+zookeeper:
+  persistence:
+    size: 1Gi

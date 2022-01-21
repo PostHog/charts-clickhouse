@@ -141,13 +141,6 @@ web:
     successThreshold: 1
     # -- The readiness probe timeout seconds
     timeoutSeconds: 2
-  # priorityClassName: ""
-  ## Use an alternate scheduler, e.g. "stork".
-  ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
-  ##
-  # schedulerName:
-  # Optional extra labels for pod, i.e. redis-client: "true"
-  # podLabels: []
 
 worker:
    # -- Whether to install the PostHog worker stack or not
@@ -385,36 +378,68 @@ postgresql:
   # existingSecretKey: postgresql-password
 
 redis:
-  # -- Install redis server on kubernetes (see below)
+  ## @param redis.enabled Whether to deploy a redis server to satisfy the applications requirements. To use an external redis instance set this to false and configure the externalRedis parameters
+  ##
   enabled: true
-  # -- Name override for redis app
-  nameOverride: posthog-redis
 
-  # -- Either standalone or cluster.
+  ## @param redis.nameOverride String
+  ##
+  nameOverride: "posthog-redis"
+
+  ## @param redis.fullnameOverride String
+  ##
+  fullnameOverride: ""
+
+  ## @param redis.architecture Cluster settings
+  ##
   architecture: standalone
 
   auth:
-    # -- Don't require password by default
+    ## @param redis.auth.enabled Enable password authentication
+    ##
     enabled: false
-    # Just omit the password field if your redis cluster doesn't use password
-    # password: redis
-    # When defined the `password` field is ignored
-    # existingSecret: secret-name
-    # existingSecretKey: redis-password
 
-  # -- Host redis is accessible from. Only set when internal redis is disabled
-  host:
-  # -- Password for redis. Only set when internal redis is disabled
-  password:
-  # -- Port redis is accessible from. Only set when internal redis is disabled
-  port:
+    ## @param redis.auth.password Redis password
+    ## Defaults to a random 10-character alphanumeric string if not set
+    ## NOTE: ignored unless redis.auth.enabled is true
+    ##       ignored if redis.auth.existingSecret is set
+    ##
+    password: ""
+
+    ## @param auth.existingSecret The name of an existing secret with Redis credentials
+    ## NOTE: ignored unless redis.auth.enabled is true
+    ##       when it is set, the previous `redis.auth.password` parameter is ignored
+    ##
+    existingSecret: ""
+
+    ## @param auth.existingSecretPasswordKey Password key to be retrieved from existing secret
+    ## NOTE: ignored unless redis.auth.existingSecret parameter is set
+    ##
+    existingSecretPasswordKey: ""
 
   master:
     persistence:
-      # -- Enable persistence using PVC
+      ## @param redis.master.persistence.enabled Enable database persistence using PVC
+      ##
       enabled: true
-      # -- PVC Storage Request for Redis volume
+
+      ## @param redis.master.persistence.size Persistent Volume size
+      ##
       size: 5Gi
+
+## External Redis;
+## @param externalRedis.host Host of the external database
+## @param externalRedis.port Database port number
+## @param externalRedis.password Password for the external Redis. Ignored if externalRedis.existingSecret is set
+## @param externalRedis.existingSecret Name of an existing Kubernetes secret object containing the password
+## @param externalRedis.existingSecretPasswordKey Name of the key pointing to the password in your Kubernetes secret
+##
+externalRedis:
+  host: ""
+  port: 6379
+  password: ""
+  existingSecret: ""
+  existingSecretPasswordKey: ""
 
 kafka:
   # -- Install kafka on kubernetes

@@ -31,15 +31,8 @@
       {{- end }}
         key: {{ template "posthog.postgresql.secretKey" . }}
 
-  # Redis configuration
-  - name: POSTHOG_REDIS_HOST
-    value: {{ template "posthog.redis.host" . }}
-  - name: POSTHOG_REDIS_PORT
-    value: {{ include "posthog.redis.port" . | quote }}
-  {{- if or (.Values.redis.enabled) (.Values.redis.password) }}
-  - name: POSTHOG_REDIS_PASSWORD
-    value: {{ .Values.redis.password | quote }}
-  {{- end }}
+  # Redis env variables
+  {{- include "snippet.redis-env" . | indent 2 }}
 
   # Django specific settings
   - name: SECRET_KEY

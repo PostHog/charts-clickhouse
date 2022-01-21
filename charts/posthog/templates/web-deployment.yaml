@@ -65,6 +65,8 @@ spec:
         ports:
         - containerPort: {{ .Values.service.internalPort }}
         env:
+        # Redis env variables
+        {{- include "snippet.redis-env" . | indent 8 }}
         - name: SITE_URL
           value: {{ template "posthog.site.url" . }}
         - name: DEPLOYMENT
@@ -103,20 +105,12 @@ spec:
           value: {{ include "posthog.pgbouncer.port" . | quote }}
         - name: USING_PGBOUNCER
           value: 'true'
-          {{- if or (.Values.redis.enabled) (.Values.redis.password) }}
-        - name: POSTHOG_REDIS_PASSWORD
-          value: {{ .Values.redis.password | quote }}
-          {{- end }}
         {{- if .Values.statsd.enabled }}
         - name: STATSD_HOST
           value: {{ template "posthog.statsd.host" . }}
         - name: STATSD_PORT
           value: "9125"
         {{- end }}
-        - name: POSTHOG_REDIS_HOST
-          value: {{ template "posthog.redis.host" . }}
-        - name: POSTHOG_REDIS_PORT
-          value: {{ include "posthog.redis.port" . | quote }}
         - name: EMAIL_HOST
           value: {{ default "" .Values.email.host | quote }}
         - name: EMAIL_PORT

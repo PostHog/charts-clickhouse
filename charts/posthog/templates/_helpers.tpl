@@ -1,4 +1,5 @@
 {{/* vim: set filetype=mustache: */}}
+
 {{/*
 Expand the name of the chart.
 */}}
@@ -35,16 +36,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- printf "%s-%s" .Release.Name .Values.postgresql.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- printf "%s-%s" (include "posthog.fullname" .) "postgresql" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "posthog.redis.fullname" -}}
-{{- if .Values.redis.fullnameOverride -}}
-{{- .Values.redis.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else if .Values.redis.nameOverride -}}
-{{- printf "%s-%s" .Release.Name .Values.redis.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" (include "posthog.fullname" .) "redis" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 
@@ -171,65 +162,96 @@ Set pgbouncer URL
     postgres://{{- .Values.postgresql.postgresqlUsername -}}:{{- template "posthog.postgresql.password" . -}}@{{- template "posthog.pgbouncer.host" .  -}}:{{- template "posthog.pgbouncer.port" . -}}/{{- .Values.postgresql.postgresqlDatabase }}
 {{- end -}}
 
+{*
+   ------ REDIS ------
+*}
+
 {{/*
-Set redis host
+Return the Redis fullname
+*/}}
+{{- define "posthog.redis.fullname" -}}
+{{- if .Values.redis.fullnameOverride -}}
+{{- .Values.redis.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else if .Values.redis.nameOverride -}}
+{{- printf "%s-%s" .Release.Name .Values.redis.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" (include "posthog.fullname" .) "redis" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the Redis host
 */}}
 {{- define "posthog.redis.host" -}}
-{{- if .Values.redis.enabled -}}
-{{- template "posthog.redis.fullname" . -}}-master
+{{- if .Values.redis.enabled }}
+    {{- printf "%s-master" (include "posthog.redis.fullname" .) -}}
 {{- else -}}
-{{- .Values.redis.host | quote -}}
+    {{- printf "%s" .Values.externalRedis.host -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Set redis secret
-*/}}
-{{- define "posthog.redis.secret" -}}
-{{- if .Values.redis.enabled -}}
-{{- template "posthog.redis.fullname" . -}}
-{{- else -}}
-{{- template "posthog.fullname" . -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set redis secretKey
-*/}}
-{{- define "posthog.redis.secretKey" -}}
-{{- if .Values.redis.enabled -}}
-"redis-password"
-{{- else -}}
-{{- default "redis-password" .Values.redis.existingSecretKey | quote -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set redis password
-*/}}
-{{- define "posthog.redis.password" -}}
-{{ .Values.redis.password | default "" }}
-{{- end -}}
-
-
-{{/*
-Set redis password base64
-*/}}
-{{- define "posthog.redis.passwordb64" -}}
-{{ .Values.redis.password | default "" | b64enc | quote }}
-{{- end -}}
-
-
-{{/*
-Set redis port
+Return the Redis port
 */}}
 {{- define "posthog.redis.port" -}}
-{{- if .Values.redis.enabled -}}
-    6379
+{{- if .Values.redis.enabled }}
+    {{- printf "6379" | quote -}}
 {{- else -}}
-{{- default "6379" .Values.redis.port -}}
+    {{- .Values.externalRedis.port | quote -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return true if a secret object for Redis should be created
+*/}}
+{{- define "posthog.redis.createSecret" -}}
+{{- if and (not .Values.redis.enabled) (not .Values.externalRedis.existingSecret) .Values.externalRedis.password }}
+    {{- true -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the Redis secret name
+*/}}
+{{- define "posthog.redis.secretName" -}}
+{{- if .Values.redis.enabled }}
+    {{- if .Values.redis.auth.existingSecret }}
+        {{- printf "%s" .Values.redis.auth.existingSecret -}}
+    {{- else -}}
+        {{- printf "%s" (include "posthog.redis.fullname" .) -}}
+    {{- end -}}
+{{- else if .Values.externalRedis.existingSecret }}
+    {{- printf "%s" .Values.externalRedis.existingSecret -}}
+{{- else -}}
+    {{- printf "%s-external" (include "posthog.redis.fullname" .) -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the Redis secret key
+*/}}
+{{- define "posthog.redis.secretPasswordKey" -}}
+{{- if and .Values.redis.enabled .Values.redis.auth.existingSecret }}
+    {{- required "You need to provide existingSecretPasswordKey when an existingSecret is specified in redis" .Values.redis.auth.existingSecretPasswordKey | printf "%s" }}
+{{- else if and (not .Values.redis.enabled) .Values.externalRedis.existingSecret }}
+    {{- required "You need to provide existingSecretPasswordKey when an existingSecret is specified in redis" .Values.externalRedis.existingSecretPasswordKey | printf "%s" }}
+{{- else -}}
+    {{- printf "redis-password" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return whether Redis uses password authentication or not
+*/}}
+{{- define "posthog.redis.auth.enabled" -}}
+{{- if or (and .Values.redis.enabled .Values.redis.auth.enabled) (and (not .Values.redis.enabled) (or .Values.externalRedis.password .Values.externalRedis.existingSecret)) }}
+    {{- true -}}
+{{- end -}}
+{{- end -}}
+
+{*
+   ------ CLICKHOUSE ------
+*}
 
 {{/*
 Set clickhouse fullname
