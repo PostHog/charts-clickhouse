@@ -2,6 +2,7 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
+  name: {{ template "posthog.fullname" . }}-web
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
 spec:
   scaleTargetRef:
