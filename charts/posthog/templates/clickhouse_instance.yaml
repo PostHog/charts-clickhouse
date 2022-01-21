@@ -18,7 +18,7 @@ spec:
       - name: {{ .Values.clickhouse.database | quote }}
         templates:
           podTemplate: pod-template
-          serviceTemplate: service-template
+          clusterServiceTemplate: service-template
           {{- if and (.Values.clickhouse.persistence.enabled) (not .Values.clickhouse.persistence.existingClaim) }}
           dataVolumeClaimTemplate: data-volumeclaim-template
           {{- end }}
