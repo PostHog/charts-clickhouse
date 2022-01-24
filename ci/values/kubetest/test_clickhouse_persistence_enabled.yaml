@@ -17,8 +17,6 @@ migrate:
   enabled: false
 events:
   enabled: false
-beat:
-  enabled: false
 worker:
   enabled: false
 plugins:

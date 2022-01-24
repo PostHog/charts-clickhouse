@@ -9,10 +9,6 @@ ingress:
 web:
   secureCookies: false
 
-redis:
-  usePassword: false
-  password: ""
-
 # Use small PVC in CI
 clickhouse:
   persistence:
@@ -27,3 +23,6 @@ redis:
   master:
     persistence:
       size: 1Gi
+zookeeper:
+  persistence:
+    size: 1Gi

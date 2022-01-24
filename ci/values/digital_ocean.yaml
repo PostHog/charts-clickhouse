@@ -20,6 +20,9 @@ redis:
   master:
     persistence:
       size: 1Gi
+zookeeper:
+  persistence:
+    size: 1Gi
 
 #
 # For DigitalOcean LB (TCP) mode, we need to enable some additional config

@@ -27,4 +27,4 @@ jobs:
 
       - name: Run kubetest
         run: |
-          cd ci/kubetest && python -m pytest .
+          cd ci/kubetest && python -m pytest . -s
