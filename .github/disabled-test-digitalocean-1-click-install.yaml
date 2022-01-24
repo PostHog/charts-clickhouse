@@ -11,7 +11,7 @@
 # #
 # # Unfortunately we can test this scenario only after merging to 'main' as we don't have
 # # control over the branch used by the DigitalOcean's marketplace 1-click install.
-# #
+
 # # ref: https://github.com/digitalocean/marketplace-kubernetes/blob/master/stacks/posthog/deploy.sh
 # #
 # on:

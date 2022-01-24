@@ -46,7 +46,7 @@ tests:
           path: spec.configuration.clusters[0].templates
           value:
             podTemplate: pod-template
-            serviceTemplate: service-template
+            clusterServiceTemplate: service-template
 
   - it: spec.configuration.cluster[0].templates volumeClaimTemplate should not exist if persistence is enabled and clickhouse.persistence.existingClaim is set
     set:
@@ -59,7 +59,7 @@ tests:
           path: spec.configuration.clusters[0].templates
           value:
             podTemplate: pod-template
-            serviceTemplate: service-template
+            clusterServiceTemplate: service-template
 
   - it: spec.configuration.cluster[0].templates volumeClaimTemplate should exist if persistence is enabled
     set:
@@ -71,7 +71,7 @@ tests:
           path: spec.configuration.clusters[0].templates
           value:
             podTemplate: pod-template
-            serviceTemplate: service-template
+            clusterServiceTemplate: service-template
             dataVolumeClaimTemplate: data-volumeclaim-template
 
 

@@ -97,25 +97,9 @@ jobs:
     #
     # ref: https://github.com/jupyterhub/action-k8s-await-workloads/issues/38
     #
-    - name: Workaround - wait for all the k8s resources to be ready
+    - name: Workaround - wait for all the PostHog resources in k8s to be ready
       timeout-minutes: 15
-      run: |
-        echo "Waiting for jobs to be ready..."
-        while ! kubectl -n posthog wait --for=condition=Complete jobs --all --timeout 10s > /dev/null 2>&1
-        do
-          sleep 1
-        done
-        echo "All jobs are now ready!"
-
-        echo "Waiting for all deployments to be ready..."
-        for deployment in $(kubectl -n posthog get deployments --no-headers -o custom-columns=NAME:.metadata.name)
-        do
-          while ! kubectl -n posthog rollout status deployment "$deployment" > /dev/null 2>&1
-          do
-            sleep 1
-          done
-        done
-        echo "All deployments are now ready!"
+      run: ./ci/wait_for_all_the_posthog_resources_to_be_ready.sh
 
     - name: Workaround - wait for the AWS load balancer to be ready
       timeout-minutes: 15
