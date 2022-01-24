@@ -8,6 +8,7 @@
 kubernetes==17.17.0
 
 kubetest==0.9.5
+pytest-split==0.6.0
 
 # Lint
 black==21.12b0
