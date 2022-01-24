@@ -1,3 +1,5 @@
+{{- include "snippet.removed-vars-errors" . -}}
+
 {{- if .Values.web.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
