@@ -18,8 +18,8 @@ jobs:
         fail-fast: false
         matrix:
             # :NOTE: Keep concurrency and group's in sync
-            concurrency: [5]
-            group: [1, 2, 3, 4, 5]
+            concurrency: [7]
+            group: [1, 2, 3, 4, 5, 6, 7]
 
     steps:
       - uses: actions/checkout@v2
@@ -37,4 +37,4 @@ jobs:
 
       - name: Run kubetest
         run: |
-          cd ci/kubetest && python -m pytest . -s --splits ${{ matrix.concurrency }} --group ${{ matrix.group }}
+          cd ci/kubetest && python -m pytest . -s --splits ${{ matrix.concurrency }} --group ${{ matrix.group }} --splitting-algorithm=least_duration
