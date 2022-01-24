@@ -1,0 +1,49 @@
+#
+# This is an e2e test to install and uninstall PostHog on a local k3s cluster
+#
+# Notes:
+#  - resources installed outside 'helm' (example: ClickHouse pods) will need to be removed manually
+#  - this test only verify if 'helm uninstall' works
+#
+name: e2e - k3s
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ci/**
+      - charts/**
+      - .github/workflows/test-helm-uninstall.yaml
+
+jobs:
+  test-helm-uninstall:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout
+
+      - uses: jupyterhub/action-k3s-helm@v1
+        with:
+          k3s-channel: v1.21
+          metrics-enabled: false
+          traefik-enabled: false
+
+      - name: Run 'helm upgrade --install'
+        run: |
+          helm upgrade --install \
+            --set "cloud=private" \
+            --timeout 20m \
+            --create-namespace \
+            --namespace posthog \
+            posthog ./charts/posthog \
+            --wait-for-jobs \
+            --wait
+
+      - name: Run 'helm uninstall'
+        run: |
+          helm uninstall \
+            --timeout 20m \
+            --namespace posthog \
+            posthog \
+            --wait
