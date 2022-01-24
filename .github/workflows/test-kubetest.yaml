@@ -11,6 +11,16 @@ on:
 jobs:
   test-kubetest:
     runs-on: ubuntu-20.04
+
+    name: e2e - kubetest (${{matrix.group}}/${{ matrix.concurrency }})
+
+    strategy:
+        fail-fast: false
+        matrix:
+            # :NOTE: Keep concurrency and group's in sync
+            concurrency: [5]
+            group: [1, 2, 3, 4, 5]
+
     steps:
       - uses: actions/checkout@v2
         name: Checkout
@@ -27,4 +37,4 @@ jobs:
 
       - name: Run kubetest
         run: |
-          cd ci/kubetest && python -m pytest . -s
+          cd ci/kubetest && python -m pytest . -s --splits ${{ matrix.concurrency }} --group ${{ matrix.group }}
