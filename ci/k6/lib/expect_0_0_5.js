@@ -1,5 +1,5 @@
 import { check, group } from "k6";
-import Ajv from 'https://jslib.k6.io/ajv/6.12.5/index.js';
+import Ajv from './ajv_6_12_5.js';
 
 export class FunkBrokenChainException extends Error {
   constructor(message) {
@@ -61,7 +61,7 @@ class Funk {
   }
 
   _leftHandValueIsHttpResponse(calee) {
-    // TODO: I don't know how to check that this.leftHandValue is of type HttpResponse 
+    // TODO: I don't know how to check that this.leftHandValue is of type HttpResponse
     if (this.leftHandValue && this.leftHandValue.hasOwnProperty('request')) {
       return true;
     }
