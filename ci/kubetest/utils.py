@@ -53,3 +53,15 @@ def get_clickhouse_statefulset_spec(kube):
     )
     statefulset = next(iter(statefulsets.values()))
     return statefulset.obj.spec
+
+
+def get_clickhouse_cluster_service_spec(kube):
+    services = kube.get_services(
+        namespace="posthog",
+        labels={
+            "clickhouse.altinity.com/namespace": "posthog",
+            "clickhouse.altinity.com/Service": "cluster",
+        },
+    )
+    service = next(iter(services.values()))
+    return service.obj.spec
