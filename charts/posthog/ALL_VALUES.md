@@ -129,15 +129,21 @@ The following table lists the configurable parameters of the PostHog chart and t
 | postgresql.persistence.size | string | `"10Gi"` | PVC Storage Request for PostgreSQL volume |
 | postgresql.postgresqlHost | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
 | postgresql.postgresqlPort | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
-| redis.enabled | bool | `true` | Install redis server on kubernetes (see below) |
-| redis.nameOverride | string | `"posthog-redis"` | Name override for redis app |
-| redis.architecture | string | `"standalone"` | Either standalone or cluster. |
-| redis.auth.enabled | bool | `false` | Don't require password by default |
-| redis.host | string | `nil` | Host redis is accessible from. Only set when internal redis is disabled |
-| redis.password | string | `nil` | Password for redis. Only set when internal redis is disabled |
-| redis.port | string | `nil` | Port redis is accessible from. Only set when internal redis is disabled |
-| redis.master.persistence.enabled | bool | `true` | Enable persistence using PVC |
-| redis.master.persistence.size | string | `"5Gi"` | PVC Storage Request for Redis volume |
+| redis.enabled | bool | `true` |  |
+| redis.nameOverride | string | `"posthog-redis"` |  |
+| redis.fullnameOverride | string | `""` |  |
+| redis.architecture | string | `"standalone"` |  |
+| redis.auth.enabled | bool | `false` |  |
+| redis.auth.password | string | `""` |  |
+| redis.auth.existingSecret | string | `""` |  |
+| redis.auth.existingSecretPasswordKey | string | `""` |  |
+| redis.master.persistence.enabled | bool | `true` |  |
+| redis.master.persistence.size | string | `"5Gi"` |  |
+| externalRedis.host | string | `""` |  |
+| externalRedis.port | int | `6379` |  |
+| externalRedis.password | string | `""` |  |
+| externalRedis.existingSecret | string | `""` |  |
+| externalRedis.existingSecretPasswordKey | string | `""` |  |
 | kafka.enabled | bool | `true` | Install kafka on kubernetes |
 | kafka.nameOverride | string | `"posthog-kafka"` | Name override for kafka app |
 | kafka.url | string | `nil` | URL for kafka. Only set when internal kafka is disabled |
