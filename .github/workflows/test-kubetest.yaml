@@ -37,4 +37,4 @@ jobs:
 
       - name: Run kubetest
         run: |
-          cd ci/kubetest && python -m pytest . -s --splits ${{ matrix.concurrency }} --group ${{ matrix.group }} --splitting-algorithm=least_duration
+          cd ci/kubetest && python -m pytest . -s --splits ${{ matrix.concurrency }} --group ${{ matrix.group }} --splitting-algorithm=least_duration --group-by file
