@@ -24,7 +24,7 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
 
 def helm_install(HELM_INSTALL_CMD):
     log.debug("🔄 Deploying PostHog...")
-    _exec_subprocess(HELM_INSTALL_CMD)
+    exec_subprocess(HELM_INSTALL_CMD)
     log.debug("✅ Done!")
 
 
@@ -34,7 +34,7 @@ def install_chart(values_yaml):
         values_file.write(values_yaml)
         values_file.flush()
 
-        _exec_subprocess(
+        exec_subprocess(
             f"""
             helm upgrade \
                 --install \
@@ -52,7 +52,7 @@ def install_chart(values_yaml):
 
 def kubectl_exec(pod, command):
     log.debug(f"🔄 Executing command '{command}' in pod {pod}")
-    cmd_run = _exec_subprocess(f"kubectl exec {pod} --namespace {NAMESPACE} -- {command}")
+    cmd_run = exec_subprocess(f"kubectl exec {pod} --namespace {NAMESPACE} -- {command}")
     log.debug("✅ Done!")
 
     return cmd_run.stdout
@@ -119,18 +119,18 @@ def test_if_posthog_deployments_are_healthy(kube):
 def create_namespace_if_not_exists(name="posthog"):
     log.debug("🔄 Creating namespace {} (if not exists)...".format(name))
     cmd = "kubectl create namespace {} --dry-run=client -o yaml | kubectl apply -f -".format(name)
-    _exec_subprocess(cmd)
+    exec_subprocess(cmd)
     log.debug("✅ Done!")
 
 
 def install_custom_resources(filename, namespace="posthog"):
     log.debug("🔄 Setting up custom resources for this test...")
     cmd = "kubectl apply -n {namespace} -f {filename}".format(namespace=namespace, filename=filename)
-    _exec_subprocess(cmd)
+    exec_subprocess(cmd)
     log.debug("✅ Done!")
 
 
-def _exec_subprocess(cmd):
+def exec_subprocess(cmd):
     cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     cmd_return_code = cmd_run.returncode
     if cmd_return_code:
