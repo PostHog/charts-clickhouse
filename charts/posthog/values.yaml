@@ -556,6 +556,11 @@ clickhouse:
     ##
     size: 20Gi
 
+  ## clickhouse.profiles -- (object) Clickhouse user profile configuration.
+  ## You can use this to override settings, for example `default/max_memory_usage: 40000000000`
+  ## For a full list of clickhouse settings, see https://clickhouse.com/docs/en/operations/settings/settings/
+  profiles:
+
 ## Prometheus Exporter / Metrics
 ##
 metrics:
