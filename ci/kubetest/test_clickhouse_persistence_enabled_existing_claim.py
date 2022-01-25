@@ -1,10 +1,16 @@
 import logging
-import subprocess
 
 import pytest
 from kubernetes import client
 
-from utils import NAMESPACE, cleanup_k8s, exec_subprocess, get_clickhouse_statefulset_spec, helm_install, wait_for_pods_to_be_ready
+from utils import (
+    NAMESPACE,
+    cleanup_k8s,
+    exec_subprocess,
+    get_clickhouse_statefulset_spec,
+    helm_install,
+    wait_for_pods_to_be_ready,
+)
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
@@ -24,7 +30,8 @@ helm upgrade \
 
 def create_custom_pvc():
     log.debug("🔄 Creating a custom Persistent Volume Claim...")
-    exec_subprocess("kubectl apply -n {namespace} -f clickhouse_existing_claim.yaml".format(namespace=NAMESPACE))
+    exec_subprocess(f"kubectl create namespace {NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -")
+    exec_subprocess(f"kubectl apply -n {NAMESPACE} -f clickhouse_existing_claim.yaml")
     log.debug("✅ Done!")
 
 
