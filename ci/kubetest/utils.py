@@ -119,27 +119,21 @@ def test_if_posthog_deployments_are_healthy(kube):
 def create_namespace_if_not_exists(name="posthog"):
     log.debug("🔄 Creating namespace {} (if not exists)...".format(name))
     cmd = "kubectl create namespace {} --dry-run=client -o yaml | kubectl apply -f -".format(name)
-    cmd_run = subprocess.run(cmd, shell=True)
-    cmd_return_code = cmd_run.returncode
-    if cmd_return_code:
-        pytest.fail("❌ Error while running '{}'. Return code: {}".format(cmd, cmd_return_code))
+    _exec_subprocess(cmd)
     log.debug("✅ Done!")
 
 
 def install_custom_resources(filename, namespace="posthog"):
     log.debug("🔄 Setting up custom resources for this test...")
     cmd = "kubectl apply -n {namespace} -f {filename}".format(namespace=namespace, filename=filename)
-    cmd_run = subprocess.run(cmd, shell=True)
-    cmd_return_code = cmd_run.returncode
-    if cmd_return_code:
-        pytest.fail("❌ Error while running '{}'. Return code: {}".format(cmd, cmd_return_code))
+    _exec_subprocess(cmd)
     log.debug("✅ Done!")
 
 
-def _exec_subprocess(cmd, fail_on_nonzero_exit=True):
+def _exec_subprocess(cmd):
     cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     cmd_return_code = cmd_run.returncode
-    if cmd_return_code and fail_on_nonzero_exit:
+    if cmd_return_code:
         pytest.fail(
             f"""
         ❌ Error while running '{cmd}'.
