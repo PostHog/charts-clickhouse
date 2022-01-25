@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import tempfile
 import time
 
 import pytest
@@ -23,12 +24,38 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
 
 def helm_install(HELM_INSTALL_CMD):
     log.debug("🔄 Deploying PostHog...")
-    cmd = HELM_INSTALL_CMD
-    cmd_run = subprocess.run(cmd, shell=True)
-    cmd_return_code = cmd_run.returncode
-    if cmd_return_code:
-        pytest.fail("❌ Error while running '{}'. Return code: {}".format(cmd, cmd_return_code))
+    _exec_subprocess(HELM_INSTALL_CMD)
     log.debug("✅ Done!")
+
+
+def install_chart(values_yaml):
+    log.debug("🔄 Deploying PostHog...")
+    with tempfile.NamedTemporaryFile(mode="w") as values_file:
+        values_file.write(values_yaml)
+        values_file.flush()
+
+        _exec_subprocess(
+            f"""
+            helm upgrade \
+                --install \
+                -f {values_file.name} \
+                --timeout 30m \
+                --create-namespace \
+                --namespace posthog \
+                posthog ../../charts/posthog \
+                --wait-for-jobs \
+                --wait
+        """
+        )
+    log.debug("✅ Done!")
+
+
+def kubectl_exec(pod, command):
+    log.debug(f"🔄 Executing command '{command}' in pod {pod}")
+    cmd_run = _exec_subprocess(f"kubectl exec {pod} --namespace {NAMESPACE} -- {command}")
+    log.debug("✅ Done!")
+
+    return cmd_run.stdout
 
 
 def wait_for_pods_to_be_ready(kube):
@@ -107,3 +134,19 @@ def install_custom_resources(filename, namespace="posthog"):
     if cmd_return_code:
         pytest.fail("❌ Error while running '{}'. Return code: {}".format(cmd, cmd_return_code))
     log.debug("✅ Done!")
+
+
+def _exec_subprocess(cmd, fail_on_nonzero_exit=True):
+    cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    cmd_return_code = cmd_run.returncode
+    if cmd_return_code and fail_on_nonzero_exit:
+        pytest.fail(
+            f"""
+        ❌ Error while running '{cmd}'.
+        Return code: {cmd_return_code}
+
+        STDOUT: {cmd_run.stdout}
+        STDERR: {cmd_run.stderr}
+        """
+        )
+    return cmd_run
