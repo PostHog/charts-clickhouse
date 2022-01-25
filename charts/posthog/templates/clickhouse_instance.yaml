@@ -12,7 +12,7 @@ spec:
       admin/quota: default
 
     profiles:
-      {{- merge dict .Values.clickhouse.defaultProfiles .Values.clickhouse.profiles | toYaml | nindent 6 }}
+      {{- merge dict .Values.clickhouse.profiles .Values.clickhouse.defaultProfiles | toYaml | nindent 6 }}
 
     clusters:
       - name: {{ .Values.clickhouse.database | quote }}

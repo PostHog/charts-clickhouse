@@ -202,3 +202,38 @@ tests:
       - equal:
           path: spec.templates.volumeClaimTemplates[0].spec.storageClassName
           value: customStorageClass
+
+  - it: default profiles configuration should be correct
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.profiles
+          value:
+            default/allow_experimental_window_functions: "1"
+
+  - it: handles custom profiles configuration
+    set:
+      clickhouse.profiles.default/max_execution_time: "90"
+      clickhouse.profiles.default/max_memory_usage: "20000000000"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.profiles
+          value:
+            default/allow_experimental_window_functions: "1"
+            default/max_execution_time: "90"
+            default/max_memory_usage: "20000000000"
+
+
+  - it: handles custom profiles overriding defaults
+    set:
+      clickhouse.profiles.default/allow_experimental_window_functions: "0"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.profiles
+          value:
+            default/allow_experimental_window_functions: "0"
