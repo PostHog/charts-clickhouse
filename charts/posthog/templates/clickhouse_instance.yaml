@@ -12,10 +12,7 @@ spec:
       admin/quota: default
 
     profiles:
-      default/allow_experimental_window_functions: "1"
-      {{- if .Values.clickhouse.profiles }}
-      {{- toYaml .Values.clickhouse.profiles | nindent 6 }}
-      {{- end }}
+      {{- merge dict .Values.clickhouse.defaultProfiles .Values.clickhouse.profiles | toYaml | nindent 6 }}
 
     clusters:
       - name: {{ .Values.clickhouse.database | quote }}
