@@ -13,7 +13,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.repository | string | `"posthog/posthog"` | Posthog image repository |
 | image.sha | string | `nil` | Posthog image sha, e.g. sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4 |
 | image.tag | string | `nil` | Posthog image tag, e.g. release-1.31.1 |
-| image.default | string | `":release-1.31.1"` | Default image or tag, e.g. :release-1.31.1 |
+| image.default | string | `":release-1.31.1"` | Default image or tag, e.g. `:release-1.31.1` Do not overwrite, use image.sha or image.tag instead. |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cloud | string | `nil` | Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
@@ -185,6 +185,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.persistence.existingClaim | string | `""` |  |
 | clickhouse.persistence.storageClass | string | `nil` |  |
 | clickhouse.persistence.size | string | `"20Gi"` |  |
+| clickhouse.profiles | object | `{}` |  |
+| clickhouse.defaultProfiles.default/allow_experimental_window_functions | string | `"1"` |  |
 | metrics.enabled | bool | `false` | Start an exporter for posthog metrics |
 | metrics.livenessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods livenessProbe settings |
 | metrics.readinessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods readinessProbe settings |
