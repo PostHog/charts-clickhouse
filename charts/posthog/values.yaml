@@ -494,13 +494,10 @@ clickhouse:
   user: admin
   # -- Clickhouse password
   password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
-  # -- Set if not installing clickhouse operator
-  host:
-  # :TODO:
-  replication: false
+  # -- Whether to use TLS connection connecting to ClickHouse
   secure: false
+  # -- Whether to verify TLS certificate on connection to ClickHouse
   verify: false
-  async: false
   # externalZookeeper:
   # -- URL for zookeeper.
   # servers:
