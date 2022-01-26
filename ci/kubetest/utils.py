@@ -39,7 +39,7 @@ def install_chart(values_yaml):
             helm upgrade \
                 --install \
                 -f {values_file.name} \
-                --timeout 30m \
+                --timeout 20m \
                 --create-namespace \
                 --namespace posthog \
                 posthog ../../charts/posthog \

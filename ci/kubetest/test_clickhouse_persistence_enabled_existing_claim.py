@@ -14,7 +14,7 @@ HELM_INSTALL_CMD = """
 helm upgrade \
     --install \
     -f ../../ci/values/kubetest/test_clickhouse_persistence_enabled_existing_claim.yaml \
-    --timeout 30m \
+    --timeout 20m \
     --create-namespace \
     --namespace posthog \
     posthog ../../charts/posthog \
