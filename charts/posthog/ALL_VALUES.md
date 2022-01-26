@@ -1,5 +1,7 @@
 # PostHog Helm chart configuration
 
+![Version: 12.0.0](https://img.shields.io/badge/Version-12.0.0-informational?style=flat-square) ![AppVersion: 1.31.1](https://img.shields.io/badge/AppVersion-1.31.1-informational?style=flat-square)
+
 ## Configuration
 
 The following table lists the configurable parameters of the PostHog chart and their default values.
@@ -221,4 +223,5 @@ The following table lists the configurable parameters of the PostHog chart and t
 | statsd | object | `{"enabled":false,"podAnnotations":{"prometheus.io/path":"/metrics","prometheus.io/port":"9102","prometheus.io/scrape":"true"}}` | Prometheus StatsD configuration, see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter |
 | installCustomStorageClass | bool | `false` |  |
 
-Dependent charts can also have values overwritten. Preface values with postgresql.*
+Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
+
