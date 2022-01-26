@@ -24,8 +24,16 @@
   value: {{ .Values.externalClickhouse.database | quote }}
 - name: CLICKHOUSE_USER
   value: {{ required "externalClickhouse.user is required if not clickhouse.enabled" .Values.externalClickhouse.user | quote }}
+{{- if .Values.externalClickhouse.existingSecret }}
+- name: POSTHOG_REDIS_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "posthog.clickhouse.secretName" . }}
+      key: {{ include "posthog.clickhouse.secretPasswordKey" . }}
+{{- else }}
 - name: CLICKHOUSE_PASSWORD
-  value: {{ .Values.externalClickhouse.password | quote }}
+  value: {{ required "externalClickhouse.password or externalClickhouse.existingSecret is required if using external clickhouse" .Values.externalClickhouse.password | quote }}
+{{- end }}
 - name: CLICKHOUSE_SECURE
   value: {{ .Values.externalClickhouse.secure | quote }}
 - name: CLICKHOUSE_VERIFY
@@ -46,5 +54,37 @@ Return clickhouse fullname
 {{- .Values.clickhouse.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- printf "%s-%s" "clickhouse" .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Return true if a secret object for ClickHouse should be created
+*/}}
+{{- define "posthog.clickhouse.createSecret" -}}
+{{- if and (not .Values.clickhouse.enabled) (not .Values.externalClickhouse.existingSecret) .Values.externalClickhouse.password }}
+    {{- true -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the ClickHouse secret name
+*/}}
+{{- define "posthog.clickhouse.secretName" -}}
+{{- if .Values.externalRedis.existingSecret }}
+    {{- .Values.externalRedis.existingSecret | quote -}}
+{{- else -}}
+    {{- printf "%s-external" (include "posthog.redis.fullname" .) -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the ClickHouse secret key
+*/}}
+{{- define "posthog.clickhouse.secretPasswordKey" -}}
+{{- if .Values.externalClickhouse.existingSecret }}
+    {{- required "You need to provide existingSecretPasswordKey when an existingSecret is specified in externalClickhouse" .Values.externalClickhouse.existingSecretPasswordKey | quote }}
+{{- else -}}
+    {{- printf "redis-password" -}}
 {{- end -}}
 {{- end -}}
