@@ -1,5 +1,9 @@
 {{/* vim: set filetype=mustache: */}}
 
+{*
+   ------ POSTHOG ------
+*}
+
 {{/*
 Expand the name of the chart.
 */}}
@@ -26,6 +30,34 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
+Set the posthog image
+*/}}
+{{- define "posthog.image.fullPath" -}}
+{{ if .Values.image.sha -}}
+"{{ .Values.image.repository }}@{{ .Values.image.sha }}"
+{{- else if .Values.image.tag -}}
+"{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+{{- else -}}
+"{{ .Values.image.repository }}{{ .Values.image.default }}"
+{{- end -}}
+{{- end -}}
+
+{{/*
+Set site url
+*/}}
+{{- define "posthog.site.url" -}}
+{{- if .Values.ingress.hostname -}}
+    "https://{{ .Values.ingress.hostname }}"
+{{- else -}}
+    "http://127.0.0.1:8000"
+{{- end -}}
+{{- end -}}
+
+{*
+   ------ POSTGRESQL ------
+*}
+
+{{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
@@ -36,29 +68,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- printf "%s-%s" .Release.Name .Values.postgresql.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- printf "%s-%s" (include "posthog.fullname" .) "postgresql" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "posthog.zookeeper.fullname" -}}
-{{- if .Values.zookeeper.fullnameOverride -}}
-{{- .Values.zookeeper.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else if .Values.zookeeper.nameOverride -}}
-{{- printf "%s-%s" .Release.Name .Values.zookeeper.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" (include "posthog.fullname" .) "zookeeper" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set the posthog image
-*/}}
-{{- define "posthog.image.fullPath" -}}
-{{ if .Values.image.sha -}}
-"{{ .Values.image.repository }}@{{ .Values.image.sha }}"
-{{- else if .Values.image.tag -}}
-"{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-{{- else -}}
-"{{ .Values.image.repository }}{{ .Values.image.default }}"
 {{- end -}}
 {{- end -}}
 
@@ -127,6 +136,21 @@ Set postgres URL
     postgres://{{- .Values.postgresql.postgresqlUsername -}}:{{- template "posthog.postgresql.password" . -}}@{{- template "posthog.postgresql.host" .  -}}:{{- template "posthog.postgresql.port" . -}}/{{- .Values.postgresql.postgresqlDatabase }}
 {{- end -}}
 
+
+{*
+   ------ ZOOKEEPER ------
+*}
+
+{{- define "posthog.zookeeper.fullname" -}}
+{{- if .Values.zookeeper.fullnameOverride -}}
+{{- .Values.zookeeper.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else if .Values.zookeeper.nameOverride -}}
+{{- printf "%s-%s" .Release.Name .Values.zookeeper.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" (include "posthog.fullname" .) "zookeeper" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Set zookeeper host
 */}}
@@ -140,6 +164,11 @@ Set zookeeper port
 {{- define "posthog.zookeeper.port" -}}
     2181
 {{- end -}}
+
+
+{*
+   ------ PGBOUNCER ------
+*}
 
 {{/*
 Set pgbouncer host
@@ -161,6 +190,7 @@ Set pgbouncer URL
 {{- define "posthog.pgbouncer.url" -}}
     postgres://{{- .Values.postgresql.postgresqlUsername -}}:{{- template "posthog.postgresql.password" . -}}@{{- template "posthog.pgbouncer.host" .  -}}:{{- template "posthog.pgbouncer.port" . -}}/{{- .Values.postgresql.postgresqlDatabase }}
 {{- end -}}
+
 
 {*
    ------ REDIS ------
@@ -249,6 +279,7 @@ Return whether Redis uses password authentication or not
 {{- end -}}
 {{- end -}}
 
+
 {*
    ------ CLICKHOUSE ------
 *}
@@ -264,16 +295,13 @@ Set clickhouse fullname
 {{- end -}}
 {{- end -}}
 
-{{/*
-Set statsd host
-*/}}
-{{- define "posthog.statsd.host" -}}
-{{- template "posthog.fullname" . -}}-statsd
-{{- end -}}
 
+{*
+   ------ KAFKA ------
+*}
 
 {{/*
-Set kafka fullname
+Return the Kafka fullname
 */}}
 {{- define "posthog.kafka.fullname" -}}
 {{- if .Values.kafka.fullnameOverride -}}
@@ -286,59 +314,45 @@ Set kafka fullname
 {{- end -}}
 
 {{/*
-Set kafka host
+Return the Kafka hosts (brokers)
 */}}
-{{- define "posthog.kafka.host" -}}
-{{- if .Values.kafka.host -}}
-    {{- .Values.kafka.host | quote -}}
+{{- define "posthog.kafka.brokers" -}}
+{{- if .Values.kafka.enabled }}
+    {{- printf "%s:%d" (include "posthog.kafka.fullname" .) (.Values.kafka.service.port | int) -}}
 {{- else -}}
-{{- template "posthog.kafka.fullname" . -}}
+    {{- printf "%s" .Values.externalKafka.brokers -}}
 {{- end -}}
 {{- end -}}
 
-{{/*
-Set kafka port
-*/}}
-{{- define "posthog.kafka.port" -}}
-{{- if .Values.kafka.port -}}
-    {{- .Values.kafka.port -}}
-{{- else -}}
-{{- default 9092 .Values.kafka.port -}}
+
+{*
+   ------ INGRESS ------
+*}
+
+{{- define "ingress.type" -}}
+{{- if ne (.Values.ingress.type | toString) "<nil>" -}}
+  {{ .Values.ingress.type }}
+{{- else if .Values.ingress.nginx.enabled -}}
+  nginx
+{{- else if (eq (.Values.cloud | toString) "gcp") -}}
+  clb
 {{- end -}}
 {{- end -}}
 
-{{/*
-Set kafka url
-*/}}
-{{- define "posthog.kafka.url" -}}
-{{- if .Values.kafka.url -}}
-    {{- .Values.kafka.url | quote -}}
+{{- define "ingress.letsencrypt" -}}
+{{- if ne (.Values.ingress.letsencrypt | toString) "<nil>" -}}
+  {{ .Values.ingress.letsencrypt }}
+{{- else if and (and (.Values.ingress.nginx.enabled) ( index .Values "cert-manager" "enabled" )) (ne (.Values.ingress.hostname | toString) "<nil>")  -}}
+  true
 {{- else -}}
-    "kafka://{{- template "posthog.kafka.host" . -}}:{{-  template "posthog.kafka.port" . -}}"
+  false
 {{- end -}}
 {{- end -}}
 
-{{/*
-Set kafka url
-*/}}
-{{- define "posthog.kafka.url_no_protocol" -}}
-{{- if .Values.kafka.url -}}
-    {{- .Values.kafka.url | quote -}}
-{{- else -}}
-    "{{- template "posthog.kafka.host" . -}}:{{-  template "posthog.kafka.port" . -}}"
-{{- end -}}
-{{- end -}}
 
-{{/*
-Set site url
-*/}}
-{{- define "posthog.site.url" -}}
-{{- if .Values.ingress.hostname -}}
-    "https://{{ .Values.ingress.hostname }}"
-{{- else -}}
-    "http://127.0.0.1:8000"
-{{- end -}}
-{{- end -}}
+{*
+   ------ OTHERS ------
+*}
 
 {{/*
 Create the name of the service account to use
@@ -351,6 +365,13 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
+{{/*
+Set statsd host
+*/}}
+{{- define "posthog.statsd.host" -}}
+{{- template "posthog.fullname" . -}}-statsd
+{{- end -}}
+
 {{- define "posthog.helmOperation" -}}
 {{- if .Release.IsUpgrade -}}
     upgrade
@@ -359,16 +380,9 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
-{{- define "ingress.type" -}}
-{{- if ne (.Values.ingress.type | toString) "<nil>" -}}
-  {{ .Values.ingress.type }}
-{{- else if .Values.ingress.nginx.enabled -}}
-  nginx
-{{- else if (eq (.Values.cloud | toString) "gcp") -}}
-  clb
+{{- define "posthog.deploymentEnv" -}}
+    helm_{{ .Values.cloud }}_ha
 {{- end -}}
-{{- end -}}
-
 
 {{- define "posthog.helmInstallInfo" -}}
 {{- $info := dict }}
@@ -382,18 +396,4 @@ Create the name of the service account to use
 {{- $info := set $info "deployment_type" (.Values.deploymentType | default "helm") -}}
 {{- $info := set $info "kube_version" .Capabilities.KubeVersion.Version -}}
 {{ toJson $info | quote }}
-{{- end -}}
-
-{{- define "posthog.deploymentEnv" -}}
-    helm_{{ .Values.cloud }}_ha
-{{- end -}}
-
-{{- define "ingress.letsencrypt" -}}
-{{- if ne (.Values.ingress.letsencrypt | toString) "<nil>" -}}
-  {{ .Values.ingress.letsencrypt }}
-{{- else if and (and (.Values.ingress.nginx.enabled) ( index .Values "cert-manager" "enabled" )) (ne (.Values.ingress.hostname | toString) "<nil>")  -}}
-  true
-{{- else -}}
-  false
-{{- end -}}
 {{- end -}}

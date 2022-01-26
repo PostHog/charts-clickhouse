@@ -65,8 +65,12 @@ spec:
         ports:
         - containerPort: {{ .Values.service.internalPort }}
         env:
+        # Kafka env variables
+        {{- include "snippet.kafka-env" . | indent 8 }}
+
         # Redis env variables
         {{- include "snippet.redis-env" . | indent 8 }}
+
         - name: SITE_URL
           value: {{ template "posthog.site.url" . }}
         - name: DEPLOYMENT
@@ -157,10 +161,6 @@ spec:
           value: {{ .Values.clickhouse.async| quote }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
-        {{- end }}
-        {{- if .Values.kafka.enabled }}
-        - name: KAFKA_URL
-          value: {{ template "posthog.kafka.url" . }}
         {{- end }}
         {{- if .Values.plugins.ingestion.enabled }}
         - name: PLUGIN_SERVER_INGESTION

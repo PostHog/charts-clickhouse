@@ -1,38 +1,35 @@
-# Default values for posthog.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# -- Cloud service being deployed on (example: `aws`, `azure`, `do`, `gcp`, `other`)
+cloud:
+
 image:
-  # -- Posthog image repository
+  # -- PostHog image repository to use
   repository: posthog/posthog
-  # -- Posthog image sha, e.g. sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4
+  # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
   sha:
-  # -- Posthog image tag, e.g. release-1.31.1
+  # -- PostHog image tag to use (example: `release-1.31.1`).
   tag:
-  # -- Default image or tag, e.g. `:release-1.31.1` Do not overwrite, use image.sha or image.tag instead.
+  # -- PostHog image default. Do not overwrite, use image.sha or image.tag instead.
   default: ":release-1.31.1"
-  # -- Image pull policy
+  # -- PostHog image pull policy
   pullPolicy: IfNotPresent
 
-# -- Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean
-cloud:
 # -- Sentry endpoint to send errors to
 sentryDSN:
 
-# -- Env vars to throw into every deployment (web, worker, and plugin server)
+# -- Environment variables to inject into every PostHog deployment
 env:
   - name: ASYNC_EVENT_PROPERTY_USAGE
     value: "true"
   - name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
     value: "86400"
 
-# -- PgBouncer setup
 pgbouncer:
-   # -- Whether to install PGBouncer or not
+   # -- Whether to install PgBouncer or not as part of this release
   enabled: true
   hpa:
-    # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
-    # -- This experimental and set up based on cpu utilization
-    # -- Adding pgbouncers can cause running out of connections for Postgres
+    # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer.
+    #    This experimental and set up based on cpu utilization.
+    #    Adding pgbouncers can cause running out of connections for PostgreSQL.
     enabled: false
     # -- CPU threshold percent for pgbouncer
     cputhreshold: 60
@@ -299,6 +296,11 @@ service:
   ## Load Balancer allow-list
   # loadBalancerSourceRanges: []
 
+###
+###
+### ---- CERT-MANAGER ----
+###
+###
 cert-manager:
   # -- Whether to install cert-manager. Validates certs for nginx ingress
   enabled: false
@@ -325,6 +327,11 @@ cert-manager:
       - 1.1.1.1
       - 208.67.222.222
 
+###
+###
+### ---- INGRESS ----
+###
+###
 ingress:
   # -- Enable ingress controller resource
   enabled: true
@@ -351,6 +358,11 @@ ingress:
   # -- TLS secret to be used by the ingress.
   secretName:
 
+###
+###
+### ---- POSTGRESQL ----
+###
+###
 postgresql:
   # -- Install postgres server on kubernetes (see below)
   enabled: true
@@ -377,104 +389,109 @@ postgresql:
   # existingSecret: secret-name
   # existingSecretKey: postgresql-password
 
+###
+###
+### ---- REDIS ----
+###
+###
 redis:
-  ## @param redis.enabled Whether to deploy a redis server to satisfy the applications requirements. To use an external redis instance set this to false and configure the externalRedis parameters
-  ##
+  # -- Whether to deploy a redis server to satisfy the applications requirements. To use an external redis instance set this to `false` and configure the `externalRedis` parameters.
   enabled: true
 
-  ## @param redis.nameOverride String
-  ##
   nameOverride: "posthog-redis"
 
-  ## @param redis.fullnameOverride String
-  ##
   fullnameOverride: ""
 
-  ## @param redis.architecture Cluster settings
-  ##
   architecture: standalone
 
   auth:
-    ## @param redis.auth.enabled Enable password authentication
-    ##
+    # -- Enable Redis password authentication.
     enabled: false
 
-    ## @param redis.auth.password Redis password
-    ## Defaults to a random 10-character alphanumeric string if not set
-    ## NOTE: ignored unless redis.auth.enabled is true
-    ##       ignored if redis.auth.existingSecret is set
-    ##
+    # -- Redis password.
+    #    Defaults to a random 10-character alphanumeric string if not set.
+    #    NOTE: ignored unless `redis.auth.enabled` is `true` or if `redis.auth.existingSecret` is set.
+    #
     password: ""
 
-    ## @param auth.existingSecret The name of an existing secret with Redis credentials
-    ## NOTE: ignored unless redis.auth.enabled is true
-    ##       when it is set, the previous `redis.auth.password` parameter is ignored
-    ##
+    # -- The name of an existing secret containing the Redis credential to use.
+    #    NOTE: ignored unless `redis.auth.enabled` is `true`.
+    #          When it is set, the previous `redis.auth.password` parameter is ignored.
+    #
     existingSecret: ""
 
-    ## @param auth.existingSecretPasswordKey Password key to be retrieved from existing secret
-    ## NOTE: ignored unless redis.auth.existingSecret parameter is set
-    ##
+    # -- Password key to be retrieved from existing secret.
+    #    NOTE: ignored unless `redis.auth.existingSecret` parameter is set.
+    #
     existingSecretPasswordKey: ""
 
   master:
     persistence:
-      ## @param redis.master.persistence.enabled Enable database persistence using PVC
-      ##
+      # -- Enable data persistence using PVC.
       enabled: true
 
-      ## @param redis.master.persistence.size Persistent Volume size
-      ##
+      # -- Persistent Volume size.
       size: 5Gi
 
-## External Redis;
-## @param externalRedis.host Host of the external database
-## @param externalRedis.port Database port number
-## @param externalRedis.password Password for the external Redis. Ignored if externalRedis.existingSecret is set
-## @param externalRedis.existingSecret Name of an existing Kubernetes secret object containing the password
-## @param externalRedis.existingSecretPasswordKey Name of the key pointing to the password in your Kubernetes secret
-##
 externalRedis:
+  # -- External Redis host to use.
   host: ""
+  # -- External Redis port to use.
   port: 6379
+  # -- Password for the external Redis. Ignored if `externalRedis.existingSecret` is set.
   password: ""
+  # -- Name of an existing Kubernetes secret object containing the Redis password.
   existingSecret: ""
+  # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
 
+###
+###
+### ---- KAFKA ----
+###
+###
 kafka:
-  # -- Install kafka on kubernetes
+  # -- Whether to deploy Kafka as part of this release. To use an external Kafka instance set this to `false` and configure the `externalKafka` values.
   enabled: true
-  # -- Name override for kafka app
+
   nameOverride: posthog-kafka
-  # -- URL for kafka. Only set when internal kafka is disabled
-  url:
-  # -- Host for kafka. Only set when internal kafka is disabled
-  host:
-  # -- Port for kafka. Only set when internal kafka is disabled
-  port:
-  service:
-    enabled: false
-    type: NodePort
-  persistence:
-    # -- Enable persistence using PVC
-    enabled: true
-    # -- PVC Storage Request for kafka volume
-    size: 20Gi
-  # -- A size-based retention policy for logs
-  # -- Should be less than kafka.persistence.size, minimum 1GB
+
+  fullnameOverride: ""
+
+  # -- A size-based retention policy for logs.
   logRetentionBytes: _15_000_000_000
-  # -- The minimum age of a log file to be eligible for deletion due to age
+
+  # -- The minimum age of a log file to be eligible for deletion due to age.
   logRetentionHours: 24
+
+  # -- The default number of log partitions per topic.
+  numPartitions: 1
+
+  persistence:
+    # - Enable data persistence using PVC.
+    enabled: true
+    # -- Persistent Volume size.
+    size: 20Gi
+
   zookeeper:
-    # -- Install zookeeper on kubernetes
+    # -- Please DO NOT override this value. This chart installs Zookeeper separately.
     enabled: false
-    # -- Name override for zookeeper app
+
   externalZookeeper:
-    # -- URL for zookeeper. Only set when internal zookeeper is disabled
-    # -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper
+    # -- Server or list of external Zookeeper servers to use.
     servers:
       - posthog-posthog-zookeeper:2181
 
+externalKafka:
+  # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided in a comma separated list, e.g. `host1:port1,host2:port2`.
+  brokers: ""
+
+
+###
+###
+### ---- ZOOKEEPER ----
+###
+###
 zookeeper:
   # -- Install zookeeper on kubernetes
   enabled: true
@@ -483,10 +500,15 @@ zookeeper:
   # -- replica count for zookeeper
   replicaCount: 1
 
+###
+###
+### ---- CLICKHOUSE ----
+###
+###
 clickhouse:
   # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
   enabled: true
-  # -- Which namespace to install clickhouse and the clickhouse-operator to (defaults to namespace chart is installed to)
+  # -- Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to)
   namespace:
   # -- Clickhouse database
   database: posthog
@@ -531,29 +553,24 @@ clickhouse:
   # -- If enabled, operator will prefer k8s nodes with tag `clickhouse:true`
   useNodeSelector: false
 
-  ## @section Persistence parameters
-  ##
   persistence:
-
-    ## @param persistence.enabled Enable data persistence
-    ##
+    # -- Enable data persistence using PVC.
     enabled: true
 
-    ## @param persistence.existingClaim A manually managed Persistent Volume and Claim
-    ## If defined, PVC must be created manually before volume will be bound.
-    ##
+    # -- Use a manually managed Persistent Volume and Claim.
+    #    If defined, PVC must be created manually before volume will be bound.
+    #
     existingClaim: ""
 
-    ## @param persistence.storageClass Persistent Volume Storage Class
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ## set, choosing the default provisioner.
-    ##
+    # -- Persistent Volume Storage Class to use.
+    #    If defined, `storageClassName: <storageClass>`.
+    #    If set to `storageClassName: ""`, disables dynamic provisioning.
+    #    If undefined (the default) or set to `null`, no storageClassName spec is
+    #    set, choosing the default provisioner.
+    #
     storageClass: null
 
-    ## @param persistence.size PVC Storage Request for the data volume
-    ##
+    # -- Persistent Volume size
     size: 20Gi
 
   ## -- Clickhouse user profile configuration.
@@ -724,7 +741,7 @@ prometheus:
     # -- Alerts configuration, see https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
     alerting_rules.yml:
       groups:
-        - name: Posthog alerts
+        - name: PostHog alerts
           rules:
             # Alert for any pod that is down for >5 minutes.
             - alert: PodDown

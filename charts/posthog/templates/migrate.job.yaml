@@ -41,8 +41,12 @@ spec:
             python manage.py migrate
             python manage.py migrate_clickhouse
         env:
+        # Kafka env variables
+        {{- include "snippet.kafka-env" . | indent 8 }}
+
         # Redis env variables
         {{- include "snippet.redis-env" . | indent 8 }}
+
         - name: SENTRY_DSN
           value: {{ .Values.sentryDSN | quote }}
 {{- if .Values.env }}
@@ -122,10 +126,6 @@ spec:
           value: {{ .Values.clickhouse.async| quote }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
-        {{- if .Values.kafka.enabled }}
-        - name: KAFKA_URL
-          value: {{ template "posthog.kafka.url" . }}
-        {{- end }}
         - name: EMAIL_USE_TLS
           value: {{ default "false" .Values.email.use_tls | quote }}
         - name: EMAIL_USE_SSL

@@ -144,3 +144,19 @@ def exec_subprocess(cmd):
         """
         )
     return cmd_run
+
+
+def install_custom_kafka(namespace="posthog"):
+    log.debug("🔄 Setting up custom Kafka for this test...")
+    cmd = """
+          helm repo add bitnami https://charts.bitnami.com/bitnami && \
+          helm upgrade --install \
+            --namespace {namespace} \
+            kafka bitnami/kafka \
+            --set zookeeper.enabled=true \
+            --set replicaCount=1
+        """.format(
+        namespace=namespace
+    )
+    exec_subprocess(cmd)
+    log.debug("✅ Done!")
