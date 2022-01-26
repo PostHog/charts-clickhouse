@@ -17,3 +17,19 @@
 - name: CLICKHOUSE_VERIFY
   value: {{ .Values.clickhouse.verify | quote }}
 {{- end }}
+
+
+{*
+   ------ CLICKHOUSE ------
+*}
+
+{{/*
+Return clickhouse fullname
+*/}}
+{{- define "posthog.clickhouse.fullname" -}}
+{{- if .Values.clickhouse.fullnameOverride -}}
+{{- .Values.clickhouse.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" "clickhouse" .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}

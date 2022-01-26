@@ -249,21 +249,6 @@ Return whether Redis uses password authentication or not
 {{- end -}}
 {{- end -}}
 
-{*
-   ------ CLICKHOUSE ------
-*}
-
-{{/*
-Set clickhouse fullname
-*/}}
-{{- define "posthog.clickhouse.fullname" -}}
-{{- if .Values.clickhouse.fullnameOverride -}}
-{{- .Values.clickhouse.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" "clickhouse" .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-
 {{/*
 Set statsd host
 */}}
