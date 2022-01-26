@@ -156,7 +156,7 @@ spec:
         {{- end }}
         - name: PRIMARY_DB
           value: clickhouse
-        {{- include "snippet.clickhouse-env" . | indent 8 }}
+        {{- include "snippet.clickhouse-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
         {{- if .Values.kafka.enabled }}

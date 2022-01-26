@@ -8,6 +8,8 @@
     {{- required (printf (include "snippet.error-on-removed-values-template" .) "clickhouseOperator values are no longer valid." "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-9xx") nil -}}
 {{- else if or .Values.redis.port .Values.redis.host .Values.redis.password }}
     {{- required (printf (include "snippet.error-on-removed-values-template" .) "redis.port, redis.host and redis.password are no longer valid." "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-11xx") nil -}}
+{{- else if .Values.clickhouse.host }}
+    {{- required (printf (include "snippet.error-on-removed-values-template" .) "clickhouse.host has been moved to externalClickhouse.host" "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-13xx") nil -}}
 {{- end -}}
 {{- end -}}
 

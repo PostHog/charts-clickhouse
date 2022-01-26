@@ -90,7 +90,7 @@ spec:
         - name: STATSD_PORT
           value: "9125"
         {{- end }}
-        {{- include "snippet.clickhouse-env" . | indent 8 }}
+        {{- include "snippet.clickhouse-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
         {{- if .Values.kafka.enabled }}
