@@ -5,11 +5,7 @@
 - name: CLICKHOUSE_DATABASE
   value: {{ .Values.clickhouse.database | quote }}
 - name: CLICKHOUSE_HOST
-  {{- if .Values.clickhouse.host }}
-  value: {{ .Values.clickhouse.host | quote }}
-  {{- else }}
   value: {{ template "posthog.clickhouse.fullname" . }}
-  {{- end }}
 - name: CLICKHOUSE_USER
   value: {{ .Values.clickhouse.user | quote }}
 - name: CLICKHOUSE_PASSWORD
