@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import tempfile
 import time
 
 import pytest
@@ -23,12 +24,38 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
 
 def helm_install(HELM_INSTALL_CMD):
     log.debug("🔄 Deploying PostHog...")
-    cmd = HELM_INSTALL_CMD
-    cmd_run = subprocess.run(cmd, shell=True)
-    cmd_return_code = cmd_run.returncode
-    if cmd_return_code:
-        pytest.fail("❌ Error while running '{}'. Return code: {}".format(cmd, cmd_return_code))
+    exec_subprocess(HELM_INSTALL_CMD)
     log.debug("✅ Done!")
+
+
+def install_chart(values_yaml):
+    log.debug("🔄 Deploying PostHog...")
+    with tempfile.NamedTemporaryFile(mode="w") as values_file:
+        values_file.write(values_yaml)
+        values_file.flush()
+
+        exec_subprocess(
+            f"""
+            helm upgrade \
+                --install \
+                -f {values_file.name} \
+                --timeout 30m \
+                --create-namespace \
+                --namespace posthog \
+                posthog ../../charts/posthog \
+                --wait-for-jobs \
+                --wait
+        """
+        )
+    log.debug("✅ Done!")
+
+
+def kubectl_exec(pod, command):
+    log.debug(f"🔄 Executing command '{command}' in pod {pod}")
+    cmd_run = exec_subprocess(f"kubectl exec {pod} --namespace {NAMESPACE} -- {command}")
+    log.debug("✅ Done!")
+
+    return cmd_run.stdout
 
 
 def wait_for_pods_to_be_ready(kube):
@@ -92,18 +119,28 @@ def test_if_posthog_deployments_are_healthy(kube):
 def create_namespace_if_not_exists(name="posthog"):
     log.debug("🔄 Creating namespace {} (if not exists)...".format(name))
     cmd = "kubectl create namespace {} --dry-run=client -o yaml | kubectl apply -f -".format(name)
-    cmd_run = subprocess.run(cmd, shell=True)
-    cmd_return_code = cmd_run.returncode
-    if cmd_return_code:
-        pytest.fail("❌ Error while running '{}'. Return code: {}".format(cmd, cmd_return_code))
+    exec_subprocess(cmd)
     log.debug("✅ Done!")
 
 
 def install_custom_resources(filename, namespace="posthog"):
     log.debug("🔄 Setting up custom resources for this test...")
     cmd = "kubectl apply -n {namespace} -f {filename}".format(namespace=namespace, filename=filename)
-    cmd_run = subprocess.run(cmd, shell=True)
+    exec_subprocess(cmd)
+    log.debug("✅ Done!")
+
+
+def exec_subprocess(cmd):
+    cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     cmd_return_code = cmd_run.returncode
     if cmd_return_code:
-        pytest.fail("❌ Error while running '{}'. Return code: {}".format(cmd, cmd_return_code))
-    log.debug("✅ Done!")
+        pytest.fail(
+            f"""
+        ❌ Error while running '{cmd}'.
+        Return code: {cmd_return_code}
+
+        STDOUT: {cmd_run.stdout}
+        STDERR: {cmd_run.stderr}
+        """
+        )
+    return cmd_run

@@ -8,7 +8,7 @@ image:
   sha:
   # -- Posthog image tag, e.g. release-1.31.1
   tag:
-  # -- Default image or tag, e.g. :release-1.31.1
+  # -- Default image or tag, e.g. `:release-1.31.1` Do not overwrite, use image.sha or image.tag instead.
   default: ":release-1.31.1"
   # -- Image pull policy
   pullPolicy: IfNotPresent
@@ -555,6 +555,15 @@ clickhouse:
     ## @param persistence.size PVC Storage Request for the data volume
     ##
     size: 20Gi
+
+  ## -- Clickhouse user profile configuration.
+  ## You can use this to override settings, for example `default/max_memory_usage: 40000000000`
+  ## For a full list of clickhouse settings, see https://clickhouse.com/docs/en/operations/settings/settings/
+  profiles: {}
+
+  ## -- Default user profile configuration for Clickhouse. Don't overwrite this!
+  defaultProfiles:
+    default/allow_experimental_window_functions: "1"
 
 ## Prometheus Exporter / Metrics
 ##
