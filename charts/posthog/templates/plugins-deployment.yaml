@@ -90,26 +90,9 @@ spec:
         - name: STATSD_PORT
           value: "9125"
         {{- end }}
-        {{- if .Values.clickhouse.enabled }}
-        - name: CLICKHOUSE_DATABASE
-          value: {{ .Values.clickhouse.database | quote }}
-        - name: CLICKHOUSE_HOST
-          {{- if .Values.clickhouse.host }}
-          value: {{ .Values.clickhouse.host | quote }}
-          {{- else }}
-          value: {{ template "posthog.clickhouse.fullname" . }}
-          {{- end }}
-        - name: CLICKHOUSE_USER
-          value: {{ .Values.clickhouse.user | quote }}
-        - name: CLICKHOUSE_PASSWORD
-          value: {{ .Values.clickhouse.password | quote }}
-        - name: CLICKHOUSE_SECURE
-          value: {{ .Values.clickhouse.secure | quote }}
-        - name: CLICKHOUSE_VERIFY
-          value: {{ .Values.clickhouse.verify | quote }}
+        {{- include "snippet.clickhouse-env" . | indent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
-        {{- end }}
         {{- if .Values.kafka.enabled }}
         - name: KAFKA_ENABLED
           value: "true"
