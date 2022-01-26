@@ -34,6 +34,29 @@
   # Redis env variables
   {{- include "snippet.redis-env" . | indent 2 }}
 
+  {{- if .Values.clickhouse.enabled }}
+  - name: CLICKHOUSE_DATABASE
+    value: {{ .Values.clickhouse.database | quote }}
+  - name: CLICKHOUSE_HOST
+    {{- if .Values.clickhouse.host }}
+    value: {{ .Values.clickhouse.host | quote }}
+    {{- else }}
+    value: {{ template "posthog.clickhouse.fullname" . }}
+    {{- end }}
+  - name: CLICKHOUSE_USER
+    value: {{ .Values.clickhouse.user | quote }}
+  - name: CLICKHOUSE_PASSWORD
+    value: {{ .Values.clickhouse.password | quote }}
+  - name: CLICKHOUSE_REPLICATION
+    value: {{ .Values.clickhouse.replication | quote }}
+  - name: CLICKHOUSE_SECURE
+    value: {{ .Values.clickhouse.secure | quote }}
+  - name: CLICKHOUSE_VERIFY
+    value: {{ .Values.clickhouse.verify | quote }}
+  - name: CLICKHOUSE_ASYNC
+    value: {{ .Values.clickhouse.async| quote }}
+  {{- end }}
+
   # Django specific settings
   - name: SECRET_KEY
     valueFrom:
