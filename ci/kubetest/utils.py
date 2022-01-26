@@ -146,8 +146,8 @@ def exec_subprocess(cmd):
     return cmd_run
 
 
-def install_custom_kafka(namespace="posthog"):
-    log.debug("🔄 Setting up custom Kafka for this test...")
+def install_external_kafka(namespace="posthog"):
+    log.debug("🔄 Setting up external Kafka...")
     cmd = """
           helm repo add bitnami https://charts.bitnami.com/bitnami && \
           helm upgrade --install \

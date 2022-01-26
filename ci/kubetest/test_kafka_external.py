@@ -1,6 +1,13 @@
 import pytest
 
-from utils import cleanup_k8s, install_chart, install_custom_kafka, is_posthog_healthy, wait_for_pods_to_be_ready
+from utils import (
+    cleanup_k8s,
+    create_namespace_if_not_exists,
+    install_chart,
+    install_external_kafka,
+    is_posthog_healthy,
+    wait_for_pods_to_be_ready,
+)
 
 VALUES_YAML = """
 cloud: local
@@ -39,7 +46,8 @@ zookeeper:
 @pytest.fixture
 def setup(kube):
     cleanup_k8s()
-    install_custom_kafka()
+    create_namespace_if_not_exists()
+    install_external_kafka()
     install_chart(VALUES_YAML)
     wait_for_pods_to_be_ready(kube)
 
