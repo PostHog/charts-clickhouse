@@ -488,6 +488,8 @@ clickhouse:
   enabled: true
   # -- Which namespace to install clickhouse and the clickhouse-operator to (defaults to namespace chart is installed to)
   namespace:
+  # -- Clickhouse cluster
+  cluster: posthog
   # -- Clickhouse database
   database: posthog
   # -- Clickhouse user

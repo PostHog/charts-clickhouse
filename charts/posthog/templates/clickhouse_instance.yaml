@@ -15,7 +15,7 @@ spec:
       {{- merge dict .Values.clickhouse.profiles .Values.clickhouse.defaultProfiles | toYaml | nindent 6 }}
 
     clusters:
-      - name: {{ .Values.clickhouse.database | quote }}
+      - name: {{ .Values.clickhouse.cluster | quote }}
         templates:
           podTemplate: pod-template
           clusterServiceTemplate: service-template

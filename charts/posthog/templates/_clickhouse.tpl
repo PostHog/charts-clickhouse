@@ -1,5 +1,7 @@
 {{/* Common ClickHouse ENV variables used by PostHog */}}
 {{- define "snippet.clickhouse-env" }}
+- name: CLICKHOUSE_CLUSTER
+  value: {{ .Values.clickhouse.cluster | quote }}
 - name: CLICKHOUSE_DATABASE
   value: {{ .Values.clickhouse.database | quote }}
 - name: CLICKHOUSE_HOST
