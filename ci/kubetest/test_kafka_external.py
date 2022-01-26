@@ -1,5 +1,3 @@
-import logging
-
 import pytest
 
 from utils import cleanup_k8s, install_chart, install_custom_kafka, is_posthog_healthy, wait_for_pods_to_be_ready
@@ -12,11 +10,6 @@ kafka:
 
 externalKafka:
   brokers: "kafka0:9092"
-
-# Disable zookeeper as we will use the built-in one from
-# bitnami/kafka (see utils.install_custom_kafka)
-zookeeper:
-    enabled: false
 
 #
 # For the purpose of this test, let's disable service persistence

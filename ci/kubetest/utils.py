@@ -153,6 +153,7 @@ def install_custom_kafka(namespace="posthog"):
           helm upgrade --install \
             --namespace {namespace} \
             kafka bitnami/kafka \
+            --version "12.6.0" \
             --set zookeeper.enabled=true \
             --set replicaCount=1
         """.format(
