@@ -69,6 +69,8 @@ spec:
         {{- include "snippet.redis-env" . | indent 8 }}
         - name: SITE_URL
           value: {{ template "posthog.site.url" . }}
+        - name: STATIC_URL
+          value: {{ default "/static/" .Values.web.staticUrl | quote }}
         - name: DEPLOYMENT
           value: {{ template "posthog.deploymentEnv" . }}
         - name: SENTRY_DSN

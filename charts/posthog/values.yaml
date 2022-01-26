@@ -27,7 +27,7 @@ env:
 
 # -- PgBouncer setup
 pgbouncer:
-   # -- Whether to install PGBouncer or not
+  # -- Whether to install PGBouncer or not
   enabled: true
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
@@ -95,6 +95,8 @@ web:
     # requests:
     #   cpu: 300m
     #   memory: 300Mi
+  # -- Location from which application static assets (js, css, etc.) should be served
+  staticUrl: "/static/"
   # -- Env variables for web container
   env:
     # -- Set google oauth 2 key. Requires posthog ee license.
@@ -143,7 +145,7 @@ web:
     timeoutSeconds: 2
 
 worker:
-   # -- Whether to install the PostHog worker stack or not
+  # -- Whether to install the PostHog worker stack or not
   enabled: true
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for worker
@@ -175,7 +177,7 @@ worker:
 
 # How many plugin server instances to run
 plugins:
-   # -- Whether to install the PostHog plugin stack or not
+  # -- Whether to install the PostHog plugin stack or not
   enabled: true
   ingestion:
     # -- Whether to enable plugin-server based ingestion
@@ -534,7 +536,6 @@ clickhouse:
   ## @section Persistence parameters
   ##
   persistence:
-
     ## @param persistence.enabled Enable data persistence
     ##
     enabled: true
