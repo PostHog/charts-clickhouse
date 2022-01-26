@@ -34,7 +34,7 @@
   # Redis env variables
   {{- include "snippet.redis-env" . | indent 2 }}
 
-  {{- if .Values.clickhouse.enabled }}
+  # ClickHouse env variables
   - name: CLICKHOUSE_DATABASE
     value: {{ .Values.clickhouse.database | quote }}
   - name: CLICKHOUSE_HOST
@@ -55,7 +55,6 @@
     value: {{ .Values.clickhouse.verify | quote }}
   - name: CLICKHOUSE_ASYNC
     value: {{ .Values.clickhouse.async| quote }}
-  {{- end }}
 
   # Django specific settings
   - name: SECRET_KEY
