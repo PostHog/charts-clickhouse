@@ -8,7 +8,7 @@ image:
   sha:
   # -- Posthog image tag, e.g. release-1.31.1
   tag:
-  # -- Default image or tag, e.g. `:release-1.31.1` Do not overwrite!
+  # -- Default image or tag, e.g. `:release-1.31.1` Do not overwrite, use image.sha or image.tag instead.
   default: ":release-1.31.1"
   # -- Image pull policy
   pullPolicy: IfNotPresent
