@@ -38,6 +38,7 @@ tests:
     set:
       testTemplates.clickhouseEnvTest: true
       clickhouse.enabled: false
+      externalClickhouse.cluster: somecluster
       externalClickhouse.host: foo.bar.net
       externalClickhouse.user: adminuser
       externalClickhouse.password: hello
@@ -64,6 +65,7 @@ tests:
     set:
       testTemplates.clickhouseEnvTest: true
       clickhouse.enabled: false
+      externalClickhouse.cluster: somecluster
       externalClickhouse.host: foo.bar.net
       externalClickhouse.user: adminuser
       externalClickhouse.existingSecret: someExistingSecret
@@ -76,6 +78,7 @@ tests:
     set:
       testTemplates.clickhouseEnvTest: true
       clickhouse.enabled: false
+      externalClickhouse.cluster: somecluster
       externalClickhouse.host: foo.bar.net
       externalClickhouse.user: adminuser
     asserts:

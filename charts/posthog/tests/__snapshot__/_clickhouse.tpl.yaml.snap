@@ -35,7 +35,7 @@ should render with external clickhouse:
     - name: CLICKHOUSE_HOST
       value: foo.bar.net
     - name: CLICKHOUSE_CLUSTER
-      value: posthog
+      value: somecluster
     - name: CLICKHOUSE_DATABASE
       value: posthog
     - name: CLICKHOUSE_USER
@@ -67,7 +67,7 @@ should render with external clickhouse with secrets:
     - name: CLICKHOUSE_HOST
       value: foo.bar.net
     - name: CLICKHOUSE_CLUSTER
-      value: posthog
+      value: somecluster
     - name: CLICKHOUSE_DATABASE
       value: posthog
     - name: CLICKHOUSE_USER

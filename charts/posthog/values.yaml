@@ -577,7 +577,7 @@ clickhouse:
 ##
 externalClickhouse:
   host:
-  cluster: posthog
+  cluster:
   database: posthog
   user:
   password:

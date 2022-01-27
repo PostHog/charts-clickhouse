@@ -19,7 +19,7 @@
 - name: CLICKHOUSE_HOST
   value: {{ required "externalClickhouse.host is required if not clickhouse.enabled" .Values.externalClickhouse.host | quote }}
 - name: CLICKHOUSE_CLUSTER
-  value: {{ .Values.externalClickhouse.cluster | quote }}
+  value: {{ required "externalClickhouse.cluster is required if not clickhouse.enabled" .Values.externalClickhouse.cluster | quote }}
 - name: CLICKHOUSE_DATABASE
   value: {{ .Values.externalClickhouse.database | quote }}
 - name: CLICKHOUSE_USER
