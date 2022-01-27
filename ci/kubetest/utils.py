@@ -39,6 +39,13 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("✅ Done!")
 
 
+def cleanup_helm(namespaces=[NAMESPACE]):
+    log.debug("🔄 Making sure helm releases get removed...")
+    for namespace in namespaces:
+        exec_subprocess(f"helm uninstall posthog --namespace {namespace} || true")
+    log.debug("✅ Done!")
+
+
 def helm_install(HELM_INSTALL_CMD):
     log.debug("🔄 Deploying PostHog...")
     exec_subprocess(HELM_INSTALL_CMD)

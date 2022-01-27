@@ -3,6 +3,7 @@ import pytest
 from utils import (
     NAMESPACE,
     VALUES_DISABLE_EVERYTHING,
+    cleanup_helm,
     cleanup_k8s,
     exec_subprocess,
     install_chart,
@@ -113,4 +114,5 @@ def verify_can_connect_to_clickhouse(kube):
 
 @pytest.fixture(autouse=True)
 def before_each_cleanup():
-    cleanup_k8s(["default", NAMESPACE, "clickhouse"])
+    cleanup_k8s([NAMESPACE, "clickhouse"])
+    cleanup_helm([NAMESPACE, "clickhouse"])
