@@ -1,4 +1,4 @@
-name: e2e - k3s
+name: e2e - k6 ingestion test
 
 on:
   workflow_dispatch:
