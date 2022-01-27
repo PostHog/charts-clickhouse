@@ -35,7 +35,7 @@
   {{- include "snippet.redis-env" . | indent 2 }}
 
   # ClickHouse env variables
-  {{- include "snippet.clickhouse-env" . | indent 2 }}
+  {{- include "snippet.clickhouse-env" . | nindent 2 }}
 
   # Django specific settings
   - name: SECRET_KEY
