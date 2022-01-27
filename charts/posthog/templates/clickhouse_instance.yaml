@@ -6,10 +6,10 @@ metadata:
 spec:
   configuration:
     users:
-      admin/password: {{ .Values.clickhouse.password }}
-      admin/networks/ip: "0.0.0.0/0"
-      admin/profile: default
-      admin/quota: default
+      {{ .Values.clickhouse.user }}/password: {{ .Values.clickhouse.password }}
+      {{ .Values.clickhouse.user }}/networks/ip: "0.0.0.0/0"
+      {{ .Values.clickhouse.user }}/profile: default
+      {{ .Values.clickhouse.user }}/quota: default
 
     profiles:
       {{- merge dict .Values.clickhouse.profiles .Values.clickhouse.defaultProfiles | toYaml | nindent 6 }}

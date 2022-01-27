@@ -28,7 +28,7 @@ VALUES_EXTERNAL_CLICKHOUSE = {
         "enabled": True,
         "cluster": "kubetest",
         "database": "kubetest_db",
-        "user": "admin",  # :TODO: Chart lies about allowing to specify a non-admin user.
+        "user": "kubeuser",
         "password": "kubetestpw",
     },
     "zookeeper": {"enabled": True},
@@ -45,10 +45,8 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD = {
         "host": "clickhouse-posthog.clickhouse.svc.cluster.local",
         "cluster": "kubetest",
         "database": "kubetest_db",
-        "user": "admin",
+        "user": "kubeuser",
         "password": "kubetestpw",
-        # "existingSecret": "clickhouse-existing-secret",
-        # "existingSecretPasswordKey": "clickhouse-password"
     },
 }
 
@@ -58,7 +56,7 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET = {
         "host": "clickhouse-posthog.clickhouse.svc.cluster.local",
         "cluster": "kubetest",
         "database": "kubetest_db",
-        "user": "admin",
+        "user": "kubeuser",
         "existingSecret": "clickhouse-existing-secret",
         "existingSecretPasswordKey": "clickhouse-password",
     },
