@@ -1,4 +1,4 @@
-name: e2e - k3s (kubetest)
+name: e2e - kubetest
 
 on:
   workflow_dispatch:
