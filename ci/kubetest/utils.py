@@ -2,9 +2,9 @@ import logging
 import subprocess
 import tempfile
 import time
-import yaml
 
 import pytest
+import yaml
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
@@ -13,19 +13,18 @@ NAMESPACE = "posthog"
 
 VALUES_DISABLE_EVERYTHING = {
     "cloud": "local",
-
-    "web": { "enabled": False },
-    "migrate": { "enabled": False },
-    "events": { "enabled": False },
-    "worker": { "enabled": False },
-    "plugins": { "enabled": False },
-    "postgresql": { "enabled": False },
-    "redis": { "enabled": False },
-    "kafka": { "enabled": False },
-    "ingress": { "enabled": False },
-    "pgbouncer": { "enabled": False },
-    "clickhouse": { "enabled": False },
-    "zookeeper": { "enabled": False }
+    "web": {"enabled": False},
+    "migrate": {"enabled": False},
+    "events": {"enabled": False},
+    "worker": {"enabled": False},
+    "plugins": {"enabled": False},
+    "postgresql": {"enabled": False},
+    "redis": {"enabled": False},
+    "kafka": {"enabled": False},
+    "ingress": {"enabled": False},
+    "pgbouncer": {"enabled": False},
+    "clickhouse": {"enabled": False},
+    "zookeeper": {"enabled": False},
 }
 
 
