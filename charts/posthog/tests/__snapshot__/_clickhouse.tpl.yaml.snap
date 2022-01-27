@@ -72,11 +72,11 @@ should render with external clickhouse with secrets:
       value: posthog
     - name: CLICKHOUSE_USER
       value: adminuser
-    - name: POSTHOG_REDIS_PASSWORD
+    - name: CLICKHOUSE_PASSWORD
       valueFrom:
         secretKeyRef:
           key: clickhousePassword
-          name: RELEASE-NAME-posthog-redis-external
+          name: someExistingSecret
     - name: CLICKHOUSE_SECURE
       value: "false"
     - name: CLICKHOUSE_VERIFY
