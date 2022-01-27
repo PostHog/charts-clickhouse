@@ -106,7 +106,7 @@ def verify_can_connect_to_clickhouse(kube):
         ]
     )
 
-    # This will exit 0 if clickhouse is not connectable
+    # This command will exit with an error code if clickhouse is not connectable
     exec_subprocess(command)
 
 
