@@ -25,7 +25,7 @@
 - name: CLICKHOUSE_USER
   value: {{ required "externalClickhouse.user is required if not clickhouse.enabled" .Values.externalClickhouse.user | quote }}
 {{- if .Values.externalClickhouse.existingSecret }}
-- name: POSTHOG_REDIS_PASSWORD
+- name: CLICKHOUSE_PASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ include "posthog.clickhouse.secretName" . }}
@@ -71,10 +71,10 @@ Return true if a secret object for ClickHouse should be created
 Return the ClickHouse secret name
 */}}
 {{- define "posthog.clickhouse.secretName" -}}
-{{- if .Values.externalRedis.existingSecret }}
-    {{- .Values.externalRedis.existingSecret | quote -}}
+{{- if .Values.externalClickhouse.existingSecret }}
+    {{- .Values.externalClickhouse.existingSecret | quote -}}
 {{- else -}}
-    {{- printf "%s-external" (include "posthog.redis.fullname" .) -}}
+    {{- printf "%s-external" (include "posthog.clickhouse.fullname" .) -}}
 {{- end -}}
 {{- end -}}
 
@@ -85,6 +85,6 @@ Return the ClickHouse secret key
 {{- if .Values.externalClickhouse.existingSecret }}
     {{- required "You need to provide existingSecretPasswordKey when an existingSecret is specified in externalClickhouse" .Values.externalClickhouse.existingSecretPasswordKey | quote }}
 {{- else -}}
-    {{- printf "redis-password" -}}
+    {{- printf "clickhouse-password" -}}
 {{- end -}}
 {{- end -}}
