@@ -2,6 +2,7 @@ import logging
 import subprocess
 import tempfile
 import time
+import yaml
 
 import pytest
 
@@ -9,6 +10,23 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 
 NAMESPACE = "posthog"
+
+VALUES_DISABLE_EVERYTHING = {
+    "cloud": "local",
+
+    "web": { "enabled": False },
+    "migrate": { "enabled": False },
+    "events": { "enabled": False },
+    "worker": { "enabled": False },
+    "plugins": { "enabled": False },
+    "postgresql": { "enabled": False },
+    "redis": { "enabled": False },
+    "kafka": { "enabled": False },
+    "ingress": { "enabled": False },
+    "pgbouncer": { "enabled": False },
+    "clickhouse": { "enabled": False },
+    "zookeeper": { "enabled": False }
+}
 
 
 def cleanup_k8s(namespaces=["default", NAMESPACE]):
@@ -28,8 +46,10 @@ def helm_install(HELM_INSTALL_CMD):
     log.debug("✅ Done!")
 
 
-def install_chart(values_yaml):
+def install_chart(values, namespace=NAMESPACE):
     log.debug("🔄 Deploying PostHog...")
+
+    values_yaml = values if isinstance(values, str) else yaml.dump(values)
     with tempfile.NamedTemporaryFile(mode="w") as values_file:
         values_file.write(values_yaml)
         values_file.flush()
@@ -41,7 +61,7 @@ def install_chart(values_yaml):
                 -f {values_file.name} \
                 --timeout 30m \
                 --create-namespace \
-                --namespace posthog \
+                --namespace {namespace} \
                 posthog ../../charts/posthog \
                 --wait-for-jobs \
                 --wait
