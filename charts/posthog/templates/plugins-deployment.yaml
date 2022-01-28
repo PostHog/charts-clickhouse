@@ -152,7 +152,7 @@ spec:
           failureThreshold: {{ .Values.plugins.livenessProbe.failureThreshold }}
           httpGet:
             path: /_health
-            port: 5000
+            port: 6738
             scheme: HTTP
           initialDelaySeconds: {{ .Values.plugins.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.plugins.livenessProbe.periodSeconds }}
