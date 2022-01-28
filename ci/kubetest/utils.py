@@ -31,11 +31,9 @@ VALUES_DISABLE_EVERYTHING = {
 def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("🔄 Making sure the k8s cluster is empty...")
     for namespace in namespaces:
-        cmd = "kubectl delete all --all -n {namespace}".format(namespace=namespace)
-        cmd_run = subprocess.run(cmd, shell=True)
-        cmd_return_code = cmd_run.returncode
-        if cmd_return_code:
-            pytest.fail("❌ Error while running '{}'. Return code: {}".format(cmd, cmd_return_code))
+        exec_subprocess(f"kubectl delete all --all -n {namespace}")
+        if namespace != 'default':
+            exec_subprocess(f"kubectl delete namespace {namespace} --ignore-not-found")
     log.debug("✅ Done!")
 
 
