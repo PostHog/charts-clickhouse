@@ -32,8 +32,7 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("🔄 Making sure the k8s cluster is empty...")
     for namespace in namespaces:
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
-        if namespace != 'default':
-            exec_subprocess(f"kubectl delete namespace {namespace} --ignore-not-found")
+    exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found")
     log.debug("✅ Done!")
 
 
