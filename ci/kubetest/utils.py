@@ -32,7 +32,7 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("🔄 Making sure the k8s cluster is empty...")
     for namespace in namespaces:
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
-    exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found")
+    exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found", ignore_errors=True)
     log.debug("✅ Done!")
 
 
@@ -153,10 +153,10 @@ def install_custom_resources(filename, namespace="posthog"):
     log.debug("✅ Done!")
 
 
-def exec_subprocess(cmd):
+def exec_subprocess(cmd, ignore_errors=False):
     cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     cmd_return_code = cmd_run.returncode
-    if cmd_return_code:
+    if cmd_return_code and not ignore_errors:
         pytest.fail(
             f"""
         ❌ Error while running '{cmd}'.
