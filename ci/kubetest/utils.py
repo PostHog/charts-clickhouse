@@ -30,9 +30,9 @@ VALUES_DISABLE_EVERYTHING = {
 
 def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("🔄 Making sure the k8s cluster is empty...")
+    exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found", ignore_errors=True)
     for namespace in namespaces:
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
-    exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found", ignore_errors=True)
     log.debug("✅ Done!")
 
 
