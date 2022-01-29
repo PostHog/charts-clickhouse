@@ -31,6 +31,8 @@ VALUES_DISABLE_EVERYTHING = {
 def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("🔄 Making sure the k8s cluster is empty...")
     exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found", ignore_errors=True)
+    exec_subprocess("kubectl delete clusterrole clickhouse-operator-posthog --ignore-not-found")
+    exec_subprocess("kubectl delete clusterrolebinding clickhouse-operator-posthog --ignore-not-found")
     for namespace in namespaces:
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
     log.debug("✅ Done!")

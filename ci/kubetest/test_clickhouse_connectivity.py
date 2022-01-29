@@ -113,4 +113,3 @@ def verify_can_connect_to_clickhouse(kube):
 @pytest.fixture(autouse=True)
 def before_each_cleanup():
     cleanup_k8s([NAMESPACE, "clickhouse"])
-    cleanup_helm([NAMESPACE, "clickhouse"])
