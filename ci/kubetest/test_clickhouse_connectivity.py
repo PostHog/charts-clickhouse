@@ -3,11 +3,12 @@ import pytest
 from utils import (
     NAMESPACE,
     VALUES_DISABLE_EVERYTHING,
-    merge_yaml,
+    cleanup_helm,
     cleanup_k8s,
     exec_subprocess,
     install_chart,
     install_custom_resources,
+    merge_yaml,
     wait_for_pods_to_be_ready,
 )
 
@@ -28,7 +29,7 @@ VALUES_ACCESS_CLICKHOUSE = merge_yaml(
       enabled: true
     pgbouncer:
       enabled: true
-    """
+    """,
 )
 
 VALUES_EXTERNAL_CLICKHOUSE = merge_yaml(
@@ -43,7 +44,7 @@ VALUES_EXTERNAL_CLICKHOUSE = merge_yaml(
 
     zookeeper:
       enabled: true
-    """
+    """,
 )
 
 VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD = merge_yaml(
@@ -66,7 +67,7 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD = merge_yaml(
       database: kubetest_db
       user: kubeuser
       password: kubetestpw
-    """
+    """,
 )
 
 VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET = merge_yaml(
@@ -79,7 +80,7 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET = merge_yaml(
       user: kubeuser
       existingSecret: clickhouse-existing-secret
       existingSecretPasswordKey: clickhouse-password
-    """
+    """,
 )
 
 
@@ -133,3 +134,4 @@ def verify_can_connect_to_clickhouse(kube):
 @pytest.fixture(autouse=True)
 def before_each_cleanup():
     cleanup_k8s([NAMESPACE, "clickhouse"])
+    cleanup_helm([NAMESPACE, "clickhouse"])

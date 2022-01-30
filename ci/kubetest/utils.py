@@ -41,6 +41,7 @@ zookeeper:
     enabled: false
 """
 
+
 def merge_yaml(*yamls):
     result = {}
     for value in yamls:
@@ -50,11 +51,18 @@ def merge_yaml(*yamls):
 
 def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("🔄 Making sure the k8s cluster is empty...")
-    exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found", ignore_errors=True)
+    # :TODO: Remove finalizers for chi!
+    # kubectl patch chi posthog --all -p '{"metadata":{"finalizers":null}}' --type=merge
+
+    # exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found", ignore_errors=True)
     exec_subprocess("kubectl delete clusterrolebinding clickhouse-operator-posthog --ignore-not-found")
     exec_subprocess("kubectl delete clusterrole clickhouse-operator-posthog --ignore-not-found")
     for namespace in namespaces:
+        patch = '{"metadata":{"finalizers":null}}'
+        exec_subprocess(f"kubectl patch chi posthog -n {namespace} -p '{patch}' --type=merge", ignore_errors=True)
+        exec_subprocess(f"kubectl delete chi posthog -n {namespace} --ignore-not-found", ignore_errors=True)
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
+
     log.debug("✅ Done!")
 
 
@@ -176,7 +184,6 @@ def install_custom_resources(filename, namespace="posthog"):
 
 
 def exec_subprocess(cmd, ignore_errors=False):
-    print([cmd])
     cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     cmd_return_code = cmd_run.returncode
     if cmd_return_code and not ignore_errors:
