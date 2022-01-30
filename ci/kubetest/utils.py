@@ -9,30 +9,50 @@ import yaml
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 
+YamlString = str
+
 NAMESPACE = "posthog"
 
-VALUES_DISABLE_EVERYTHING = {
-    "cloud": "local",
-    "web": {"enabled": False},
-    "migrate": {"enabled": False},
-    "events": {"enabled": False},
-    "worker": {"enabled": False},
-    "plugins": {"enabled": False},
-    "postgresql": {"enabled": False},
-    "redis": {"enabled": False},
-    "kafka": {"enabled": False},
-    "ingress": {"enabled": False},
-    "pgbouncer": {"enabled": False},
-    "clickhouse": {"enabled": False},
-    "zookeeper": {"enabled": False},
-}
+VALUES_DISABLE_EVERYTHING: YamlString = """
+cloud: "local"
+web:
+    enabled: false
+migrate:
+    enabled: false
+events:
+    enabled: false
+worker:
+    enabled: false
+plugins:
+    enabled: false
+postgresql:
+    enabled: false
+redis:
+    enabled: false
+kafka:
+    enabled: false
+ingress:
+    enabled: false
+pgbouncer:
+    enabled: false
+clickhouse:
+    enabled: false
+zookeeper:
+    enabled: false
+"""
+
+def merge_yaml(*yamls):
+    result = {}
+    for value in yamls:
+        result.update(yaml.safe_load(value))
+    return yaml.dump(result)
 
 
 def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("🔄 Making sure the k8s cluster is empty...")
     exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found", ignore_errors=True)
-    exec_subprocess("kubectl delete clusterrole clickhouse-operator-posthog --ignore-not-found")
     exec_subprocess("kubectl delete clusterrolebinding clickhouse-operator-posthog --ignore-not-found")
+    exec_subprocess("kubectl delete clusterrole clickhouse-operator-posthog --ignore-not-found")
     for namespace in namespaces:
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
     log.debug("✅ Done!")

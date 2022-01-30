@@ -3,7 +3,7 @@ import pytest
 from utils import (
     NAMESPACE,
     VALUES_DISABLE_EVERYTHING,
-    cleanup_helm,
+    merge_yaml,
     cleanup_k8s,
     exec_subprocess,
     install_chart,
@@ -11,56 +11,76 @@ from utils import (
     wait_for_pods_to_be_ready,
 )
 
-VALUES_ACCESS_CLICKHOUSE = {
-    **VALUES_DISABLE_EVERYTHING,
-    "clickhouse": {"enabled": True},
-    "zookeeper": {"enabled": True},
-    "web": {"enabled": True},
-    "migrate": {"enabled": True},
-    "postgresql": {"enabled": True},
-    "redis": {"enabled": True},
-    "pgbouncer": {"enabled": True},
-}
+VALUES_ACCESS_CLICKHOUSE = merge_yaml(
+    VALUES_DISABLE_EVERYTHING,
+    """
+    clickhouse:
+      enabled: true
+    zookeeper:
+      enabled: true
+    web:
+      enabled: true
+    migrate:
+      enabled: true
+    postgresql:
+      enabled: true
+    redis:
+      enabled: true
+    pgbouncer:
+      enabled: true
+    """
+)
 
-VALUES_EXTERNAL_CLICKHOUSE = {
-    **VALUES_DISABLE_EVERYTHING,
-    "clickhouse": {
-        "enabled": True,
-        "cluster": "kubetest",
-        "database": "kubetest_db",
-        "user": "kubeuser",
-        "password": "kubetestpw",
-    },
-    "zookeeper": {"enabled": True},
-}
+VALUES_EXTERNAL_CLICKHOUSE = merge_yaml(
+    VALUES_DISABLE_EVERYTHING,
+    """
+    clickhouse:
+      enabled: true
+      cluster: kubetest
+      database: kubetest_db
+      user: kubeuser
+      password: kubetestpw
 
-VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD = {
-    **VALUES_DISABLE_EVERYTHING,
-    "web": {"enabled": True},
-    "migrate": {"enabled": True},
-    "postgresql": {"enabled": True},
-    "redis": {"enabled": True},
-    "pgbouncer": {"enabled": True},
-    "externalClickhouse": {
-        "host": "clickhouse-posthog.clickhouse.svc.cluster.local",
-        "cluster": "kubetest",
-        "database": "kubetest_db",
-        "user": "kubeuser",
-        "password": "kubetestpw",
-    },
-}
+    zookeeper:
+      enabled: true
+    """
+)
 
-VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET = {
-    **VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD,
-    "externalClickhouse": {
-        "host": "clickhouse-posthog.clickhouse.svc.cluster.local",
-        "cluster": "kubetest",
-        "database": "kubetest_db",
-        "user": "kubeuser",
-        "existingSecret": "clickhouse-existing-secret",
-        "existingSecretPasswordKey": "clickhouse-password",
-    },
-}
+VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD = merge_yaml(
+    VALUES_DISABLE_EVERYTHING,
+    """
+    web:
+      enabled: true
+    migrate:
+      enabled: true
+    postgresql:
+      enabled: true
+    redis:
+      enabled: true
+    pgbouncer:
+      enabled: true
+
+    externalClickhouse:
+      host: "clickhouse-posthog.clickhouse.svc.cluster.local"
+      cluster: kubetest
+      database: kubetest_db
+      user: kubeuser
+      password: kubetestpw
+    """
+)
+
+VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET = merge_yaml(
+    VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD,
+    """
+    externalClickhouse:
+      host: "clickhouse-posthog.clickhouse.svc.cluster.local"
+      cluster: kubetest
+      database: kubetest_db
+      user: kubeuser
+      existingSecret: clickhouse-existing-secret
+      existingSecretPasswordKey: clickhouse-password
+    """
+)
 
 
 def test_can_connect_from_web_pod(kube):
