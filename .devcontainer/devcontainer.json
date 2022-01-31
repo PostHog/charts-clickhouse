@@ -1,0 +1,20 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/ubuntu
+{
+	"name": "Ubuntu with kind",
+	"image": "mcr.microsoft.com/vscode/devcontainers/universal:1-linux",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-kubernetes-tools.vscode-kubernetes-tools",
+		"tomaciazek.ansible"
+	],
+
+	"forwardPorts": [8000, 4330],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": ".devcontainer/setup_container.sh"
+}
