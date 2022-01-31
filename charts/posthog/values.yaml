@@ -25,30 +25,6 @@ env:
   - name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
     value: "86400"
 
-# -- PgBouncer setup
-pgbouncer:
-   # -- Whether to install PGBouncer or not
-  enabled: true
-  hpa:
-    # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
-    # -- This experimental and set up based on cpu utilization
-    # -- Adding pgbouncers can cause running out of connections for Postgres
-    enabled: false
-    # -- CPU threshold percent for pgbouncer
-    cputhreshold: 60
-    # -- Min pods for pgbouncer
-    minpods: 1
-    # -- Max pods for pgbouncer
-    maxpods: 10
-  # -- How many replicas of pgbouncer to run. Ignored if hpa is used
-  replicacount: 1
-  # -- Additional env vars to be added to the pgbouncer deployment
-  env: []
-  # -- Additional volumeMounts to be added to the pgbouncer deployment
-  extraVolumeMounts: []
-  # -- Additional volumes to be added to the pgbouncer deployment
-  extraVolumes: []
-
 migrate:
   # -- Whether to install the PostHog migrate job or not
   enabled: true
@@ -376,6 +352,30 @@ postgresql:
   # When defined the `postgresqlPassword` field is ignored
   # existingSecret: secret-name
   # existingSecretKey: postgresql-password
+
+# -- PgBouncer setup
+pgbouncer:
+   # -- Whether to install PGBouncer or not
+  enabled: true
+  hpa:
+    # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
+    # -- This experimental and set up based on cpu utilization
+    # -- Adding pgbouncers can cause running out of connections for Postgres
+    enabled: false
+    # -- CPU threshold percent for pgbouncer
+    cputhreshold: 60
+    # -- Min pods for pgbouncer
+    minpods: 1
+    # -- Max pods for pgbouncer
+    maxpods: 10
+  # -- How many replicas of pgbouncer to run. Ignored if hpa is used
+  replicacount: 1
+  # -- Additional env vars to be added to the pgbouncer deployment
+  env: []
+  # -- Additional volumeMounts to be added to the pgbouncer deployment
+  extraVolumeMounts: []
+  # -- Additional volumes to be added to the pgbouncer deployment
+  extraVolumes: []
 
 redis:
   ## @param redis.enabled Whether to deploy a redis server to satisfy the applications requirements. To use an external redis instance set this to false and configure the externalRedis parameters
