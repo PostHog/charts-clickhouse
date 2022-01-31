@@ -96,13 +96,6 @@ Set postgres port
 {{- end -}}
 
 {{/*
-Set postgres password
-*/}}
-{{- define "posthog.postgresql.password" -}}
-{{ .Values.postgresql.postgresqlPassword | default "" }}
-{{- end -}}
-
-{{/*
 Set postgres password b64
 */}}
 {{- define "posthog.postgresql.passwordb64" -}}
