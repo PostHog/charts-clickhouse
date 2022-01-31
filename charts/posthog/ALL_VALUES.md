@@ -164,14 +164,12 @@ The following table lists the configurable parameters of the PostHog chart and t
 | zookeeper.replicaCount | int | `1` | replica count for zookeeper |
 | clickhouse.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouse.namespace | string | `nil` | Which namespace to install clickhouse and the clickhouse-operator to (defaults to namespace chart is installed to) |
+| clickhouse.cluster | string | `"posthog"` | Clickhouse cluster |
 | clickhouse.database | string | `"posthog"` | Clickhouse database |
 | clickhouse.user | string | `"admin"` | Clickhouse user |
 | clickhouse.password | string | `"a1f31e03-c88e-4ca6-a2df-ad49183d15d9"` | Clickhouse password |
-| clickhouse.host | string | `nil` | Set if not installing clickhouse operator |
-| clickhouse.replication | bool | `false` |  |
-| clickhouse.secure | bool | `false` |  |
-| clickhouse.verify | bool | `false` |  |
-| clickhouse.async | bool | `false` |  |
+| clickhouse.secure | bool | `false` | Whether to use TLS connection connecting to ClickHouse |
+| clickhouse.verify | bool | `false` | Whether to verify TLS certificate on connection to ClickHouse |
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
 | clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod |
 | clickhouse.resources | object | `{}` | Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
@@ -187,6 +185,15 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.persistence.size | string | `"20Gi"` |  |
 | clickhouse.profiles | object | `{}` |  |
 | clickhouse.defaultProfiles.default/allow_experimental_window_functions | string | `"1"` |  |
+| externalClickhouse.host | string | `nil` | Host of the external cluster. This is required when clickhouse.enabled is false |
+| externalClickhouse.cluster | string | `nil` | Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false |
+| externalClickhouse.database | string | `"posthog"` | Database name for the external cluster |
+| externalClickhouse.user | string | `nil` | User name for the external cluster to connect to the external cluster as |
+| externalClickhouse.password | string | `nil` | Password for the cluster. Ignored if existingClickhouse.existingSecret is set |
+| externalClickhouse.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the password |
+| externalClickhouse.existingSecretPasswordKey | string | `nil` | Name of the key pointing to the password in your Kubernetes secret |
+| externalClickhouse.secure | bool | `false` | Whether to use TLS connection connecting to ClickHouse |
+| externalClickhouse.verify | bool | `false` | Whether to verify TLS connection connecting to ClickHouse |
 | metrics.enabled | bool | `false` | Start an exporter for posthog metrics |
 | metrics.livenessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods livenessProbe settings |
 | metrics.readinessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods readinessProbe settings |
