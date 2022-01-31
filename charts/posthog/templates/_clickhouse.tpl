@@ -1,4 +1,4 @@
-{{/* Common ClickHouse ENV variables used by PostHog */}}
+{{/* Common ClickHouse ENV variables and helpers used by PostHog */}}
 {{- define "snippet.clickhouse-env" }}
 {{- if .Values.clickhouse.enabled -}}
 - name: CLICKHOUSE_HOST
