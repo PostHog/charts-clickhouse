@@ -1,7 +1,7 @@
 # Tests charts/posthog/templates/_clickhouse.tpl
 suite: _clickhouse.tpl template
 templates:
-  - templates/test-templates/clickhouse-env.yaml
+  - templates/test-templates.yaml
 
 tests:
   - it: should render with defaults
