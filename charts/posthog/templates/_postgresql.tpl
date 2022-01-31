@@ -9,12 +9,8 @@
 - name: POSTHOG_DB_PASSWORD
   valueFrom:
     secretKeyRef:
-      {{- if .Values.postgresql.existingSecret }}
-      name: {{ .Values.postgresql.existingSecret }}
-      {{- else }}
-      name: {{ template "posthog.postgresql.secret" . }}
-      {{- end }}
-      key: {{ template "posthog.postgresql.secretKey" . }}
+      name: {{ include "posthog.postgresql.secretName" . }}
+      key: {{ include "posthog.postgresql.secretPasswordKey" . }}
 - name: POSTHOG_POSTGRES_HOST
   value: {{ template "posthog.pgbouncer.host" . }}
 - name: POSTHOG_POSTGRES_PORT
@@ -32,12 +28,8 @@
 - name: POSTHOG_DB_PASSWORD
   valueFrom:
     secretKeyRef:
-    {{- if .Values.postgresql.existingSecret }}
-      name: {{ .Values.postgresql.existingSecret }}
-    {{- else }}
-      name: {{ template "posthog.postgresql.secret" . }}
-    {{- end }}
-      key: {{ template "posthog.postgresql.secretKey" . }}
+      name: {{ include "posthog.postgresql.secretName" . }}
+      key: {{ include "posthog.postgresql.secretPasswordKey" . }}
 # Connect directly to postgres (without pgbouncer) to avoid statement_timeout for longer-running queries
 - name: POSTHOG_POSTGRES_HOST
   value: {{ template "posthog.postgresql.host" . }}
@@ -64,8 +56,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{/*
 Set postgres secret
 */}}
-{{- define "posthog.postgresql.secret" -}}
-{{- if .Values.postgresql.enabled -}}
+{{- define "posthog.postgresql.secretName" -}}
+{{- if .Values.postgresql.existingSecret }}
+{{- .Values.postgresql.existingSecret | quote -}}
+{{- else if .Values.postgresql.enabled -}}
 {{- template "posthog.postgresql.fullname" . -}}
 {{- else -}}
 {{- template "posthog.fullname" . -}}
@@ -73,13 +67,13 @@ Set postgres secret
 {{- end -}}
 
 {{/*
-Set postgres secretKey
+Set postgres secret password key
 */}}
-{{- define "posthog.postgresql.secretKey" -}}
-{{- if .Values.postgresql.enabled -}}
-"postgresql-password"
+{{- define "posthog.postgresql.secretPasswordKey" -}}
+{{- if .Values.postgresql.existingSecret }}
+{{- required "postgresql.existingSecretKey is required when `existingSecret` is set" .Values.postgresql.existingSecretKey | quote -}}
 {{- else -}}
-{{- default "postgresql-password" .Values.postgresql.existingSecretKey | quote -}}
+"postgresql-password"
 {{- end -}}
 {{- end -}}
 
@@ -117,11 +111,4 @@ Set postgres password b64
 */}}
 {{- define "posthog.postgresql.passwordb64" -}}
 {{ .Values.postgresql.postgresqlPassword | default "" | b64enc | quote }}
-{{- end -}}
-
-{{/*
-Set postgres URL
-*/}}
-{{- define "posthog.postgresql.url" -}}
-    postgres://{{- .Values.postgresql.postgresqlUsername -}}:{{- template "posthog.postgresql.password" . -}}@{{- template "posthog.postgresql.host" .  -}}:{{- template "posthog.postgresql.port" . -}}/{{- .Values.postgresql.postgresqlDatabase }}
 {{- end -}}
