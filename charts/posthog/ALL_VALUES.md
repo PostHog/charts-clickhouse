@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 13.0.0](https://img.shields.io/badge/Version-13.0.0-informational?style=flat-square) ![AppVersion: 1.31.1](https://img.shields.io/badge/AppVersion-1.31.1-informational?style=flat-square)
+![Version: 13.0.1](https://img.shields.io/badge/Version-13.0.1-informational?style=flat-square) ![AppVersion: 1.32.0](https://img.shields.io/badge/AppVersion-1.32.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -12,8 +12,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 |-----|------|---------|-------------|
 | image.repository | string | `"posthog/posthog"` | Posthog image repository |
 | image.sha | string | `nil` | Posthog image sha, e.g. sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4 |
-| image.tag | string | `nil` | Posthog image tag, e.g. release-1.31.1 |
-| image.default | string | `":release-1.31.1"` | Default image or tag, e.g. `:release-1.31.1` Do not overwrite, use image.sha or image.tag instead. |
+| image.tag | string | `nil` | Posthog image tag, e.g. release-1.32.0 |
+| image.default | string | `":release-1.32.0"` | Default image or tag, e.g. `:release-1.32.0` Do not overwrite, use image.sha or image.tag instead. |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cloud | string | `nil` | Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
