@@ -4,21 +4,69 @@ import tempfile
 import time
 
 import pytest
+import yaml
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 
+YamlString = str
+
 NAMESPACE = "posthog"
+
+VALUES_DISABLE_EVERYTHING: YamlString = """
+cloud: "local"
+web:
+    enabled: false
+migrate:
+    enabled: false
+events:
+    enabled: false
+worker:
+    enabled: false
+plugins:
+    enabled: false
+postgresql:
+    enabled: false
+redis:
+    enabled: false
+kafka:
+    enabled: false
+ingress:
+    enabled: false
+pgbouncer:
+    enabled: false
+clickhouse:
+    enabled: false
+zookeeper:
+    enabled: false
+"""
+
+
+def merge_yaml(*yamls):
+    result = {}
+    for value in yamls:
+        result.update(yaml.safe_load(value))
+    return yaml.dump(result)
 
 
 def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("🔄 Making sure the k8s cluster is empty...")
+
+    exec_subprocess("kubectl delete clusterrolebinding clickhouse-operator-posthog --ignore-not-found")
+    exec_subprocess("kubectl delete clusterrole clickhouse-operator-posthog --ignore-not-found")
     for namespace in namespaces:
-        cmd = "kubectl delete all --all -n {namespace}".format(namespace=namespace)
-        cmd_run = subprocess.run(cmd, shell=True)
-        cmd_return_code = cmd_run.returncode
-        if cmd_return_code:
-            pytest.fail("❌ Error while running '{}'. Return code: {}".format(cmd, cmd_return_code))
+        patch = '{"metadata":{"finalizers":null}}'
+        exec_subprocess(f"kubectl patch chi posthog -n {namespace} -p '{patch}' --type=merge", ignore_errors=True)
+        exec_subprocess(f"kubectl delete chi posthog -n {namespace} --ignore-not-found", ignore_errors=True)
+        exec_subprocess(f"kubectl delete all --all -n {namespace}")
+
+    log.debug("✅ Done!")
+
+
+def cleanup_helm(namespaces=[NAMESPACE]):
+    log.debug("🔄 Making sure helm releases get removed...")
+    for namespace in namespaces:
+        exec_subprocess(f"helm uninstall posthog --namespace {namespace} || true")
     log.debug("✅ Done!")
 
 
@@ -28,8 +76,10 @@ def helm_install(HELM_INSTALL_CMD):
     log.debug("✅ Done!")
 
 
-def install_chart(values_yaml):
+def install_chart(values, namespace=NAMESPACE):
     log.debug("🔄 Deploying PostHog...")
+
+    values_yaml = values if isinstance(values, str) else yaml.dump(values)
     with tempfile.NamedTemporaryFile(mode="w") as values_file:
         values_file.write(values_yaml)
         values_file.flush()
@@ -41,7 +91,7 @@ def install_chart(values_yaml):
                 -f {values_file.name} \
                 --timeout 30m \
                 --create-namespace \
-                --namespace posthog \
+                --namespace {namespace} \
                 posthog ../../charts/posthog \
                 --wait-for-jobs \
                 --wait
@@ -130,10 +180,10 @@ def install_custom_resources(filename, namespace="posthog"):
     log.debug("✅ Done!")
 
 
-def exec_subprocess(cmd):
+def exec_subprocess(cmd, ignore_errors=False):
     cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     cmd_return_code = cmd_run.returncode
-    if cmd_return_code:
+    if cmd_return_code and not ignore_errors:
         pytest.fail(
             f"""
         ❌ Error while running '{cmd}'.
