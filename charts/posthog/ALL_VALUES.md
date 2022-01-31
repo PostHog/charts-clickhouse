@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 12.1.0](https://img.shields.io/badge/Version-12.1.0-informational?style=flat-square) ![AppVersion: 1.31.1](https://img.shields.io/badge/AppVersion-1.31.1-informational?style=flat-square)
+![Version: 13.0.0](https://img.shields.io/badge/Version-13.0.0-informational?style=flat-square) ![AppVersion: 1.31.1](https://img.shields.io/badge/AppVersion-1.31.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -18,16 +18,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | cloud | string | `nil` | Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, worker, and plugin server) |
-| pgbouncer | object | `{"enabled":true,"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
-| pgbouncer.enabled | bool | `true` | Whether to install PGBouncer or not |
-| pgbouncer.hpa.enabled | bool | `false` | Adding pgbouncers can cause running out of connections for Postgres |
-| pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for pgbouncer |
-| pgbouncer.hpa.minpods | int | `1` | Min pods for pgbouncer |
-| pgbouncer.hpa.maxpods | int | `10` | Max pods for pgbouncer |
-| pgbouncer.replicacount | int | `1` | How many replicas of pgbouncer to run. Ignored if hpa is used |
-| pgbouncer.env | list | `[]` | Additional env vars to be added to the pgbouncer deployment |
-| pgbouncer.extraVolumeMounts | list | `[]` | Additional volumeMounts to be added to the pgbouncer deployment |
-| pgbouncer.extraVolumes | list | `[]` | Additional volumes to be added to the pgbouncer deployment |
 | migrate.enabled | bool | `true` | Whether to install the PostHog migrate job or not |
 | events.enabled | bool | `true` | Whether to install the PostHog events stack or not |
 | events.hpa | object | `{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1}` | events horizontal pod autoscaler settings |
@@ -131,6 +121,16 @@ The following table lists the configurable parameters of the PostHog chart and t
 | postgresql.persistence.size | string | `"10Gi"` | PVC Storage Request for PostgreSQL volume |
 | postgresql.postgresqlHost | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
 | postgresql.postgresqlPort | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
+| pgbouncer | object | `{"enabled":true,"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
+| pgbouncer.enabled | bool | `true` | Whether to install PGBouncer or not |
+| pgbouncer.hpa.enabled | bool | `false` | Adding pgbouncers can cause running out of connections for Postgres |
+| pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for pgbouncer |
+| pgbouncer.hpa.minpods | int | `1` | Min pods for pgbouncer |
+| pgbouncer.hpa.maxpods | int | `10` | Max pods for pgbouncer |
+| pgbouncer.replicacount | int | `1` | How many replicas of pgbouncer to run. Ignored if hpa is used |
+| pgbouncer.env | list | `[]` | Additional env vars to be added to the pgbouncer deployment |
+| pgbouncer.extraVolumeMounts | list | `[]` | Additional volumeMounts to be added to the pgbouncer deployment |
+| pgbouncer.extraVolumes | list | `[]` | Additional volumes to be added to the pgbouncer deployment |
 | redis.enabled | bool | `true` |  |
 | redis.nameOverride | string | `"posthog-redis"` |  |
 | redis.fullnameOverride | string | `""` |  |
