@@ -109,7 +109,7 @@ Set postgres username
 */}}
 {{- define "posthog.postgresql.username" -}}
 {{- if .Values.postgresql.enabled -}}
-{{- .Values.postgresql.postgresqlUsername | quote -}}
+"postgres"
 {{- else -}}
 {{- .Values.externalPostgresql.postgresqlUsername | quote -}}
 {{- end -}}

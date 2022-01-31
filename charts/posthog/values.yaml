@@ -334,8 +334,6 @@ postgresql:
   nameOverride: posthog-postgresql
   # -- Postgresql database name
   postgresqlDatabase: posthog
-  # -- Postgresql database username
-  postgresqlUsername: postgres
   # -- Postgresql database password
   postgresqlPassword: postgres
   persistence:

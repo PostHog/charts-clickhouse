@@ -1,14 +1,14 @@
 should render with custom values:
   1: |
     - name: POSTHOG_DB_USER
-      value: customUser
+      value: postgres
     - name: POSTHOG_DB_NAME
       value: customDb
     - name: POSTHOG_DB_PASSWORD
       valueFrom:
         secretKeyRef:
           key: postgresql-password
-          name: RELEASE-NAME-customName
+          name: RELEASE-NAME-posthog
     - name: POSTHOG_POSTGRES_HOST
       value: RELEASE-NAME-customName
     - name: POSTHOG_POSTGRES_PORT
@@ -25,7 +25,7 @@ should render with defaults:
       valueFrom:
         secretKeyRef:
           key: postgresql-password
-          name: RELEASE-NAME-posthog-postgresql
+          name: RELEASE-NAME-posthog
     - name: POSTHOG_POSTGRES_HOST
       value: RELEASE-NAME-posthog-postgresql
     - name: POSTHOG_POSTGRES_PORT
