@@ -80,16 +80,13 @@ spec:
             secretKeyRef:
               name: {{ template "posthog.fullname" . }}
               key: posthog-secret
-        - name: DATABASE_URL
-          value: {{ template "posthog.pgbouncer.url" . }}
-        - name: USING_PGBOUNCER
-          value: 'true'
         {{- if .Values.statsd.enabled }}
         - name: STATSD_HOST
           value: {{ template "posthog.statsd.host" . }}
         - name: STATSD_PORT
           value: "9125"
         {{- end }}
+        {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
