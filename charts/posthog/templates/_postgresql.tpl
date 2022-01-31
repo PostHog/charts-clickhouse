@@ -1,4 +1,6 @@
 {{/* Common PostgreSQL and pgbouncer ENV variables and helpers used by PostHog */}}
+
+{{/* ENV used by posthog deployments for connecting to postgresql */}}
 {{- define "snippet.postgresql-env" }}
 - name: POSTHOG_DB_USER
   value: {{ default "posthog" .Values.postgresql.postgresqlUsername | quote }}
@@ -19,6 +21,30 @@
   value: {{ include "posthog.pgbouncer.port" . | quote }}
 - name: USING_PGBOUNCER
   value: 'true'
+{{- end }}
+
+{{/* ENV used by migrate job for connecting to postgresql */}}
+{{- define "snippet.postgresql-migrate-env" }}
+- name: POSTHOG_DB_USER
+  value: {{ default "posthog" .Values.postgresql.postgresqlUsername | quote }}
+- name: POSTHOG_DB_NAME
+  value: {{ default "posthog" .Values.postgresql.postgresqlDatabase | quote }}
+- name: POSTHOG_DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+    {{- if .Values.postgresql.existingSecret }}
+      name: {{ .Values.postgresql.existingSecret }}
+    {{- else }}
+      name: {{ template "posthog.postgresql.secret" . }}
+    {{- end }}
+      key: {{ template "posthog.postgresql.secretKey" . }}
+# Connect directly to postgres (without pgbouncer) to avoid statement_timeout for longer-running queries
+- name: POSTHOG_POSTGRES_HOST
+  value: {{ template "posthog.postgresql.host" . }}
+- name: POSTHOG_POSTGRES_PORT
+  value: {{ include "posthog.postgresql.port" . | quote }}
+- name: USING_PGBOUNCER
+  value: 'false'
 {{- end }}
 
 {{/*
