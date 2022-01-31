@@ -10,9 +10,9 @@ from utils import (
     wait_for_pods_to_be_ready,
 )
 
-# :TODO: postgresqlUsername and nameOverride don't work as expected - debug and fix!
 VALUES_INTERNAL_POSTGRESQL_OVERRIDES = """
 postgresql:
+  nameOverride: kubetest-pg
   postgresqlDatabase: kubetest_db
   postgresqlPassword: kubetest_password
 """
