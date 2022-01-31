@@ -82,25 +82,6 @@ spec:
             secretKeyRef:
               name: {{ template "posthog.fullname" . }}
               key: posthog-secret
-        - name: POSTHOG_DB_USER
-          value: {{ default "posthog" .Values.postgresql.postgresqlUsername | quote }}
-        - name: POSTHOG_DB_NAME
-          value: {{ default "posthog" .Values.postgresql.postgresqlDatabase | quote }}
-        - name: POSTHOG_DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-            {{- if .Values.postgresql.existingSecret }}
-              name: {{ .Values.postgresql.existingSecret }}
-            {{- else }}
-              name: {{ template "posthog.postgresql.secret" . }}
-            {{- end }}
-              key: {{ template "posthog.postgresql.secretKey" . }}
-        - name: POSTHOG_POSTGRES_HOST
-          value: {{ template "posthog.pgbouncer.host" . }}
-        - name: POSTHOG_POSTGRES_PORT
-          value: {{ include "posthog.pgbouncer.port" . | quote }}
-        - name: USING_PGBOUNCER
-          value: 'true'
         {{- if .Values.statsd.enabled }}
         - name: STATSD_HOST
           value: {{ template "posthog.statsd.host" . }}
@@ -130,6 +111,7 @@ spec:
           value: {{ .Values.email.from_email | quote }}
         - name: PRIMARY_DB
           value: clickhouse
+        {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
