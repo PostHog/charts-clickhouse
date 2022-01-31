@@ -46,6 +46,7 @@ externalPostgresql:
   existingSecretPasswordKey: postgresql-password
 """
 
+
 @pytest.mark.parametrize(
     "values,resources_to_install",
     [
@@ -59,12 +60,15 @@ externalPostgresql:
         pytest.param(
             VALUES_EXTERNAL_POSTGRESQL_WITH_PASSWORD,
             ["./custom_k8s_resources/postgresql_external.yaml"],
-            id="EXTERNAL_POSTGRESQL_WITH_PASSWORD"
+            id="EXTERNAL_POSTGRESQL_WITH_PASSWORD",
         ),
         pytest.param(
             VALUES_EXTERNAL_POSTGRESQL_WITH_EXISTING_SECRET,
-            ["./custom_k8s_resources/postgresql_existing_secret.yaml", "./custom_k8s_resources/postgresql_external.yaml"],
-            id="EXTERNAL_POSTGRESQL_WITH_EXISTING_SECRET"
+            [
+                "./custom_k8s_resources/postgresql_existing_secret.yaml",
+                "./custom_k8s_resources/postgresql_external.yaml",
+            ],
+            id="EXTERNAL_POSTGRESQL_WITH_EXISTING_SECRET",
         ),
     ],
 )
