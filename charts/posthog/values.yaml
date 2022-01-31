@@ -6,10 +6,10 @@ image:
   repository: posthog/posthog
   # -- Posthog image sha, e.g. sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4
   sha:
-  # -- Posthog image tag, e.g. release-1.31.1
+  # -- Posthog image tag, e.g. release-1.32.0
   tag:
-  # -- Default image or tag, e.g. `:release-1.31.1` Do not overwrite, use image.sha or image.tag instead.
-  default: ":release-1.31.1"
+  # -- Default image or tag, e.g. `:release-1.32.0` Do not overwrite, use image.sha or image.tag instead.
+  default: ":release-1.32.0"
   # -- Image pull policy
   pullPolicy: IfNotPresent
 
