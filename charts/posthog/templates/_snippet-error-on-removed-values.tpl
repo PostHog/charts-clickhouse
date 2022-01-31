@@ -11,7 +11,11 @@
 {{- else if .Values.clickhouse.host }}
     {{- required (printf (include "snippet.error-on-removed-values-template" .) "clickhouse.host has been moved to externalClickhouse.host" "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-13xx") nil -}}
 {{- else if .Values.clickhouse.replication }}
-    {{- required (printf (include "snippet.error-on-removed-values-template" .) "clickhouse.replication has been removed" "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-13xx") nil -}}
+    {{- required (printf (include "snippet.error-on-removed-values-template" .) "clickhouse.replication has been removed" "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-12xx") nil -}}
+{{- else if .Values.postgresql.postgresqlHost }}
+    {{- required (printf (include "snippet.error-on-removed-values-template" .) "postgresql.postgresqlHost has been moved to externalPostgresql.postgresqlHost" "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-13xx") nil -}}
+{{- else if .Values.postgresql.postgresqlPort }}
+    {{- required (printf (include "snippet.error-on-removed-values-template" .) "postgresql.postgresqlPort has been moved to externalPostgresql.postgresqlPort" "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-13xx") nil -}}
 {{- end -}}
 {{- end -}}
 

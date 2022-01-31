@@ -56,18 +56,18 @@ spec:
         - containerPort: 6543
         env:
         - name: DB_USER
-          value: {{ .Values.postgresql.postgresqlUsername | quote }}
+          value: {{ include "posthog.postgresql.username" . }}
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ include "posthog.postgresql.secretName" . }}
               key: {{ include "posthog.postgresql.secretPasswordKey" . }}
         - name: DB_HOST
-          value: {{ template "posthog.postgresql.host" . }}
+          value: {{ include "posthog.postgresql.host" . }}
         - name: DB_PORT
           value: {{ include "posthog.postgresql.port" . | quote }}
         - name: DB_NAME
-          value: {{ .Values.postgresql.postgresqlDatabase | quote }}
+          value: {{ include "posthog.postgresql.database" . }}
         - name: LISTEN_PORT
           value: "6543"
         - name: MAX_CLIENT_CONN

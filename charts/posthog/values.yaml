@@ -343,14 +343,25 @@ postgresql:
     enabled: true
     # -- PVC Storage Request for PostgreSQL volume
     size: 10Gi
-  # -- Host postgres is accessible from. Only set when internal PG is disabled
-  postgresqlHost:
-  # -- Host postgres is accessible from. Only set when internal PG is disabled
-  postgresqlPort:
-  # postgresqlHost: postgres
-  # postgresqlPort: 5432
   # -- Secret containing desired postgresql password. Secret must be behind key `postgresql-password`.  When defined the `postgresqlPassword` field is ignored
   existingSecret:
+
+externalPostgresql:
+  # -- Host postgresql is accessible from
+  postgresqlHost:
+  # -- Port postgresql is accessible from
+  postgresqlPort: 5432
+  # -- Postgresql database
+  postgresqlDatabase:
+  # -- Postgresql username. Must be admin, required by posthog migrations
+  postgresqlUsername:
+  # -- Postgresql password. Either this or `existingSecret` must be set
+  postgresqlPassword:
+
+  # -- Name of an existing Kubernetes secret object containing the password
+  existingSecret:
+  # -- Name of the key pointing to the password in your Kubernetes secret
+  existingSecretPasswordKey: postgresql-password
 
 # -- PgBouncer setup
 pgbouncer:

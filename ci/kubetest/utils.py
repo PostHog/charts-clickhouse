@@ -89,6 +89,7 @@ def install_chart(values, namespace=NAMESPACE):
             helm upgrade \
                 --install \
                 -f {values_file.name} \
+                --set cloud=local \
                 --timeout 30m \
                 --create-namespace \
                 --namespace {namespace} \

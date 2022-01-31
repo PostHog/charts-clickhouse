@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql-external
+  labels:
+    app: postgresql
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      containers:
+      - name: postgresql
+        image: postgres:13
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: kubetest_db
+        - name: POSTGRES_USER
+          value: kubetest_user
+        - name: POSTGRES_PASSWORD
+          value: kubetest_password
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: "md5"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-external
+  labels:
+    app: postgresql
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgresql

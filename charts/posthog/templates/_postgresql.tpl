@@ -3,9 +3,9 @@
 {{/* ENV used by posthog deployments for connecting to postgresql */}}
 {{- define "snippet.postgresql-env" }}
 - name: POSTHOG_DB_USER
-  value: {{ default "posthog" .Values.postgresql.postgresqlUsername | quote }}
+  value: {{ include "posthog.postgresql.username" . }}
 - name: POSTHOG_DB_NAME
-  value: {{ default "posthog" .Values.postgresql.postgresqlDatabase | quote }}
+  value: {{ include "posthog.postgresql.database" . }}
 - name: POSTHOG_DB_PASSWORD
   valueFrom:
     secretKeyRef:
@@ -22,9 +22,9 @@
 {{/* ENV used by migrate job for connecting to postgresql */}}
 {{- define "snippet.postgresql-migrate-env" }}
 - name: POSTHOG_DB_USER
-  value: {{ default "posthog" .Values.postgresql.postgresqlUsername | quote }}
+  value: {{ include "posthog.postgresql.username" . }}
 - name: POSTHOG_DB_NAME
-  value: {{ default "posthog" .Values.postgresql.postgresqlDatabase | quote }}
+  value: {{ include "posthog.postgresql.database" . }}
 - name: POSTHOG_DB_PASSWORD
   valueFrom:
     secretKeyRef:
@@ -53,14 +53,19 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
+
+{{- define "posthog.postgresql.createSecret" -}}
+{{ not (or .Values.postgresql.existingSecret .Values.externalPostgresql.existingSecret) }}
+{{- end -}}
+
 {{/*
 Set postgres secret
 */}}
 {{- define "posthog.postgresql.secretName" -}}
-{{- if .Values.postgresql.existingSecret }}
+{{- if and .Values.postgresql.enabled .Values.postgresql.existingSecret }}
 {{- .Values.postgresql.existingSecret | quote -}}
-{{- else if .Values.postgresql.enabled -}}
-{{- template "posthog.postgresql.fullname" . -}}
+{{- else if and (not .Values.postgresql.enabled) .Values.externalPostgresql.existingSecret }}
+{{- .Values.externalPostgresql.existingSecret | quote -}}
 {{- else -}}
 {{- template "posthog.fullname" . -}}
 {{- end -}}
@@ -70,7 +75,11 @@ Set postgres secret
 Set postgres secret password key
 */}}
 {{- define "posthog.postgresql.secretPasswordKey" -}}
+{{- if .Values.postgresql.enabled -}}
 "postgresql-password"
+{{- else -}}
+{{- .Values.externalPostgresql.existingSecretPasswordKey | quote -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -80,7 +89,7 @@ Set postgres host
 {{- if .Values.postgresql.enabled -}}
 {{- template "posthog.postgresql.fullname" . -}}
 {{- else -}}
-{{- .Values.postgresql.postgresqlHost | default "" -}}
+{{- required "externalPostgresql.postgresqlHost is required if not postgresql.enabled" .Values.externalPostgresql.postgresqlHost | quote }}
 {{- end -}}
 {{- end -}}
 
@@ -89,15 +98,41 @@ Set postgres port
 */}}
 {{- define "posthog.postgresql.port" -}}
 {{- if .Values.postgresql.enabled -}}
-    5432
+5432
 {{- else -}}
-{{- default "5432" .Values.postgresql.postgresqlPort -}}
+{{- .Values.externalPostgresql.postgresqlPort -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Set postgres password b64
+Set postgres username
 */}}
-{{- define "posthog.postgresql.passwordb64" -}}
-{{ .Values.postgresql.postgresqlPassword | default "" | b64enc | quote }}
+{{- define "posthog.postgresql.username" -}}
+{{- if .Values.postgresql.enabled -}}
+{{- .Values.postgresql.postgresqlUsername | quote -}}
+{{- else -}}
+{{- .Values.externalPostgresql.postgresqlUsername | quote -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Set postgres database
+*/}}
+{{- define "posthog.postgresql.database" -}}
+{{- if .Values.postgresql.enabled -}}
+{{- .Values.postgresql.postgresqlDatabase | quote -}}
+{{- else -}}
+{{- .Values.externalPostgresql.postgresqlDatabase | quote -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Set postgres password. Don't use this outside of secrets!
+*/}}
+{{- define "posthog.postgresql.password" -}}
+{{- if .Values.postgresql.enabled -}}
+{{- .Values.postgresql.postgresqlPassword -}}
+{{- else -}}
+{{- .Values.externalPostgresql.postgresqlPassword -}}
+{{- end -}}
 {{- end -}}
