@@ -564,26 +564,26 @@ clickhouse:
   defaultProfiles:
     default/allow_experimental_window_functions: "1"
 
-## External ClickHouse cluster;
-## @param existingClickhouse.host Host of the external cluster
-## @param existingClickhouse.cluster Name of the external cluster to run DDL queries on
-## @param existingClickhouse.database Database name for the external cluster
-## @param existingClickhouse.user User name for the external cluster to connect to the external cluster as
-## @param existingClickhouse.password Password for the cluster. Ignored if existingClickhouse.existingSecret is set
-## @param existingClickhouse.existingSecret Name of an existing Kubernetes secret object containing the password
-## @param existingClickhouse.existingSecretPasswordKey Name of the key pointing to the password in your Kubernetes secret
-## @param existingClickhouse.secure Whether to use TLS connection connecting to ClickHouse
-## @param existingClickhouse.verify Whether to verify TLS connection connecting to ClickHouse
+## External clickhouse configuration
 ##
 externalClickhouse:
+  # -- Host of the external cluster. This is required when clickhouse.enabled is false
   host:
+  # -- Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false
   cluster:
+  # -- Database name for the external cluster
   database: posthog
+  # -- User name for the external cluster to connect to the external cluster as
   user:
+  # -- Password for the cluster. Ignored if existingClickhouse.existingSecret is set
   password:
+  # -- Name of an existing Kubernetes secret object containing the password
   existingSecret:
+  # -- Name of the key pointing to the password in your Kubernetes secret
   existingSecretPasswordKey:
+  # -- Whether to use TLS connection connecting to ClickHouse
   secure: false
+  # -- Whether to verify TLS connection connecting to ClickHouse
   verify: false
 
 ## Prometheus Exporter / Metrics
