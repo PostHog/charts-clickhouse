@@ -23,6 +23,14 @@ postgresql:
   postgresqlPassword: kubetest_password
 """
 
+VALUES_INTERNAL_POSTGRESQL_EXISTING_SECRET = """
+cloud: "local"
+
+postgresql:
+  existingSecret: postgresql-existing-secret
+  existingSecretKey: postgresql-password
+"""
+
 
 
 @pytest.mark.parametrize(
@@ -30,10 +38,15 @@ postgresql:
     [
         pytest.param(VALUES_INTERNAL_POSTGRESQL_DEFAULTS, [], id="INTERNAL_POSTGRESQL_DEFAULTS"),
         pytest.param(VALUES_INTERNAL_POSTGRESQL_OVERRIDES, [], id="INTERNAL_POSTGRESQL_OVERRIDES"),
+        pytest.param(VALUES_INTERNAL_POSTGRESQL_EXISTING_SECRET, ["./custom_k8s_resources/postgresql_existing_secret.yaml"], id="INTERNAL_POSTGRESQL_EXISTING_SECRET"),
     ]
 )
 def test_can_connect_from_web_pod(values, resources_to_install, kube):
     cleanup_k8s([NAMESPACE])
+    exec_subprocess("kubectl delete pvc --all --all-namespaces")
+
+    for resource in resources_to_install:
+        install_custom_resources(resource)
 
     install_chart(values)
     wait_for_pods_to_be_ready(kube)
