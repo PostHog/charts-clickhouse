@@ -38,8 +38,7 @@ spec:
           - -c
           - |
             python manage.py notify_helm_install || true
-            python manage.py migrate
-            python manage.py migrate_clickhouse
+            python manage.py migrate && python manage.py migrate_clickhouse
         env:
         # Redis env variables
         {{- include "snippet.redis-env" . | indent 8 }}
