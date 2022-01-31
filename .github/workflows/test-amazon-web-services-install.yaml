@@ -9,6 +9,9 @@ name: e2e - Amazon Web Services (install)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   aws-install:

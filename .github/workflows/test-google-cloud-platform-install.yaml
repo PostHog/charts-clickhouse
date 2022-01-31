@@ -9,6 +9,9 @@ name: e2e - Google Cloud Platform (install)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   gcp-install:
