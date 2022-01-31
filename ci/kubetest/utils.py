@@ -51,10 +51,7 @@ def merge_yaml(*yamls):
 
 def cleanup_k8s(namespaces=["default", NAMESPACE]):
     log.debug("🔄 Making sure the k8s cluster is empty...")
-    # :TODO: Remove finalizers for chi!
-    # kubectl patch chi posthog --all -p '{"metadata":{"finalizers":null}}' --type=merge
 
-    # exec_subprocess(f"kubectl delete chi --all --all-namespaces --ignore-not-found", ignore_errors=True)
     exec_subprocess("kubectl delete clusterrolebinding clickhouse-operator-posthog --ignore-not-found")
     exec_subprocess("kubectl delete clusterrole clickhouse-operator-posthog --ignore-not-found")
     for namespace in namespaces:
