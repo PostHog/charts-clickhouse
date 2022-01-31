@@ -16,7 +16,7 @@
     {{- required (printf (include "snippet.error-on-removed-values-template" .) "postgresql.postgresqlHost has been moved to externalPostgresql.postgresqlHost" "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-13xx") nil -}}
 {{- else if .Values.postgresql.postgresqlPort }}
     {{- required (printf (include "snippet.error-on-removed-values-template" .) "postgresql.postgresqlPort has been moved to externalPostgresql.postgresqlPort" "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-13xx") nil -}}
-{{- else if .Values.postgresql.postgresqlUsername }}
+{{- else if and .Values.postgresql.postgresqlUsername (ne .Values.postgresql.postgresqlUsername "postgres") }}
     {{- required (printf (include "snippet.error-on-removed-values-template" .) "postgresql.postgresqlUsername has been removed" "https://posthog.com/docs/self-host/deploy/upgrade-notes#upgrading-from-13xx") nil -}}
 {{- end -}}
 {{- end -}}
