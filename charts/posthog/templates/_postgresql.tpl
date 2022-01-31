@@ -70,11 +70,7 @@ Set postgres secret
 Set postgres secret password key
 */}}
 {{- define "posthog.postgresql.secretPasswordKey" -}}
-{{- if .Values.postgresql.existingSecret }}
-{{- required "postgresql.existingSecretKey is required when `existingSecret` is set" .Values.postgresql.existingSecretKey | quote -}}
-{{- else -}}
 "postgresql-password"
-{{- end -}}
 {{- end -}}
 
 {{/*

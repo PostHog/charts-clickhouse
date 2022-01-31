@@ -41,7 +41,7 @@ should render with existing secret:
     - name: POSTHOG_DB_PASSWORD
       valueFrom:
         secretKeyRef:
-          key: clickhousePassword
+          key: postgresql-password
           name: someExistingSecret
     - name: POSTHOG_POSTGRES_HOST
       value: RELEASE-NAME-posthog-postgresql

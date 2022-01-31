@@ -28,7 +28,6 @@ cloud: "local"
 
 postgresql:
   existingSecret: postgresql-existing-secret
-  existingSecretKey: postgresql-password
 """
 
 

@@ -23,3 +23,11 @@ tests:
     asserts:
       - matchSnapshot:
           path: data
+
+  - it: should render with existing secret
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.existingSecret: someExistingSecret
+    asserts:
+      - matchSnapshot:
+          path: data

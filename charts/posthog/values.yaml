@@ -349,9 +349,8 @@ postgresql:
   postgresqlPort:
   # postgresqlHost: postgres
   # postgresqlPort: 5432
-  # When defined the `postgresqlPassword` field is ignored
-  # existingSecret: secret-name
-  # existingSecretKey: postgresql-password
+  # -- Secret containing desired postgresql password. Secret must be behind key `postgresql-password`.  When defined the `postgresqlPassword` field is ignored
+  existingSecret:
 
 # -- PgBouncer setup
 pgbouncer:
