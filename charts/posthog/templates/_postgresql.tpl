@@ -1,4 +1,4 @@
-{{/* Common PostgreSQL and pgbouncer ENV variables and helpers used by PostHog */}}
+{{/* Common PostgreSQL ENV variables and helpers used by PostHog */}}
 
 {{/* ENV used by posthog deployments for connecting to postgresql */}}
 {{- define "snippet.postgresql-env" }}
@@ -124,25 +124,4 @@ Set postgres URL
 */}}
 {{- define "posthog.postgresql.url" -}}
     postgres://{{- .Values.postgresql.postgresqlUsername -}}:{{- template "posthog.postgresql.password" . -}}@{{- template "posthog.postgresql.host" .  -}}:{{- template "posthog.postgresql.port" . -}}/{{- .Values.postgresql.postgresqlDatabase }}
-{{- end -}}
-
-{{/*
-Set pgbouncer host
-*/}}
-{{- define "posthog.pgbouncer.host" -}}
-    {{- template "posthog.fullname" . }}-pgbouncer
-{{- end -}}
-
-{{/*
-Set pgbouncer port
-*/}}
-{{- define "posthog.pgbouncer.port" -}}
-    6543
-{{- end -}}
-
-{{/*
-Set pgbouncer URL
-*/}}
-{{- define "posthog.pgbouncer.url" -}}
-    postgres://{{- .Values.postgresql.postgresqlUsername -}}:{{- template "posthog.postgresql.password" . -}}@{{- template "posthog.pgbouncer.host" .  -}}:{{- template "posthog.pgbouncer.port" . -}}/{{- .Values.postgresql.postgresqlDatabase }}
 {{- end -}}
