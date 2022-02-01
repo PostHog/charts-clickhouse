@@ -53,11 +53,6 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 {{- end -}}
 
-
-{{- define "posthog.postgresql.createSecret" -}}
-{{ not (or .Values.postgresql.existingSecret .Values.externalPostgresql.existingSecret) }}
-{{- end -}}
-
 {{/*
 Set postgres secret
 */}}
@@ -141,5 +136,14 @@ Set postgres password. Don't use this outside of secrets!
 {{- .Values.postgresql.postgresqlPassword -}}
 {{- else if and (not .Values.postgresql.enabled) (not .Values.externalPostgresql.existingSecret) -}}
 {{- .Values.externalPostgresql.postgresqlPassword -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Set postgres secret created in secrets.yaml
+*/}}
+{{- define "posthog.postgresql.createdSecret" -}}
+{{- if not (or .Values.postgresql.existingSecret .Values.externalPostgresql.existingSecret) -}}
+postgresql-password: {{ include "posthog.postgresql.password" . | default "" | b64enc | quote -}}
 {{- end -}}
 {{- end -}}
