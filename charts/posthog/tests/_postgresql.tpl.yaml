@@ -64,14 +64,3 @@ tests:
     asserts:
       - failedTemplate:
           errorMessage: externalPostgresql.postgresqlHost is required if not postgresql.enabled
-
-  - it: requires either externalPostgresql.password or externalPostgresql.existingSecret
-    set:
-      testTemplates.postgresqlEnvTest: true
-      postgresql.enabled: false
-      externalPostgresql.postgresqlHost: pg.foo.bar
-      externalPostgresql.postgresqlDatabase: somedb
-      externalPostgresql.postgresqlUsername: someuser
-    asserts:
-      - failedTemplate:
-          errorMessage: externalPostgresql.password or externalPostgresql.existingSecret is required

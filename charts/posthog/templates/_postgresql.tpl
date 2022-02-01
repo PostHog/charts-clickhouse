@@ -62,13 +62,6 @@ Set postgres secret
 {{- else if and (not .Values.postgresql.enabled) .Values.externalPostgresql.existingSecret }}
 {{- .Values.externalPostgresql.existingSecret | quote -}}
 {{- else -}}
-
-{{- if and .Values.postgresql.enabled (not .Values.postgresql.postgresqlPassword) -}}
-{{ fail "postgresql.password or postgresql.existingSecret is required" }}
-{{- else if and (not .Values.postgresql.enabled) (not .Values.externalPostgresql.postgresqlPassword )}}
-{{ required "externalPostgresql.password or externalPostgresql.existingSecret is required" nil }}
-{{- end -}}
-
 {{- if .Values.postgresql.enabled -}}
 {{- template "posthog.postgresql.fullname" . -}}
 {{- else -}}
@@ -136,7 +129,7 @@ Set postgres database
 Set if postgres secret should be created
 */}}
 {{- define "posthog.postgresql.createSecret" -}}
-{{- if and (not .Values.postgresql.enabled) (not .Values.externalPostgresql.existingSecret) -}}
+{{- if and (not .Values.postgresql.enabled) .Values.externalPostgresql.postgresqlPassword -}}
 {{- true -}}
 {{- end -}}
 {{- end -}}
