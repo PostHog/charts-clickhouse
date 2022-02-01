@@ -31,3 +31,47 @@ tests:
     asserts:
       - matchSnapshot:
           path: data
+
+  - it: should render with external postgresql and password
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.enabled: false
+      externalPostgresql.postgresqlHost: pg.foo.bar
+      externalPostgresql.postgresqlDatabase: somedb
+      externalPostgresql.postgresqlUsername: someuser
+      externalPostgresql.postgresqlPassword: password123
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should render with external postgresql and existing secret
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.enabled: false
+      externalPostgresql.postgresqlHost: pg.foo.bar
+      externalPostgresql.postgresqlDatabase: somedb
+      externalPostgresql.postgresqlUsername: someuser
+      externalPostgresql.existingSecret: password123
+      externalPostgresql.existingSecretPasswordKey: somekey
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should raise when postgresql is disabled but no external postgresql
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.enabled: false
+    asserts:
+      - failedTemplate:
+          errorMessage: externalPostgresql.postgresqlHost is required if not postgresql.enabled
+
+  - it: requires either externalPostgresql.password or externalPostgresql.existingSecret
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.enabled: false
+      externalPostgresql.postgresqlHost: pg.foo.bar
+      externalPostgresql.postgresqlDatabase: somedb
+      externalPostgresql.postgresqlUsername: someuser
+    asserts:
+      - failedTemplate:
+          errorMessage: externalPostgresql.password or externalPostgresql.existingSecret is required

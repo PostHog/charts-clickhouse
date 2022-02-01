@@ -2,6 +2,10 @@
 
 {{/* ENV used by posthog deployments for connecting to postgresql */}}
 {{- define "snippet.postgresql-env" }}
+- name: POSTHOG_POSTGRES_HOST
+  value: {{ template "posthog.pgbouncer.host" . }}
+- name: POSTHOG_POSTGRES_PORT
+  value: {{ include "posthog.pgbouncer.port" . | quote }}
 - name: POSTHOG_DB_USER
   value: {{ include "posthog.postgresql.username" . }}
 - name: POSTHOG_DB_NAME
@@ -11,16 +15,17 @@
     secretKeyRef:
       name: {{ include "posthog.postgresql.secretName" . }}
       key: {{ include "posthog.postgresql.secretPasswordKey" . }}
-- name: POSTHOG_POSTGRES_HOST
-  value: {{ template "posthog.pgbouncer.host" . }}
-- name: POSTHOG_POSTGRES_PORT
-  value: {{ include "posthog.pgbouncer.port" . | quote }}
 - name: USING_PGBOUNCER
   value: 'true'
 {{- end }}
 
 {{/* ENV used by migrate job for connecting to postgresql */}}
 {{- define "snippet.postgresql-migrate-env" }}
+# Connect directly to postgres (without pgbouncer) to avoid statement_timeout for longer-running queries
+- name: POSTHOG_POSTGRES_HOST
+  value: {{ template "posthog.postgresql.host" . }}
+- name: POSTHOG_POSTGRES_PORT
+  value: {{ include "posthog.postgresql.port" . | quote }}
 - name: POSTHOG_DB_USER
   value: {{ include "posthog.postgresql.username" . }}
 - name: POSTHOG_DB_NAME
@@ -30,11 +35,6 @@
     secretKeyRef:
       name: {{ include "posthog.postgresql.secretName" . }}
       key: {{ include "posthog.postgresql.secretPasswordKey" . }}
-# Connect directly to postgres (without pgbouncer) to avoid statement_timeout for longer-running queries
-- name: POSTHOG_POSTGRES_HOST
-  value: {{ template "posthog.postgresql.host" . }}
-- name: POSTHOG_POSTGRES_PORT
-  value: {{ include "posthog.postgresql.port" . | quote }}
 - name: USING_PGBOUNCER
   value: 'false'
 {{- end }}
@@ -67,6 +67,13 @@ Set postgres secret
 {{- else if and (not .Values.postgresql.enabled) .Values.externalPostgresql.existingSecret }}
 {{- .Values.externalPostgresql.existingSecret | quote -}}
 {{- else -}}
+
+{{- if and .Values.postgresql.enabled (not .Values.postgresql.postgresqlPassword) -}}
+{{ fail "postgresql.password or postgresql.existingSecret is required" }}
+{{- else if and (not .Values.postgresql.enabled) (not .Values.externalPostgresql.postgresqlPassword )}}
+{{ required "externalPostgresql.password or externalPostgresql.existingSecret is required" nil }}
+{{- end -}}
+
 {{- template "posthog.fullname" . -}}
 {{- end -}}
 {{- end -}}
@@ -130,9 +137,9 @@ Set postgres database
 Set postgres password. Don't use this outside of secrets!
 */}}
 {{- define "posthog.postgresql.password" -}}
-{{- if .Values.postgresql.enabled -}}
+{{- if and .Values.postgresql.enabled (not .Values.postgresql.existingSecret) -}}
 {{- .Values.postgresql.postgresqlPassword -}}
-{{- else -}}
+{{- else if and (not .Values.postgresql.enabled) (not .Values.externalPostgresql.existingSecret) -}}
 {{- .Values.externalPostgresql.postgresqlPassword -}}
 {{- end -}}
 {{- end -}}
