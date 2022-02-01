@@ -69,7 +69,11 @@ Set postgres secret
 {{ required "externalPostgresql.password or externalPostgresql.existingSecret is required" nil }}
 {{- end -}}
 
-{{- template "posthog.fullname" . -}}
+{{- if .Values.postgresql.enabled -}}
+{{- template "posthog.postgresql.fullname" . -}}
+{{- else -}}
+{{- printf "%s-external" (include "posthog.fullname" .) -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -77,10 +81,10 @@ Set postgres secret
 Set postgres secret password key
 */}}
 {{- define "posthog.postgresql.secretPasswordKey" -}}
-{{- if .Values.postgresql.enabled -}}
-"postgresql-password"
-{{- else -}}
+{{- if and (not .Values.postgresql.enabled) .Values.externalPostgresql.existingSecretPasswordKey }}
 {{- .Values.externalPostgresql.existingSecretPasswordKey | quote -}}
+{{- else -}}
+"postgresql-password"
 {{- end -}}
 {{- end -}}
 
@@ -129,21 +133,10 @@ Set postgres database
 {{- end -}}
 
 {{/*
-Set postgres password. Don't use this outside of secrets!
+Set if postgres secret should be created
 */}}
-{{- define "posthog.postgresql.password" -}}
-{{- if and .Values.postgresql.enabled (not .Values.postgresql.existingSecret) -}}
-{{- .Values.postgresql.postgresqlPassword -}}
-{{- else if and (not .Values.postgresql.enabled) (not .Values.externalPostgresql.existingSecret) -}}
-{{- .Values.externalPostgresql.postgresqlPassword -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set postgres secret created in secrets.yaml
-*/}}
-{{- define "posthog.postgresql.createdSecret" -}}
-{{- if not (or .Values.postgresql.existingSecret .Values.externalPostgresql.existingSecret) -}}
-postgresql-password: {{ include "posthog.postgresql.password" . | default "" | b64enc | quote -}}
+{{- define "posthog.postgresql.createSecret" -}}
+{{- if and (not .Values.postgresql.enabled) (not .Values.externalPostgresql.existingSecret) -}}
+{{- true -}}
 {{- end -}}
 {{- end -}}

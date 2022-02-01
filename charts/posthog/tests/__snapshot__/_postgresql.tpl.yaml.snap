@@ -12,7 +12,7 @@ should render with custom values:
       valueFrom:
         secretKeyRef:
           key: postgresql-password
-          name: RELEASE-NAME-posthog
+          name: RELEASE-NAME-customName
     - name: USING_PGBOUNCER
       value: "false"
 should render with defaults:
@@ -29,7 +29,7 @@ should render with defaults:
       valueFrom:
         secretKeyRef:
           key: postgresql-password
-          name: RELEASE-NAME-posthog
+          name: RELEASE-NAME-posthog-postgresql
     - name: USING_PGBOUNCER
       value: "false"
 should render with existing secret:
@@ -80,6 +80,6 @@ should render with external postgresql and password:
       valueFrom:
         secretKeyRef:
           key: postgresql-password
-          name: RELEASE-NAME-posthog
+          name: RELEASE-NAME-posthog-external
     - name: USING_PGBOUNCER
       value: "false"
