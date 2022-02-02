@@ -16,7 +16,7 @@
     {{- else }}
       name: {{ template "posthog.fullname" . }}
     {{- end }}
-      key: smtp-password
+      key: {{ default "smtp-password" .Values.email.existingSecretKey | quote }}
 - name: EMAIL_USE_TLS
   value: {{ default "false" .Values.email.use_tls | quote }}
 - name: EMAIL_USE_SSL
