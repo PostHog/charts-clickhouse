@@ -1,0 +1,85 @@
+should render with custom values:
+  1: |
+    - name: POSTHOG_POSTGRES_HOST
+      value: RELEASE-NAME-customName
+    - name: POSTHOG_POSTGRES_PORT
+      value: "5432"
+    - name: POSTHOG_DB_USER
+      value: postgres
+    - name: POSTHOG_DB_NAME
+      value: customDb
+    - name: POSTHOG_DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: postgresql-password
+          name: RELEASE-NAME-customName
+    - name: USING_PGBOUNCER
+      value: "false"
+should render with defaults:
+  1: |
+    - name: POSTHOG_POSTGRES_HOST
+      value: RELEASE-NAME-posthog-postgresql
+    - name: POSTHOG_POSTGRES_PORT
+      value: "5432"
+    - name: POSTHOG_DB_USER
+      value: postgres
+    - name: POSTHOG_DB_NAME
+      value: posthog
+    - name: POSTHOG_DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: postgresql-password
+          name: RELEASE-NAME-posthog-postgresql
+    - name: USING_PGBOUNCER
+      value: "false"
+should render with existing secret:
+  1: |
+    - name: POSTHOG_POSTGRES_HOST
+      value: RELEASE-NAME-posthog-postgresql
+    - name: POSTHOG_POSTGRES_PORT
+      value: "5432"
+    - name: POSTHOG_DB_USER
+      value: postgres
+    - name: POSTHOG_DB_NAME
+      value: posthog
+    - name: POSTHOG_DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: postgresql-password
+          name: someExistingSecret
+    - name: USING_PGBOUNCER
+      value: "false"
+should render with external postgresql and existing secret:
+  1: |
+    - name: POSTHOG_POSTGRES_HOST
+      value: pg.foo.bar
+    - name: POSTHOG_POSTGRES_PORT
+      value: "5432"
+    - name: POSTHOG_DB_USER
+      value: someuser
+    - name: POSTHOG_DB_NAME
+      value: somedb
+    - name: POSTHOG_DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: somekey
+          name: password123
+    - name: USING_PGBOUNCER
+      value: "false"
+should render with external postgresql and password:
+  1: |
+    - name: POSTHOG_POSTGRES_HOST
+      value: pg.foo.bar
+    - name: POSTHOG_POSTGRES_PORT
+      value: "5432"
+    - name: POSTHOG_DB_USER
+      value: someuser
+    - name: POSTHOG_DB_NAME
+      value: somedb
+    - name: POSTHOG_DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: postgresql-password
+          name: RELEASE-NAME-posthog-external
+    - name: USING_PGBOUNCER
+      value: "false"

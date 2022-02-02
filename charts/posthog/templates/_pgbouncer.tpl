@@ -13,10 +13,3 @@ Set pgbouncer port
 {{- define "posthog.pgbouncer.port" -}}
     6543
 {{- end -}}
-
-{{/*
-Set pgbouncer URL
-*/}}
-{{- define "posthog.pgbouncer.url" -}}
-    postgres://{{- .Values.postgresql.postgresqlUsername -}}:{{- template "posthog.postgresql.password" . -}}@{{- template "posthog.pgbouncer.host" .  -}}:{{- template "posthog.pgbouncer.port" . -}}/{{- .Values.postgresql.postgresqlDatabase }}
-{{- end -}}
