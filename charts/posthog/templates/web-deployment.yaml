@@ -92,27 +92,6 @@ spec:
         - name: STATSD_PORT
           value: "9125"
         {{- end }}
-        - name: EMAIL_HOST
-          value: {{ default "" .Values.email.host | quote }}
-        - name: EMAIL_PORT
-          value: {{ default "" .Values.email.port | quote }}
-        - name: EMAIL_HOST_USER
-          value: {{ default "" .Values.email.user | quote }}
-        - name: EMAIL_HOST_PASSWORD
-          valueFrom:
-            secretKeyRef:
-            {{- if .Values.email.existingSecret }}
-              name: {{ .Values.email.existingSecret }}
-            {{- else }}
-              name: {{ template "posthog.fullname" . }}
-            {{- end }}
-              key: smtp-password
-        - name: EMAIL_USE_TLS
-          value: {{ default "false" .Values.email.use_tls | quote }}
-        - name: EMAIL_USE_SSL
-          value: {{ default "false" .Values.email.use_ssl | quote }}
-        - name: DEFAULT_FROM_EMAIL
-          value: {{ .Values.email.from_email | quote }}
         - name: SAML_ENTITY_ID
           value: {{ default "" .Values.saml.entity_id | quote }}
         - name: SAML_ACS_URL
@@ -139,6 +118,7 @@ spec:
           value: clickhouse
         {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
+        {{- include "snippet.email-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
         {{- if .Values.kafka.enabled }}
