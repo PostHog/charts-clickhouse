@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 13.1.0](https://img.shields.io/badge/Version-13.1.0-informational?style=flat-square) ![AppVersion: 1.32.0](https://img.shields.io/badge/AppVersion-1.32.0-informational?style=flat-square)
+![Version: 13.2.0](https://img.shields.io/badge/Version-13.2.0-informational?style=flat-square) ![AppVersion: 1.32.0](https://img.shields.io/badge/AppVersion-1.32.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -115,12 +115,17 @@ The following table lists the configurable parameters of the PostHog chart and t
 | postgresql.enabled | bool | `true` | Install postgres server on kubernetes (see below) |
 | postgresql.nameOverride | string | `"posthog-postgresql"` | Name override for postgresql app |
 | postgresql.postgresqlDatabase | string | `"posthog"` | Postgresql database name |
-| postgresql.postgresqlUsername | string | `"postgres"` | Postgresql database username |
 | postgresql.postgresqlPassword | string | `"postgres"` | Postgresql database password |
 | postgresql.persistence.enabled | bool | `true` | Enable persistence using PVC |
 | postgresql.persistence.size | string | `"10Gi"` | PVC Storage Request for PostgreSQL volume |
-| postgresql.postgresqlHost | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
-| postgresql.postgresqlPort | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
+| postgresql.existingSecret | string | `nil` | Secret containing desired postgresql password. Secret must be behind key `postgresql-password`.  When defined the `postgresqlPassword` field is ignored |
+| externalPostgresql.postgresqlHost | string | `nil` | Host postgresql is accessible from |
+| externalPostgresql.postgresqlPort | int | `5432` | Port postgresql is accessible from |
+| externalPostgresql.postgresqlDatabase | string | `nil` | Postgresql database |
+| externalPostgresql.postgresqlUsername | string | `nil` | Postgresql username. Must be admin, required by posthog migrations |
+| externalPostgresql.postgresqlPassword | string | `nil` | Postgresql password. Either this or `existingSecret` must be set |
+| externalPostgresql.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the password |
+| externalPostgresql.existingSecretPasswordKey | string | `"postgresql-password"` | Name of the key pointing to the password in your Kubernetes secret |
 | pgbouncer | object | `{"enabled":true,"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
 | pgbouncer.enabled | bool | `true` | Whether to install PGBouncer or not |
 | pgbouncer.hpa.enabled | bool | `false` | Adding pgbouncers can cause running out of connections for Postgres |
