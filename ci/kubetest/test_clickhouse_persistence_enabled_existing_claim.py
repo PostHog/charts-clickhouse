@@ -1,20 +1,25 @@
+import logging
+
 import pytest
 from kubernetes import client
 
 from utils import (
+    NAMESPACE,
     cleanup_k8s,
-    create_namespace_if_not_exists,
+    exec_subprocess,
     get_clickhouse_statefulset_spec,
     helm_install,
-    install_custom_resources,
     wait_for_pods_to_be_ready,
 )
+
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger()
 
 HELM_INSTALL_CMD = """
 helm upgrade \
     --install \
     -f ../../ci/values/kubetest/test_clickhouse_persistence_enabled_existing_claim.yaml \
-    --timeout 20m \
+    --timeout 30m \
     --create-namespace \
     --namespace posthog \
     posthog ../../charts/posthog \
@@ -23,11 +28,17 @@ helm upgrade \
 """
 
 
+def create_custom_pvc():
+    log.debug("🔄 Creating a custom Persistent Volume Claim...")
+    exec_subprocess(f"kubectl create namespace {NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -")
+    exec_subprocess(f"kubectl apply -n {NAMESPACE} -f clickhouse_existing_claim.yaml")
+    log.debug("✅ Done!")
+
+
 @pytest.fixture
 def setup(kube):
     cleanup_k8s()
-    create_namespace_if_not_exists()
-    install_custom_resources("./custom_k8s_resources/clickhouse_existing_claim.yaml")
+    create_custom_pvc()
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
 
