@@ -93,12 +93,6 @@ spec:
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
-        {{- if .Values.kafka.enabled }}
-        - name: KAFKA_ENABLED
-          value: "true"
-        - name: KAFKA_HOSTS
-          value: {{ template "posthog.kafka.url_no_protocol" . }}
-        {{- end }}
         {{- if .Values.plugins.ingestion.enabled }}
         - name: PLUGIN_SERVER_INGESTION
           value: 'true'

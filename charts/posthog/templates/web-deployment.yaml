@@ -125,7 +125,6 @@ spec:
         {{- include "snippet.email-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
-        {{- end }}
         {{- if .Values.plugins.ingestion.enabled }}
         - name: PLUGIN_SERVER_INGESTION
           value: 'true'
