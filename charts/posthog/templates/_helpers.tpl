@@ -29,7 +29,6 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 
-
 {{/*
 Set site url
 */}}
@@ -38,24 +37,6 @@ Set site url
     "https://{{ .Values.ingress.hostname }}"
 {{- else -}}
     "http://127.0.0.1:8000"
-{{- end -}}
-{{- end -}}
-
-{*
-   ------ POSTGRESQL ------
-*}
-
-{{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-*/}}
-{{- define "posthog.postgresql.fullname" -}}
-{{- if .Values.postgresql.fullnameOverride -}}
-{{- .Values.postgresql.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else if .Values.postgresql.nameOverride -}}
-{{- printf "%s-%s" .Release.Name .Values.postgresql.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" (include "posthog.fullname" .) "postgresql" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
 

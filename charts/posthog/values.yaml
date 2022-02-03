@@ -23,29 +23,6 @@ env:
   - name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
     value: "86400"
 
-pgbouncer:
-   # -- Whether to install PgBouncer or not as part of this release
-  enabled: true
-  hpa:
-    # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer.
-    #    This experimental and set up based on cpu utilization.
-    #    Adding pgbouncers can cause running out of connections for PostgreSQL.
-    enabled: false
-    # -- CPU threshold percent for pgbouncer
-    cputhreshold: 60
-    # -- Min pods for pgbouncer
-    minpods: 1
-    # -- Max pods for pgbouncer
-    maxpods: 10
-  # -- How many replicas of pgbouncer to run. Ignored if hpa is used
-  replicacount: 1
-  # -- Additional env vars to be added to the pgbouncer deployment
-  env: []
-  # -- Additional volumeMounts to be added to the pgbouncer deployment
-  extraVolumeMounts: []
-  # -- Additional volumes to be added to the pgbouncer deployment
-  extraVolumes: []
-
 migrate:
   # -- Whether to install the PostHog migrate job or not
   enabled: true
