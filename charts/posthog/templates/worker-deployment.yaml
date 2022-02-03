@@ -85,75 +85,17 @@ spec:
             secretKeyRef:
               name: {{ template "posthog.fullname" . }}
               key: posthog-secret
-        - name: POSTHOG_DB_USER
-          value: {{ default "posthog" .Values.postgresql.postgresqlUsername | quote }}
-        - name: POSTHOG_DB_NAME
-          value: {{ default "posthog" .Values.postgresql.postgresqlDatabase | quote }}
-        - name: POSTHOG_DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-            {{- if .Values.postgresql.existingSecret }}
-              name: {{ .Values.postgresql.existingSecret }}
-            {{- else }}
-              name: {{ template "posthog.postgresql.secret" . }}
-            {{- end }}
-              key: {{ template "posthog.postgresql.secretKey" . }}
-        - name: POSTHOG_POSTGRES_HOST
-          value: {{ template "posthog.pgbouncer.host" . }}
-        - name: POSTHOG_POSTGRES_PORT
-          value: {{ include "posthog.pgbouncer.port" . | quote }}
-        - name: USING_PGBOUNCER
-          value: 'true'
         {{- if .Values.statsd.enabled }}
         - name: STATSD_HOST
           value: {{ template "posthog.statsd.host" . }}
         - name: STATSD_PORT
           value: "9125"
         {{- end }}
-        - name: EMAIL_HOST
-          value: {{ default "" .Values.email.host | quote }}
-        - name: EMAIL_PORT
-          value: {{ default "" .Values.email.port | quote }}
-        - name: EMAIL_HOST_USER
-          value: {{ default "" .Values.email.user | quote }}
-        - name: EMAIL_HOST_PASSWORD
-          valueFrom:
-            secretKeyRef:
-            {{- if .Values.email.existingSecret }}
-              name: {{ .Values.email.existingSecret }}
-            {{- else }}
-              name: {{ template "posthog.fullname" . }}
-            {{- end }}
-              key: smtp-password
-        - name: EMAIL_USE_TLS
-          value: {{ default "false" .Values.email.use_tls | quote }}
-        - name: EMAIL_USE_SSL
-          value: {{ default "false" .Values.email.use_ssl | quote }}
-        - name: DEFAULT_FROM_EMAIL
-          value: {{ .Values.email.from_email | quote }}
-          {{- if .Values.clickhouse.enabled }}
         - name: PRIMARY_DB
           value: clickhouse
-        - name: CLICKHOUSE_DATABASE
-          value: {{ .Values.clickhouse.database | quote }}
-        - name: CLICKHOUSE_HOST
-          {{- if .Values.clickhouse.host }}
-          value: {{ .Values.clickhouse.host | quote }}
-          {{- else }}
-          value: {{ template "posthog.clickhouse.fullname" . }}
-          {{- end }}
-        - name: CLICKHOUSE_USER
-          value: {{ .Values.clickhouse.user | quote }}
-        - name: CLICKHOUSE_PASSWORD
-          value: {{ .Values.clickhouse.password | quote }}
-        - name: CLICKHOUSE_REPLICATION
-          value: {{ .Values.clickhouse.replication | quote }}
-        - name: CLICKHOUSE_SECURE
-          value: {{ .Values.clickhouse.secure | quote }}
-        - name: CLICKHOUSE_VERIFY
-          value: {{ .Values.clickhouse.verify | quote }}
-        - name: CLICKHOUSE_ASYNC
-          value: {{ .Values.clickhouse.async| quote }}
+        {{- include "snippet.postgresql-env" . | nindent 8 }}
+        {{- include "snippet.clickhouse-env" . | nindent 8 }}
+        {{- include "snippet.email-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
         {{- end }}

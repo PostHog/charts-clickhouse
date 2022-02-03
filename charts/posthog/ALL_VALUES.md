@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 12.0.0](https://img.shields.io/badge/Version-12.0.0-informational?style=flat-square) ![AppVersion: 1.31.1](https://img.shields.io/badge/AppVersion-1.31.1-informational?style=flat-square)
+![Version: 13.2.0](https://img.shields.io/badge/Version-13.2.0-informational?style=flat-square) ![AppVersion: 1.32.0](https://img.shields.io/badge/AppVersion-1.32.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -12,22 +12,12 @@ The following table lists the configurable parameters of the PostHog chart and t
 |-----|------|---------|-------------|
 | image.repository | string | `"posthog/posthog"` | Posthog image repository |
 | image.sha | string | `nil` | Posthog image sha, e.g. sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4 |
-| image.tag | string | `nil` | Posthog image tag, e.g. release-1.31.1 |
-| image.default | string | `":release-1.31.1"` | Default image or tag, e.g. `:release-1.31.1` Do not overwrite, use image.sha or image.tag instead. |
+| image.tag | string | `nil` | Posthog image tag, e.g. release-1.32.0 |
+| image.default | string | `":release-1.32.0"` | Default image or tag, e.g. `:release-1.32.0` Do not overwrite, use image.sha or image.tag instead. |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | cloud | string | `nil` | Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to |
 | env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Env vars to throw into every deployment (web, worker, and plugin server) |
-| pgbouncer | object | `{"enabled":true,"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
-| pgbouncer.enabled | bool | `true` | Whether to install PGBouncer or not |
-| pgbouncer.hpa.enabled | bool | `false` | Adding pgbouncers can cause running out of connections for Postgres |
-| pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for pgbouncer |
-| pgbouncer.hpa.minpods | int | `1` | Min pods for pgbouncer |
-| pgbouncer.hpa.maxpods | int | `10` | Max pods for pgbouncer |
-| pgbouncer.replicacount | int | `1` | How many replicas of pgbouncer to run. Ignored if hpa is used |
-| pgbouncer.env | list | `[]` | Additional env vars to be added to the pgbouncer deployment |
-| pgbouncer.extraVolumeMounts | list | `[]` | Additional volumeMounts to be added to the pgbouncer deployment |
-| pgbouncer.extraVolumes | list | `[]` | Additional volumes to be added to the pgbouncer deployment |
 | migrate.enabled | bool | `true` | Whether to install the PostHog migrate job or not |
 | events.enabled | bool | `true` | Whether to install the PostHog events stack or not |
 | events.hpa | object | `{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1}` | events horizontal pod autoscaler settings |
@@ -125,12 +115,27 @@ The following table lists the configurable parameters of the PostHog chart and t
 | postgresql.enabled | bool | `true` | Install postgres server on kubernetes (see below) |
 | postgresql.nameOverride | string | `"posthog-postgresql"` | Name override for postgresql app |
 | postgresql.postgresqlDatabase | string | `"posthog"` | Postgresql database name |
-| postgresql.postgresqlUsername | string | `"postgres"` | Postgresql database username |
 | postgresql.postgresqlPassword | string | `"postgres"` | Postgresql database password |
 | postgresql.persistence.enabled | bool | `true` | Enable persistence using PVC |
 | postgresql.persistence.size | string | `"10Gi"` | PVC Storage Request for PostgreSQL volume |
-| postgresql.postgresqlHost | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
-| postgresql.postgresqlPort | string | `nil` | Host postgres is accessible from. Only set when internal PG is disabled |
+| postgresql.existingSecret | string | `nil` | Secret containing desired postgresql password. Secret must be behind key `postgresql-password`.  When defined the `postgresqlPassword` field is ignored |
+| externalPostgresql.postgresqlHost | string | `nil` | Host postgresql is accessible from |
+| externalPostgresql.postgresqlPort | int | `5432` | Port postgresql is accessible from |
+| externalPostgresql.postgresqlDatabase | string | `nil` | Postgresql database |
+| externalPostgresql.postgresqlUsername | string | `nil` | Postgresql username. Must be admin, required by posthog migrations |
+| externalPostgresql.postgresqlPassword | string | `nil` | Postgresql password. Either this or `existingSecret` must be set |
+| externalPostgresql.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the password |
+| externalPostgresql.existingSecretPasswordKey | string | `"postgresql-password"` | Name of the key pointing to the password in your Kubernetes secret |
+| pgbouncer | object | `{"enabled":true,"env":[],"extraVolumeMounts":[],"extraVolumes":[],"hpa":{"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"replicacount":1}` | PgBouncer setup |
+| pgbouncer.enabled | bool | `true` | Whether to install PGBouncer or not |
+| pgbouncer.hpa.enabled | bool | `false` | Adding pgbouncers can cause running out of connections for Postgres |
+| pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for pgbouncer |
+| pgbouncer.hpa.minpods | int | `1` | Min pods for pgbouncer |
+| pgbouncer.hpa.maxpods | int | `10` | Max pods for pgbouncer |
+| pgbouncer.replicacount | int | `1` | How many replicas of pgbouncer to run. Ignored if hpa is used |
+| pgbouncer.env | list | `[]` | Additional env vars to be added to the pgbouncer deployment |
+| pgbouncer.extraVolumeMounts | list | `[]` | Additional volumeMounts to be added to the pgbouncer deployment |
+| pgbouncer.extraVolumes | list | `[]` | Additional volumes to be added to the pgbouncer deployment |
 | redis.enabled | bool | `true` |  |
 | redis.nameOverride | string | `"posthog-redis"` |  |
 | redis.fullnameOverride | string | `""` |  |
@@ -164,14 +169,12 @@ The following table lists the configurable parameters of the PostHog chart and t
 | zookeeper.replicaCount | int | `1` | replica count for zookeeper |
 | clickhouse.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouse.namespace | string | `nil` | Which namespace to install clickhouse and the clickhouse-operator to (defaults to namespace chart is installed to) |
+| clickhouse.cluster | string | `"posthog"` | Clickhouse cluster |
 | clickhouse.database | string | `"posthog"` | Clickhouse database |
 | clickhouse.user | string | `"admin"` | Clickhouse user |
 | clickhouse.password | string | `"a1f31e03-c88e-4ca6-a2df-ad49183d15d9"` | Clickhouse password |
-| clickhouse.host | string | `nil` | Set if not installing clickhouse operator |
-| clickhouse.replication | bool | `false` |  |
-| clickhouse.secure | bool | `false` |  |
-| clickhouse.verify | bool | `false` |  |
-| clickhouse.async | bool | `false` |  |
+| clickhouse.secure | bool | `false` | Whether to use TLS connection connecting to ClickHouse |
+| clickhouse.verify | bool | `false` | Whether to verify TLS certificate on connection to ClickHouse |
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
 | clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod |
 | clickhouse.resources | object | `{}` | Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
@@ -187,6 +190,15 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.persistence.size | string | `"20Gi"` |  |
 | clickhouse.profiles | object | `{}` |  |
 | clickhouse.defaultProfiles.default/allow_experimental_window_functions | string | `"1"` |  |
+| externalClickhouse.host | string | `nil` | Host of the external cluster. This is required when clickhouse.enabled is false |
+| externalClickhouse.cluster | string | `nil` | Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false |
+| externalClickhouse.database | string | `"posthog"` | Database name for the external cluster |
+| externalClickhouse.user | string | `nil` | User name for the external cluster to connect to the external cluster as |
+| externalClickhouse.password | string | `nil` | Password for the cluster. Ignored if existingClickhouse.existingSecret is set |
+| externalClickhouse.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the password |
+| externalClickhouse.existingSecretPasswordKey | string | `nil` | Name of the key pointing to the password in your Kubernetes secret |
+| externalClickhouse.secure | bool | `false` | Whether to use TLS connection connecting to ClickHouse |
+| externalClickhouse.verify | bool | `false` | Whether to verify TLS connection connecting to ClickHouse |
 | metrics.enabled | bool | `false` | Start an exporter for posthog metrics |
 | metrics.livenessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods livenessProbe settings |
 | metrics.readinessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods readinessProbe settings |

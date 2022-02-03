@@ -1,0 +1,10 @@
+{{- if .Values.testTemplates -}}
+apiVersion: v1
+kind: ConfigMap
+data:
+{{- if .Values.testTemplates.clickhouseEnvTest -}}
+{{- include "snippet.clickhouse-env" . | nindent 2 }}
+{{- else if .Values.testTemplates.postgresqlEnvTest -}}
+{{- include "snippet.postgresql-migrate-env" . | nindent 2 }}
+{{- end -}}
+{{- end -}}

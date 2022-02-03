@@ -237,3 +237,16 @@ tests:
           path: spec.configuration.profiles
           value:
             default/allow_experimental_window_functions: "0"
+
+  - it: handles custom users and passwords
+    set:
+      clickhouse.user: someuser
+      clickhouse.password: somepass
+    asserts:
+      - equal:
+          path: spec.configuration.users
+          value:
+            someuser/password: somepass
+            someuser/networks/ip: "0.0.0.0/0"
+            someuser/profile: default
+            someuser/quota: default

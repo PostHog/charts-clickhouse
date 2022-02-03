@@ -9,6 +9,9 @@ name: e2e - DigitalOcean (install)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   do-install:

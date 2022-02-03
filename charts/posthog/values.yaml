@@ -6,10 +6,10 @@ image:
   repository: posthog/posthog
   # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
   sha:
-  # -- PostHog image tag to use (example: `release-1.31.1`).
+  # -- PostHog image tag to use (example: `release-1.32.0`).
   tag:
   # -- PostHog image default. Do not overwrite, use image.sha or image.tag instead.
-  default: ":release-1.31.1"
+  default: ":release-1.32.0"
   # -- PostHog image pull policy
   pullPolicy: IfNotPresent
 
@@ -370,8 +370,6 @@ postgresql:
   nameOverride: posthog-postgresql
   # -- Postgresql database name
   postgresqlDatabase: posthog
-  # -- Postgresql database username
-  postgresqlUsername: postgres
   # -- Postgresql database password
   postgresqlPassword: postgres
   persistence:
@@ -379,15 +377,49 @@ postgresql:
     enabled: true
     # -- PVC Storage Request for PostgreSQL volume
     size: 10Gi
-  # -- Host postgres is accessible from. Only set when internal PG is disabled
+  # -- Secret containing desired postgresql password. Secret must be behind key `postgresql-password`.  When defined the `postgresqlPassword` field is ignored
+  existingSecret:
+
+externalPostgresql:
+  # -- Host postgresql is accessible from
   postgresqlHost:
-  # -- Host postgres is accessible from. Only set when internal PG is disabled
-  postgresqlPort:
-  # postgresqlHost: postgres
-  # postgresqlPort: 5432
-  # When defined the `postgresqlPassword` field is ignored
-  # existingSecret: secret-name
-  # existingSecretKey: postgresql-password
+  # -- Port postgresql is accessible from
+  postgresqlPort: 5432
+  # -- Postgresql database
+  postgresqlDatabase:
+  # -- Postgresql username. Must be admin, required by posthog migrations
+  postgresqlUsername:
+  # -- Postgresql password. Either this or `existingSecret` must be set
+  postgresqlPassword:
+
+  # -- Name of an existing Kubernetes secret object containing the password
+  existingSecret:
+  # -- Name of the key pointing to the password in your Kubernetes secret
+  existingSecretPasswordKey: postgresql-password
+
+# -- PgBouncer setup
+pgbouncer:
+   # -- Whether to install PGBouncer or not
+  enabled: true
+  hpa:
+    # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
+    # -- This experimental and set up based on cpu utilization
+    # -- Adding pgbouncers can cause running out of connections for Postgres
+    enabled: false
+    # -- CPU threshold percent for pgbouncer
+    cputhreshold: 60
+    # -- Min pods for pgbouncer
+    minpods: 1
+    # -- Max pods for pgbouncer
+    maxpods: 10
+  # -- How many replicas of pgbouncer to run. Ignored if hpa is used
+  replicacount: 1
+  # -- Additional env vars to be added to the pgbouncer deployment
+  env: []
+  # -- Additional volumeMounts to be added to the pgbouncer deployment
+  extraVolumeMounts: []
+  # -- Additional volumes to be added to the pgbouncer deployment
+  extraVolumes: []
 
 ###
 ###
@@ -510,19 +542,18 @@ clickhouse:
   enabled: true
   # -- Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to)
   namespace:
+  # -- Clickhouse cluster
+  cluster: posthog
   # -- Clickhouse database
   database: posthog
   # -- Clickhouse user
   user: admin
   # -- Clickhouse password
   password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
-  # -- Set if not installing clickhouse operator
-  host:
-  # :TODO:
-  replication: false
+  # -- Whether to use TLS connection connecting to ClickHouse
   secure: false
+  # -- Whether to verify TLS certificate on connection to ClickHouse
   verify: false
-  async: false
   # externalZookeeper:
   # -- URL for zookeeper.
   # servers:
@@ -581,6 +612,28 @@ clickhouse:
   ## -- Default user profile configuration for Clickhouse. Don't overwrite this!
   defaultProfiles:
     default/allow_experimental_window_functions: "1"
+
+## External clickhouse configuration
+##
+externalClickhouse:
+  # -- Host of the external cluster. This is required when clickhouse.enabled is false
+  host:
+  # -- Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false
+  cluster:
+  # -- Database name for the external cluster
+  database: posthog
+  # -- User name for the external cluster to connect to the external cluster as
+  user:
+  # -- Password for the cluster. Ignored if existingClickhouse.existingSecret is set
+  password:
+  # -- Name of an existing Kubernetes secret object containing the password
+  existingSecret:
+  # -- Name of the key pointing to the password in your Kubernetes secret
+  existingSecretPasswordKey:
+  # -- Whether to use TLS connection connecting to ClickHouse
+  secure: false
+  # -- Whether to verify TLS connection connecting to ClickHouse
+  verify: false
 
 ## Prometheus Exporter / Metrics
 ##

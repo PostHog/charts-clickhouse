@@ -1,0 +1,190 @@
+suite: Email settings propagated to pods
+templates:
+  # This list may be too broad or too narrow, I've just added to all deployments
+  # that use the django backend.
+  - templates/web-deployment.yaml
+  - templates/worker-deployment.yaml
+  - templates/events-deployment.yaml
+  - templates/migrate.job.yaml
+  # NOTE: we need to include this as it is required by the other templates
+  - templates/secrets.yaml
+
+tests:
+  - it: should use email.existingSecret and email.existingSecretKey when set
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      email:
+        existingSecret: my-existing-secret
+        existingSecretKey: some-key
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_HOST_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: my-existing-secret
+                key: some-key
+
+  - it: should use email.existingSecret with default secret key
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      email:
+        existingSecret: my-existing-secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_HOST_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: my-existing-secret
+                key: smtp-password
+
+  - it: should use smtp settings from values email.*
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      email:
+        from_email: no-reply@somedomain.fake
+        host: smtp.somedomain.fake
+        port: "9999"
+        user: some-user
+
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEFAULT_FROM_EMAIL
+            value: no-reply@somedomain.fake
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_HOST
+            value: smtp.somedomain.fake
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_PORT
+            value: "9999"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_HOST_USER
+            value: some-user
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_HOST_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: RELEASE-NAME-posthog
+                key: smtp-password
+
+  - it: should set tls/ssl to false when set
+    # NOTE: in other tests we can be reasonably confident that asserts aren't
+    # just aligning with defaults, here our values space is small, so we
+    # explicitly check.
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      email:
+        use_tls: false
+        use_ssl: false
+
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_USE_TLS
+            value: "false"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_USE_SSL
+            value: "false"
+
+  - it: should set tls/ssl to true when set
+    # NOTE: in other tests we can be reasonably confident that asserts aren't
+    # just aligning with defaults, here our values space is small, so we
+    # explicitly check.
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      email:
+        use_tls: true
+        use_ssl: true
+
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_USE_TLS
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_USE_SSL
+            value: "true"
+
+  - it: should render with no values set, i.e. with default chart values
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_HOST
+            value: ""
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_PORT
+            value: ""
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_HOST_USER
+            value: ""
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_USE_TLS
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: EMAIL_USE_SSL
+            value: "false"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: DEFAULT_FROM_EMAIL
+            value: null

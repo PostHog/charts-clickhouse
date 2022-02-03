@@ -1,4 +1,4 @@
-name: e2e - k3s (kubetest)
+name: e2e - kubetest
 
 on:
   workflow_dispatch:
@@ -43,3 +43,10 @@ jobs:
             --group ${{ matrix.group }} \
             --splitting-algorithm=least_duration \
             --group-by file
+
+      # GitHub Action reference: https://github.com/jupyterhub/action-k8s-namespace-report
+      - name: Emit namespace report
+        uses: jupyterhub/action-k8s-namespace-report@v1
+        if: always()
+        with:
+          namespace: posthog

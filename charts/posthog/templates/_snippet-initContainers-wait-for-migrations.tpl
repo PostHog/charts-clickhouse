@@ -13,26 +13,13 @@
   env:
 
   # PostgreSQL configuration
-  - name: POSTHOG_POSTGRES_HOST
-    value: {{ template "posthog.pgbouncer.host" . }}
-  - name: POSTHOG_POSTGRES_PORT
-    value: {{ include "posthog.pgbouncer.port" . | quote }}
-  - name: POSTHOG_DB_NAME
-    value: {{ default "posthog" .Values.postgresql.postgresqlDatabase | quote }}
-  - name: POSTHOG_DB_USER
-    value: {{ default "posthog" .Values.postgresql.postgresqlUsername | quote }}
-  - name: POSTHOG_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-      {{- if .Values.postgresql.existingSecret }}
-        name: {{ .Values.postgresql.existingSecret }}
-      {{- else }}
-        name: {{ template "posthog.postgresql.secret" . }}
-      {{- end }}
-        key: {{ template "posthog.postgresql.secretKey" . }}
+  {{- include "snippet.postgresql-env" . | nindent 2 }}
 
   # Redis env variables
   {{- include "snippet.redis-env" . | indent 2 }}
+
+  # ClickHouse env variables
+  {{- include "snippet.clickhouse-env" . | nindent 2 }}
 
   # Django specific settings
   - name: SECRET_KEY
