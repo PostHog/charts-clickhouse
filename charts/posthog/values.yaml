@@ -1,24 +1,22 @@
-# Default values for posthog.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+# -- Cloud service being deployed on (example: `aws`, `azure`, `do`, `gcp`, `other`).
+cloud:
+
 image:
-  # -- Posthog image repository
+  # -- PostHog image repository to use.
   repository: posthog/posthog
-  # -- Posthog image sha, e.g. sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4
+  # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
   sha:
-  # -- Posthog image tag, e.g. release-1.32.0
+  # -- PostHog image tag to use (example: `release-1.32.0`).
   tag:
-  # -- Default image or tag, e.g. `:release-1.32.0` Do not overwrite, use image.sha or image.tag instead.
+  # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
   default: ":release-1.32.0"
-  # -- Image pull policy
+  # -- PostHog image pull policy.
   pullPolicy: IfNotPresent
 
-# -- Required: Cloud service being deployed on. Either `gcp` or `aws` or `do` for DigitalOcean
-cloud:
-# -- Sentry endpoint to send errors to
+# -- Sentry endpoint to send errors to.
 sentryDSN:
 
-# -- Env vars to throw into every deployment (web, worker, and plugin server)
+# -- Environment variables to inject into every PostHog deployment.
 env:
   - name: ASYNC_EVENT_PROPERTY_USAGE
     value: "true"
@@ -26,52 +24,48 @@ env:
     value: "86400"
 
 migrate:
-  # -- Whether to install the PostHog migrate job or not
+  # -- Whether to install the PostHog migrate job or not.
   enabled: true
 
 events:
-  # -- Whether to install the PostHog events stack or not
+  # -- Whether to install the PostHog events stack or not.
   enabled: true
-  # -- events horizontal pod autoscaler settings
-  hpa:
-    # -- Boolean to create a HorizontalPodAutoscaler for events stack
-    # -- This experimental
-    enabled: false
-    # -- CPU threshold percent for the events stack
-    cputhreshold: 60
-    # -- Min pods for the events stack
-    minpods: 1
-    # -- Max pods for the events stack
-    maxpods: 10
-  # -- Amount of events pods to run. Ignored if hpa is used
+
+  # -- Count of events pods to run. This setting is ignored if `events.hpa.enabled` is set to `true`.
   replicacount: 1
 
-web:
-  # -- Whether to install the PostHog web stack or not
-  enabled: true
-  # -- Web horizontal pod autoscaler settings
   hpa:
-    # -- Boolean to create a HorizontalPodAutoscaler for web
-    # -- This experimental
+    # -- Whether to create a HorizontalPodAutoscaler for the events stack.
     enabled: false
-    # -- CPU threshold percent for the web
+    # -- CPU threshold percent for the events stack HorizontalPodAutoscaler.
     cputhreshold: 60
-    # -- Min pods for the web
+    # -- Min pods for the events stack HorizontalPodAutoscaler.
     minpods: 1
-    # -- Max pods for the web
+    # -- Max pods for the events stack HorizontalPodAutoscaler.
     maxpods: 10
-  # -- Amount of web pods to run. Ignored if hpa is used
+
+web:
+  # -- Whether to install the PostHog web stack or not.
+  enabled: true
+
+  # -- Count of web pods to run. This setting is ignored if `web.hpa.enabled` is set to `true`.
   replicacount: 1
-  # -- Resource limits for web service. See https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-requests-and-limits-of-pod-and-container for more
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the web stack.
+    enabled: false
+    # -- CPU threshold percent for the web stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the web stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the web stack HorizontalPodAutoscaler.
+    maxpods: 10
+
+  # -- Resource limits for web service.
   resources:
     {}
-    # limits:
-    #   cpu: 500m
-    #   memory: 500Mi
-    # requests:
-    #   cpu: 300m
-    #   memory: 300Mi
-  # -- Env variables for web container
+
+  # -- Additional env variables to inject into the web stack deployment.
   env:
     # -- Set google oauth 2 key. Requires posthog ee license.
     - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
@@ -79,7 +73,7 @@ web:
     # -- Set google oauth 2 secret. Requires posthog ee license.
     - name: SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
       value:
-    # -- Set google oauth 2 whitelisted domains users can log in from
+    # -- Set google oauth 2 whitelisted domains users can log in from.
     - name: SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS
       value: "posthog.com"
 
@@ -87,14 +81,15 @@ web:
     # -- Whether to capture information on operation of posthog into posthog, exposed in /instance/status page
     capture: true
 
-  # -- Node labels for web pod assignment
+  # -- Node labels for web stack deployment.
   nodeSelector: {}
-  # -- Toleration labels for web pod assignment
+  # -- Toleration labels for web stack deployment.
   tolerations: []
-  # -- Affinity settings for web pod assignment
+  # -- Affinity settings for web stack deployment.
   affinity: {}
   # :TODO:
   secureCookies: true
+
   livenessProbe:
     # -- The liveness probe failure threshold
     failureThreshold: 5
@@ -106,6 +101,7 @@ web:
     successThreshold: 1
     # -- The liveness probe timeout seconds
     timeoutSeconds: 2
+
   readinessProbe:
     # -- The readiness probe failure threshold
     failureThreshold: 10
@@ -119,95 +115,94 @@ web:
     timeoutSeconds: 2
 
 worker:
-   # -- Whether to install the PostHog worker stack or not
+  # -- Whether to install the PostHog worker stack or not.
   enabled: true
-  hpa:
-    # -- Boolean to create a HorizontalPodAutoscaler for worker
-    # -- This experimental
-    enabled: false
-    cputhreshold: 60
-    minpods: 1
-    maxpods: 20
-  env: []
-  # -- How many replicas of workers to run. Ignored if hpa is used
+
+  # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1
-  # -- Resource limits for workers
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the worker stack.
+    enabled: false
+    # -- CPU threshold percent for the worker stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the worker stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the worker stack HorizontalPodAutoscaler.
+    maxpods: 10
+
+  # -- Additional env variables to inject into the worker stack deployment.
+  env: []
+
+  # -- Resource limits for the worker stack deployment.
   resources:
     {}
-    # limits:
-    #   cpu: 300m
-    #   memory: 500Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 100Mi
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-  # priorityClassName: ""
-  # schedulerName:
-  # Optional extra labels for pod, i.e. redis-client: "true"
-  # podLabels: []
-  # concurrency:
 
-# How many plugin server instances to run
+  # -- Node labels for the worker stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the worker stack deployment.
+  tolerations: []
+  # -- Affinity settings for the worker stack deployment.
+  affinity: {}
+
+
 plugins:
-   # -- Whether to install the PostHog plugin stack or not
+   # -- Whether to install the PostHog plugin-server stack or not.
   enabled: true
+
   ingestion:
     # -- Whether to enable plugin-server based ingestion
     enabled: true
-  hpa:
-    # -- Boolean to create a HorizontalPodAutoscaler for plugin server
-    # -- This experimental, based on cpu util which is not necessarily the bottleneck
-    enabled: false
-    cputhreshold: 60
-    minpods: 1
-    maxpods: 10
-  env: []
-  # -- How many replicas of plugin-server to run. Ignored if hpa is used
+
+  # -- Count of plugin-server pods to run. This setting is ignored if `plugin-server.hpa.enabled` is set to `true`.
   replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+
+  # -- Additional env variables to inject into the plugin-server stack deployment.
+  env: []
+
+  # -- Resource limits for the plugin-server stack deployment.
   resources:
     {}
-    # limits:
-    #   cpu: 300m
-    #   memory: 500Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 100Mi
+
+  # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
+  # -- Toleration labels for the plugin-server stack deployment.
   tolerations: []
+  # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
-  # priorityClassName: ""
-  # schedulerName:
-  # Optional extra labels for pod, i.e. redis-client: "true"
-  # podLabels: []
-  # concurrency:
 
-# Outbound E-mails
+
 email:
-  # -- Outbound email sender
-  from_email:
-  # -- STMP host
+  # -- SMTP service host.
   host:
-  # -- STMP port
+  # -- SMTP service port.
   port:
-  # -- STMP login user
+  # -- SMTP service user.
   user:
-  # -- STMP password
+  # -- SMTP service password.
   password:
-  # -- SMTP TLS for security
+  # -- Name of an existing Kubernetes secret object containing the SMTP service password.
+  existingSecret: ""
+  # -- Name of the key pointing to the password in your Kubernetes secret.
+  existingSecretKey: ""
+  # -- Use TLS to authenticate to the SMTP service.
   use_tls: true
-  # -- SMTP SSL for security
+  # -- Use SSL to authenticate to the SMTP service.
   use_ssl:
-  # -- SMTP password from an existing secret. When defined the `password` field is ignored
-  existingSecret:
-  # -- Key to get from the `email.existingSecret` secret
-  existingSecretKey:
-  # When defined the `password` field is ignored
-  # existingSecret: secret-name
-  # existingSecretKey: smtp-password
+  # -- Outbound email sender to use.
+  from_email:
 
-# SAML
+
 saml:
   # -- Whether password-based login is disabled and users automatically redirected to SAML login. Requires SAML to be properly configured.
   enforced: false
@@ -256,29 +251,28 @@ saml:
   # attr_email: "email"
   attr_email:
 
-# -- Name of the service and what port to expose on the pod. Don't change these unless you know what you're doing
+
 service:
+  # -- PostHog service name.
   name: posthog
+  # -- PostHog service type.
   type: NodePort
   externalPort: 8000
   internalPort: 8000
 
-  ## Service annotations
-  ##
+  # -- PostHog service annotations.
   annotations: {}
 
-  ## External IP addresses of service
-  ## Default: nil
-  ##
-  # externalIPs:
-  # - 192.168.0.1
-  ## Load Balancer allow-list
-  # loadBalancerSourceRanges: []
 
+###
+###
+### ---- CERT-MANAGER ----
+###
+###
 cert-manager:
-  # -- Whether to install cert-manager. Validates certs for nginx ingress
+  # -- Whether to install `cert-manager` resources.
   enabled: false
-  # -- Whether to install cert-manager CRDs.
+  # -- Whether to install `cert-manager` CRDs.
   installCRDs: true
 
   #
@@ -301,6 +295,12 @@ cert-manager:
       - 1.1.1.1
       - 208.67.222.222
 
+
+###
+###
+### ---- INGRESS ----
+###
+###
 ingress:
   # -- Enable ingress controller resource
   enabled: true
@@ -327,43 +327,51 @@ ingress:
   # -- TLS secret to be used by the ingress.
   secretName:
 
+
+###
+###
+### ---- POSTGRESQL ----
+###
+###
 postgresql:
-  # -- Install postgres server on kubernetes (see below)
+  # -- Whether to deploy a PostgreSQL server to satisfy the applications requirements. To use an external PostgreSQL instance set this to `false` and configure the `externalPostgresql` parameters.
   enabled: true
-  # -- Name override for postgresql app
+  # -- Name override for PostgreSQL app.
   nameOverride: posthog-postgresql
-  # -- Postgresql database name
+  # -- PostgreSQL database name.
   postgresqlDatabase: posthog
-  # -- Postgresql database password
+  # -- PostgreSQL database password.
   postgresqlPassword: postgres
   persistence:
-    # -- Enable persistence using PVC
+    # -- Enable persistence using PVC.
     enabled: true
-    # -- PVC Storage Request for PostgreSQL volume
+    # -- PVC Storage Request for PostgreSQL volume.
     size: 10Gi
-  # -- Secret containing desired postgresql password. Secret must be behind key `postgresql-password`.  When defined the `postgresqlPassword` field is ignored
-  existingSecret:
 
 externalPostgresql:
-  # -- Host postgresql is accessible from
+  # -- External PostgreSQL service host.
   postgresqlHost:
-  # -- Port postgresql is accessible from
+  # -- External PostgreSQL service port.
   postgresqlPort: 5432
-  # -- Postgresql database
+  # -- External PostgreSQL service database name.
   postgresqlDatabase:
-  # -- Postgresql username. Must be admin, required by posthog migrations
+  # -- External PostgreSQL service user.
   postgresqlUsername:
-  # -- Postgresql password. Either this or `existingSecret` must be set
+  # -- External PostgreSQL service password. Either this or `externalPostgresql.existingSecret` must be set.
   postgresqlPassword:
-
-  # -- Name of an existing Kubernetes secret object containing the password
+  # -- Name of an existing Kubernetes secret object containing the PostgreSQL password
   existingSecret:
   # -- Name of the key pointing to the password in your Kubernetes secret
   existingSecretPasswordKey: postgresql-password
 
-# -- PgBouncer setup
+
+###
+###
+### ---- PGBOUNCER ----
+###
+###
 pgbouncer:
-   # -- Whether to install PGBouncer or not
+  # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
   enabled: true
   hpa:
     # -- Boolean to create a HorizontalPodAutoscaler for pgbouncer
@@ -385,70 +393,68 @@ pgbouncer:
   # -- Additional volumes to be added to the pgbouncer deployment
   extraVolumes: []
 
+
+###
+###
+### ---- REDIS ----
+###
+###
 redis:
-  ## @param redis.enabled Whether to deploy a redis server to satisfy the applications requirements. To use an external redis instance set this to false and configure the externalRedis parameters
-  ##
+  # -- Whether to deploy a Redis server to satisfy the applications requirements. To use an external redis instance set this to `false` and configure the `externalRedis` parameters.
   enabled: true
 
-  ## @param redis.nameOverride String
-  ##
   nameOverride: "posthog-redis"
 
-  ## @param redis.fullnameOverride String
-  ##
   fullnameOverride: ""
 
-  ## @param redis.architecture Cluster settings
-  ##
   architecture: standalone
 
   auth:
-    ## @param redis.auth.enabled Enable password authentication
-    ##
+    # -- Enable Redis password authentication.
     enabled: false
 
-    ## @param redis.auth.password Redis password
-    ## Defaults to a random 10-character alphanumeric string if not set
-    ## NOTE: ignored unless redis.auth.enabled is true
-    ##       ignored if redis.auth.existingSecret is set
-    ##
+    # -- Redis password.
+    #    Defaults to a random 10-character alphanumeric string if not set.
+    #    NOTE: ignored unless `redis.auth.enabled` is `true` or if `redis.auth.existingSecret` is set.
+    #
     password: ""
 
-    ## @param auth.existingSecret The name of an existing secret with Redis credentials
-    ## NOTE: ignored unless redis.auth.enabled is true
-    ##       when it is set, the previous `redis.auth.password` parameter is ignored
-    ##
+    # -- The name of an existing secret containing the Redis credential to use.
+    #    NOTE: ignored unless `redis.auth.enabled` is `true`.
+    #          When it is set, the previous `redis.auth.password` parameter is ignored.
+    #
     existingSecret: ""
 
-    ## @param auth.existingSecretPasswordKey Password key to be retrieved from existing secret
-    ## NOTE: ignored unless redis.auth.existingSecret parameter is set
-    ##
+    # -- Password key to be retrieved from existing secret.
+    #    NOTE: ignored unless `redis.auth.existingSecret` parameter is set.
+    #
     existingSecretPasswordKey: ""
 
   master:
     persistence:
-      ## @param redis.master.persistence.enabled Enable database persistence using PVC
-      ##
+      # -- Enable data persistence using PVC.
       enabled: true
 
-      ## @param redis.master.persistence.size Persistent Volume size
-      ##
+      # -- Persistent Volume size.
       size: 5Gi
 
-## External Redis;
-## @param externalRedis.host Host of the external database
-## @param externalRedis.port Database port number
-## @param externalRedis.password Password for the external Redis. Ignored if externalRedis.existingSecret is set
-## @param externalRedis.existingSecret Name of an existing Kubernetes secret object containing the password
-## @param externalRedis.existingSecretPasswordKey Name of the key pointing to the password in your Kubernetes secret
-##
 externalRedis:
+  # -- External Redis host to use.
   host: ""
+  # -- External Redis port to use.
   port: 6379
+  # -- Password for the external Redis. Ignored if `externalRedis.existingSecret` is set.
   password: ""
+  # -- Name of an existing Kubernetes secret object containing the Redis password.
   existingSecret: ""
+  # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
 
+###
+###
+### ---- KAFKA ----
+###
+###
 kafka:
   # -- Install kafka on kubernetes
   enabled: true
@@ -483,6 +489,12 @@ kafka:
     servers:
       - posthog-posthog-zookeeper:2181
 
+
+###
+###
+### ---- ZOOKEEPER ----
+###
+###
 zookeeper:
   # -- Install zookeeper on kubernetes
   enabled: true
@@ -491,10 +503,15 @@ zookeeper:
   # -- replica count for zookeeper
   replicaCount: 1
 
+###
+###
+### ---- CLICKHOUSE ----
+###
+###
 clickhouse:
   # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
   enabled: true
-  # -- Which namespace to install clickhouse and the clickhouse-operator to (defaults to namespace chart is installed to)
+  # -- Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to)
   namespace:
   # -- Clickhouse cluster
   cluster: posthog
@@ -538,29 +555,24 @@ clickhouse:
   # -- If enabled, operator will prefer k8s nodes with tag `clickhouse:true`
   useNodeSelector: false
 
-  ## @section Persistence parameters
-  ##
   persistence:
-
-    ## @param persistence.enabled Enable data persistence
-    ##
+    # -- Enable data persistence using PVC.
     enabled: true
 
-    ## @param persistence.existingClaim A manually managed Persistent Volume and Claim
-    ## If defined, PVC must be created manually before volume will be bound.
-    ##
+    # -- Use a manually managed Persistent Volume and Claim.
+    #    If defined, PVC must be created manually before volume will be bound.
+    #
     existingClaim: ""
 
-    ## @param persistence.storageClass Persistent Volume Storage Class
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ## set, choosing the default provisioner.
-    ##
+    # -- Persistent Volume Storage Class to use.
+    #    If defined, `storageClassName: <storageClass>`.
+    #    If set to `storageClassName: ""`, disables dynamic provisioning.
+    #    If undefined (the default) or set to `null`, no storageClassName spec is
+    #    set, choosing the default provisioner.
+    #
     storageClass: null
 
-    ## @param persistence.size PVC Storage Request for the data volume
-    ##
+    # -- Persistent Volume size
     size: 20Gi
 
   ## -- Clickhouse user profile configuration.
@@ -753,7 +765,7 @@ prometheus:
     # -- Alerts configuration, see https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
     alerting_rules.yml:
       groups:
-        - name: Posthog alerts
+        - name: PostHog alerts
           rules:
             # Alert for any pod that is down for >5 minutes.
             - alert: PodDown
