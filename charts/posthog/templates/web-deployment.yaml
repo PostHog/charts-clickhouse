@@ -122,7 +122,7 @@ spec:
         livenessProbe:
           failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
           httpGet:
-            path: /_health/
+            path: /_livez/
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           initialDelaySeconds: {{ .Values.web.livenessProbe.initialDelaySeconds }}
@@ -132,13 +132,24 @@ spec:
         readinessProbe:
           failureThreshold: {{ .Values.web.readinessProbe.failureThreshold }}
           httpGet:
-            path: /_health/
+            # For readiness, we don't want to bring down a web pod if kafka is
+            # down, it is likely only to result in minor degraded functionality.
+            path: /_readyz/?exclude=kafka_connected
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           initialDelaySeconds: {{ .Values.web.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.web.readinessProbe.periodSeconds }}
           successThreshold: {{ .Values.web.readinessProbe.successThreshold }}
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
+        startupProbe:
+          failureThreshold: {{ .Values.web.readinessProbe.failureThreshold }}
+          httpGet:
+            # For startup, we want to make sure that everything is in place,
+            # including postgres. This does however mean we would not be able to
+            # deploy new releases when we have a postgres outage
+            path: /_readyz/
+            port: {{ .Values.service.internalPort }}
+            scheme: HTTP
         resources:
 {{ toYaml .Values.web.resources | indent 12 }}
         {{- if .Values.web.securityContext.enabled }}
