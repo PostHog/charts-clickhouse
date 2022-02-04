@@ -606,79 +606,6 @@ externalClickhouse:
   # -- Whether to verify TLS connection connecting to ClickHouse
   verify: false
 
-## Prometheus Exporter / Metrics
-##
-metrics:
-  # -- Start an exporter for posthog metrics
-  enabled: false
-
-  ## Configure extra options for liveness and readiness probes
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
-
-  # -- Metrics pods livenessProbe settings
-  livenessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 5
-    timeoutSeconds: 2
-    failureThreshold: 3
-    successThreshold: 1
-
-  # -- Metrics pods readinessProbe settings
-  readinessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 5
-    timeoutSeconds: 2
-    failureThreshold: 3
-    successThreshold: 1
-
-  # -- Metrics resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/
-  resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 100Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 100Mi
-
-  # -- Node labels for metrics pod
-  nodeSelector: {}
-  # -- Toleration labels for metrics pod assignment
-  tolerations: []
-  # -- Affinity settings for metrics pod
-  affinity: {}
-  # schedulerName:
-  # Optional extra labels for pod, i.e. redis-client: "true"
-  # podLabels: []
-  service:
-    # --  Kubernetes service type for metrics service
-    type: ClusterIP
-    # -- Additional labels for metrics service
-    labels: {}
-
-  image:
-    # -- Metrics exporter image repository
-    repository: prom/statsd-exporter
-    # -- Metrics exporter image tag
-    tag: v0.10.5
-    # -- Metrics exporter image pull policy
-    pullPolicy: IfNotPresent
-
-  # Enable this if you're using https://github.com/coreos/prometheus-operator
-  serviceMonitor:
-    # -- if `true`, creates a Prometheus Operator ServiceMonitor (also requires `metrics.enabled` to be `true`)
-    enabled: false
-    # -- Optional namespace which Prometheus is running in
-    namespace:
-    # -- How frequently to scrape metrics (use by default, falling back to Prometheus' default)
-    interval:
-    ## Defaults to what's used if you follow CoreOS [Prometheus Install Instructions](https://github.com/helm/charts/tree/master/stable/prometheus-operator#tldr)
-    ## [Prometheus Selector Label](https://github.com/helm/charts/tree/master/stable/prometheus-operator#prometheus-operator-1)
-    ## [Kube Prometheus Selector Label](https://github.com/helm/charts/tree/master/stable/prometheus-operator#exporters)
-    # -- Default to kube-prometheus install (CoreOS recommended), but should be set according to Prometheus install
-    selector:
-      prometheus: kube-prometheus
 
 cloudwatch:
   # -- Enable cloudwatch container insights to get logs and metrics on AWS
@@ -693,6 +620,7 @@ cloudwatch:
     port: 2020
     readHead: "On"
     readTail: "Off"
+
 
 # Provide affinity for hooks if needed
 hooks:
@@ -796,14 +724,30 @@ prometheus:
                 description: "Persistent volume claim {{ $labels.persistentvolumeclaim }} disk usage is above 85% for past 5 minutes"
                 summary: "Kubernetes {{ $labels.persistentvolumeclaim }} is full (host {{ $labels.kubernetes_io_hostname }})"
 
-# -- Prometheus StatsD configuration, see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter
-statsd:
+###
+###
+### ---- STATSD ----
+###
+###
+prometheus-statsd-exporter:
+  # -- Whether to install the `prometheus-statsd-exporter` or not.
   enabled: false
-
+  # -- Map of annotations to add to the pods.
   podAnnotations:
     prometheus.io/scrape: "true"
     prometheus.io/path: /metrics
     prometheus.io/port: "9102"
 
-# Misc
+externalStatsd:
+  # -- External Statsd host to use.
+  host:
+  # -- External Statsd port to use.
+  port:
+
+
+###
+###
+### ---- MISC ----
+###
+###
 installCustomStorageClass: false
