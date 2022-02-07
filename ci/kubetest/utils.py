@@ -181,6 +181,21 @@ def install_custom_resources(filename, namespace="posthog"):
     log.debug("✅ Done!")
 
 
+def install_external_statsd(namespace="posthog"):
+    log.debug("🔄 Setting up external statsd...")
+    cmd = """
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
+          helm upgrade --install \
+            --namespace {namespace} \
+            external prometheus-community/prometheus-statsd-exporter \
+            --version "0.4.2"
+        """.format(
+        namespace=namespace
+    )
+    exec_subprocess(cmd)
+    log.debug("✅ Done!")
+
+
 def exec_subprocess(cmd, ignore_errors=False):
     cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     cmd_return_code = cmd_run.returncode

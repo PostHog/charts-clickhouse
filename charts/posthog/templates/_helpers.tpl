@@ -151,14 +151,6 @@ Return whether Redis uses password authentication or not
 {{- end -}}
 
 {{/*
-Set statsd host
-*/}}
-{{- define "posthog.statsd.host" -}}
-{{- template "posthog.fullname" . -}}-statsd
-{{- end -}}
-
-
-{{/*
 Set kafka fullname
 */}}
 {{- define "posthog.kafka.fullname" -}}

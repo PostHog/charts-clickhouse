@@ -17,7 +17,6 @@ spec:
   template:
     metadata:
       annotations:
-        metrics-enabled: {{ .Values.metrics.enabled | quote }}
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
       labels:
         app: {{ template "posthog.fullname" . }}

@@ -1,27 +1,27 @@
 dependencies:
-- name: zookeeper
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.6.1
+- name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 4.0.13
+- name: kafka
   repository: https://charts.bitnami.com/bitnami
-  version: 7.0.5
+  version: 12.6.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 8.6.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 14.6.2
-- name: kafka
+- name: zookeeper
   repository: https://charts.bitnami.com/bitnami
-  version: 12.6.0
-- name: ingress-nginx
-  repository: https://kubernetes.github.io/ingress-nginx
-  version: 4.0.13
-- name: cert-manager
-  repository: https://charts.jetstack.io
-  version: v1.6.1
+  version: 7.0.5
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 14.1.1
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:e442ce20b1f51d79395e08abe6c968ac3e3d1cd66e5ef13296aee85b5fd06c61
-generated: "2021-12-21T12:26:31.673037+01:00"
+digest: sha256:dbe396bacd71c6cd2e483de7a44e38129296626db63daca26393ead450af972a
+generated: "2022-02-04T17:49:28.162966+01:00"
