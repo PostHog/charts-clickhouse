@@ -724,9 +724,10 @@ prometheus:
                 description: "Persistent volume claim {{ $labels.persistentvolumeclaim }} disk usage is above 85% for past 5 minutes"
                 summary: "Kubernetes {{ $labels.persistentvolumeclaim }} is full (host {{ $labels.kubernetes_io_hostname }})"
 
+
 ###
 ###
-### ---- STATSD ----
+### ---- prometheus-statsd-exporter ----
 ###
 ###
 prometheus-statsd-exporter:
@@ -744,6 +745,33 @@ externalStatsd:
   # -- External Statsd port to use.
   port:
 
+
+###
+###
+### ---- prometheus-kafka-exporter ----
+###
+###
+prometheus-kafka-exporter:
+  # -- Whether to install the `prometheus-kafka-exporter` or not.
+  enabled: false
+
+  # -- We want to pin to image tag `v1.4.2` as it is currently the only
+  # available version working on Apple M1 (otherwise we break local development).
+  #
+  # TODO: remove the override once `prometheus-kafka-exporter` will default to this version.
+  #
+  image:
+    tag: v1.4.2
+
+  # -- Map of annotations to add to the pods.
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9308"
+
+  # -- Specify the target Kafka brokers to monitor.
+  kafkaServer:
+    - posthog-posthog-kafka:9092
 
 ###
 ###
