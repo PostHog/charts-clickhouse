@@ -199,22 +199,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | externalClickhouse.existingSecretPasswordKey | string | `nil` | Name of the key pointing to the password in your Kubernetes secret |
 | externalClickhouse.secure | bool | `false` | Whether to use TLS connection connecting to ClickHouse |
 | externalClickhouse.verify | bool | `false` | Whether to verify TLS connection connecting to ClickHouse |
-| metrics.enabled | bool | `false` | Start an exporter for posthog metrics |
-| metrics.livenessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods livenessProbe settings |
-| metrics.readinessProbe | object | `{"enabled":true,"failureThreshold":3,"initialDelaySeconds":30,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":2}` | Metrics pods readinessProbe settings |
-| metrics.resources | object | `{}` | Metrics resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
-| metrics.nodeSelector | object | `{}` | Node labels for metrics pod |
-| metrics.tolerations | list | `[]` | Toleration labels for metrics pod assignment |
-| metrics.affinity | object | `{}` | Affinity settings for metrics pod |
-| metrics.service.type | string | `"ClusterIP"` | Kubernetes service type for metrics service |
-| metrics.service.labels | object | `{}` | Additional labels for metrics service |
-| metrics.image.repository | string | `"prom/statsd-exporter"` | Metrics exporter image repository |
-| metrics.image.tag | string | `"v0.10.5"` | Metrics exporter image tag |
-| metrics.image.pullPolicy | string | `"IfNotPresent"` | Metrics exporter image pull policy |
-| metrics.serviceMonitor.enabled | bool | `false` | if `true`, creates a Prometheus Operator ServiceMonitor (also requires `metrics.enabled` to be `true`) |
-| metrics.serviceMonitor.namespace | string | `nil` | Optional namespace which Prometheus is running in |
-| metrics.serviceMonitor.interval | string | `nil` | How frequently to scrape metrics (use by default, falling back to Prometheus' default) |
-| metrics.serviceMonitor.selector | object | `{"prometheus":"kube-prometheus"}` | Default to kube-prometheus install (CoreOS recommended), but should be set according to Prometheus install |
 | cloudwatch.enabled | bool | `false` | Enable cloudwatch container insights to get logs and metrics on AWS |
 | cloudwatch.region | string | `nil` | AWS region |
 | cloudwatch.clusterName | string | `nil` | AWS EKS cluster name |
@@ -234,7 +218,10 @@ The following table lists the configurable parameters of the PostHog chart and t
 | prometheus.pushgateway.enabled | bool | `false` | If false, pushgateway will not be installed |
 | prometheus.alertmanagerFiles."alertmanager.yml" | object | `{"global":{},"receivers":[{"name":"default-receiver"}],"route":{"group_by":["alertname"],"receiver":"default-receiver"}}` | alertmanager configuration rules. See https://prometheus.io/docs/alerting/latest/configuration/ |
 | prometheus.serverFiles."alerting_rules.yml" | object | `{"groups":[{"name":"PostHog alerts","rules":[{"alert":"PodDown","annotations":{"description":"Pod {{ $labels.kubernetes_pod_name }} in namespace {{ $labels.kubernetes_namespace }} down for more than 5 minutes.","summary":"Pod {{ $labels.kubernetes_pod_name }} down."},"expr":"up{job=\"kubernetes-pods\"} == 0","for":"1m","labels":{"severity":"alert"}},{"alert":"PodFrequentlyRestarting","annotations":{"description":"Pod {{$labels.namespace}}/{{$labels.pod}} was restarted {{$value}} times within the last hour","summary":"Pod is restarting frequently"},"expr":"increase(kube_pod_container_status_restarts_total[1h]) > 5","for":"10m","labels":{"severity":"warning"}},{"alert":"VolumeRemainingCapacityLowTest","annotations":{"description":"Persistent volume claim {{ $labels.persistentvolumeclaim }} disk usage is above 85% for past 5 minutes","summary":"Kubernetes {{ $labels.persistentvolumeclaim }} is full (host {{ $labels.kubernetes_io_hostname }})"},"expr":"kubelet_volume_stats_used_bytes/kubelet_volume_stats_capacity_bytes >= 0.85","for":"5m","labels":{"severity":"page"}}]}]}` | Alerts configuration, see https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/ |
-| statsd | object | `{"enabled":false,"podAnnotations":{"prometheus.io/path":"/metrics","prometheus.io/port":"9102","prometheus.io/scrape":"true"}}` | Prometheus StatsD configuration, see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter |
+| prometheus-statsd-exporter.enabled | bool | `false` | Whether to install the `prometheus-statsd-exporter` or not. |
+| prometheus-statsd-exporter.podAnnotations | object | `{"prometheus.io/path":"/metrics","prometheus.io/port":"9102","prometheus.io/scrape":"true"}` | Map of annotations to add to the pods. |
+| externalStatsd.host | string | `nil` | External Statsd host to use. |
+| externalStatsd.port | string | `nil` | External Statsd port to use. |
 | installCustomStorageClass | bool | `false` |  |
 
 Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
