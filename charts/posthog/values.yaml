@@ -794,10 +794,9 @@ prometheus-postgres-exporter:
     datasource:
       host: posthog-posthog-postgresql
       user: postgres
-      passwordSecret: {
-        name: posthog-posthog-postgresql,
+      passwordSecret:
+        name: posthog-posthog-postgresql
         key: postgresql-password
-      }
 
 
 ###
