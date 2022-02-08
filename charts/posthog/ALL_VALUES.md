@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 14.0.0](https://img.shields.io/badge/Version-14.0.0-informational?style=flat-square) ![AppVersion: 1.32.0](https://img.shields.io/badge/AppVersion-1.32.0-informational?style=flat-square)
+![Version: 15.0.0](https://img.shields.io/badge/Version-15.0.0-informational?style=flat-square) ![AppVersion: 1.32.0](https://img.shields.io/badge/AppVersion-1.32.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -222,6 +222,10 @@ The following table lists the configurable parameters of the PostHog chart and t
 | prometheus-statsd-exporter.podAnnotations | object | `{"prometheus.io/path":"/metrics","prometheus.io/port":"9102","prometheus.io/scrape":"true"}` | Map of annotations to add to the pods. |
 | externalStatsd.host | string | `nil` | External Statsd host to use. |
 | externalStatsd.port | string | `nil` | External Statsd port to use. |
+| prometheus-kafka-exporter.enabled | bool | `false` | Whether to install the `prometheus-kafka-exporter` or not. |
+| prometheus-kafka-exporter.image | object | `{"tag":"v1.4.2"}` | We want to pin to image tag `v1.4.2` as it is currently the only available version working on Apple M1 (otherwise we break local development). TODO: remove the override once `prometheus-kafka-exporter` will default to this version. |
+| prometheus-kafka-exporter.annotations | object | `{"prometheus.io/path":"/metrics","prometheus.io/port":"9308","prometheus.io/scrape":"true"}` | Map of annotations to add to the pods. |
+| prometheus-kafka-exporter.kafkaServer | list | `["posthog-posthog-kafka:9092"]` | Specify the target Kafka brokers to monitor. |
 | installCustomStorageClass | bool | `false` |  |
 
 Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
