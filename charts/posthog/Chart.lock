@@ -23,8 +23,14 @@ dependencies:
 - name: prometheus-kafka-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 1.5.0
+- name: prometheus-postgres-exporter
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 2.5.0
+- name: prometheus-redis-exporter
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 4.6.0
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:a0adcd787d88b0b19f84de8b95d63a65f231255cd88860dece2fd23698c5503d
-generated: "2022-02-07T15:12:19.344022+01:00"
+digest: sha256:dc4aed061b6ff1b1b3631173b79c4a7f34c1eecc5c31dbd1da96c73bf1e48445
+generated: "2022-02-08T09:29:01.508056+01:00"
