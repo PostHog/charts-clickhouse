@@ -773,6 +773,51 @@ prometheus-kafka-exporter:
   kafkaServer:
     - posthog-posthog-kafka:9092
 
+
+###
+###
+### ---- prometheus-postgres-exporter ----
+###
+###
+prometheus-postgres-exporter:
+  # -- Whether to install the `prometheus-postgres-exporter` or not.
+  enabled: false
+
+  # -- Map of annotations to add to the pods.
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9187"
+
+  # -- Configuration options.
+  config:
+    datasource:
+      host: posthog-posthog-postgresql
+      user: postgres
+      passwordSecret:
+        name: posthog-posthog-postgresql
+        key: postgresql-password
+
+
+###
+###
+### ---- prometheus-redis-exporter ----
+###
+###
+prometheus-redis-exporter:
+  # -- Whether to install the `prometheus-redis-exporter` or not.
+  enabled: false
+
+  # -- Map of annotations to add to the pods.
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9121"
+
+  # -- Specify the target Redis instance to monitor.
+  redisAddress: redis://posthog-posthog-redis-master:6379
+
+
 ###
 ###
 ### ---- MISC ----
