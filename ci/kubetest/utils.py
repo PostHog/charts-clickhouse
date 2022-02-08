@@ -167,6 +167,26 @@ def test_if_posthog_deployments_are_healthy(kube):
             assert pod.is_ready(), "Pod {} of deployment {} is not ready".format(pod.name, deployment_name)
 
 
+def is_prometheus_exporter_healthy(kube, exporter_name, expected_string):
+    # TODO: we currently can't use the code commented below due to a possible bug
+    # in `kubetest` as no pods gets returned by `get_pods()`.
+    # Looks similar to https://github.com/vapor-ware/kubetest/pull/145 but I didn't
+    # have time to investigate.
+    #
+    # deployments = kube.get_deployments(namespace="posthog")
+    # deployment = deployments.get(deployment)
+    # assert deployment is not None
+    #
+    # pods = deployment.get_pods()
+    pods = kube.get_pods(namespace=NAMESPACE, labels={"app": exporter_name})
+    assert len(pods) == 1, "{} deployment should have one pod".format(exporter_name)
+    for pod in pods.values():
+        containers = pod.get_containers()
+        assert len(containers) == 1, "{} should have one container".format(exporter_name)
+        resp = pod.http_proxy_get("/metrics")
+        assert expected_string in resp.data
+
+
 def create_namespace_if_not_exists(name="posthog"):
     log.debug("🔄 Creating namespace {} (if not exists)...".format(name))
     cmd = "kubectl create namespace {} --dry-run=client -o yaml | kubectl apply -f -".format(name)

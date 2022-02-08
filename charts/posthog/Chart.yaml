@@ -50,9 +50,14 @@ dependencies:
 
   # Monitoring & observability
   - name: prometheus
-    version: 14.1.1
+    version: 15.1.3
     repository: https://prometheus-community.github.io/helm-charts
     condition: prometheus.enabled
+
+  - name: prometheus-kafka-exporter
+    version: 1.5.0
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: prometheus-kafka-exporter.enabled
 
   - name: prometheus-statsd-exporter
     version: 0.3.1
