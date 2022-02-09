@@ -1,3 +1,7 @@
+# ⚠️ Follow [these instructions](https://posthog.com/docs/self-host) instead of modifying or running this chart
+
+If you make changes to these helm charts, however simple, we won't be able to support you. Most people who modify or use a non-standard way of running this chart run into issues. We **strongly recommend** following the [official instructions](https://posthog.com/docs/self-host) to deploy PostHog.
+
 # PostHog Helm Chart
 
 [![Latest release of the Helm chart](https://img.shields.io/badge/dynamic/yaml.svg?label=Helm%20chart%20version&url=https://posthog.github.io/charts-clickhouse/index.yaml&query=$.entries.posthog[:1].version&logo=helm)](https://github.com/PostHog/charts-clickhouse)
@@ -10,6 +14,8 @@
 🦔 [PostHog](https://posthog.com/) is a developer-friendly, open-source product analytics suite.
 
 This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+
+
 
 ## Prerequisites
 - Kubernetes >=1.20 <= 1.23
