@@ -552,9 +552,6 @@ clickhouse:
   # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
   serviceType: NodePort
 
-  # -- If enabled, operator will prefer k8s nodes with tag `clickhouse:true`
-  useNodeSelector: false
-
   persistence:
     # -- Enable data persistence using PVC.
     enabled: true
