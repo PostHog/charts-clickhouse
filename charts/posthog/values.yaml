@@ -653,7 +653,7 @@ grafana:
   # -- Whether to install Grafana or not.
   enabled: false
 
-  # -- Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](http://docs.grafana.org/administration/provisioning/#dashboards) for more info.
+  # -- Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info.
   sidecar:
     dashboards:
       enabled: true
@@ -662,7 +662,7 @@ grafana:
       provider:
         foldersFromFilesStructure: true
 
-  # -- Configure Grafana datasources. See [official docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info.
+  # -- Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info.
   datasources:
     datasources.yaml:
       apiVersion: 1

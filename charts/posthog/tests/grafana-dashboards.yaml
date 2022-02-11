@@ -1,4 +1,4 @@
-suite: ClickHouse instance
+suite: Grafana dashboards configuration
 templates:
   - templates/grafana-dashboards.yaml
 
@@ -22,8 +22,6 @@ tests:
     set:
       grafana.enabled: true
     asserts:
-      - hasDocuments:
-          count: 1
       - isAPIVersion:
           of: v1
 
@@ -31,8 +29,6 @@ tests:
     set:
       grafana.enabled: true
     asserts:
-      - hasDocuments:
-          count: 1
       - isKind:
           of: ConfigMap
 
@@ -41,8 +37,6 @@ tests:
       grafana.enabled: true
       grafana.sidecar.dashboards.label: puzzy
     asserts:
-      - hasDocuments:
-          count: 1
       - equal:
           path: metadata.labels
           value:
@@ -53,8 +47,6 @@ tests:
       grafana.enabled: true
       grafana.sidecar.dashboards.folderAnnotation: customFolder
     asserts:
-      - hasDocuments:
-          count: 1
       - equal:
           path: metadata.annotations
           value:
