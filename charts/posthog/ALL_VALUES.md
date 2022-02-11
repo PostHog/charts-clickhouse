@@ -183,7 +183,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.securityContext.runAsGroup | int | `101` |  |
 | clickhouse.securityContext.fsGroup | int | `101` |  |
 | clickhouse.serviceType | string | `"NodePort"` | Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost) |
-| clickhouse.useNodeSelector | bool | `false` | If enabled, operator will prefer k8s nodes with tag `clickhouse:true` |
 | clickhouse.persistence.enabled | bool | `true` | Enable data persistence using PVC. |
 | clickhouse.persistence.existingClaim | string | `""` | Use a manually managed Persistent Volume and Claim.    If defined, PVC must be created manually before volume will be bound. |
 | clickhouse.persistence.storageClass | string | `nil` | Persistent Volume Storage Class to use.    If defined, `storageClassName: <storageClass>`.    If set to `storageClassName: ""`, disables dynamic provisioning.    If undefined (the default) or set to `null`, no storageClassName spec is    set, choosing the default provisioner. |
