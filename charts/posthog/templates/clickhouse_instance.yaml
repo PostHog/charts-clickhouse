@@ -110,11 +110,6 @@ spec:
                   mountPath: /var/lib/clickhouse
               {{- end }}
 
-              {{- if .Values.clickhouse.useNodeSelector }}
-              nodeSelector:
-                clickhouse: true
-              {{- end }}
-
               {{- if .Values.clickhouse.resources }}
               resources: {{ toYaml .Values.clickhouse.resources | nindent 16 }}
               {{- end }}
