@@ -110,9 +110,9 @@ spec:
         readinessProbe:
           failureThreshold: {{ .Values.web.readinessProbe.failureThreshold }}
           httpGet:
-            # For readiness, we don't want to bring down a pod if it can't query
-            # postgres. I this case we want to remain up, and still push to kafka
-            path: /_readyz/?exclude=postgres&exclude=postgres_migrations_uptodate
+            # For readiness, we want to use the checks specific to the events
+            # role, which may be a subset of all the apps dependencies
+            path: /_readyz/?role=events
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           initialDelaySeconds: {{ .Values.web.readinessProbe.initialDelaySeconds }}

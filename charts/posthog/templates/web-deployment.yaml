@@ -132,9 +132,9 @@ spec:
         readinessProbe:
           failureThreshold: {{ .Values.web.readinessProbe.failureThreshold }}
           httpGet:
-            # For readiness, we don't want to bring down a web pod if kafka is
-            # down, it is likely only to result in minor degraded functionality.
-            path: /_readyz/?exclude=kafka_connected
+            # For readiness, we want to use the checks specific to the web
+            # role, which may be a subset of all the apps dependencies
+            path: /_readyz/?role=web
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           initialDelaySeconds: {{ .Values.web.readinessProbe.initialDelaySeconds }}
