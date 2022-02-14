@@ -1,4 +1,4 @@
-{{- if .Values.clickhouseOperator.enabled }}
+{{- if .Values.clickhouse.enabled }}
 # Template Parameters:
 #
 # NAMESPACE=posthog
@@ -12,7 +12,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: clickhouse-operator
-  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     app: clickhouse-operator
 spec:

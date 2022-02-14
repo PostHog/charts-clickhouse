@@ -26,28 +26,6 @@ tests:
       - isKind:
           of: Service
 
-  - it: should have the correct metadata values
-    set:
-      kafka.service.enabled: true
-    asserts:
-      - hasDocuments:
-          count: 1
-      - matchRegex:
-          path: metadata.name
-          pattern: -kafka$
-      - equal:
-          path: metadata.labels.app
-          value: RELEASE-NAME-posthog
-      - matchRegex:
-          path: metadata.labels.chart
-          pattern: ^posthog-
-      - equal:
-          path: metadata.labels.release
-          value: RELEASE-NAME
-      - equal:
-          path: metadata.labels.heritage
-          value: Helm
-
   - it: should have the correct optional metadata values
     set:
       kafka.service.enabled: true

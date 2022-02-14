@@ -22,4 +22,4 @@ jobs:
           helm plugin install https://github.com/quintush/helm-unittest.git --version 0.2.7
 
       - name: Run test suite
-        run: helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/**/*.yaml' charts/posthog
+        run: helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/clickhouse-operator/*.yaml' charts/posthog

@@ -48,6 +48,8 @@ tests:
       - equal:
           path: metadata.annotations
           value:
+            meta.helm.sh/release-name: RELEASE-NAME
+            meta.helm.sh/release-namespace: NAMESPACE
             kubernetes.io/ingress.class: nginx
             nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -68,6 +70,8 @@ tests:
       - equal:
           path: metadata.annotations
           value:
+            meta.helm.sh/release-name: RELEASE-NAME
+            meta.helm.sh/release-namespace: NAMESPACE
             kubernetes.io/ingress.class: nginx
             nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -84,6 +88,8 @@ tests:
       - equal:
           path: metadata.annotations
           value:
+            meta.helm.sh/release-name: RELEASE-NAME
+            meta.helm.sh/release-namespace: NAMESPACE
             kubernetes.io/ingress.class: gce
             kubernetes.io/ingress.global-static-ip-name: posthog
             networking.gke.io/managed-certificates: RELEASE-NAME-gke-cert
@@ -102,6 +108,8 @@ tests:
       - equal:
           path: metadata.annotations
           value:
+            meta.helm.sh/release-name: RELEASE-NAME
+            meta.helm.sh/release-namespace: NAMESPACE
             kubernetes.io/ingress.class: gce
             kubernetes.io/ingress.global-static-ip-name: ip_custom_name
             networking.gke.io/managed-certificates: RELEASE-NAME-gke-cert
@@ -116,6 +124,8 @@ tests:
       - equal:
           path: metadata.annotations
           value:
+            meta.helm.sh/release-name: RELEASE-NAME
+            meta.helm.sh/release-namespace: NAMESPACE
             kubernetes.io/ingress.class: nginx
             nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -130,6 +140,8 @@ tests:
       - equal:
           path: metadata.annotations
           value:
+            meta.helm.sh/release-name: RELEASE-NAME
+            meta.helm.sh/release-namespace: NAMESPACE
             kubernetes.io/ingress.class: nginx
             nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -146,5 +158,7 @@ tests:
       - equal:
           path: metadata.annotations
           value:
+            meta.helm.sh/release-name: RELEASE-NAME
+            meta.helm.sh/release-namespace: NAMESPACE
             key1: value1
             key2: value2

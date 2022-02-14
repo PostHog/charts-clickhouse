@@ -1,0 +1,53 @@
+suite: Grafana dashboards configuration
+templates:
+  - templates/grafana-dashboards.yaml
+
+tests:
+  - it: should be empty if grafana.enabled is set to false
+    set:
+      grafana.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: the manifest should match the snapshot when using default values
+    set:
+      grafana.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot: {}
+
+  - it: should have the correct apiVersion
+    set:
+      grafana.enabled: true
+    asserts:
+      - isAPIVersion:
+          of: v1
+
+  - it: should be the correct kind
+    set:
+      grafana.enabled: true
+    asserts:
+      - isKind:
+          of: ConfigMap
+
+  - it: metadata.labels should match any override to grafana.sidecar.dashboards.label
+    set:
+      grafana.enabled: true
+      grafana.sidecar.dashboards.label: puzzy
+    asserts:
+      - equal:
+          path: metadata.labels
+          value:
+            puzzy: "1"
+
+  - it: metadata.annotations should match any override to grafana.sidecar.dashboards.folderAnnotation
+    set:
+      grafana.enabled: true
+      grafana.sidecar.dashboards.folderAnnotation: customFolder
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            customFolder: "PostHog"

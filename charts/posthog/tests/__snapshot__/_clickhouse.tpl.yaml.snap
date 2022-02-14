@@ -1,0 +1,83 @@
+should render with custom values:
+  1: |
+    - name: CLICKHOUSE_HOST
+      value: clickhouse-RELEASE-NAME
+    - name: CLICKHOUSE_CLUSTER
+      value: customCluster
+    - name: CLICKHOUSE_DATABASE
+      value: customDatabase
+    - name: CLICKHOUSE_USER
+      value: customUser
+    - name: CLICKHOUSE_PASSWORD
+      value: customPassword
+    - name: CLICKHOUSE_SECURE
+      value: "true"
+    - name: CLICKHOUSE_VERIFY
+      value: "true"
+should render with defaults:
+  1: |
+    - name: CLICKHOUSE_HOST
+      value: clickhouse-RELEASE-NAME
+    - name: CLICKHOUSE_CLUSTER
+      value: posthog
+    - name: CLICKHOUSE_DATABASE
+      value: posthog
+    - name: CLICKHOUSE_USER
+      value: admin
+    - name: CLICKHOUSE_PASSWORD
+      value: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+    - name: CLICKHOUSE_SECURE
+      value: "false"
+    - name: CLICKHOUSE_VERIFY
+      value: "false"
+should render with external clickhouse:
+  1: |
+    - name: CLICKHOUSE_HOST
+      value: foo.bar.net
+    - name: CLICKHOUSE_CLUSTER
+      value: somecluster
+    - name: CLICKHOUSE_DATABASE
+      value: posthog
+    - name: CLICKHOUSE_USER
+      value: adminuser
+    - name: CLICKHOUSE_PASSWORD
+      value: hello
+    - name: CLICKHOUSE_SECURE
+      value: "false"
+    - name: CLICKHOUSE_VERIFY
+      value: "false"
+should render with external clickhouse with more custom settings:
+  1: |
+    - name: CLICKHOUSE_HOST
+      value: foo.bar.net
+    - name: CLICKHOUSE_CLUSTER
+      value: customCluster
+    - name: CLICKHOUSE_DATABASE
+      value: customDatabase
+    - name: CLICKHOUSE_USER
+      value: adminuser
+    - name: CLICKHOUSE_PASSWORD
+      value: hello
+    - name: CLICKHOUSE_SECURE
+      value: "true"
+    - name: CLICKHOUSE_VERIFY
+      value: "true"
+should render with external clickhouse with secrets:
+  1: |
+    - name: CLICKHOUSE_HOST
+      value: foo.bar.net
+    - name: CLICKHOUSE_CLUSTER
+      value: somecluster
+    - name: CLICKHOUSE_DATABASE
+      value: posthog
+    - name: CLICKHOUSE_USER
+      value: adminuser
+    - name: CLICKHOUSE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: clickhousePassword
+          name: someExistingSecret
+    - name: CLICKHOUSE_SECURE
+      value: "false"
+    - name: CLICKHOUSE_VERIFY
+      value: "false"

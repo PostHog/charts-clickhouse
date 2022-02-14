@@ -50,23 +50,23 @@ kubectl-slice -f "$TMP_FOLDER/clickhouse-operator.yaml" -o "${CHART_PATH}/crds" 
 kubectl-slice -f "$TMP_FOLDER/clickhouse-operator.yaml" -o "${CHART_PATH}/templates/clickhouse-operator" --exclude-kind CustomResourceDefinition --template '{{.kind | lower}}.yaml'
 
 #
-# Add a {{- if .Values.clickhouseOperator.enabled }} and {{- end }} at the end of each non-crds resource.
+# Add a {{- if .Values.clickhouse.enabled }} and {{- end }} at the end of each non-crds resource.
 # Also replace 'namespace: posthog' and '#namespace: posthog' with
-# {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }} so we can keep customizing where the operator is installed
+# {{ .Values.clickhouse.namespace | default .Release.Namespace }} so we can keep customizing where the operator is installed
 #
 FILES="${CHART_PATH}/templates/clickhouse-operator/*"
 for f in $FILES
 do
     sed -i '' '1i\
-{{- if .Values.clickhouseOperator.enabled }}
+{{- if .Values.clickhouse.enabled }}
     ' "$f"
 
     sed -i '' '$a\
 {{- end }}
     ' "$f"
 
-    sed -i '' 's/#namespace: posthog$/namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}/g' "$f"
+    sed -i '' 's/#namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
 
-    sed -i '' 's/namespace: posthog$/namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}/g' "$f"
+    sed -i '' 's/namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
 
 done

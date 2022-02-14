@@ -1,4 +1,4 @@
-name: e2e - k3s (kubetest)
+name: e2e - kubetest
 
 on:
   workflow_dispatch:
@@ -11,6 +11,16 @@ on:
 jobs:
   test-kubetest:
     runs-on: ubuntu-20.04
+
+    name: e2e - kubetest (${{matrix.group}}/${{ matrix.concurrency }})
+
+    strategy:
+        fail-fast: false
+        matrix:
+            # :NOTE: Keep concurrency and group's in sync
+            concurrency: [7]
+            group: [1, 2, 3, 4, 5, 6, 7]
+
     steps:
       - uses: actions/checkout@v2
         name: Checkout
@@ -27,4 +37,16 @@ jobs:
 
       - name: Run kubetest
         run: |
-          cd ci/kubetest && python -m pytest .
+          cd ci/kubetest && \
+          python -m pytest . -s \
+            --splits ${{ matrix.concurrency }} \
+            --group ${{ matrix.group }} \
+            --splitting-algorithm=least_duration \
+            --group-by file
+
+      # GitHub Action reference: https://github.com/jupyterhub/action-k8s-namespace-report
+      - name: Emit namespace report
+        uses: jupyterhub/action-k8s-namespace-report@v1
+        if: always()
+        with:
+          namespace: posthog

@@ -1,4 +1,4 @@
-{{- if .Values.clickhouseOperator.enabled }}
+{{- if .Values.clickhouse.enabled }}
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-files
@@ -9,7 +9,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-files
-  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     app: clickhouse-operator
 data:
@@ -190,7 +190,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-confd-files
-  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     app: clickhouse-operator
 data:
@@ -207,7 +207,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-configd-files
-  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     app: clickhouse-operator
 data:
@@ -266,7 +266,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-templatesd-files
-  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     app: clickhouse-operator
 data:
@@ -367,7 +367,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-usersd-files
-  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     app: clickhouse-operator
 data:
