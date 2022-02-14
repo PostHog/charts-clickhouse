@@ -40,7 +40,7 @@ jobs:
       run: |
         doctl k8s clusters create \
           ${{ steps.vars.outputs.k8s_cluster_name }} \
-          --version 1.21.5-do.0 \
+          --version 1.21.9-do.0 \
           --tag="provisioned_by:github_action" \
           --size s-2vcpu-4gb \
           --count 2 \
