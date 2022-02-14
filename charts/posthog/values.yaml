@@ -640,6 +640,42 @@ serviceAccount:
   # -- Configures annotation for the ServiceAccount
   annotations: {}
 
+
+###
+###
+### ---- Grafana ----
+###
+###
+grafana:
+  # -- Whether to install Grafana or not.
+  enabled: false
+
+  # -- Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info.
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      folderAnnotation: grafana_folder
+      provider:
+        foldersFromFilesStructure: true
+
+  # -- Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info.
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://posthog-prometheus-server
+        access: proxy
+        isDefault: true
+
+
+###
+###
+### ---- Prometheus ----
+###
+###
 prometheus:
   # -- Whether to enable a minimal prometheus installation for getting alerts/monitoring the stack
   enabled: false
