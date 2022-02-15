@@ -5,11 +5,16 @@ metadata:
   name: {{ template "posthog.fullname" . }}
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
-    {{- if (eq (include "ingress.type" .) "nginx") }}
+    {{- if (and (eq (include "ingress.type" .) "nginx") (not (.Values.ingress.class)) ) }}
     kubernetes.io/ingress.class: "nginx"
     {{- end }}
-    {{- if (eq (include "ingress.type" .) "clb") }}
+    {{- if (and (eq (include "ingress.type" .) "clb") (not (.Values.ingress.class)) ) }}
     kubernetes.io/ingress.class: "gce"
+    {{- end }}
+    {{- if .Values.ingress.class }}
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    {{- end }}
+    {{- if (eq (include "ingress.type" .) "clb") }}
     {{- if not (.Values.ingress.gcp.secretName) }}
     networking.gke.io/managed-certificates: "{{ .Release.Name }}-gke-cert"
     {{- end }}
@@ -31,6 +36,15 @@ metadata:
     {{- end }}
    {{- end }}
 spec:
+  {{- if (and (eq (include "ingress.type" .) "nginx") (not (.Values.ingress.class)) ) }}
+  ingressClassName: "nginx"
+  {{- end }}
+  {{- if (and (eq (include "ingress.type" .) "clb") (not (.Values.ingress.class)) ) }}
+  ingressClassName: "gce"
+  {{- end }}
+  {{- if .Values.ingress.class }}
+  ingressClassName: {{ .Values.ingress.class }}
+  {{- end }}
   {{- if or (eq (include "ingress.letsencrypt" .) "true") (or (.Values.ingress.secretName) (.Values.ingress.gcp.secretName)) }}
   tls:
   - hosts:

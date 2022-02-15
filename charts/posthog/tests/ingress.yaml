@@ -162,3 +162,54 @@ tests:
             meta.helm.sh/release-namespace: NAMESPACE
             key1: value1
             key2: value2
+
+  - it: AWS - 'spec.ingressClassName' and 'metadata.annotations.kubernetes.io/ingress.class' should be set
+    set:
+      cloud: "aws"
+      ingress:
+        hostname: <your-hostname>
+        nginx:
+          enabled: true
+      cert-manager:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations
+          value:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+            kubernetes.io/ingress.class: nginx
+            meta.helm.sh/release-name: RELEASE-NAME
+            meta.helm.sh/release-namespace: NAMESPACE
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      - equal:
+          path: spec.ingressClassName
+          value: nginx
+
+  - it: GCP - custom 'spec.ingressClassName' and 'metadata.annotations.kubernetes.io/ingress.class' should be set
+    set:
+      cloud: "gcp"
+      ingress:
+        hostname: <your-hostname>
+        nginx:
+          enabled: false
+        class: test
+      cert-manager:
+        enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.annotations
+          value:
+            kubernetes.io/ingress.class: test
+            kubernetes.io/ingress.global-static-ip-name: posthog
+            meta.helm.sh/release-name: RELEASE-NAME
+            meta.helm.sh/release-namespace: NAMESPACE
+            networking.gke.io/managed-certificates: RELEASE-NAME-gke-cert
+            networking.gke.io/v1beta1.FrontendConfig: RELEASE-NAME-frontend-config
+      - equal:
+          path: spec.ingressClassName
+          value: test

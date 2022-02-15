@@ -326,6 +326,8 @@ ingress:
   annotations: {}
   # -- TLS secret to be used by the ingress.
   secretName:
+  # -- A custom ingress class
+  class:
 
 
 ###
