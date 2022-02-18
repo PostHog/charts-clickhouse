@@ -531,6 +531,12 @@ clickhouse:
   # - host: posthog-posthog-zookeeper
   #   port: 2181
 
+  image:
+    # -- Clickhouse image repository
+    repository: yandex/clickhouse-server
+    # -- Clickhouse image tag. Note that posthog does not support all versions of clickhouse.
+    tag: "21.6.5"
+
   # -- Toleration labels for clickhouse pod assignment
   tolerations: []
   # -- Affinity settings for clickhouse pod

@@ -88,3 +88,10 @@ Return the ClickHouse secret key
     {{- printf "clickhouse-password" -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return the ClickHouse image
+*/}}
+{{- define "posthog.clickhouse.image" -}}
+"{{ .Values.clickhouse.image.repository }}:{{ .Values.clickhouse.image.tag }}"
+{{- end -}}
