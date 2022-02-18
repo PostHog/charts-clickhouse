@@ -1,6 +1,6 @@
 import pytest
 
-from utils import (
+from helpers.utils import (
     NAMESPACE,
     VALUES_DISABLE_EVERYTHING,
     cleanup_helm,

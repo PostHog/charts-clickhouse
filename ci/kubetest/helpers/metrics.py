@@ -1,6 +1,6 @@
 import logging
 
-from ..utils import NAMESPACE, exec_subprocess
+from .utils import NAMESPACE, exec_subprocess
 
 log = logging.getLogger()
 

@@ -1,6 +1,6 @@
 import pytest
 
-from utils import (
+from helpers.utils import (
     NAMESPACE,
     cleanup_k8s,
     create_namespace_if_not_exists,
