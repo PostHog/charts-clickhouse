@@ -23,7 +23,7 @@ clickhouse:
 """
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def setup(kube):
     cleanup_k8s()
     cleanup_helm()
@@ -31,10 +31,10 @@ def setup(kube):
     wait_for_pods_to_be_ready(kube)
 
 
-def test_posthog_healthy(setup, kube):
+def test_posthog_healthy(kube):
     is_posthog_healthy(kube)
 
 
-def test_clickhouse_pod_image(setup, kube):
+def test_clickhouse_pod_image(kube):
     pod_spec = get_clickhouse_pod_spec(kube)
     assert pod_spec.containers[0].image == "yandex/clickhouse-server:22.1"
