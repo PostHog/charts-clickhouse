@@ -3,11 +3,11 @@ import pytest
 from utils import (
     cleanup_helm,
     cleanup_k8s,
-    get_clickhouse_pod_spec,
     install_chart,
     is_posthog_healthy,
     wait_for_pods_to_be_ready,
 )
+from helpers.clickhouse import get_clickhouse_pod_spec
 
 # :KLUDGE: We need to override image.tag to be more dynamic with supported clickhouse versions.
 # Can remove it once PostHog 1.33.0 is out.
