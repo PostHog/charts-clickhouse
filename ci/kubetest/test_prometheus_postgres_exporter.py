@@ -4,9 +4,9 @@ from utils import (
     cleanup_k8s,
     install_chart,
     is_posthog_healthy,
-    is_prometheus_exporter_healthy,
     wait_for_pods_to_be_ready,
 )
+from helpers.metrics import is_prometheus_exporter_healthy
 
 VALUES_YAML = """
 cloud: local
