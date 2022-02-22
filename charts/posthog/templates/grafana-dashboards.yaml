@@ -1,0 +1,18 @@
+{{- if .Values.grafana.enabled -}}
+{{ range $path, $_ :=  .Files.Glob  "grafana-dashboards/**.json" }}
+{{ $filename := ($path | replace "grafana-dashboards/" "") }}
+{{ $name := ($filename | replace ".json" "") }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: posthog-grafana-dashboard-{{ $name }}
+  labels:
+    {{ $.Values.grafana.sidecar.dashboards.label }}: "1"
+  annotations:
+    {{ $.Values.grafana.sidecar.dashboards.folderAnnotation }}: "PostHog"
+data:
+  {{ $filename }}: |-
+{{ $.Files.Get $path | indent 4 }}
+---
+{{- end }}
+{{- end }}

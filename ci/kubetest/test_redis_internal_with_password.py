@@ -3,7 +3,7 @@ import logging
 
 import pytest
 
-from utils import cleanup_k8s, helm_install, is_posthog_healthy, wait_for_pods_to_be_ready
+from helpers.utils import cleanup_k8s, helm_install, is_posthog_healthy, wait_for_pods_to_be_ready
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()

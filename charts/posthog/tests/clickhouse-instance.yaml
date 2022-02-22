@@ -250,3 +250,18 @@ tests:
             someuser/networks/ip: "0.0.0.0/0"
             someuser/profile: default
             someuser/quota: default
+
+  - it: sets default clickhouse-server image
+    asserts:
+      - equal:
+          path: spec.templates.podTemplates[0].spec.containers[0].image
+          value: "yandex/clickhouse-server:21.6.5"
+
+  - it: allows modifying clickhouse-server version
+    set:
+      clickhouse.image.repository: altinity/clickhouse-server
+      clickhouse.image.tag: 22.1
+    asserts:
+      - equal:
+          path: spec.templates.podTemplates[0].spec.containers[0].image
+          value: "altinity/clickhouse-server:22.1"

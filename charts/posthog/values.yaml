@@ -530,6 +530,12 @@ clickhouse:
   # - host: posthog-posthog-zookeeper
   #   port: 2181
 
+  image:
+    # -- ClickHouse image repository.
+    repository: yandex/clickhouse-server
+    # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. 
+    tag: "21.6.5"
+
   # -- Toleration labels for clickhouse pod assignment
   tolerations: []
   # -- Affinity settings for clickhouse pod
@@ -550,9 +556,6 @@ clickhouse:
 
   # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
   serviceType: NodePort
-
-  # -- If enabled, operator will prefer k8s nodes with tag `clickhouse:true`
-  useNodeSelector: false
 
   persistence:
     # -- Enable data persistence using PVC.
@@ -605,79 +608,6 @@ externalClickhouse:
   # -- Whether to verify TLS connection connecting to ClickHouse
   verify: false
 
-## Prometheus Exporter / Metrics
-##
-metrics:
-  # -- Start an exporter for posthog metrics
-  enabled: false
-
-  ## Configure extra options for liveness and readiness probes
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
-
-  # -- Metrics pods livenessProbe settings
-  livenessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 5
-    timeoutSeconds: 2
-    failureThreshold: 3
-    successThreshold: 1
-
-  # -- Metrics pods readinessProbe settings
-  readinessProbe:
-    enabled: true
-    initialDelaySeconds: 30
-    periodSeconds: 5
-    timeoutSeconds: 2
-    failureThreshold: 3
-    successThreshold: 1
-
-  # -- Metrics resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/
-  resources: {}
-  #   limits:
-  #     cpu: 100m
-  #     memory: 100Mi
-  #   requests:
-  #     cpu: 100m
-  #     memory: 100Mi
-
-  # -- Node labels for metrics pod
-  nodeSelector: {}
-  # -- Toleration labels for metrics pod assignment
-  tolerations: []
-  # -- Affinity settings for metrics pod
-  affinity: {}
-  # schedulerName:
-  # Optional extra labels for pod, i.e. redis-client: "true"
-  # podLabels: []
-  service:
-    # --  Kubernetes service type for metrics service
-    type: ClusterIP
-    # -- Additional labels for metrics service
-    labels: {}
-
-  image:
-    # -- Metrics exporter image repository
-    repository: prom/statsd-exporter
-    # -- Metrics exporter image tag
-    tag: v0.10.5
-    # -- Metrics exporter image pull policy
-    pullPolicy: IfNotPresent
-
-  # Enable this if you're using https://github.com/coreos/prometheus-operator
-  serviceMonitor:
-    # -- if `true`, creates a Prometheus Operator ServiceMonitor (also requires `metrics.enabled` to be `true`)
-    enabled: false
-    # -- Optional namespace which Prometheus is running in
-    namespace:
-    # -- How frequently to scrape metrics (use by default, falling back to Prometheus' default)
-    interval:
-    ## Defaults to what's used if you follow CoreOS [Prometheus Install Instructions](https://github.com/helm/charts/tree/master/stable/prometheus-operator#tldr)
-    ## [Prometheus Selector Label](https://github.com/helm/charts/tree/master/stable/prometheus-operator#prometheus-operator-1)
-    ## [Kube Prometheus Selector Label](https://github.com/helm/charts/tree/master/stable/prometheus-operator#exporters)
-    # -- Default to kube-prometheus install (CoreOS recommended), but should be set according to Prometheus install
-    selector:
-      prometheus: kube-prometheus
 
 cloudwatch:
   # -- Enable cloudwatch container insights to get logs and metrics on AWS
@@ -692,6 +622,7 @@ cloudwatch:
     port: 2020
     readHead: "On"
     readTail: "Off"
+
 
 # Provide affinity for hooks if needed
 hooks:
@@ -714,6 +645,42 @@ serviceAccount:
   # -- Configures annotation for the ServiceAccount
   annotations: {}
 
+
+###
+###
+### ---- Grafana ----
+###
+###
+grafana:
+  # -- Whether to install Grafana or not.
+  enabled: false
+
+  # -- Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info.
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      folderAnnotation: grafana_folder
+      provider:
+        foldersFromFilesStructure: true
+
+  # -- Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info.
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://posthog-prometheus-server
+        access: proxy
+        isDefault: true
+
+
+###
+###
+### ---- Prometheus ----
+###
+###
 prometheus:
   # -- Whether to enable a minimal prometheus installation for getting alerts/monitoring the stack
   enabled: false
@@ -795,14 +762,103 @@ prometheus:
                 description: "Persistent volume claim {{ $labels.persistentvolumeclaim }} disk usage is above 85% for past 5 minutes"
                 summary: "Kubernetes {{ $labels.persistentvolumeclaim }} is full (host {{ $labels.kubernetes_io_hostname }})"
 
-# -- Prometheus StatsD configuration, see https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-statsd-exporter
-statsd:
-  enabled: false
 
+###
+###
+### ---- prometheus-statsd-exporter ----
+###
+###
+prometheus-statsd-exporter:
+  # -- Whether to install the `prometheus-statsd-exporter` or not.
+  enabled: false
+  # -- Map of annotations to add to the pods.
   podAnnotations:
     prometheus.io/scrape: "true"
     prometheus.io/path: /metrics
     prometheus.io/port: "9102"
 
-# Misc
+externalStatsd:
+  # -- External Statsd host to use.
+  host:
+  # -- External Statsd port to use.
+  port:
+
+
+###
+###
+### ---- prometheus-kafka-exporter ----
+###
+###
+prometheus-kafka-exporter:
+  # -- Whether to install the `prometheus-kafka-exporter` or not.
+  enabled: false
+
+  # -- We want to pin to image tag `v1.4.2` as it is currently the only
+  # available version working on Apple M1 (otherwise we break local development).
+  #
+  # TODO: remove the override once `prometheus-kafka-exporter` will default to this version.
+  #
+  image:
+    tag: v1.4.2
+
+  # -- Map of annotations to add to the pods.
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9308"
+
+  # -- Specify the target Kafka brokers to monitor.
+  kafkaServer:
+    - posthog-posthog-kafka:9092
+
+
+###
+###
+### ---- prometheus-postgres-exporter ----
+###
+###
+prometheus-postgres-exporter:
+  # -- Whether to install the `prometheus-postgres-exporter` or not.
+  enabled: false
+
+  # -- Map of annotations to add to the pods.
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9187"
+
+  # -- Configuration options.
+  config:
+    datasource:
+      host: posthog-posthog-postgresql
+      user: postgres
+      passwordSecret:
+        name: posthog-posthog-postgresql
+        key: postgresql-password
+
+
+###
+###
+### ---- prometheus-redis-exporter ----
+###
+###
+prometheus-redis-exporter:
+  # -- Whether to install the `prometheus-redis-exporter` or not.
+  enabled: false
+
+  # -- Map of annotations to add to the pods.
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9121"
+
+  # -- Specify the target Redis instance to monitor.
+  redisAddress: redis://posthog-posthog-redis-master:6379
+
+
+###
+###
+### ---- MISC ----
+###
+###
 installCustomStorageClass: false

@@ -1,0 +1,73 @@
+suite: StatsD env variable propagation
+templates:
+  - templates/events-deployment.yaml
+  - templates/plugins-deployment.yaml
+  - templates/web-deployment.yaml
+  - templates/worker-deployment.yaml
+  # NOTE: we need to include this as it is required by the other templates
+  - templates/secrets.yaml
+
+tests:
+  - it: spec.template.spec.containers[0].env should have the default statsd env variables when `prometheus-statsd-exporter.enabled` is `true`
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      prometheus-statsd-exporter.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STATSD_HOST
+            value: RELEASE-NAME-posthog-prometheus-statsd-exporter
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STATSD_PORT
+            value: "9125"
+
+  - it: spec.template.spec.containers[0].env should have custom statsd env variables when `prometheus-statsd-exporter.enabled` is `true` port is custom
+    template: templates/events-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      prometheus-statsd-exporter.enabled: true
+      prometheus-statsd-exporter.statsd.tcpPort: 1234
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STATSD_HOST
+            value: RELEASE-NAME-posthog-prometheus-statsd-exporter
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STATSD_PORT
+            value: "1234"
+
+  - it: spec.template.spec.containers[0].env should have custom statsd env variables when `externalStatsd` is configured
+    template: templates/events-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      externalStatsd:
+        host: statsd.example.com
+        port: "5678"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STATSD_HOST
+            value: statsd.example.com
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: STATSD_PORT
+            value: "5678"

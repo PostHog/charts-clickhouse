@@ -86,7 +86,7 @@ spec:
             - name: clickhouse
               # KEEP CLICKHOUSE-SERVER VERSION IN SYNC WITH
               # https://github.com/PostHog/posthog/tree/master/ee/docker-compose.ch.yml#L17
-              image: yandex/clickhouse-server:21.6.5
+              image: {{ template "posthog.clickhouse.image" . }}
               command:
                 - /bin/bash
                 - -c
@@ -108,11 +108,6 @@ spec:
                 - name: data-volumeclaim-template
               {{- end }}
                   mountPath: /var/lib/clickhouse
-              {{- end }}
-
-              {{- if .Values.clickhouse.useNodeSelector }}
-              nodeSelector:
-                clickhouse: true
               {{- end }}
 
               {{- if .Values.clickhouse.resources }}

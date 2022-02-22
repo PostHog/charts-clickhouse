@@ -1,0 +1,82 @@
+# Tests charts/posthog/templates/_statsd.tpl
+suite: _statsd.tpl template
+templates:
+  - templates/test-templates.yaml
+
+tests:
+  - it: should render empty data with defaults
+    set:
+      testTemplates.prometheusStatsdExporterEnvTest: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data
+          value: null
+
+  - it: should render env variables pointing to prometheus-statsd-exporter when it is enabled
+    set:
+      testTemplates.prometheusStatsdExporterEnvTest: true
+      prometheus-statsd-exporter.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data
+          value:
+            - name: STATSD_HOST
+              value: RELEASE-NAME-posthog-prometheus-statsd-exporter
+            - name: STATSD_PORT
+              value: "9125"
+
+  - it: should render env variables pointing to prometheus-statsd-exporter when it is enabled and custom values are used
+    set:
+      testTemplates.prometheusStatsdExporterEnvTest: true
+      prometheus-statsd-exporter.enabled: true
+      prometheus-statsd-exporter.statsd.tcpPort: 1234
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data
+          value:
+            - name: STATSD_HOST
+              value: RELEASE-NAME-posthog-prometheus-statsd-exporter
+            - name: STATSD_PORT
+              value: "1234"
+
+  - it: should render env variables pointing to externalStatsd when is enabled
+    set:
+      testTemplates.prometheusStatsdExporterEnvTest: true
+      externalStatsd:
+        host: statsd.example.com
+        port: "5678"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data
+          value:
+            - name: STATSD_HOST
+              value: statsd.example.com
+            - name: STATSD_PORT
+              value: "5678"
+
+  - it: should render env variables pointing to prometheus-statsd-exporter when both internal and external statsd are enabled
+    set:
+      testTemplates.prometheusStatsdExporterEnvTest: true
+      prometheus-statsd-exporter.enabled: true
+      prometheus-statsd-exporter.statsd.tcpPort: 1234
+      externalStatsd:
+        host: statsd.example.com
+        port: "5678"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: data
+          value:
+            - name: STATSD_HOST
+              value: RELEASE-NAME-posthog-prometheus-statsd-exporter
+            - name: STATSD_PORT
+              value: "1234"

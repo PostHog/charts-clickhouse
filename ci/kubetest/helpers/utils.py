@@ -125,27 +125,6 @@ def wait_for_pods_to_be_ready(kube):
     log.debug("✅ Done!")
 
 
-def get_clickhouse_statefulset_spec(kube):
-    statefulsets = kube.get_statefulsets(
-        namespace="posthog",
-        labels={"clickhouse.altinity.com/namespace": "posthog"},
-    )
-    statefulset = next(iter(statefulsets.values()))
-    return statefulset.obj.spec
-
-
-def get_clickhouse_cluster_service_spec(kube):
-    services = kube.get_services(
-        namespace="posthog",
-        labels={
-            "clickhouse.altinity.com/namespace": "posthog",
-            "clickhouse.altinity.com/Service": "cluster",
-        },
-    )
-    service = next(iter(services.values()))
-    return service.obj.spec
-
-
 def is_posthog_healthy(kube):
     test_if_posthog_deployments_are_healthy(kube)
 
