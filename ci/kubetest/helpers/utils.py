@@ -191,7 +191,7 @@ def install_external_kafka(namespace="posthog"):
             kafka bitnami/kafka \
             --version "12.6.0" \
             --set zookeeper.enabled=true \
-            --set replicaCount=1
+            --set replicaCount=2
         """.format(
         namespace=namespace
     )
