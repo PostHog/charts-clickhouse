@@ -14,6 +14,11 @@ on:
         description: 'The posthog docker image to deploy'
         required: false
         type: string
+      keep-after-install:
+        description: ''
+        required: true
+        default: "false"
+        type: boolean
 
   push:
     branches:
@@ -168,7 +173,7 @@ jobs:
         filename: ci/k6/ingestion-test.js
 
     - name: Delete the k8s cluster and all the associated resources
-      if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
+      if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' && !github.event.inputs.keep-after-install }}
       run: |
         ./eksctl delete cluster \
           --region=us-east-1 \
@@ -177,7 +182,7 @@ jobs:
           --wait
 
     - name: Delete the DNS record
-      if: ${{ always() && steps.dns_creation.outcome == 'success' }}
+      if: ${{ always() && steps.dns_creation.outcome == 'success' && !github.event.inputs.keep-after-install }}
       run: |
         DNS_RECORD_ID=$(doctl compute domain records list posthog.cc --no-header --format ID,Name | grep ${{ steps.vars.outputs.dns_record }} | awk '{print $1}')
         doctl compute domain records delete \
