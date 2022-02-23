@@ -9,6 +9,11 @@ name: e2e - DigitalOcean (install)
 
 on:
   workflow_dispatch:
+    inputs:
+      posthog-image-sha:
+        description: 'The posthog docker image to deploy'
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -57,6 +62,7 @@ jobs:
           --set ingress.hostname="${{ steps.vars.outputs.fqdn_record }}" \
           --set ingress-nginx.controller.service.annotations."service\.beta\.kubernetes\.io/do-loadbalancer-name"="${{ steps.vars.outputs.k8s_cluster_name }}" \
           --set ingress-nginx.controller.service.annotations."service\.beta\.kubernetes\.io/do-loadbalancer-hostname"="${{ steps.vars.outputs.fqdn_record }}" \
+          --set "image.sha=${{ github.event.inputs.posthog-image-sha }}" \
           --timeout 20m \
           --create-namespace \
           --namespace posthog \
