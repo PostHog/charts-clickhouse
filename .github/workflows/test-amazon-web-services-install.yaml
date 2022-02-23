@@ -9,6 +9,12 @@ name: e2e - Amazon Web Services (install)
 
 on:
   workflow_dispatch:
+    inputs:
+      posthog-image-sha:
+        description: 'The posthog docker image to deploy'
+        required: false
+        type: string
+
   push:
     branches:
       - main
@@ -80,6 +86,7 @@ jobs:
         helm upgrade --install \
           -f ci/values/amazon_web_services.yaml \
           --set "ingress.hostname=${{ steps.vars.outputs.fqdn_record }}" \
+          --set "image.sha=${{ github.event.inputs.posthog-image-sha }}" \
           --timeout 20m \
           --create-namespace \
           --namespace posthog \
