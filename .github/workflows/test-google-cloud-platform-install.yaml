@@ -9,6 +9,11 @@ name: e2e - Google Cloud Platform (install)
 
 on:
   workflow_dispatch:
+    inputs:
+      posthog-image-sha:
+        description: 'The posthog docker image to deploy'
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -88,6 +93,7 @@ jobs:
           -f ci/values/google_cloud_platform.yaml \
           --set "ingress.hostname=${{ steps.vars.outputs.fqdn_record }}" \
           --set "ingress.gcp.ip_name=${{ steps.vars.outputs.dns_record }}" \
+          --set "image.sha=${{ github.event.inputs.posthog-image-sha }}" \
           --timeout 20m \
           --create-namespace \
           --namespace posthog \
