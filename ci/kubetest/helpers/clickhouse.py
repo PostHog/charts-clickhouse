@@ -1,5 +1,6 @@
 import json
 
+
 def get_clickhouse_statefulset_spec(kube):
     statefulsets = kube.get_statefulsets(
         namespace="posthog",
@@ -20,6 +21,7 @@ def get_clickhouse_cluster_service_spec(kube):
     service = next(iter(services.values()))
     return service.obj.spec
 
+
 def get_clickhouse_pods(kube):
     return kube.get_pods(
         namespace="posthog",
@@ -29,9 +31,11 @@ def get_clickhouse_pods(kube):
         },
     )
 
+
 def get_clickhouse_pod_spec(kube):
     pod = next(iter(get_clickhouse_pods(kube).values()))
     return pod.obj.spec
+
 
 def run_query_on_clickhouse_nodes(kube, user, password, query):
     pod = next(iter(get_clickhouse_pods(kube).values()))
@@ -47,9 +51,10 @@ def run_query_on_clickhouse_nodes(kube, user, password, query):
 
     assert response.status == 200, f"Clickhouse query failed. status={response.status}, data={response.data}"
 
-    return response.json().get('data')
+    return response.json().get("data")
 
-def get_clickhouse_table_counts_on_all_nodes(kube, user = "posthog", password = "kubetest123"):
+
+def get_clickhouse_table_counts_on_all_nodes(kube, user="posthog", password="kubetest123"):
     table_counts_rows = run_query_on_clickhouse_nodes(
         kube,
         user=user,
