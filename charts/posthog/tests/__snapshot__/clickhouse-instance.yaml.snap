@@ -1,3 +1,23 @@
+allows passing custom sharding settings:
+  1: |
+    shards:
+    - internalReplication: Disabled
+      name: shard0
+      replicasCount: 3
+      templates:
+        dataVolumeClaimTemplate: default-volume-claim
+        logVolumeClaimTemplate: default-volume-claim
+        podTemplate: clickhouse-v18.16.1
+      weight: 1
+    - name: shard1
+      replicas:
+      - name: replica0
+      - name: replica1
+      - name: replica2
+      templates:
+        dataVolumeClaimTemplate: default-volume-claim
+        logVolumeClaimTemplate: default-volume-claim
+        podTemplate: clickhouse-v18.16.1
 the manifest should match the snapshot when using default values:
   1: |
     apiVersion: clickhouse.altinity.com/v1
