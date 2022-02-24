@@ -2,14 +2,20 @@
 {{- define "_snippet-initContainers-wait-for-service-dependencies" }}
 - name: wait-for-service-dependencies
   image: busybox:1.34
+  env:
+    {{- include "snippet.clickhouse-env" . | nindent 4 }}
   command:
     - /bin/sh
     - -c
     - >
         {{ if .Values.clickhouse.enabled }}
-        until (nc -vz "{{ include "posthog.clickhouse.fullname" . }}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local" 8123);
+        until (
+            wget -qO- \
+                "http://$CLICKHOUSE_USER:$CLICKHOUSE_PASSWORD@{{ include "posthog.clickhouse.fullname" . }}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local:8123" \
+                --post-data "SELECT count() FROM clusterAllReplicas('{{ .Values.clickhouse.cluster }}', system, one)"
+        );
         do
-            echo "waiting for ClickHouse"; sleep 1;
+            echo "waiting for ClickHouse cluster to become available"; sleep 1;
         done
         {{ end }}
 
