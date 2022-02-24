@@ -68,6 +68,6 @@ def get_clickhouse_table_counts_on_all_nodes(kube, user="posthog", password="kub
     )
 
     number_of_hosts = len(table_counts_rows)
-    table_counts = [row["table_count"] for row in table_counts_rows]
+    table_counts = [int(row["table_count"]) for row in table_counts_rows]
 
     return number_of_hosts, table_counts
