@@ -23,8 +23,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 2,
-  "iteration": 1644586400884,
+  "id": 3,
+  "iteration": 1644854451957,
   "links": [
     {
       "asDropdown": true,
@@ -53,12 +53,16 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "dark-red",
                 "value": null
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "dark-orange",
+                "value": 60
+              },
+              {
+                "color": "dark-green",
+                "value": 3600
               }
             ]
           },
@@ -1232,11 +1236,12 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "1m",
+  "refresh": "",
   "schemaVersion": 34,
   "style": "dark",
   "tags": [
-    "PostHog"
+    "PostHog",
+    "Redis"
   ],
   "templating": {
     "list": [
@@ -1319,8 +1324,8 @@
         "allValue": ".*",
         "current": {
           "selected": false,
-          "text": "10.244.0.3:9121",
-          "value": "10.244.0.3:9121"
+          "text": "10.244.0.12:9121",
+          "value": "10.244.0.12:9121"
         },
         "definition": "label_values(redis_up{}, instance)",
         "hide": 0,
@@ -1343,7 +1348,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
