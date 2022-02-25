@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 15.4.0](https://img.shields.io/badge/Version-15.4.0-informational?style=flat-square) ![AppVersion: 1.32.0](https://img.shields.io/badge/AppVersion-1.32.0-informational?style=flat-square)
+![Version: 15.4.1](https://img.shields.io/badge/Version-15.4.1-informational?style=flat-square) ![AppVersion: 1.32.0](https://img.shields.io/badge/AppVersion-1.32.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -151,19 +151,17 @@ The following table lists the configurable parameters of the PostHog chart and t
 | externalRedis.password | string | `""` | Password for the external Redis. Ignored if `externalRedis.existingSecret` is set. |
 | externalRedis.existingSecret | string | `""` | Name of an existing Kubernetes secret object containing the Redis password. |
 | externalRedis.existingSecretPasswordKey | string | `""` | Name of the key pointing to the password in your Kubernetes secret. |
-| kafka.enabled | bool | `true` | Install kafka on kubernetes |
-| kafka.nameOverride | string | `"posthog-kafka"` | Name override for kafka app |
-| kafka.url | string | `nil` | URL for kafka. Only set when internal kafka is disabled |
-| kafka.host | string | `nil` | Host for kafka. Only set when internal kafka is disabled |
-| kafka.port | string | `nil` | Port for kafka. Only set when internal kafka is disabled |
-| kafka.service.enabled | bool | `false` |  |
-| kafka.service.type | string | `"NodePort"` |  |
-| kafka.persistence.enabled | bool | `true` | Enable persistence using PVC |
-| kafka.persistence.size | string | `"20Gi"` | PVC Storage Request for kafka volume |
-| kafka.logRetentionBytes | string | `"_15_000_000_000"` | Should be less than kafka.persistence.size, minimum 1GB |
-| kafka.logRetentionHours | int | `24` | The minimum age of a log file to be eligible for deletion due to age |
-| kafka.zookeeper.enabled | bool | `false` | Install zookeeper on kubernetes |
-| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper |
+| kafka.enabled | bool | `true` | Whether to deploy Kafka as part of this release. To use an external Kafka instance set this to `false` and configure the `externalKafka` values. |
+| kafka.nameOverride | string | `"posthog-kafka"` |  |
+| kafka.fullnameOverride | string | `""` |  |
+| kafka.logRetentionBytes | string | `"_15_000_000_000"` | A size-based retention policy for logs. |
+| kafka.logRetentionHours | int | `24` | The minimum age of a log file to be eligible for deletion due to age. |
+| kafka.numPartitions | int | `1` | The default number of log partitions per topic. |
+| kafka.persistence.enabled | bool | `true` |  |
+| kafka.persistence.size | string | `"20Gi"` | Persistent Volume size. |
+| kafka.zookeeper.enabled | bool | `false` | Please DO NOT override this value. This chart installs Zookeeper separately. |
+| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | Server or list of external Zookeeper servers to use. |
+| externalKafka.brokers | string | `""` |  |
 | zookeeper.enabled | bool | `true` | Install zookeeper on kubernetes |
 | zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for zookeeper app |
 | zookeeper.replicaCount | int | `1` | replica count for zookeeper |
