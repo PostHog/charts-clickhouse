@@ -21,10 +21,16 @@ spec:
 {{ toYaml .Values.worker.podLabels | indent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.hooks.affinity }}
-      affinity:
-{{ toYaml . | indent 8 }}
+      {{- if .Values.migrate.affinity }}
+      affinity: {{ toYaml .Values.migrate.affinity | nindent 12 }}
       {{- end }}
+      {{- if .Values.migrate.tolerations }}
+      tolerations: {{ toYaml .Values.migrate.tolerations | nindent 12 }}
+      {{- end }}
+      {{- if .Values.migrate.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.migrate.nodeSelector | nindent 12 }}
+      {{- end }}
+
       restartPolicy: Never
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets:
@@ -42,17 +48,19 @@ spec:
         env:
         # Redis env variables
         {{- include "snippet.redis-env" . | indent 8 }}
+
+        # Add common env variables
+        {{- if .Values.env }}
+        {{ toYaml .Values.env | indent 8 }}
+        {{- end }}
+
+        # Add migrate specific env variables
+        {{- if .Values.migrate.env }}
+        {{ toYaml .Values.migrate.env | indent 8 }}
+        {{- end }}
+
         - name: SENTRY_DSN
           value: {{ .Values.sentryDSN | quote }}
-{{- if .Values.env }}
-{{ toYaml .Values.env | indent 8 }}
-{{- end }}
-{{- if .Values.worker.env }}
-{{ toYaml .Values.worker.env | indent 8 }}
-{{- end }}
-{{- if .Values.hooks.migrate.env }}
-{{ toYaml .Values.hooks.migrate.env | indent 8 }}
-{{- end }}
         - name: SITE_URL
           value: {{ template "posthog.site.url" . }}
         - name: DEPLOYMENT
@@ -75,8 +83,7 @@ spec:
         {{- end }}
         - name: HELM_INSTALL_INFO
           value: {{ template "posthog.helmInstallInfo" . }}
-        resources:
-{{ toYaml .Values.hooks.migrate.resources | indent 10 }}
+        resources: {{ toYaml .Values.migrate.migrate.resources | nindent 10 }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
 {{- end }}

@@ -32,19 +32,18 @@ spec:
 {{ toYaml .Values.web.podLabels | indent 8 }}
         {{- end }}
     spec:
-      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.web.affinity }}
-      affinity:
-{{ toYaml .Values.web.affinity | indent 8 }}
-      {{- end }}
-      {{- if .Values.web.nodeSelector }}
-      nodeSelector:
-{{ toYaml .Values.web.nodeSelector | indent 8 }}
+      affinity: {{ toYaml .Values.web.affinity | nindent 12 }}
       {{- end }}
       {{- if .Values.web.tolerations }}
-      tolerations:
-{{ toYaml .Values.web.tolerations | indent 8 }}
+      tolerations: {{ toYaml .Values.web.tolerations | nindent 12 }}
       {{- end }}
+      {{- if .Values.web.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.web.nodeSelector | nindent 12 }}
+      {{- end }}
+
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+
       {{- if .Values.web.schedulerName }}
       schedulerName: "{{ .Values.web.schedulerName }}"
       {{- end }}
@@ -69,6 +68,16 @@ spec:
 
         # statsd env variables
         {{- include "snippet.statsd-env" . | indent 8 }}
+
+        # Add common env variables
+        {{- if .Values.env }}
+        {{ toYaml .Values.env | indent 8 }}
+        {{- end }}
+
+        # Add events specific env variables
+        {{- if .Values.events.env }}
+        {{ toYaml .Values.events.env | indent 8 }}
+        {{- end }}
 
         - name: SITE_URL
           value: {{ template "posthog.site.url" . }}
@@ -106,12 +115,7 @@ spec:
         {{- end }}
         - name: HELM_INSTALL_INFO
           value: {{ template "posthog.helmInstallInfo" . }}
-{{- if .Values.env }}
-{{ toYaml .Values.env | indent 8 }}
-{{- end }}
-{{- if .Values.web.env }}
-{{ toYaml .Values.web.env | indent 8 }}
-{{- end }}
+
         livenessProbe:
           failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
           httpGet:

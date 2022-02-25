@@ -26,19 +26,17 @@ spec:
 {{ toYaml .Values.pgbouncer.podLabels | indent 8 }}
         {{- end }}
     spec:
-      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.pgbouncer.affinity }}
-      affinity:
-{{ toYaml .Values.pgbouncer.affinity | indent 8 }}
-      {{- end }}
-      {{- if .Values.pgbouncer.nodeSelector }}
-      nodeSelector:
-{{ toYaml .Values.pgbouncer.nodeSelector | indent 8 }}
+      affinity: {{ toYaml .Values.pgbouncer.affinity | nindent 12 }}
       {{- end }}
       {{- if .Values.pgbouncer.tolerations }}
-      tolerations:
-{{ toYaml .Values.pgbouncer.tolerations | indent 8 }}
+      tolerations: {{ toYaml .Values.pgbouncer.tolerations | nindent 12 }}
       {{- end }}
+      {{- if .Values.pgbouncer.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.pgbouncer.nodeSelector | nindent 12 }}
+      {{- end }}
+
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.pgbouncer.schedulerName }}
       schedulerName: "{{ .Values.pgbouncer.schedulerName }}"
       {{- end }}
