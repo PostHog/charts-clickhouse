@@ -33,7 +33,13 @@
         {{ end }}
 
         {{ if .Values.kafka.enabled }}
-        until (nc -vz "{{ include "posthog.kafka.host" . }}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local" 9092);
+
+        KAFKA_BROKERS="{{ include "posthog.kafka.brokers" . }}"
+
+        KAFKA_HOST=$(echo $KAFKA_BROKERS | cut -f1 -d:)
+        KAFKA_PORT=$(echo $KAFKA_BROKERS | cut -f2 -d:)
+
+        until (nc -vz "$KAFKA_HOST.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local" $KAFKA_PORT);
         do
             echo "waiting for Kafka"; sleep 1;
         done

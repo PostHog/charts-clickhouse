@@ -151,63 +151,6 @@ Return whether Redis uses password authentication or not
 {{- end -}}
 
 {{/*
-Set kafka fullname
-*/}}
-{{- define "posthog.kafka.fullname" -}}
-{{- if .Values.kafka.fullnameOverride -}}
-{{- .Values.kafka.fullnameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else if .Values.kafka.nameOverride -}}
-{{- printf "%s-%s" .Release.Name .Values.kafka.nameOverride | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "%s-%s" (include "posthog.fullname" .) "kafka" | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set kafka host
-*/}}
-{{- define "posthog.kafka.host" -}}
-{{- if .Values.kafka.host -}}
-    {{- .Values.kafka.host | quote -}}
-{{- else -}}
-{{- template "posthog.kafka.fullname" . -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set kafka port
-*/}}
-{{- define "posthog.kafka.port" -}}
-{{- if .Values.kafka.port -}}
-    {{- .Values.kafka.port -}}
-{{- else -}}
-{{- default 9092 .Values.kafka.port -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set kafka url
-*/}}
-{{- define "posthog.kafka.url" -}}
-{{- if .Values.kafka.url -}}
-    {{- .Values.kafka.url | quote -}}
-{{- else -}}
-    "kafka://{{- template "posthog.kafka.host" . -}}:{{-  template "posthog.kafka.port" . -}}"
-{{- end -}}
-{{- end -}}
-
-{{/*
-Set kafka url
-*/}}
-{{- define "posthog.kafka.url_no_protocol" -}}
-{{- if .Values.kafka.url -}}
-    {{- .Values.kafka.url | quote -}}
-{{- else -}}
-    "{{- template "posthog.kafka.host" . -}}:{{-  template "posthog.kafka.port" . -}}"
-{{- end -}}
-{{- end -}}
-
-{{/*
 Set site url
 */}}
 {{- define "posthog.site.url" -}}

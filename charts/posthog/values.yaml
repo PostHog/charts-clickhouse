@@ -295,7 +295,6 @@ cert-manager:
       - 1.1.1.1
       - 208.67.222.222
 
-
 ###
 ###
 ### ---- INGRESS ----
@@ -326,7 +325,6 @@ ingress:
   annotations: {}
   # -- TLS secret to be used by the ingress.
   secretName:
-
 
 ###
 ###
@@ -393,7 +391,6 @@ pgbouncer:
   # -- Additional volumes to be added to the pgbouncer deployment
   extraVolumes: []
 
-
 ###
 ###
 ### ---- REDIS ----
@@ -456,38 +453,40 @@ externalRedis:
 ###
 ###
 kafka:
-  # -- Install kafka on kubernetes
+  # -- Whether to deploy Kafka as part of this release. To use an external Kafka instance set this to `false` and configure the `externalKafka` values.
   enabled: true
-  # -- Name override for kafka app
+
   nameOverride: posthog-kafka
-  # -- URL for kafka. Only set when internal kafka is disabled
-  url:
-  # -- Host for kafka. Only set when internal kafka is disabled
-  host:
-  # -- Port for kafka. Only set when internal kafka is disabled
-  port:
-  service:
-    enabled: false
-    type: NodePort
-  persistence:
-    # -- Enable persistence using PVC
-    enabled: true
-    # -- PVC Storage Request for kafka volume
-    size: 20Gi
-  # -- A size-based retention policy for logs
-  # -- Should be less than kafka.persistence.size, minimum 1GB
+
+  fullnameOverride: ""
+
+  # -- A size-based retention policy for logs.
   logRetentionBytes: _15_000_000_000
-  # -- The minimum age of a log file to be eligible for deletion due to age
+
+  # -- The minimum age of a log file to be eligible for deletion due to age.
   logRetentionHours: 24
+
+  # -- The default number of log partitions per topic.
+  numPartitions: 1
+
+  persistence:
+    # - Enable data persistence using PVC.
+    enabled: true
+    # -- Persistent Volume size.
+    size: 20Gi
+
   zookeeper:
-    # -- Install zookeeper on kubernetes
+    # -- Please DO NOT override this value. This chart installs Zookeeper separately.
     enabled: false
-    # -- Name override for zookeeper app
+
   externalZookeeper:
-    # -- URL for zookeeper. Only set when internal zookeeper is disabled
-    # -- IF using default clickhouse zookeeper use <deployment-name>-posthog-zookeeper
+    # -- Server or list of external Zookeeper servers to use.
     servers:
       - posthog-posthog-zookeeper:2181
+
+externalKafka:
+  # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided in a comma separated list, e.g. `host1:port1,host2:port2`.
+  brokers: ""
 
 
 ###

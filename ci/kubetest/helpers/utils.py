@@ -56,8 +56,14 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
     exec_subprocess("kubectl delete clusterrole clickhouse-operator-posthog --ignore-not-found")
     for namespace in namespaces:
         patch = '{"metadata":{"finalizers":null}}'
-        exec_subprocess(f"kubectl patch chi posthog -n {namespace} -p '{patch}' --type=merge", ignore_errors=True)
-        exec_subprocess(f"kubectl delete chi posthog -n {namespace} --ignore-not-found", ignore_errors=True)
+        exec_subprocess(
+            f"kubectl patch chi posthog -n {namespace} -p '{patch}' --type=merge",
+            ignore_errors=True,
+        )
+        exec_subprocess(
+            f"kubectl delete chi posthog -n {namespace} --ignore-not-found",
+            ignore_errors=True,
+        )
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
 
     log.debug("✅ Done!")
@@ -174,3 +180,20 @@ def exec_subprocess(cmd, ignore_errors=False):
         """
         )
     return cmd_run
+
+
+def install_external_kafka(namespace="posthog"):
+    log.debug("🔄 Setting up external Kafka...")
+    cmd = """
+          helm repo add bitnami https://charts.bitnami.com/bitnami && \
+          helm upgrade --install \
+            --namespace {namespace} \
+            kafka bitnami/kafka \
+            --version "12.6.0" \
+            --set zookeeper.enabled=true \
+            --set replicaCount=2
+        """.format(
+        namespace=namespace
+    )
+    exec_subprocess(cmd)
+    log.debug("✅ Done!")
