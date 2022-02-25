@@ -18,8 +18,8 @@ spec:
     metadata:
       annotations:
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
-      {{- if .Values.web.podAnnotations }}
-{{ toYaml .Values.web.podAnnotations | indent 8 }}
+      {{- if .Values.events.podAnnotations }}
+{{ toYaml .Values.events.podAnnotations | indent 8 }}
       {{- end }}
       labels:
         app: {{ template "posthog.fullname" . }}
@@ -28,24 +28,24 @@ spec:
         {{- if (eq (default .Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
-        {{- if .Values.web.podLabels }}
+        {{- if .Values.events.podLabels }}
 {{ toYaml .Values.web.podLabels | indent 8 }}
         {{- end }}
     spec:
-      {{- if .Values.web.affinity }}
-      affinity: {{ toYaml .Values.web.affinity | nindent 12 }}
+      {{- if .Values.events.affinity }}
+      affinity: {{ toYaml .Values.events.affinity | nindent 12 }}
       {{- end }}
-      {{- if .Values.web.tolerations }}
-      tolerations: {{ toYaml .Values.web.tolerations | nindent 12 }}
+      {{- if .Values.events.tolerations }}
+      tolerations: {{ toYaml .Values.events.tolerations | nindent 12 }}
       {{- end }}
-      {{- if .Values.web.nodeSelector }}
-      nodeSelector: {{ toYaml .Values.web.nodeSelector | nindent 12 }}
+      {{- if .Values.events.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.events.nodeSelector | nindent 12 }}
       {{- end }}
 
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
 
-      {{- if .Values.web.schedulerName }}
-      schedulerName: "{{ .Values.web.schedulerName }}"
+      {{- if .Values.events.schedulerName }}
+      schedulerName: "{{ .Values.events.schedulerName }}"
       {{- end }}
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets:
@@ -136,8 +136,7 @@ spec:
           periodSeconds: {{ .Values.web.readinessProbe.periodSeconds }}
           successThreshold: {{ .Values.web.readinessProbe.successThreshold }}
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
-        resources:
-{{ toYaml .Values.web.resources | indent 12 }}
+        resources: {{ toYaml .Values.events.resources | nindent 12 }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}

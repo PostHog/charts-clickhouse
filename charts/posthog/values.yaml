@@ -55,14 +55,46 @@ events:
     # -- Max pods for the events stack HorizontalPodAutoscaler.
     maxpods: 10
 
-  # -- Node labels for the events stack deployment.
+  # -- Resource limits for events service.
+  resources:
+    {}
+
+  # -- Additional env variables to inject into the events stack deployment.
+  env:
+    []
+
+  # -- Node labels for events stack deployment.
   nodeSelector: {}
 
-  # -- Toleration labels the events stack deployment.
+  # -- Toleration labels for events stack deployment.
   tolerations: []
 
-  # -- Affinity settings the events stack deployment.
+  # -- Affinity settings for events stack deployment.
   affinity: {}
+
+  livenessProbe:
+    # -- The liveness probe failure threshold
+    failureThreshold: 5
+    # -- The liveness probe initial delay seconds
+    initialDelaySeconds: 50
+    # -- The liveness probe period seconds
+    periodSeconds: 10
+    # -- The liveness probe success threshold
+    successThreshold: 1
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 2
+
+  readinessProbe:
+    # -- The readiness probe failure threshold
+    failureThreshold: 10
+    # -- The readiness probe initial delay seconds
+    initialDelaySeconds: 50
+    # -- The readiness probe period seconds
+    periodSeconds: 10
+    # -- The readiness probe success threshold
+    successThreshold: 1
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 2
 
 
 web:
