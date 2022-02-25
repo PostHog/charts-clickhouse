@@ -31,14 +31,14 @@
 {{- end }}
 - name: KAFKA_ENABLED
   value: "true"
-# Used by PostHog/plugin-server. Expected format: comma-separated list of "host:port"
+# Used by PostHog/plugin-server. There is no specific reason for the difference. Expected format: comma-separated list of "host:port"
 - name: KAFKA_HOSTS
 {{- if .Values.kafka.enabled }}
   value: {{ ( include "posthog.kafka.brokers" . ) }}
 {{ else }}
   value: {{ join "," .Values.externalKafka.brokers | quote }}
 {{- end }}
-# Used by PostHog/web. Expected format: comma-separated list of "kafka://host:port"
+# Used by PostHog/web. There is no specific reason for the difference. Expected format: comma-separated list of "kafka://host:port"
 - name: KAFKA_URL
 {{- if .Values.kafka.enabled }}
   value: {{ printf "kafka://%s" ( include "posthog.kafka.brokers" . ) }}
