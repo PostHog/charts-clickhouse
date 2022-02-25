@@ -32,19 +32,17 @@ spec:
 {{ toYaml .Values.worker.podLabels | indent 8 }}
         {{- end }}
     spec:
-      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.worker.affinity }}
-      affinity:
-{{ toYaml .Values.worker.affinity | indent 8 }}
-      {{- end }}
-      {{- if .Values.worker.nodeSelector }}
-      nodeSelector:
-{{ toYaml .Values.worker.nodeSelector | indent 8 }}
+      affinity: {{ toYaml .Values.worker.affinity | nindent 12 }}
       {{- end }}
       {{- if .Values.worker.tolerations }}
-      tolerations:
-{{ toYaml .Values.worker.tolerations | indent 8 }}
+      tolerations: {{ toYaml .Values.worker.tolerations | nindent 12 }}
       {{- end }}
+      {{- if .Values.worker.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.worker.nodeSelector | nindent 12 }}
+      {{- end }}
+
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.worker.schedulerName }}
       schedulerName: "{{ .Values.worker.schedulerName }}"
       {{- end }}
@@ -72,6 +70,16 @@ spec:
 
         # statsd env variables
         {{- include "snippet.statsd-env" . | indent 8 }}
+
+        # Add common env variables
+        {{- if .Values.env }}
+        {{ toYaml .Values.env | indent 8 }}
+        {{- end }}
+
+        # Add worker specific env variables
+        {{- if .Values.worker.env }}
+        {{ toYaml .Values.worker.env | indent 8 }}
+        {{- end }}
 
         - name: SITE_URL
           value: {{ template "posthog.site.url" . }}
@@ -101,12 +109,7 @@ spec:
         {{- end }}
         - name: HELM_INSTALL_INFO
           value: {{ template "posthog.helmInstallInfo" . }}
-{{- if .Values.env }}
-{{ toYaml .Values.env | indent 8 }}
-{{- end }}
-{{- if .Values.worker.env }}
-{{ toYaml .Values.worker.env | indent 8 }}
-{{- end }}
+
         resources:
 {{ toYaml .Values.worker.resources | indent 12 }}
       initContainers:

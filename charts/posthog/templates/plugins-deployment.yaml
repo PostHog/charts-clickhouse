@@ -73,6 +73,16 @@ spec:
         # statsd env variables
         {{- include "snippet.statsd-env" . | indent 8 }}
 
+        # Add common env variables
+        {{- if .Values.env }}
+        {{ toYaml .Values.env | indent 8 }}
+        {{- end }}
+
+        # Add plugins specific env variables
+        {{- if .Values.plugins.env }}
+        {{ toYaml .Values.plugins.env | indent 8 }}
+        {{- end }}
+
         - name: SENTRY_DSN
           value: {{ .Values.sentryDSN | quote }}
         - name: DEPLOYMENT
@@ -98,12 +108,7 @@ spec:
         {{- end }}
         - name: HELM_INSTALL_INFO
           value: {{ template "posthog.helmInstallInfo" . }}
-{{- if .Values.env }}
-{{ toYaml .Values.env | indent 8 }}
-{{- end }}
-{{- if .Values.plugins.env }}
-{{ toYaml .Values.plugins.env | indent 8 }}
-{{- end }}
+
         resources:
 {{ toYaml .Values.plugins.resources | indent 12 }}
       initContainers:
