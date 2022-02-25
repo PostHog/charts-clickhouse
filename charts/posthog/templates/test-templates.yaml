@@ -6,6 +6,8 @@ data:
 {{- include "snippet.clickhouse-env" . | nindent 2 }}
 {{- else if .Values.testTemplates.postgresqlEnvTest -}}
 {{- include "snippet.postgresql-migrate-env" . | nindent 2 }}
+{{- else if .Values.testTemplates.kafkaEnvTest -}}
+{{- include "snippet.kafka-env" . | nindent 2 }}
 {{- else if .Values.testTemplates.prometheusStatsdExporterEnvTest -}}
 {{- include "snippet.statsd-env" . | nindent 2 }}
 {{- end -}}
