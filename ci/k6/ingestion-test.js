@@ -60,7 +60,7 @@ export function checkEvents() {
 
   success = describe('Check the count of events ingested', (t) => {
 
-    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/1/insights/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`)
+    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/2/insights/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`)
     const res = http.get(URI.toString(), {
       headers: {
         Authorization: `Bearer e2e_demo_api_key`
