@@ -2,17 +2,6 @@ the manifest should match the snapshot when using default values:
   1: |
     apiVersion: v1
     data:
-      clickhouse.json: ""
-    kind: ConfigMap
-    metadata:
-      annotations:
-        grafana_folder: PostHog
-      labels:
-        grafana_dashboard: "1"
-      name: posthog-grafana-dashboard-clickhouse
-  2: |
-    apiVersion: v1
-    data:
       postgresql.json: |-
         {
             "annotations": {
@@ -1157,7 +1146,7 @@ the manifest should match the snapshot when using default values:
       labels:
         grafana_dashboard: "1"
       name: posthog-grafana-dashboard-postgresql
-  3: |
+  2: |
     apiVersion: v1
     data:
       redis.json: |-
