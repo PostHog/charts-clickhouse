@@ -3,11 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "posthog.fullname" . }}-pgbouncer
-  labels:
-    app: {{ template "posthog.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -20,7 +17,6 @@ spec:
   template:
     metadata:
       annotations:
-        metrics-enabled: {{ .Values.metrics.enabled | quote }}
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
       labels:
         app: {{ template "posthog.fullname" . }}
@@ -58,11 +54,19 @@ spec:
         ports:
         - containerPort: 6543
         env:
-        - name: DATABASE_URL
+        - name: DB_USER
+          value: {{ include "posthog.postgresql.username" . }}
+        - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ template "posthog.fullname" . }}
-              key: postgresql-url
+              name: {{ include "posthog.postgresql.secretName" . }}
+              key: {{ include "posthog.postgresql.secretPasswordKey" . }}
+        - name: DB_HOST
+          value: {{ include "posthog.postgresql.host" . }}
+        - name: DB_PORT
+          value: {{ include "posthog.postgresql.port" . | quote }}
+        - name: DB_NAME
+          value: {{ include "posthog.postgresql.database" . }}
         - name: LISTEN_PORT
           value: "6543"
         - name: MAX_CLIENT_CONN

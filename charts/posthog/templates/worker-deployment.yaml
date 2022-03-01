@@ -3,17 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "posthog.fullname" . }}-worker
-  labels:
-    app: {{ template "posthog.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
-  annotations:
-    # This is what defines this resource as a hook. Without this line, the
-    # job is considered part of the release.
-    "helm.sh/hook": "post-install,post-upgrade"
-    "helm.sh/resource-policy": "keep"
-    "helm.sh/hook-weight": "1"
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -26,7 +17,6 @@ spec:
   template:
     metadata:
       annotations:
-        metrics-enabled: {{ .Values.metrics.enabled | quote }}
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
       {{- if .Values.worker.podAnnotations }}
 {{ toYaml .Values.worker.podAnnotations | indent 8 }}
@@ -77,6 +67,15 @@ spec:
         ports:
         - containerPort: {{ .Values.service.internalPort }}
         env:
+        # Kafka env variables
+        {{- include "snippet.kafka-env" . | indent 8 }}
+
+        # Redis env variables
+        {{- include "snippet.redis-env" . | indent 8 }}
+
+        # statsd env variables
+        {{- include "snippet.statsd-env" . | indent 8 }}
+
         - name: SITE_URL
           value: {{ template "posthog.site.url" . }}
         - name: DEPLOYMENT
@@ -88,90 +87,13 @@ spec:
             secretKeyRef:
               name: {{ template "posthog.fullname" . }}
               key: posthog-secret
-        - name: POSTHOG_DB_USER
-          value: {{ default "posthog" .Values.postgresql.postgresqlUsername | quote }}
-        - name: POSTHOG_DB_NAME
-          value: {{ default "posthog" .Values.postgresql.postgresqlDatabase | quote }}
-        - name: POSTHOG_DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-            {{- if .Values.postgresql.existingSecret }}
-              name: {{ .Values.postgresql.existingSecret }}
-            {{- else }}
-              name: {{ template "posthog.postgresql.secret" . }}
-            {{- end }}
-              key: {{ template "posthog.postgresql.secretKey" . }}
-        - name: POSTHOG_POSTGRES_HOST
-          value: {{ template "posthog.pgbouncer.host" . }}
-        - name: POSTHOG_POSTGRES_PORT
-          value: {{ include "posthog.pgbouncer.port" . | quote }}
-        - name: USING_PGBOUNCER
-          value: 'true'
-          {{- if or (.Values.redis.enabled) (.Values.redis.password) }}
-        - name: POSTHOG_REDIS_PASSWORD
-          value: {{ .Values.redis.password | quote }}
-          {{- end }}
-        - name: POSTHOG_REDIS_HOST
-          value: {{ template "posthog.redis.host" . }}
-        - name: POSTHOG_REDIS_PORT
-          value: {{ include "posthog.redis.port" . | quote }}
-        {{- if .Values.statsd.enabled }}
-        - name: STATSD_HOST
-          value: {{ template "posthog.statsd.host" . }}
-        - name: STATSD_PORT
-          value: "9125"
-        {{- end }}
-        - name: EMAIL_HOST
-          value: {{ default "" .Values.email.host | quote }}
-        - name: EMAIL_PORT
-          value: {{ default "" .Values.email.port | quote }}
-        - name: EMAIL_HOST_USER
-          value: {{ default "" .Values.email.user | quote }}
-        - name: EMAIL_HOST_PASSWORD
-          valueFrom:
-            secretKeyRef:
-            {{- if .Values.email.existingSecret }}
-              name: {{ .Values.email.existingSecret }}
-            {{- else }}
-              name: {{ template "posthog.fullname" . }}
-            {{- end }}
-              key: smtp-password
-        - name: EMAIL_USE_TLS
-          value: {{ default "false" .Values.email.use_tls | quote }}
-        - name: EMAIL_USE_SSL
-          value: {{ default "false" .Values.email.use_ssl | quote }}
-        - name: DEFAULT_FROM_EMAIL
-          value: {{ .Values.email.from_email | quote }}
-          {{- if .Values.clickhouse.enabled }}
         - name: PRIMARY_DB
           value: clickhouse
-        - name: CLICKHOUSE_DATABASE
-          value: {{ .Values.clickhouse.database | quote }}
-        - name: CLICKHOUSE_HOST
-          {{- if .Values.clickhouse.host }}
-          value: {{ .Values.clickhouse.host | quote }}
-          {{- else }}
-          value: {{ template "posthog.clickhouse.fullname" . }}
-          {{- end }}
-        - name: CLICKHOUSE_USER
-          value: {{ .Values.clickhouse.user | quote }}
-        - name: CLICKHOUSE_PASSWORD
-          value: {{ .Values.clickhouse.password | quote }}
-        - name: CLICKHOUSE_REPLICATION
-          value: {{ .Values.clickhouse.replication | quote }}
-        - name: CLICKHOUSE_SECURE
-          value: {{ .Values.clickhouse.secure | quote }}
-        - name: CLICKHOUSE_VERIFY
-          value: {{ .Values.clickhouse.verify | quote }}
-        - name: CLICKHOUSE_ASYNC
-          value: {{ .Values.clickhouse.async| quote }}
+        {{- include "snippet.postgresql-env" . | nindent 8 }}
+        {{- include "snippet.clickhouse-env" . | nindent 8 }}
+        {{- include "snippet.email-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
-        {{- end }}
-        {{- if .Values.kafka.enabled }}
-        - name: KAFKA_URL
-          value: {{ template "posthog.kafka.url" . }}
-        {{- end }}
         {{- if .Values.plugins.ingestion.enabled }}
         - name: PLUGIN_SERVER_INGESTION
           value: 'true'
@@ -186,4 +108,7 @@ spec:
 {{- end }}
         resources:
 {{ toYaml .Values.worker.resources | indent 12 }}
+      initContainers:
+      {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
+      {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
 {{- end }}

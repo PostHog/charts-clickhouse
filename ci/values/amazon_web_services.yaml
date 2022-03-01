@@ -7,21 +7,22 @@ cert-manager:
   enabled: true
 
 # Use small PVC in CI
-clickhouseOperator:
-  storage: 1Gi
-
+clickhouse:
+  persistence:
+    size: 1Gi
 kafka:
   persistence:
     size: 1Gi
-
 postgresql:
   persistence:
     size: 1Gi
-
 redis:
   master:
     persistence:
       size: 1Gi
+zookeeper:
+  persistence:
+    size: 1Gi
 
 #
 # For AWS ELB in L4 (TCP) mode, we need to enable some additional config

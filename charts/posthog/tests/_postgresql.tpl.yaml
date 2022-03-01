@@ -1,0 +1,66 @@
+# Tests charts/posthog/templates/_postgresql.tpl
+suite: _postgresql.tpl template
+templates:
+  - templates/test-templates.yaml
+
+tests:
+  - it: should render with defaults
+    set:
+      testTemplates.postgresqlEnvTest: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot:
+          path: data
+
+  - it: should render with custom values
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.nameOverride: customName
+      postgresql.postgresqlDatabase: customDb
+      postgresql.postgresqlUsername: customUser
+      postgresql.postgresqlPassword: customPassword
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should render with existing secret
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.existingSecret: someExistingSecret
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should render with external postgresql and password
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.enabled: false
+      externalPostgresql.postgresqlHost: pg.foo.bar
+      externalPostgresql.postgresqlDatabase: somedb
+      externalPostgresql.postgresqlUsername: someuser
+      externalPostgresql.postgresqlPassword: password123
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should render with external postgresql and existing secret
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.enabled: false
+      externalPostgresql.postgresqlHost: pg.foo.bar
+      externalPostgresql.postgresqlDatabase: somedb
+      externalPostgresql.postgresqlUsername: someuser
+      externalPostgresql.existingSecret: password123
+      externalPostgresql.existingSecretPasswordKey: somekey
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should raise when postgresql is disabled but no external postgresql
+    set:
+      testTemplates.postgresqlEnvTest: true
+      postgresql.enabled: false
+    asserts:
+      - failedTemplate:
+          errorMessage: externalPostgresql.postgresqlHost is required if not postgresql.enabled
