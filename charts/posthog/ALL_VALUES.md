@@ -17,7 +17,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.default | string | `":release-1.33.0"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
 | image.pullPolicy | string | `"IfNotPresent"` | PostHog image pull policy. |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to. |
-| env | list | `[{"name":"ASYNC_EVENT_PROPERTY_USAGE","value":"true"},{"name":"EVENT_PROPERTY_USAGE_INTERVAL_SECONDS","value":"86400"}]` | Environment variables to inject into every PostHog deployment. |
+| env | list | `[]` | Environment variables to inject into every PostHog deployment. |
 | migrate.enabled | bool | `true` | Whether to install the PostHog migrate job or not. |
 | events.enabled | bool | `true` | Whether to install the PostHog events stack or not. |
 | events.replicacount | int | `1` | Count of events pods to run. This setting is ignored if `events.hpa.enabled` is set to `true`. |
