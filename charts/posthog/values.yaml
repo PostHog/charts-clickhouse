@@ -17,11 +17,10 @@ image:
 sentryDSN:
 
 # -- Environment variables to inject into every PostHog deployment.
-env:
-  - name: ASYNC_EVENT_PROPERTY_USAGE
-    value: "true"
-  - name: EVENT_PROPERTY_USAGE_INTERVAL_SECONDS
-    value: "86400"
+env: []
+# env: 
+#   - name: FOO 
+#     value: bar
 
 migrate:
   # -- Whether to install the PostHog migrate job or not.
