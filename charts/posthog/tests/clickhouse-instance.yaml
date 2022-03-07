@@ -265,3 +265,43 @@ tests:
       - equal:
           path: spec.templates.podTemplates[0].spec.containers[0].image
           value: "altinity/clickhouse-server:22.1"
+
+  - it: allows overriding shard counts
+    set:
+      clickhouse.layout.shardsCount: 3
+      clickhouse.layout.replicasCount: 2
+    asserts:
+      - equal:
+          path: spec.configuration.clusters[0].layout
+          value:
+            shardsCount: 3
+            replicasCount: 2
+
+  - it: allows passing custom sharding settings
+    set:
+      clickhouse.layout:
+        shardsCount: null
+        replicasCount: null
+        # From https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md
+        shards:
+          - name: shard0
+            replicasCount: 3
+            weight: 1
+            internalReplication: Disabled
+            templates:
+              podTemplate: clickhouse-v18.16.1
+              dataVolumeClaimTemplate: default-volume-claim
+              logVolumeClaimTemplate: default-volume-claim
+
+          - name: shard1
+            templates:
+              podTemplate: clickhouse-v18.16.1
+              dataVolumeClaimTemplate: default-volume-claim
+              logVolumeClaimTemplate: default-volume-claim
+            replicas:
+              - name: replica0
+              - name: replica1
+              - name: replica2
+    asserts:
+      - matchSnapshot:
+          path: spec.configuration.clusters[0].layout

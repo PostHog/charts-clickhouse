@@ -585,6 +585,13 @@ clickhouse:
   defaultProfiles:
     default/allow_experimental_window_functions: "1"
 
+  ## -- Clickhouse cluster layout. (Experimental, use at own risk)
+  ## For a full list of options, see https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md
+  ## section on clusters and layouts.
+  layout:
+    shardsCount: 1
+    replicasCount: 1
+
 ## External clickhouse configuration
 ##
 externalClickhouse:

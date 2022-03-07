@@ -23,8 +23,7 @@ spec:
           dataVolumeClaimTemplate: data-volumeclaim-template
           {{- end }}
         layout:
-          shardsCount: 1
-          replicasCount: 1
+          {{- toYaml .Values.clickhouse.layout | nindent 10 }}
 
     settings:
       format_schema_path: /etc/clickhouse-server/config.d/
