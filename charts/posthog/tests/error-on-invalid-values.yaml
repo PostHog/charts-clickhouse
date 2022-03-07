@@ -1,0 +1,103 @@
+suite: Error on invalid values
+templates:
+  - error-on-invalid-values.yaml
+
+tests:
+  - it: shouldn't error if externalPostgresql.postgresqlHost is set and postgresql.enabled is false
+    set:
+      cloud: local
+      postgresql.enabled: false
+      externalPostgresql.postgresqlHost: test123.local
+    asserts: []
+  
+  - it: shouldn't error if externalPostgresql.postgresqlHost is empty and postgresql.enabled is true
+    set:
+      cloud: local
+      postgresql.enabled: true
+      externalPostgresql.postgresqlHost: ""
+    asserts: []
+  
+  - it: shouldn't error if externalPostgresql.postgresqlHost is null and postgresql.enabled is true
+    set:
+      cloud: local
+      postgresql.enabled: true
+      externalPostgresql.postgresqlHost: ~
+    asserts: []
+  
+  - it: shouldn't error if externalRedis.host is set and redis.enabled is false
+    set:
+      cloud: local
+      redis.enabled: false
+      externalRedis.host: test123.local
+    asserts: []
+  
+  - it: shouldn't error if externalRedis.host is empty and redis.enabled is true
+    set:
+      cloud: local
+      redis.enabled: true
+      externalRedis.host: ""
+    asserts: []
+  
+  - it: shouldn't error if externalRedis.host is null and redis.enabled is true
+    set:
+      cloud: local
+      redis.enabled: true
+      externalRedis.host: ~
+    asserts: []
+  
+  - it: shouldn't error if externalKafka.brokers is set and kafka.enabled is false
+    set:
+      cloud: local
+      kafka.enabled: false
+      externalKafka.brokers:
+        - test123.local
+    asserts: []
+  
+  - it: shouldn't error if externalKafka.brokers is empty and kafka.enabled is true
+    set:
+      cloud: local
+      kafka.enabled: true
+      externalKafka.brokers: []
+    asserts: []
+  
+  - it: shouldn't error if externalClickhouse.host is set and clickhouse.enabled is false
+    set:
+      cloud: local
+      clickhouse.enabled: false
+      externalClickhouse.host: test123.local
+    asserts: []
+  
+  - it: shouldn't error if externalClickhouse.host is empty and clickhouse.enabled is true
+    set:
+      cloud: local
+      clickhouse.enabled: true
+      externalClickhouse.host: ""
+    asserts: []
+  
+  - it: shouldn't error if externalClickhouse.host is null and clickhouse.enabled is true
+    set:
+      cloud: local
+      clickhouse.enabled: true
+      externalClickhouse.host: ~
+    asserts: []
+  
+  - it: shouldn't error if externalClickhouse.cluster is set and clickhouse.enabled is false
+    set:
+      cloud: local
+      clickhouse.enabled: false
+      externalClickhouse.cluster: clickhouse
+    asserts: []
+  
+  - it: shouldn't error if externalClickhouse.cluster is empty and clickhouse.enabled is true
+    set:
+      cloud: local
+      clickhouse.enabled: true
+      externalClickhouse.cluster: ""
+    asserts: []
+  
+  - it: shouldn't error if externalClickhouse.cluster is null and clickhouse.enabled is true
+    set:
+      cloud: local
+      clickhouse.enabled: true
+      externalClickhouse.cluster: ~
+    asserts: []
