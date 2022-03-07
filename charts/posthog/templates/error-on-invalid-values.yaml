@@ -1,5 +1,6 @@
 {{- if false -}}
-# :TRICKY: This template raises an error if any externalService is configured without service.enabled being false in values.yaml.
+# :TRICKY: These templates raise an error if any invalid values are used in values.yaml.
 #   It doesn't actually define any real kubernetes resources
 {{- end -}}
+{{- include "snippet.error-on-removed-values" . -}}
 {{- include "snippet.error-on-both-externalService-and-service-enabled" . -}}
