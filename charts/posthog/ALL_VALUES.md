@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 16.1.0](https://img.shields.io/badge/Version-16.1.0-informational?style=flat-square) ![AppVersion: 1.33.0](https://img.shields.io/badge/AppVersion-1.33.0-informational?style=flat-square)
+![Version: 16.1.1](https://img.shields.io/badge/Version-16.1.1-informational?style=flat-square) ![AppVersion: 1.33.0](https://img.shields.io/badge/AppVersion-1.33.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -189,6 +189,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.persistence.size | string | `"20Gi"` | Persistent Volume size |
 | clickhouse.profiles | object | `{}` |  |
 | clickhouse.defaultProfiles.default/allow_experimental_window_functions | string | `"1"` |  |
+| clickhouse.layout.shardsCount | int | `1` |  |
+| clickhouse.layout.replicasCount | int | `1` |  |
 | externalClickhouse.host | string | `nil` | Host of the external cluster. This is required when clickhouse.enabled is false |
 | externalClickhouse.cluster | string | `nil` | Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false |
 | externalClickhouse.database | string | `"posthog"` | Database name for the external cluster |
