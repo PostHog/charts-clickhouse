@@ -12,9 +12,6 @@ from helpers.utils import (
 VALUES_YAML = """
 cloud: local
 
-kafka:
-  enabled: false
-
 externalKafka:
   brokers:
     - "kafka0:9092"
@@ -27,6 +24,7 @@ clickhouse:
   persistence:
     enabled: false
 kafka:
+  enabled: false
   persistence:
     enabled: false
 pgbouncer:
