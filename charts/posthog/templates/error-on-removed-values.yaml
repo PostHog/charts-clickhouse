@@ -1,5 +1,0 @@
-{{- if false -}}
-# :TRICKY: This template raises an error if any removed values are used in values.yaml.
-#   It doesn't actually define any real kubernetes resources
-{{- end -}}
-{{- include "snippet.error-on-removed-values" . -}}

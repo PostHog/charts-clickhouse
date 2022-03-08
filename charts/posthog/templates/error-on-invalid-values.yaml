@@ -1,0 +1,5 @@
+{{- if false -}}
+# :TRICKY: This template raises an error if any invalid values are used in values.yaml.
+#   It doesn't actually define any real kubernetes resources
+{{- end -}}
+{{- include "snippet.error-on-invalid-values" . -}}
