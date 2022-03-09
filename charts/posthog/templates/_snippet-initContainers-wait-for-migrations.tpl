@@ -5,9 +5,8 @@
   command:
     - /bin/sh
     - -c
-    - |
-        set -e
-        until (bin/migrate-check);
+    - >
+        until (python manage.py migrate --check);
         do
             echo "Waiting for database migrations to be completed"; sleep 1;
         done

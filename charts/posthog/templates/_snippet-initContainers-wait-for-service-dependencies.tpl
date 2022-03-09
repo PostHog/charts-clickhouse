@@ -5,8 +5,7 @@
   command:
     - /bin/sh
     - -c
-    - |
-        set -e
+    - >
         {{ if .Values.clickhouse.enabled }}
         until (nc -vz "{{ include "posthog.clickhouse.fullname" . }}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local" 8123);
         do
