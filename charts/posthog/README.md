@@ -43,7 +43,7 @@ This repo uses several types of test suite targeting different goals:
 We use `helm lint` that can be invoked via: `helm lint --strict --set “cloud=local” charts/posthog`
 
 #### Unit tests
-In order to run the test suite, you need to install the `helm-unittest` plugin. You can do that by running: `helm plugin install https://github.com/quintush/helm-unittest.git --version 0.2.8`
+In order to run the test suite, you need to install the `helm-unittest` plugin. You can do that by running: `helm plugin install https://github.com/quintush/helm-unittest --version 0.2.8`
 
 For more information about how it works and how to write test cases, please look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md) or to the [tests already available in this repo](https://github.com/PostHog/charts-clickhouse/tree/main/charts/posthog/tests).
 
