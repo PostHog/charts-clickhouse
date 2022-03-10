@@ -3,17 +3,12 @@ import pytest
 from helpers.clickhouse import get_clickhouse_pod_spec
 from helpers.utils import cleanup_helm, cleanup_k8s, install_chart, is_posthog_healthy, wait_for_pods_to_be_ready
 
-# :KLUDGE: We need to override image.tag to be more dynamic with supported clickhouse versions.
-# Can remove it once PostHog 1.33.0 is out.
 VALUES_WITH_DIFFERENT_CLICKHOUSE_IMAGE = """
 cloud: "local"
 
-image:
-  tag: latest
-
 clickhouse:
   image:
-    tag: 22.1
+    tag: 21.9.2.17
 """
 
 
@@ -31,4 +26,4 @@ def test_posthog_healthy(kube):
 
 def test_clickhouse_pod_image(kube):
     pod_spec = get_clickhouse_pod_spec(kube)
-    assert pod_spec.containers[0].image == "yandex/clickhouse-server:22.1"
+    assert pod_spec.containers[0].image == "yandex/clickhouse-server:21.9.2.17"
