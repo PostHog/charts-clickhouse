@@ -255,7 +255,7 @@ tests:
     asserts:
       - equal:
           path: spec.templates.podTemplates[0].spec.containers[0].image
-          value: "yandex/clickhouse-server:21.6.5"
+          value: "yandex/clickhouse-server:21.11.11.1"
 
   - it: allows modifying clickhouse-server version
     set:
