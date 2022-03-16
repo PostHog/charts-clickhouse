@@ -35,11 +35,9 @@ env: []
 #   - name: FOO
 #     value: bar
 
-
 migrate:
   # -- Whether to install the PostHog migrate job or not.
   enabled: true
-
 
 events:
   # -- Whether to install the PostHog events stack or not.
@@ -91,8 +89,7 @@ web:
     behavior:
 
   # -- Resource limits for web service.
-  resources:
-    {}
+  resources: {}
 
   # -- Additional env variables to inject into the web stack deployment.
   env:
@@ -121,7 +118,7 @@ web:
 
   livenessProbe:
     # -- The liveness probe failure threshold
-    failureThreshold: 5
+    failureThreshold: 3
     # -- The liveness probe initial delay seconds
     initialDelaySeconds: 50
     # -- The liveness probe period seconds
@@ -133,15 +130,15 @@ web:
 
   readinessProbe:
     # -- The readiness probe failure threshold
-    failureThreshold: 10
+    failureThreshold: 3
     # -- The readiness probe initial delay seconds
     initialDelaySeconds: 50
     # -- The readiness probe period seconds
-    periodSeconds: 10
+    periodSeconds: 30
     # -- The readiness probe success threshold
     successThreshold: 1
     # -- The readiness probe timeout seconds
-    timeoutSeconds: 2
+    timeoutSeconds: 5
   # -- Container security context for web stack deployment.
   securityContext:
     enabled: false
@@ -174,8 +171,7 @@ worker:
   env: []
 
   # -- Resource limits for the worker stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the worker stack deployment.
   nodeSelector: {}
@@ -218,8 +214,7 @@ plugins:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -258,7 +253,6 @@ plugins:
     successThreshold: 1
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
-
 
 pluginsAsync:
   # -- Whether to install the PostHog plugin-server async stack or not.
@@ -287,8 +281,7 @@ pluginsAsync:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -328,8 +321,6 @@ pluginsAsync:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
 
-
-
 email:
   # -- SMTP service host.
   host:
@@ -349,7 +340,6 @@ email:
   use_ssl:
   # -- Outbound email sender to use.
   from_email:
-
 
 saml:
   # -- Whether password-based login is disabled and users automatically redirected to SAML login. Requires SAML to be properly configured.
@@ -399,7 +389,6 @@ saml:
   # attr_email: "email"
   attr_email:
 
-
 service:
   # -- PostHog service name.
   name: posthog
@@ -410,7 +399,6 @@ service:
 
   # -- PostHog service annotations.
   annotations: {}
-
 
 ###
 ###
@@ -447,7 +435,6 @@ cert-manager:
       - 1.1.1.1
       - 208.67.222.222
 
-
 ###
 ###
 ### ---- INGRESS ----
@@ -479,7 +466,6 @@ ingress:
   # -- TLS secret to be used by the ingress.
   secretName:
 
-
 ingress-nginx:
   controller:
     config:
@@ -496,7 +482,6 @@ ingress-nginx:
     #     annotations:
     #       prometheus.io/port: "10254"
     #       prometheus.io/scrape: "true"
-
 
 ###
 ###
@@ -533,7 +518,6 @@ externalPostgresql:
   existingSecret:
   # -- Name of the key pointing to the password in your Kubernetes secret
   existingSecretPasswordKey: postgresql-password
-
 
 ###
 ###
@@ -636,7 +620,6 @@ externalRedis:
   # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
 
-
 ###
 ###
 ### ---- KAFKA ----
@@ -678,7 +661,6 @@ externalKafka:
   # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
   brokers: []
 
-
 ###
 ###
 ### ---- ZOOKEEPER ----
@@ -702,9 +684,10 @@ zookeeper:
     enabled: false
     service:
       annotations:
-        "prometheus.io/scrape": "false" # let's make Prometheus skip the scraping of the
-                                        # service as we already scrape the pods (see below
-                                        # and https://github.com/bitnami/charts/issues/10101)
+        "prometheus.io/scrape":
+          "false" # let's make Prometheus skip the scraping of the
+          # service as we already scrape the pods (see below
+          # and https://github.com/bitnami/charts/issues/10101)
 
   ## -- Zookeeper pod(s) annotation.
   podAnnotations:
@@ -712,7 +695,6 @@ zookeeper:
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9141"
-
 
 ###
 ###
@@ -749,7 +731,7 @@ clickhouse:
   # servers:
   # - host: posthog-posthog-zookeeper
   #   port: 2181
-  
+
   image:
     # -- ClickHouse image repository.
     repository: clickhouse/clickhouse-server
@@ -820,7 +802,6 @@ clickhouse:
     default/allow_experimental_window_functions: "1"
     default/allow_nondeterministic_mutations: "1"
 
-
   ## -- Clickhouse cluster layout. (Experimental, use at own risk)
   ## For a full list of options, see https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md
   ## section on clusters and layouts.
@@ -832,7 +813,8 @@ clickhouse:
   ## You can use this to override settings, for example `prometheus/port: 9363`
   ## For the full list of settings, see:
   ## - https://clickhouse.com/docs/en/operations/settings/settings/
-  settings: {}
+  settings:
+    {}
     # Uncomment those lines if you want to enable the built-in Prometheus HTTP endpoint in ClickHouse.
     # prometheus/endpoint: /metrics
     # prometheus/port: 9363
@@ -850,10 +832,10 @@ clickhouse:
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9363"
-  
+
   client:
     image:
-    # -- Clickhouse client image repository.
+      # -- Clickhouse client image repository.
       repository: yandex/clickhouse-client
       # -- ClickHouse backup image tag.
       tag: "21.3.20.1"
@@ -872,9 +854,9 @@ clickhouse:
     backup_password: backup_password
     backup_schedule: "0 0 * * *" #backup every day at 0:00
     clickhouse_services: "chi-posthog-posthog-0-0" # use first replica in each shard, use `kubectl get svc | grep chi-posthog-posthog`
-    
+
     # All options: https://github.com/AlexAkulov/clickhouse-backup#default-config
-    env: 
+    env:
       - name: LOG_LEVEL
         value: "debug"
       - name: ALLOW_EMPTY_BACKUPS
@@ -887,7 +869,6 @@ clickhouse:
       - name: BACKUPS_TO_KEEP_REMOTE
         value: "0"
       # Add settings for remote backup storage.
-
 
 ## External clickhouse configuration
 ##
@@ -911,7 +892,6 @@ externalClickhouse:
   # -- Whether to verify TLS connection connecting to ClickHouse
   verify: false
 
-
 cloudwatch:
   # -- Enable cloudwatch container insights to get logs and metrics on AWS
   enabled: false
@@ -926,7 +906,6 @@ cloudwatch:
     readHead: "On"
     readTail: "Off"
 
-
 # Provide affinity for hooks if needed
 hooks:
   # -- Affinity settings for hooks
@@ -936,7 +915,6 @@ hooks:
     env: []
     # -- Hook job resource limits/requests
     resources: {}
-
 
 serviceAccount:
   # -- Configures if a ServiceAccount with this name should be created
@@ -948,7 +926,6 @@ serviceAccount:
   name:
   # -- Configures annotation for the ServiceAccount
   annotations: {}
-
 
 ###
 ###
@@ -1025,21 +1002,19 @@ grafana:
     datasources.yaml:
       apiVersion: 1
       datasources:
+        # Comment the snippet below if you are running with `prometheus.enabled: false`
+        - name: Prometheus
+          type: prometheus
+          url: http://posthog-prometheus-server
+          access: proxy
+          isDefault: true
 
-      # Comment the snippet below if you are running with `prometheus.enabled: false`
-      - name: Prometheus
-        type: prometheus
-        url: http://posthog-prometheus-server
-        access: proxy
-        isDefault: true
-
-      # Comment the snippet below if you are running with `loki.enabled: false`
-      - name: Loki
-        type: loki
-        url: http://posthog-loki:3100
-        access: proxy
-        isDefault: false
-
+        # Comment the snippet below if you are running with `loki.enabled: false`
+        - name: Loki
+          type: loki
+          url: http://posthog-loki:3100
+          access: proxy
+          isDefault: false
 
 ###
 ###
@@ -1049,7 +1024,6 @@ grafana:
 loki:
   # -- Whether to install Loki or not.
   enabled: false
-
 
 ###
 ###
@@ -1061,7 +1035,6 @@ promtail:
   enabled: false
   config:
     lokiAddress: http://posthog-loki:3100/loki/api/v1/push
-
 
 ###
 ###
@@ -1149,7 +1122,6 @@ prometheus:
                 description: "Persistent volume claim {{ $labels.persistentvolumeclaim }} disk usage is above 85% for past 5 minutes"
                 summary: "Kubernetes {{ $labels.persistentvolumeclaim }} is full (host {{ $labels.kubernetes_io_hostname }})"
 
-
 ###
 ###
 ### ---- prometheus-statsd-exporter ----
@@ -1169,7 +1141,6 @@ externalStatsd:
   host:
   # -- External Statsd port to use.
   port:
-
 
 ###
 ###
@@ -1198,7 +1169,6 @@ prometheus-kafka-exporter:
   kafkaServer:
     - posthog-posthog-kafka:9092
 
-
 ###
 ###
 ### ---- prometheus-postgres-exporter ----
@@ -1223,7 +1193,6 @@ prometheus-postgres-exporter:
         name: posthog-posthog-postgresql
         key: postgresql-password
 
-
 ###
 ###
 ### ---- prometheus-redis-exporter ----
@@ -1241,7 +1210,6 @@ prometheus-redis-exporter:
 
   # -- Specify the target Redis instance to monitor.
   redisAddress: redis://posthog-posthog-redis-master:6379
-
 
 ###
 ###
