@@ -276,6 +276,8 @@ tests:
       clickhouse.user: someuser
       clickhouse.password: somepass
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.configuration.users
           value:
@@ -286,6 +288,8 @@ tests:
 
   - it: sets default clickhouse-server image
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.templates.podTemplates[0].spec.containers[0].image
           value: "yandex/clickhouse-server:21.6.5"
@@ -295,6 +299,8 @@ tests:
       clickhouse.image.repository: altinity/clickhouse-server
       clickhouse.image.tag: 22.1
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.templates.podTemplates[0].spec.containers[0].image
           value: "altinity/clickhouse-server:22.1"
@@ -304,6 +310,8 @@ tests:
       clickhouse.layout.shardsCount: 3
       clickhouse.layout.replicasCount: 2
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.configuration.clusters[0].layout
           value:
@@ -336,11 +344,15 @@ tests:
               - name: replica1
               - name: replica2
     asserts:
+      - hasDocuments:
+          count: 1
       - matchSnapshot:
           path: spec.configuration.clusters[0].layout
 
-  - it: podAnnotations should not be set by default
+  - it: spec.templates.podTemplates.[0].metadata should not be set by default
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.templates.podTemplates[0].metadata
           value: null
@@ -351,6 +363,8 @@ tests:
         key1: value1
         key2: value2
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.templates.podTemplates[0].metadata.annotations
           value:
