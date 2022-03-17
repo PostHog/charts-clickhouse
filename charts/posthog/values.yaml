@@ -18,8 +18,8 @@ sentryDSN:
 
 # -- Environment variables to inject into every PostHog deployment.
 env: []
-# env: 
-#   - name: FOO 
+# env:
+#   - name: FOO
 #     value: bar
 
 migrate:
@@ -577,8 +577,10 @@ clickhouse:
     size: 20Gi
 
   ## -- Clickhouse user profile configuration.
-  ## You can use this to override settings, for example `default/max_memory_usage: 40000000000`
-  ## For a full list of clickhouse settings, see https://clickhouse.com/docs/en/operations/settings/settings/
+  ## You can use this to override profile settings, for example `default/max_memory_usage: 40000000000`
+  ## For the full list of settings, see:
+  ## - https://clickhouse.com/docs/en/operations/settings/settings-profiles/
+  ## - https://clickhouse.com/docs/en/operations/settings/settings/
   profiles: {}
 
   ## -- Default user profile configuration for Clickhouse. Don't overwrite this!
@@ -591,6 +593,29 @@ clickhouse:
   layout:
     shardsCount: 1
     replicasCount: 1
+
+  ## -- ClickHouse settings configuration.
+  ## You can use this to override settings, for example `prometheus/port: 9363`
+  ## For the full list of settings, see:
+  ## - https://clickhouse.com/docs/en/operations/settings/settings/
+  settings: {}
+    # Uncomment those lines if you want to enable the built-in Prometheus HTTP endpoint in ClickHouse.
+    # prometheus/endpoint: /metrics
+    # prometheus/port: 9363
+    # prometheus/metrics: true
+    # prometheus/events: true
+    # prometheus/asynchronous_metrics: true
+
+  ## -- Default settings configuration for ClickHouse. Don't overwrite this!
+  defaultSettings:
+    format_schema_path: /etc/clickhouse-server/config.d/
+
+  ## -- ClickHouse pod(s) annotation.
+  podAnnotations:
+    # Uncomment those lines if you want Prometheus server to scrape ClickHouse pods metrics.
+    # prometheus.io/scrape: "true"
+    # prometheus.io/path: /metrics
+    # prometheus.io/port: "9363"
 
 ## External clickhouse configuration
 ##
