@@ -107,7 +107,7 @@ spec:
         readinessProbe:
           failureThreshold: {{ .Values.plugins.readinessProbe.failureThreshold }}
           httpGet:
-            path: /_health/
+            path: /_ready/
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           initialDelaySeconds: {{ .Values.plugins.readinessProbe.initialDelaySeconds }}
