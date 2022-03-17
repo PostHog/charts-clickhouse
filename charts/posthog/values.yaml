@@ -187,7 +187,7 @@ plugins:
   # concurrency:
   readinessProbe:
     # -- The readiness probe failure threshold
-    failureThreshold: 10
+    failureThreshold: 15
     # -- The readiness probe initial delay seconds
     initialDelaySeconds: 50
     # -- The readiness probe period seconds
