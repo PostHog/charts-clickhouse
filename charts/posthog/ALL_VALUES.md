@@ -191,6 +191,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.defaultProfiles.default/allow_experimental_window_functions | string | `"1"` |  |
 | clickhouse.layout.shardsCount | int | `1` |  |
 | clickhouse.layout.replicasCount | int | `1` |  |
+| clickhouse.settings | object | `{}` |  |
+| clickhouse.defaultSettings.format_schema_path | string | `"/etc/clickhouse-server/config.d/"` |  |
+| clickhouse.podAnnotations | string | `nil` |  |
 | externalClickhouse.host | string | `nil` | Host of the external cluster. This is required when clickhouse.enabled is false |
 | externalClickhouse.cluster | string | `nil` | Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false |
 | externalClickhouse.database | string | `"posthog"` | Database name for the external cluster |
