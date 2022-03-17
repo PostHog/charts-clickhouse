@@ -185,17 +185,6 @@ plugins:
   # Optional extra labels for pod, i.e. redis-client: "true"
   # podLabels: []
   # concurrency:
-  livenessProbe:
-    # -- The liveness probe failure threshold
-    failureThreshold: 5
-    # -- The liveness probe initial delay seconds
-    initialDelaySeconds: 50
-    # -- The liveness probe period seconds
-    periodSeconds: 10
-    # -- The liveness probe success threshold
-    successThreshold: 1
-    # -- The liveness probe timeout seconds
-    timeoutSeconds: 5
   readinessProbe:
     # -- The readiness probe failure threshold
     failureThreshold: 10
