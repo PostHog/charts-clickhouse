@@ -11,15 +11,18 @@ on:
   workflow_dispatch:
     inputs:
       posthog-image-sha:
-        description: The posthog docker image to deploy
+        description: |
+          The posthog docker image to deploy. If unspecified we'll use the Helm
+          chart's default image.
         required: false
         type: string
       keep-after-install:
         description: |
-          For debugging purposes, to not tear down the cluster after deploy
+          For debugging purposes, to not tear down the cluster after deploy.
         required: true
         default: false
         type: boolean
+
   push:
     branches:
       - main
