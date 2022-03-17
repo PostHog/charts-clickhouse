@@ -12,13 +12,13 @@ on:
     inputs:
       posthog-image-sha:
         description: |
-          The posthog docker image to deploy. If unspecified we'll use the Helm
-          chart's default image.
+          Use this specific dockerhub posthog/posthog image sha. If unspecified
+          we'll use the Helm chart's default image.
         required: false
         type: string
       keep-after-install:
         description: |
-          For debugging purposes, to not tear down the cluster after deploy.
+          Keep K8s cluster and Helm deployment after workflow completion.
         required: true
         default: false
         type: boolean
