@@ -104,16 +104,6 @@ spec:
 {{- if .Values.plugins.env }}
 {{ toYaml .Values.plugins.env | indent 8 }}
 {{- end }}
-        livenessProbe:
-          failureThreshold: {{ .Values.plugins.livenessProbe.failureThreshold }}
-          httpGet:
-            path: /_health
-            port: 6738
-            scheme: HTTP
-          initialDelaySeconds: {{ .Values.plugins.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.plugins.livenessProbe.periodSeconds }}
-          successThreshold: {{ .Values.plugins.livenessProbe.successThreshold }}
-          timeoutSeconds: {{ .Values.plugins.livenessProbe.timeoutSeconds }}
         readinessProbe:
           failureThreshold: {{ .Values.plugins.readinessProbe.failureThreshold }}
           httpGet:
