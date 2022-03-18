@@ -29,7 +29,7 @@ dependencies:
     condition: ingress.nginx.enabled
 
   - name: kafka
-    version: 12.6.0
+    version: 14.9.3
     repository: https://charts.bitnami.com/bitnami
     condition: kafka.enabled
 

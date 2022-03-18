@@ -7,7 +7,7 @@ dependencies:
   version: 4.0.13
 - name: kafka
   repository: https://charts.bitnami.com/bitnami
-  version: 12.6.0
+  version: 14.9.3
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 8.6.1
@@ -35,5 +35,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:dc564924a37a755706e88e4d3760b207fa6ea3e0d6617d0fda1fb0824ff64fe4
-generated: "2022-02-08T17:37:18.034653+01:00"
+digest: sha256:3b5703f18c715e585eaf4ae4b4cf92d90fd638303e59bb828c83d41f20f5a8ca
+generated: "2022-03-18T16:25:04.886323+01:00"

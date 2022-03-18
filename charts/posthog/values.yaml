@@ -471,15 +471,15 @@ kafka:
   persistence:
     # - Enable data persistence using PVC.
     enabled: true
-    # -- Persistent Volume size.
+    # -- PVC Storage Request for Kafka data volume.
     size: 20Gi
 
   zookeeper:
-    # -- Please DO NOT override this value. This chart installs Zookeeper separately.
+    # -- Switch to enable or disable the ZooKeeper helm chart. !!! Please DO NOT override this (this chart installs Zookeeper separately) !!!
     enabled: false
 
   externalZookeeper:
-    # -- Server or list of external Zookeeper servers to use.
+    # -- List of external zookeeper servers to use.
     servers:
       - posthog-posthog-zookeeper:2181
 
@@ -583,7 +583,7 @@ clickhouse:
   ## - https://clickhouse.com/docs/en/operations/settings/settings/
   profiles: {}
 
-  ## -- Default user profile configuration for Clickhouse. Don't overwrite this!
+  ## -- Default user profile configuration for Clickhouse. !!! Please DO NOT override this !!!
   defaultProfiles:
     default/allow_experimental_window_functions: "1"
 
@@ -606,7 +606,7 @@ clickhouse:
     # prometheus/events: true
     # prometheus/asynchronous_metrics: true
 
-  ## -- Default settings configuration for ClickHouse. Don't overwrite this!
+  ## -- Default settings configuration for ClickHouse. !!! Please DO NOT override this !!!
   defaultSettings:
     format_schema_path: /etc/clickhouse-server/config.d/
 
