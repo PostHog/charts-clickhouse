@@ -158,9 +158,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.logRetentionHours | int | `24` | The minimum age of a log file to be eligible for deletion due to age. |
 | kafka.numPartitions | int | `1` | The default number of log partitions per topic. |
 | kafka.persistence.enabled | bool | `true` |  |
-| kafka.persistence.size | string | `"20Gi"` | Persistent Volume size. |
-| kafka.zookeeper.enabled | bool | `false` | Please DO NOT override this value. This chart installs Zookeeper separately. |
-| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | Server or list of external Zookeeper servers to use. |
+| kafka.persistence.size | string | `"20Gi"` | PVC Storage Request for Kafka data volume. |
+| kafka.zookeeper.enabled | bool | `false` | Switch to enable or disable the ZooKeeper helm chart. !!! Please DO NOT override this (this chart installs Zookeeper separately) !!! |
+| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | List of external zookeeper servers to use. |
 | externalKafka.brokers | list | `[]` |  |
 | zookeeper.enabled | bool | `true` | Install zookeeper on kubernetes |
 | zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for zookeeper app |
