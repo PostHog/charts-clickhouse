@@ -21,7 +21,7 @@ This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [
 
 ## Prerequisites
 - Kubernetes >=1.20 <= 1.23
-- Helm 3+
+- Helm >= 3.7.0
 
 ## Installation
 Deployment instructions for the major cloud service providers and on-premise deploys are available [here](https://posthog.com/docs/self-host).
