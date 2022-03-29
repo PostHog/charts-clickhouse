@@ -5,6 +5,7 @@ import time
 
 import pytest
 import yaml
+from uuid import uuid4
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
@@ -65,9 +66,6 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
             ignore_errors=True,
         )
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
-        # Also delete any persistent volumes created, these aren't deleted by
-        # the delete all command above.
-        exec_subprocess(f"kubectl delete pv --all -n {namespace}")
 
     log.debug("✅ Done!")
 
@@ -93,12 +91,15 @@ def install_chart(values, namespace=NAMESPACE):
         values_file.write(values_yaml)
         values_file.flush()
 
+        release_name = f"posthog-{uuid4()}"
+
         exec_subprocess(
             f"""
             helm upgrade \
                 --install \
                 -f {values_file.name} \
                 --set cloud=local \
+                --set clickhouse.persistence.enabled=false \
                 --timeout 30m \
                 --create-namespace \
                 --namespace {namespace} \
@@ -174,6 +175,7 @@ def install_custom_resources(filename, namespace="posthog"):
 
 
 def exec_subprocess(cmd, ignore_errors=False):
+    log.debug(f"Running: `{cmd}`")
     cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     cmd_return_code = cmd_run.returncode
     if cmd_return_code and not ignore_errors:
