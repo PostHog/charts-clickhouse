@@ -65,6 +65,9 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
             ignore_errors=True,
         )
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
+        # Also delete any persistent volumes created, these aren't deleted by
+        # the delete all command.
+        exec_subprocess(f"kubectl delete pv --all -n {namespace}")
 
     log.debug("✅ Done!")
 
@@ -73,6 +76,7 @@ def cleanup_helm(namespaces=[NAMESPACE]):
     log.debug("🔄 Making sure helm releases get removed...")
     for namespace in namespaces:
         exec_subprocess(f"helm uninstall posthog --namespace {namespace} || true")
+
     log.debug("✅ Done!")
 
 
