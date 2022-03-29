@@ -9,6 +9,10 @@ cloud: local
 externalStatsd:
   host: "external-prometheus-statsd-exporter"
   port: "9125"
+
+clickhouse:
+  persistence: 
+    enabled: false
 """
 
 
