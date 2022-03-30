@@ -5,7 +5,6 @@ import time
 
 import pytest
 import yaml
-from uuid import uuid4
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
@@ -91,16 +90,14 @@ def install_chart(values, namespace=NAMESPACE):
         values_file.write(values_yaml)
         values_file.flush()
 
-        release_name = f"posthog-{uuid4()}"
-
         exec_subprocess(
             f"""
             helm upgrade \
                 --install \
-                -f {values_file.name} \
-                --set cloud=local \
                 --set clickhouse.persistence.enabled=false \
                 --set zookeeper.persistence.enabled=false \
+                -f {values_file.name} \
+                --set cloud=local \
                 --timeout 30m \
                 --create-namespace \
                 --namespace {namespace} \
