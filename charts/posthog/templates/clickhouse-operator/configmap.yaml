@@ -123,7 +123,7 @@ data:
     ##
     ################################################
     
-    logtostderr: "true"
+    logtostderr: {{ .Values.clickhouse.logtostderr | default "true" }}
     alsologtostderr: "false"
     v: "1"
     stderrthreshold: ""
@@ -223,7 +223,7 @@ data:
     <yandex>
         <logger>
             <!-- Possible levels: https://github.com/pocoproject/poco/blob/develop/Foundation/include/Poco/Logger.h#L105 -->
-            <level>debug</level>
+            <level>{{ .Values.clickhouse.loglevel | default "debug" }}</level>
             <log>/var/log/clickhouse-server/clickhouse-server.log</log>
             <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
             <size>1000M</size>

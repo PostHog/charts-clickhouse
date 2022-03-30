@@ -528,6 +528,8 @@ clickhouse:
   # servers:
   # - host: posthog-posthog-zookeeper
   #   port: 2181
+  loglevel: info
+  logtostderr: "false"
 
   image:
     # -- ClickHouse image repository.
