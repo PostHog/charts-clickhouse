@@ -8,6 +8,7 @@ on:
 jobs:
   test-kubetest-store-durations:
     runs-on: ubuntu-20.04
+    timeout-minutes: 3600
     steps:
       - uses: actions/checkout@v2
         name: Checkout
