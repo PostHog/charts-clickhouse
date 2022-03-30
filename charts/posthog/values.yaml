@@ -744,12 +744,17 @@ serviceAccount:
 minio:
   # -- Whether to install MinIO (object storage system) or not. If false, `$SOMETHING` must be set
   enabled: true
+  auth:
+    # -- MinIO root username
+    rootUser: root-user
+    # -- MinIO root password
+    rootPassword: root-password-change-me-please
   persistence:
-    # Enable MinIO data persistence using PVC.
+    # -- Enable MinIO data persistence using PVC.
     enabled: true
-  # Comma, semi-colon or space separated list of buckets to create at initialization (only in standalone mode)
+  # -- Comma, semi-colon or space separated list of buckets to create at initialization (only in standalone mode)
   defaultBuckets: "posthog"
-  # Disable MinIO Web UI
+  # -- Disable MinIO Web UI
   disableWebUI: true
   ## -- MinIO pod(s) annotation.
   podAnnotations:
