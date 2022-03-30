@@ -100,6 +100,7 @@ def install_chart(values, namespace=NAMESPACE):
                 -f {values_file.name} \
                 --set cloud=local \
                 --set clickhouse.persistence.enabled=false \
+                --set zookeeper.persistence.enabled=false \
                 --timeout 30m \
                 --create-namespace \
                 --namespace {namespace} \
