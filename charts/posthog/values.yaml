@@ -747,6 +747,10 @@ minio:
   persistence:
     # Enable MinIO data persistence using PVC.
     enabled: true
+  # Comma, semi-colon or space separated list of buckets to create at initialization (only in standalone mode)
+  defaultBuckets: "posthog"
+  # Disable MinIO Web UI
+  disableWebUI: true
   ## -- MinIO pod(s) annotation.
   podAnnotations:
     # Uncomment those lines if you want Prometheus server to scrape MinIO pods metrics.
