@@ -97,6 +97,8 @@ def install_chart(values, namespace=NAMESPACE):
                 --set clickhouse.persistence.enabled=false \
                 --set zookeeper.persistence.enabled=false \
                 --set kafka.persistence.enabled=false \
+                --set web.livenessProbe.initialDelaySeconds=10 \
+                --set web.readinessProbe.initialDelaySeconds=10 \
                 -f {values_file.name} \
                 --set cloud=local \
                 --timeout 30m \
