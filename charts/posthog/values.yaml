@@ -528,8 +528,10 @@ clickhouse:
   # servers:
   # - host: posthog-posthog-zookeeper
   #   port: 2181
-  loglevel: info
-  logtostderr: "false"
+  # set log level of clickhouse
+  loglevel: debug
+  # allows logs to stderr
+  logtostderr: "true"
 
   image:
     # -- ClickHouse image repository.
