@@ -55,17 +55,10 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
     exec_subprocess("kubectl delete clusterrolebinding clickhouse-operator-posthog --ignore-not-found")
     exec_subprocess("kubectl delete clusterrole clickhouse-operator-posthog --ignore-not-found")
     for namespace in namespaces:
-        patch = '{"metadata":{"finalizers":null}}'
-        exec_subprocess(
-            f"kubectl patch chi posthog -n {namespace} -p '{patch}' --type=merge",
-            ignore_errors=True,
-        )
-        exec_subprocess(
-            f"kubectl delete chi posthog -n {namespace} --ignore-not-found",
-            ignore_errors=True,
-        )
+        log.debug("- deleting all resources in namespace {namespace}...", namespace)
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
-
+        log.debug("- deleting all the PV and PVC still around in namespace {namespace}...", namespace)
+        exec_subprocess(f"kubectl delete pvc --all -n {namespace}")
     log.debug("✅ Done!")
 
 
