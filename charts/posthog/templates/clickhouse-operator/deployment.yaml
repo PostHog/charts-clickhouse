@@ -47,7 +47,7 @@ spec:
             name: etc-clickhouse-operator-usersd-files
       containers:
         - name: clickhouse-operator
-          image: altinity/clickhouse-operator:latest
+          image: altinity/clickhouse-operator:0.18.3
           imagePullPolicy: Always
           volumeMounts:
             - name: etc-clickhouse-operator-folder
