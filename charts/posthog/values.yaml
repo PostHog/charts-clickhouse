@@ -738,6 +738,25 @@ serviceAccount:
 
 ###
 ###
+### ---- MINIO ----
+###
+###
+minio:
+  # -- Whether to install MinIO (object storage system) or not. If false, `$SOMETHING` must be set
+  enabled: true
+  persistence:
+    # Enable MinIO data persistence using PVC.
+    enabled: true
+  ## -- MinIO pod(s) annotation.
+  podAnnotations:
+    # Uncomment those lines if you want Prometheus server to scrape MinIO pods metrics.
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/minio/v2/metrics/cluster"
+    prometheus.io/port: "9000"
+
+
+###
+###
 ### ---- Grafana ----
 ###
 ###

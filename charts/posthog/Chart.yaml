@@ -33,6 +33,11 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: kafka.enabled
 
+  - name: minio
+    version: 11.1.4
+    repository: https://charts.bitnami.com/bitnami
+    condition: minio.enabled
+
   - name: postgresql
     version: 8.6.1
     repository: https://charts.bitnami.com/bitnami
