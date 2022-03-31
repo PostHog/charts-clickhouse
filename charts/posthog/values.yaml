@@ -742,7 +742,7 @@ serviceAccount:
 ###
 ###
 minio:
-  # -- Whether to install MinIO (object storage system) or not. If false, `$SOMETHING` must be set
+  # -- Whether to install MinIO (object storage system) or not. If false, `externalObjectStorage` must be set and configured.
   enabled: true
   auth:
     # -- MinIO root username
