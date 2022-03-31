@@ -89,8 +89,6 @@ spec:
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS
           value: {{ .Values.web.internalMetrics.capture| quote }}
-        - name: PLUGIN_SERVER_INGESTION
-          value: 'false'
         - name: HELM_INSTALL_INFO
           value: {{ template "posthog.helmInstallInfo" . }}
 {{- if .Values.env }}
