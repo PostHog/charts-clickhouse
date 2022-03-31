@@ -75,7 +75,7 @@ jobs:
           --nodes 3
 
         # Note: we explicitly set the reclaim policy of the default StorageClass
-        # to 'Delete' to make sure we don't keep EBS volumes around after cluster deletion
+        # to 'Delete' to make sure we don't keep disk volumes around after cluster deletion
         kubectl patch storageclass -p '{"reclaimPolicy": "Delete"}'
 
     - name: Install PostHog using the Helm chart
