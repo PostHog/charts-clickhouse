@@ -56,7 +56,7 @@ spec:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}-plugins
+      - name: {{ .Chart.Name }}-plugins-server-runner
         image: {{ template "posthog.image.fullPath" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:
