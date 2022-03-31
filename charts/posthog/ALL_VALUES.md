@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 17.0.0](https://img.shields.io/badge/Version-17.0.0-informational?style=flat-square) ![AppVersion: 1.34.0](https://img.shields.io/badge/AppVersion-1.34.0-informational?style=flat-square)
+![Version: 18.0.0](https://img.shields.io/badge/Version-18.0.0-informational?style=flat-square) ![AppVersion: 1.34.1](https://img.shields.io/badge/AppVersion-1.34.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -13,8 +13,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | cloud | string | `nil` | Cloud service being deployed on (example: `aws`, `azure`, `do`, `gcp`, `other`). |
 | image.repository | string | `"posthog/posthog"` | PostHog image repository to use. |
 | image.sha | string | `nil` | PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`). |
-| image.tag | string | `nil` | PostHog image tag to use (example: `release-1.34.0`). |
-| image.default | string | `":release-1.34.0"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
+| image.tag | string | `nil` | PostHog image tag to use (example: `release-1.34.1`). |
+| image.default | string | `":release-1.34.1"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
 | image.pullPolicy | string | `"IfNotPresent"` | PostHog image pull policy. |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to. |
 | env | list | `[]` | Environment variables to inject into every PostHog deployment. |
