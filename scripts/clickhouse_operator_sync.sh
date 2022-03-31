@@ -70,3 +70,7 @@ do
     sed -i '' 's/namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
 
 done
+
+# Add a {{ .Values.clickhouse.parameter }} for to stderror and log level settings
+sed -i '' 's/<level>debug<\/level>$/<level>{{ .Values.clickhouse.loglevel | default "debug" }}<\/level>/g' "${CHART_PATH}/templates/clickhouse-operator/configmap.yaml"
+sed -i '' 's/logtostderr: "true"$/logtostderr: {{ .Values.clickhouse.logtostderr | default "true" | quote }}/g' "${CHART_PATH}/templates/clickhouse-operator/configmap.yaml"

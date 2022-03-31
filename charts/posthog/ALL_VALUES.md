@@ -194,6 +194,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.settings | object | `{}` |  |
 | clickhouse.defaultSettings.format_schema_path | string | `"/etc/clickhouse-server/config.d/"` |  |
 | clickhouse.podAnnotations | string | `nil` |  |
+| clickhouse.logtostderr | bool | `"true"` | Whether allows logs to stderr |
+| clickhouse.loglevel | bool | `debug` | Log level |
 | externalClickhouse.host | string | `nil` | Host of the external cluster. This is required when clickhouse.enabled is false |
 | externalClickhouse.cluster | string | `nil` | Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false |
 | externalClickhouse.database | string | `"posthog"` | Database name for the external cluster |
