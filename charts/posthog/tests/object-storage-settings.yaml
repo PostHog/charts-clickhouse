@@ -1,0 +1,144 @@
+suite: Object storage settings propagated to pods
+templates:
+  # This list may be too broad or too narrow, I've just added to all deployments
+  # that use the django backend.
+  - templates/web-deployment.yaml
+  - templates/worker-deployment.yaml
+  - templates/events-deployment.yaml
+  - templates/migrate.job.yaml
+  # NOTE: we need to include this as it is required by the other templates
+  - templates/secrets.yaml
+
+tests:
+  - it: should use internal Object Storage as default
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_HOST
+            value: "posthog-minio"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_PORT
+            value: "9000"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_BUCKET
+            value: posthog
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: my-existing-secret
+                key: root-user
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: my-existing-secret
+                key: root-password
+
+  - it: should use internal Kafka when `kafka.enabled` is set to `true` and `externalKafka.brokers` is configured
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: true
+      externalKafka:
+        brokers:
+          - "broker1:port1"
+          - "broker2:port2"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_ENABLED
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_HOSTS
+            value: RELEASE-NAME-posthog-kafka:9092
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_URL
+            value: kafka://RELEASE-NAME-posthog-kafka:9092
+
+  - it: should use external Kafka when `kafka.enabled` is set to `false` and `externalKafka.brokers` is configured
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalKafka:
+        brokers:
+          - broker1:port1
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_ENABLED
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_HOSTS
+            value: "broker1:port1"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_URL
+            value: kafka://broker1:port1
+
+  - it: should use external Kafka when `kafka.enabled` is set to `false` and `externalKafka.brokers` is configured (multiple brokers)
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalKafka:
+        brokers:
+          - broker1:port1
+          - broker2:port2
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_ENABLED
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_HOSTS
+            value: "broker1:port1,broker2:port2"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_URL
+            value: kafka://broker1:port1,kafka://broker2:port2

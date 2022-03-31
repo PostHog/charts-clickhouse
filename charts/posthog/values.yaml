@@ -738,7 +738,7 @@ serviceAccount:
 
 ###
 ###
-### ---- MINIO ----
+### ---- MINIO (Object Storage system) ----
 ###
 ###
 minio:
