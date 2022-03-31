@@ -1,4 +1,4 @@
-{{- if .Values.plugins-server-runner.enabled -}}
+{{- if .Values.pluginsServerRunner.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -11,15 +11,15 @@ spec:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
         role: plugins-server-runner
-  {{- if not .Values.plugins-server-runner.hpa.enabled }}
-  replicas: {{ .Values.plugins-server-runner.replicacount }}
+  {{- if not .Values.pluginsServerRunner.hpa.enabled }}
+  replicas: {{ .Values.pluginsServerRunner.replicacount }}
   {{- end }}
   template:
     metadata:
       annotations:
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
-      {{- if .Values.plugins-server-runner.podAnnotations }}
-{{ toYaml .Values.plugins-server-runner.podAnnotations | indent 8 }}
+      {{- if .Values.pluginsServerRunner.podAnnotations }}
+{{ toYaml .Values.pluginsServerRunner.podAnnotations | indent 8 }}
       {{- end }}
       labels:
         app: {{ template "posthog.fullname" . }}
@@ -28,28 +28,28 @@ spec:
         {{- if (eq (default .Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
-        {{- if .Values.plugins-server-runner.podLabels }}
-{{ toYaml .Values.plugins-server-runner.podLabels | indent 8 }}
+        {{- if .Values.pluginsServerRunner.podLabels }}
+{{ toYaml .Values.pluginsServerRunner.podLabels | indent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
-      {{- if .Values.plugins-server-runner.affinity }}
+      {{- if .Values.pluginsServerRunner.affinity }}
       affinity:
-{{ toYaml .Values.plugins-server-runner.affinity | indent 8 }}
+{{ toYaml .Values.pluginsServerRunner.affinity | indent 8 }}
       {{- end }}
-      {{- if .Values.plugins-server-runner.nodeSelector }}
+      {{- if .Values.pluginsServerRunner.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.plugins-server-runner.nodeSelector | indent 8 }}
+{{ toYaml .Values.pluginsServerRunner.nodeSelector | indent 8 }}
       {{- end }}
-      {{- if .Values.plugins-server-runner.tolerations }}
+      {{- if .Values.pluginsServerRunner.tolerations }}
       tolerations:
-{{ toYaml .Values.plugins-server-runner.tolerations | indent 8 }}
+{{ toYaml .Values.pluginsServerRunner.tolerations | indent 8 }}
       {{- end }}
-      {{- if .Values.plugins-server-runner.schedulerName }}
-      schedulerName: "{{ .Values.plugins-server-runner.schedulerName }}"
+      {{- if .Values.pluginsServerRunner.schedulerName }}
+      schedulerName: "{{ .Values.pluginsServerRunner.schedulerName }}"
       {{- end }}
-      {{- if .Values.plugins-server-runner.priorityClassName }}
-      priorityClassName: "{{ .Values.plugins-server-runner.priorityClassName }}"
+      {{- if .Values.pluginsServerRunner.priorityClassName }}
+      priorityClassName: "{{ .Values.pluginsServerRunner.priorityClassName }}"
       {{- end }}
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets:
@@ -94,11 +94,11 @@ spec:
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 8 }}
 {{- end }}
-{{- if .Values.plugins-server-runner.env }}
-{{ toYaml .Values.plugins-server-runner.env | indent 8 }}
+{{- if .Values.pluginsServerRunner.env }}
+{{ toYaml .Values.pluginsServerRunner.env | indent 8 }}
 {{- end }}
         resources:
-{{ toYaml .Values.plugins-server-runner.resources | indent 12 }}
+{{ toYaml .Values.pluginsServerRunner.resources | indent 12 }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}

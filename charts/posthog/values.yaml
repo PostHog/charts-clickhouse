@@ -181,10 +181,10 @@ plugins:
   affinity: {}
 
 
-plugins-server-runner:
+pluginsServerRunner:
    # -- Whether to install the PostHog plugin-server-runner stack or not.
   enabled: true
-  
+
   # -- Count of plugin-server-runner pods to run. This setting is ignored if `plugin-server-runner.hpa.enabled` is set to `true`.
   replicacount: 1
 
