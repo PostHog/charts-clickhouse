@@ -181,6 +181,37 @@ plugins:
   affinity: {}
 
 
+plugins-server-runner:
+   # -- Whether to install the PostHog plugin-server-runner stack or not.
+  enabled: true
+  
+  # -- Count of plugin-server-runner pods to run. This setting is ignored if `plugin-server-runner.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server-runner stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server-runner stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server-runner stack HorizontalPodAutoscaler.
+    maxpods: 10
+
+  # -- Additional env variables to inject into the plugin-server-runner stack deployment.
+  env: []
+
+  # -- Resource limits for the plugin-server-runner stack deployment.
+  resources:
+    {}
+
+  # -- Node labels for the plugin-server-runner stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the plugin-server-runner stack deployment.
+  tolerations: []
+  # -- Affinity settings for the plugin-server-runner stack deployment.
+  affinity: {}
+
 email:
   # -- SMTP service host.
   host:

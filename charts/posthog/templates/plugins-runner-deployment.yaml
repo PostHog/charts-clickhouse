@@ -1,0 +1,107 @@
+{{- if .Values.plugins-server-runner.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "posthog.fullname" . }}-plugins-server-runner
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: plugins-server-runner
+  {{- if not .Values.plugins-server-runner.hpa.enabled }}
+  replicas: {{ .Values.plugins-server-runner.replicacount }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+      {{- if .Values.plugins-server-runner.podAnnotations }}
+{{ toYaml .Values.plugins-server-runner.podAnnotations | indent 8 }}
+      {{- end }}
+      labels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: plugins-server-runner
+        {{- if (eq (default .Values.image.tag "none") "latest") }}
+        date: "{{ now | unixEpoch }}"
+        {{- end }}
+        {{- if .Values.plugins-server-runner.podLabels }}
+{{ toYaml .Values.plugins-server-runner.podLabels | indent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+      {{- if .Values.plugins-server-runner.affinity }}
+      affinity:
+{{ toYaml .Values.plugins-server-runner.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.plugins-server-runner.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.plugins-server-runner.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.plugins-server-runner.tolerations }}
+      tolerations:
+{{ toYaml .Values.plugins-server-runner.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.plugins-server-runner.schedulerName }}
+      schedulerName: "{{ .Values.plugins-server-runner.schedulerName }}"
+      {{- end }}
+      {{- if .Values.plugins-server-runner.priorityClassName }}
+      priorityClassName: "{{ .Values.plugins-server-runner.priorityClassName }}"
+      {{- end }}
+      {{- if .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}-plugins
+        image: {{ template "posthog.image.fullPath" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+          - /bin/sh
+          - -c
+          - |
+            ./bin/plugin-server-runner --no-restart-loop
+        ports:
+        - containerPort: {{ .Values.service.internalPort }}
+        env:
+        # Kafka env variables
+        {{- include "snippet.kafka-env" . | indent 8 }}
+
+        # Redis env variables
+        {{- include "snippet.redis-env" . | indent 8 }}
+
+        # statsd env variables
+        {{- include "snippet.statsd-env" . | indent 8 }}
+
+        - name: SENTRY_DSN
+          value: {{ .Values.sentryDSN | quote }}
+        - name: DEPLOYMENT
+          value: {{ template "posthog.deploymentEnv" . }}
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "posthog.fullname" . }}
+              key: posthog-secret
+        {{- include "snippet.postgresql-env" . | nindent 8 }}
+        {{- include "snippet.clickhouse-env" . | nindent 8 }}
+        - name: CAPTURE_INTERNAL_METRICS
+          value: {{ .Values.web.internalMetrics.capture| quote }}
+        - name: PLUGIN_SERVER_INGESTION
+          value: 'false'
+        - name: HELM_INSTALL_INFO
+          value: {{ template "posthog.helmInstallInfo" . }}
+{{- if .Values.env }}
+{{ toYaml .Values.env | indent 8 }}
+{{- end }}
+{{- if .Values.plugins-server-runner.env }}
+{{ toYaml .Values.plugins-server-runner.env | indent 8 }}
+{{- end }}
+        resources:
+{{ toYaml .Values.plugins-server-runner.resources | indent 12 }}
+      initContainers:
+      {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
+      {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
+{{- end }}
