@@ -62,7 +62,7 @@ jobs:
     - name: Deploy a new k8s cluster
       id: k8s_cluster_creation
       run: |
-        # note: we manually specify all the AZs in the region to reduce the
+        # Note: we manually specify all the AZs in the region to reduce the
         # possibility AWS runs out of capacity in a single one, making this
         # test fail.
         ./eksctl create cluster \
@@ -73,6 +73,10 @@ jobs:
           --tags="provisioned_by=github_action" \
           --version 1.21 \
           --nodes 3
+
+        # Note: we explicitly set the reclaim policy of the default StorageClass
+        # to 'Delete' to make sure we don't keep EBS volumes around after cluster deletion
+        kubectl patch storageclass -p '{"reclaimPolicy": "Delete"}'
 
     - name: Install PostHog using the Helm chart
       id: helm_install

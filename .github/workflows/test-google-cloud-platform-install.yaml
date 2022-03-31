@@ -45,6 +45,8 @@ jobs:
     - name: Deploy a new k8s cluster
       id: k8s_cluster_creation
       run: |
+        # Note: num-nodes will be created in each zone, such that if you specify
+        # --num-nodes=4 and choose two locations 8 nodes will be created.
         gcloud container clusters create \
           ${{ steps.vars.outputs.k8s_cluster_name }} \
           --project ${{ secrets.GCP_PROJECT_ID }} \
@@ -54,8 +56,9 @@ jobs:
           --machine-type e2-small \
           --num-nodes 2
 
-        # note: num-nodes will be created in each zone, such that if you specify
-        # --num-nodes=4 and choose two locations 8 nodes will be created.
+        # Note: we explicitly set the reclaim policy of the default StorageClass
+        # to 'Delete' to make sure we don't keep EBS volumes around after cluster deletion
+        kubectl patch storageclass -p '{"reclaimPolicy": "Delete"}'
 
     - name: Create new GCP global static IP address
       id: static_ip_creation
