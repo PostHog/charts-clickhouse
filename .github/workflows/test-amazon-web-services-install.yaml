@@ -76,7 +76,8 @@ jobs:
 
         # Note: we explicitly set the reclaim policy of the default StorageClass
         # to 'Delete' to make sure we don't keep disk volumes around after cluster deletion
-        kubectl patch storageclass -p '{"reclaimPolicy": "Delete"}'
+        DEFAULT_STORAGE_CLASS=$(kubectl get storageclass -o=jsonpath='{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}')
+        kubectl patch storageclass "$DEFAULT_STORAGE_CLASS" -p '{"reclaimPolicy": "Delete"}'
 
     - name: Install PostHog using the Helm chart
       id: helm_install
