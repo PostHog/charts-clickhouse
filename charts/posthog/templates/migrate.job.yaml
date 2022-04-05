@@ -37,6 +37,7 @@ spec:
           - /bin/sh
           - -c
           - |
+            python manage.py notify_helm_install || true
             ./bin/migrate
 
         env:
