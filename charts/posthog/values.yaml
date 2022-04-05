@@ -325,6 +325,15 @@ ingress:
   # -- TLS secret to be used by the ingress.
   secretName:
 
+ingress-nginx:
+  controller:
+    config:
+      # -- Whether to forward "X-Forwarded-*" headers to upstream services.
+      # -- This is needed to ensure the PostHog application knows e.g. if the
+      # -- downstream proxy is using a secure connection. See the official
+      # -- [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers)
+      use-forwarded-headers: "true"
+
 ###
 ###
 ### ---- POSTGRESQL ----
