@@ -496,10 +496,13 @@ externalKafka:
 zookeeper:
   # -- Install zookeeper on kubernetes
   enabled: true
-  # -- Name override for zookeeper app
+  # -- Name override for Zookeeper
   nameOverride: posthog-zookeeper
-  # -- replica count for zookeeper
+  # -- Number of ZooKeeper nodes
   replicaCount: 1
+  autopurge:
+    # -- The time interval (in hours) for which the purge task has to be triggered
+    purgeInterval: 1
 
 ###
 ###
