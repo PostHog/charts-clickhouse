@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 18.2.0](https://img.shields.io/badge/Version-18.2.0-informational?style=flat-square) ![AppVersion: 1.34.2](https://img.shields.io/badge/AppVersion-1.34.2-informational?style=flat-square)
+![Version: 18.2.1](https://img.shields.io/badge/Version-18.2.1-informational?style=flat-square) ![AppVersion: 1.34.2](https://img.shields.io/badge/AppVersion-1.34.2-informational?style=flat-square)
 
 ## Configuration
 
@@ -163,8 +163,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | List of external zookeeper servers to use. |
 | externalKafka.brokers | list | `[]` |  |
 | zookeeper.enabled | bool | `true` | Install zookeeper on kubernetes |
-| zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for zookeeper app |
-| zookeeper.replicaCount | int | `1` | replica count for zookeeper |
+| zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for Zookeeper |
+| zookeeper.replicaCount | int | `1` | Number of ZooKeeper nodes |
+| zookeeper.autopurge.purgeInterval | int | `1` | The time interval (in hours) for which the purge task has to be triggered |
 | clickhouse.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouse.namespace | string | `nil` | Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to) |
 | clickhouse.cluster | string | `"posthog"` | Clickhouse cluster |
