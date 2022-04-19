@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 18.2.1](https://img.shields.io/badge/Version-18.2.1-informational?style=flat-square) ![AppVersion: 1.34.2](https://img.shields.io/badge/AppVersion-1.34.2-informational?style=flat-square)
+![Version: 18.2.2](https://img.shields.io/badge/Version-18.2.2-informational?style=flat-square) ![AppVersion: 1.34.2](https://img.shields.io/badge/AppVersion-1.34.2-informational?style=flat-square)
 
 ## Configuration
 
@@ -114,6 +114,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | ingress.nginx.redirectToTLS | bool | `true` | Whether to redirect to TLS with nginx ingress. |
 | ingress.annotations | object | `{}` | Extra annotations |
 | ingress.secretName | string | `nil` | TLS secret to be used by the ingress. |
+| ingress-nginx.controller.config.use-forwarded-headers | string | `"true"` | [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers) |
 | postgresql.enabled | bool | `true` | Whether to deploy a PostgreSQL server to satisfy the applications requirements. To use an external PostgreSQL instance set this to `false` and configure the `externalPostgresql` parameters. |
 | postgresql.nameOverride | string | `"posthog-postgresql"` | Name override for PostgreSQL app. |
 | postgresql.postgresqlDatabase | string | `"posthog"` | PostgreSQL database name. |
