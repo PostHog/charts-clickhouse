@@ -14,8 +14,9 @@ jobs:
 
       - name: Run helm-docs
         run: |
-          GOBIN=$PWD GO111MODULE=on go get github.com/norwoodj/helm-docs/cmd/helm-docs@v1.7.0
+          GOBIN=$PWD go install github.com/norwoodj/helm-docs/cmd/helm-docs@v1.8.1
           ./helm-docs --sort-values-order file -t ALL_VALUES.md.gotmpl -o ALL_VALUES.md
+          rm ./helm-docs
 
       - name: Commit bump
         uses: EndBug/add-and-commit@v7
