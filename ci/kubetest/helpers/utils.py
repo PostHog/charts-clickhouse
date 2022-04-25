@@ -94,9 +94,6 @@ def install_chart(values, namespace=NAMESPACE):
             f"""
             helm upgrade \
                 --install \
-                --set clickhouse.persistence.enabled=false \
-                --set zookeeper.persistence.enabled=false \
-                --set kafka.persistence.enabled=false \
                 -f {values_file.name} \
                 --set cloud=local \
                 --timeout 30m \
