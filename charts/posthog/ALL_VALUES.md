@@ -99,6 +99,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | service.annotations | object | `{}` | PostHog service annotations. |
 | cert-manager.enabled | bool | `false` | Whether to install `cert-manager` resources. |
 | cert-manager.installCRDs | bool | `true` | Whether to install `cert-manager` CRDs. |
+| cert-manager.email | string | `james.g@posthog.com` | Email address to get notified about ACME certs |
 | cert-manager.podDnsPolicy | string | `"None"` |  |
 | cert-manager.podDnsConfig.nameservers[0] | string | `"8.8.8.8"` |  |
 | cert-manager.podDnsConfig.nameservers[1] | string | `"1.1.1.1"` |  |

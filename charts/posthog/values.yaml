@@ -273,6 +273,10 @@ cert-manager:
   enabled: false
   # -- Whether to install `cert-manager` CRDs.
   installCRDs: true
+  # -- Who to email if the certificate is about to expire
+  # -- Defaults to James.g@posthog.com but feel free (please) replace this 
+  # -- with whoever is managing the stack
+  email: james.g@posthog.com 
 
   #
   # [Workaround] - do not use the local DNS for the 'cert-manager' pods since it would return local IPs

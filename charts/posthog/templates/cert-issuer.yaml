@@ -12,7 +12,7 @@ metadata:
 spec:
   acme:
     # Email address used for ACME registration
-    email: james.g@posthog.com
+    email: {{ .Values.cert-manager.email }}
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       # Name of a secret used to store the ACME account private key
