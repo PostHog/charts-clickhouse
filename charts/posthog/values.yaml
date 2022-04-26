@@ -274,8 +274,8 @@ cert-manager:
   # -- Whether to install `cert-manager` CRDs.
   installCRDs: true
   # -- Who to email if the certificate is about to expire
-  # -- Defaults to James.g@posthog.com but feel free (please) replace this 
-  # -- with whoever is managing the stack
+  # -- Defaults to James.g@posthog.com but feel free (please)
+  # -- to replace this with whoever is managing the stack
   email: james.g@posthog.com 
 
   #
