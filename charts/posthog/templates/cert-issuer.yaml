@@ -12,7 +12,7 @@ metadata:
 spec:
   acme:
     # Email address used for ACME registration
-    email: {{ index .Values "cert-manager.email" }}
+    email: {{ coalesce .Values.notificationEmail (index .Values "cert-manager.email") "none" }}
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       # Name of a secret used to store the ACME account private key

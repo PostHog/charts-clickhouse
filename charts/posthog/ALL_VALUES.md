@@ -10,6 +10,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| notificationEmail | string | `nil` | Email of who is managing the stack - to receive notifications about the stack |
 | cloud | string | `nil` | Cloud service being deployed on (example: `aws`, `azure`, `do`, `gcp`, `other`). |
 | image.repository | string | `"posthog/posthog"` | PostHog image repository to use. |
 | image.sha | string | `nil` | PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`). |
@@ -99,7 +100,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | service.annotations | object | `{}` | PostHog service annotations. |
 | cert-manager.enabled | bool | `false` | Whether to install `cert-manager` resources. |
 | cert-manager.installCRDs | bool | `true` | Whether to install `cert-manager` CRDs. |
-| cert-manager.email | string | `james.g@posthog.com` | Email address to get notified about ACME certs |
+| cert-manager.email | string | `nil` | Email address to get notified about ACME certs. Defaults to global email for notifications on chart. |
 | cert-manager.podDnsPolicy | string | `"None"` |  |
 | cert-manager.podDnsConfig.nameservers[0] | string | `"8.8.8.8"` |  |
 | cert-manager.podDnsConfig.nameservers[1] | string | `"1.1.1.1"` |  |
