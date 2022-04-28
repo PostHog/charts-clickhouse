@@ -273,6 +273,9 @@ cert-manager:
   enabled: false
   # -- Whether to install `cert-manager` CRDs.
   installCRDs: true
+  # -- Who to email if the certificate is about to expire
+  # -- Defaults to `notificationEmail` if it is available 
+  email: null 
 
   #
   # [Workaround] - do not use the local DNS for the 'cert-manager' pods since it would return local IPs
