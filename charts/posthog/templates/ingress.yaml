@@ -2,13 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
- name: {{ template "posthog.fullname" . }}
- labels:
-    app: {{ template "posthog.fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
- annotations:
+  name: {{ template "posthog.fullname" . }}
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
     {{- if (eq (include "ingress.type" .) "nginx") }}
     kubernetes.io/ingress.class: "nginx"
     {{- end }}

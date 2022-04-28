@@ -1,4 +1,4 @@
-{{- if .Values.clickhouseOperator.enabled }}
+{{- if .Values.clickhouse.enabled }}
 # Template Parameters:
 #
 # NAMESPACE=posthog
@@ -12,7 +12,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: clickhouse-operator-posthog
-  namespace: {{ .Values.clickhouseOperator.namespace | default .Release.Namespace }}
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
 rules:
 - apiGroups:
     - ""

@@ -9,6 +9,9 @@ name: e2e - DigitalOcean (install)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   do-install:
@@ -35,9 +38,12 @@ jobs:
     - name: Deploy a new k8s cluster
       id: k8s_cluster_creation
       run: |
+        # Get the DO K8 version slug
+        DO_K8S_VERSION=$(doctl k8s options versions -ojson | jq --raw-output 'first(.[] | select(.slug | test("^1.21.[0-9]+-do.[0-9]+$")) | .slug)')
+
         doctl k8s clusters create \
           ${{ steps.vars.outputs.k8s_cluster_name }} \
-          --version 1.21.5-do.0 \
+          --version "$DO_K8S_VERSION" \
           --tag="provisioned_by:github_action" \
           --size s-2vcpu-4gb \
           --count 2 \
@@ -71,16 +77,13 @@ jobs:
     #
     # ref: https://github.com/jupyterhub/action-k8s-await-workloads/issues/38
     #
-    - name: Workaround - wait for all the k8s resources to be ready
+    - name: Workaround - wait for all the PostHog resources in k8s to be ready
+      timeout-minutes: 15
+      run: ./ci/wait_for_all_the_posthog_resources_to_be_ready.sh
+
+    - name: Workaround - wait for the DO load balancer to be ready
       timeout-minutes: 15
       run: |
-        echo "Waiting for pods to be ready..."
-        while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
-        do
-          echo "  pods are not yet ready"
-        done
-        echo "All pods are now ready!"
-
         echo "Waiting for the DigitalOcean Load Balancer to be ready..."
         load_balancer_external_hostname=""
         while [ -z "$load_balancer_external_hostname" ];

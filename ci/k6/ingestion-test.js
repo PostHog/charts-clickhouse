@@ -1,8 +1,8 @@
 import http from 'k6/http'
-import { check, sleep } from 'k6'
+import { check } from 'k6'
 import { Counter } from 'k6/metrics'
-import { URL } from 'https://jslib.k6.io/url/1.0.0/index.js'
-import { describe } from 'https://jslib.k6.io/expect/0.0.5/index.js';
+import { URL } from './lib/url_1_0_0.js'
+import { describe } from './lib/expect_0_0_5.js';
 import { isPrivateIP }  from './utils.js'
 import {
     POSTHOG_API_ENDPOINT,
@@ -60,7 +60,7 @@ export function checkEvents() {
 
   success = describe('Check the count of events ingested', (t) => {
 
-    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/insight/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`)
+    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/2/insights/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`)
     const res = http.get(URI.toString(), {
       headers: {
         Authorization: `Bearer e2e_demo_api_key`

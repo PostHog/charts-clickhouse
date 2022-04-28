@@ -1,0 +1,17 @@
+cloud: local
+
+events:
+  hpa:
+    enabled: true
+plugins:
+  hpa:
+    enabled: true
+pgbouncer:
+  hpa:
+    enabled: true
+web:
+  hpa:
+    enabled: true
+worker:
+  hpa:
+    enabled: true

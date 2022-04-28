@@ -9,6 +9,9 @@ name: e2e - Google Cloud Platform (install)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   gcp-install:
@@ -20,7 +23,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up GCP Cloud SDK
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@v0
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
@@ -105,16 +108,13 @@ jobs:
     #
     # ref: https://github.com/jupyterhub/action-k8s-await-workloads/issues/38
     #
-    - name: Workaround - wait for all the k8s resources to be ready
+    - name: Workaround - wait for all the PostHog resources in k8s to be ready
+      timeout-minutes: 15
+      run: ./ci/wait_for_all_the_posthog_resources_to_be_ready.sh
+
+    - name: Workaround - wait for the GCP load balancer to be ready
       timeout-minutes: 15
       run: |
-        echo "Waiting for pods to be ready..."
-        while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
-        do
-          echo "  pods are not yet ready"
-        done
-        echo "All pods are now ready!"
-
         echo "Waiting for the GCP Load Balancer to be ready..."
         load_balancer_external_ip=""
         while [ -z "$load_balancer_external_ip" ];

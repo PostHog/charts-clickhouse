@@ -1,0 +1,112 @@
+# #
+# # This is an e2e test to deploy PostHog on DigitalOcean using DigitalOcean's 1-click app install.
+# #
+# # TODO:
+# # - run k8s spec test
+# # - run action only when necessary
+# # - test the "Securing your 1-click install" https://posthog.com/docs/self-host/deploy/digital-ocean#securing-your-1-click-install
+# #
+# name: e2e - DigitalOcean "1-click" (install)
+
+# #
+# # Unfortunately we can test this scenario only after merging to 'main' as we don't have
+# # control over the branch used by the DigitalOcean's marketplace 1-click install.
+
+# # ref: https://github.com/digitalocean/marketplace-kubernetes/blob/master/stacks/posthog/deploy.sh
+# #
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   do-install:
+#     runs-on: ubuntu-20.04
+#     if: github.repository == 'PostHog/charts-clickhouse'
+#     steps:
+
+#     - name: Checkout
+#       uses: actions/checkout@v2
+
+#     - name: Install doctl
+#       uses: digitalocean/action-doctl@v2
+#       with:
+#         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+#     - name: Declare variables that we can share across steps
+#       id: vars
+#       run: |
+#         TEST_NAME="helm-test-e2e-do-1-click-$(git rev-parse --short HEAD)"
+#         echo "::set-output name=k8s_cluster_name::${TEST_NAME}"
+
+#     - name: Deploy a new k8s cluster
+#       id: k8s_cluster_creation
+#       run: |
+#         doctl k8s clusters create \
+#           ${{ steps.vars.outputs.k8s_cluster_name }} \
+#           --version 1.21.5-do.0 \
+#           --tag="provisioned_by:github_action" \
+#           --size s-2vcpu-4gb \
+#           --count 2 \
+#           --wait \
+#           --1-clicks \
+#           posthog
+
+#     #
+#     # Wait for all k8s resources to be ready.
+#     #
+#     # Despite the --wait flag used in the command above
+#     # there is no guarantee that all the resources will be deployed
+#     # when the command returns.
+#     #
+#     # Why can't we directly use the 'action-k8s-await-workloads' step below?
+#     # Because it's not working for this use case
+#     #
+#     # ref: https://github.com/jupyterhub/action-k8s-await-workloads/issues/38
+#     #
+#     - name: Workaround - wait for all the k8s resources to be ready
+#       timeout-minutes: 15
+#       run: |
+#         echo "Waiting for pods to be ready..."
+#         while ! kubectl wait --for=condition=Ready pods --timeout=60s --all -n posthog > /dev/null 2>&1
+#         do
+#           echo "  pods are not yet ready"
+#         done
+#         echo "All pods are now ready!"
+
+#         echo "Waiting for the DigitalOcean Load Balancer to be ready..."
+#         load_balancer_external_ip=""
+#         while [ -z "$load_balancer_external_ip" ];
+#         do
+#           load_balancer_external_ip=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+#           [ -z "$load_balancer_external_ip" ] && echo "  sleeping 10 seconds" && sleep 10
+#         done
+#         echo "The DigitalOcean Load Balancer is now ready!"
+
+#     - name: Wait until all the resources are fully deployed in k8s
+#       uses: jupyterhub/action-k8s-await-workloads@main
+#       with:
+#         namespace: "posthog"
+#         timeout: 300
+#         max-restarts: 10
+
+#     - name: Setup PostHog for the ingestion test
+#       run: ./ci/setup_ingestion_test.sh
+
+#     - name: Set PostHog endpoints to use for the ingestion test
+#       run: |
+#         # Get the Load Balancer IP address
+#         load_balancer_external_ip=$(kubectl get ingress -n posthog posthog -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+
+#         echo "POSTHOG_API_ENDPOINT=http://${load_balancer_external_ip}" | tee -a "$GITHUB_ENV"
+#         echo "POSTHOG_EVENT_ENDPOINT=http://${load_balancer_external_ip}" | tee -a "$GITHUB_ENV"
+
+#     - name: Run ingestion test using k6
+#       uses: k6io/action@v0.2.0
+#       with:
+#         filename: ci/k6/ingestion-test.js
+
+#     - name: Delete the k8s cluster and all the associated resources
+#       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}
+#       run: |
+#         doctl k8s cluster delete --dangerous --force ${{ steps.vars.outputs.k8s_cluster_name }}

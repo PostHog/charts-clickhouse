@@ -1,3 +1,9 @@
+# ⚠️ Follow [these instructions](https://posthog.com/docs/self-host) instead of modifying or running this chart
+
+If you make changes to these helm charts, however simple, we won't be able to support you. Most people who modify or use a non-standard way of running this chart run into issues. We **strongly recommend** following the [official instructions](https://posthog.com/docs/self-host) to deploy PostHog.
+
+If there are changes you need, please raise a PR or [reach out on Slack](https://posthog.com/slack) so we can help you.
+
 # PostHog Helm Chart
 
 [![Latest release of the Helm chart](https://img.shields.io/badge/dynamic/yaml.svg?label=Helm%20chart%20version&url=https://posthog.github.io/charts-clickhouse/index.yaml&query=$.entries.posthog[:1].version&logo=helm)](https://github.com/PostHog/charts-clickhouse)
@@ -11,9 +17,11 @@
 
 This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
+
+
 ## Prerequisites
 - Kubernetes >=1.20 <= 1.23
-- Helm 3+
+- Helm >= 3.7.0
 
 ## Installation
 Deployment instructions for the major cloud service providers and on-premise deploys are available [here](https://posthog.com/docs/self-host).
@@ -35,11 +43,11 @@ This repo uses several types of test suite targeting different goals:
 We use `helm lint` that can be invoked via: `helm lint --strict --set “cloud=local” charts/posthog`
 
 #### Unit tests
-In order to run the test suite, you need to install the `helm-unittest` plugin. You can do that by running: `helm plugin install https://github.com/quintush/helm-unittest`
+In order to run the test suite, you need to install the `helm-unittest` plugin. You can do that by running: `helm plugin install https://github.com/quintush/helm-unittest --version 0.2.8`
 
 For more information about how it works and how to write test cases, please look at the upstream [documentation](https://github.com/quintush/helm-unittest/blob/master/README.md) or to the [tests already available in this repo](https://github.com/PostHog/charts-clickhouse/tree/main/charts/posthog/tests).
 
-To run the test suite you can execute: `helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/**/*.yaml' charts/posthog`
+To run the test suite you can execute: `helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/clickhouse-operator/*.yaml' charts/posthog`
 
 #### Integration tests
 - [kubetest](https://github.com/PostHog/charts-clickhouse/tree/main/ci/kubetest): to verify if applying the rendered Helm templates against a Kubernetes target cluster gives us the stack we expect (example: are the disks encrypted? Can this pod communicate with this service?)

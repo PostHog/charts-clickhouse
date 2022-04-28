@@ -3,16 +3,16 @@ templates:
   - templates/clickhouse_instance.yaml
 
 tests:
-  - it: should be empty if clickhouseOperator.enabled is set to false
+  - it: should be empty if clickhouse.enabled is set to false
     set:
-      clickhouseOperator.enabled: false
+      clickhouse.enabled: false
     asserts:
       - hasDocuments:
           count: 0
 
   - it: the manifest should match the snapshot when using default values
     set:
-      clickhouseOperator.enabled: true
+      clickhouse.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -20,7 +20,7 @@ tests:
 
   - it: should have the correct apiVersion
     set:
-      clickhouseOperator.enabled: true
+      clickhouse.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -29,12 +29,123 @@ tests:
 
   - it: should be the correct kind
     set:
-      clickhouseOperator.enabled: true
+      clickhouse.enabled: true
     asserts:
       - hasDocuments:
           count: 1
       - isKind:
           of: ClickHouseInstallation
+
+  - it: spec.configuration.cluster[0].templates volumeClaimTemplate should not exist if persistence is disabled
+    set:
+      clickhouse.persistence.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.clusters[0].templates
+          value:
+            podTemplate: pod-template
+            clusterServiceTemplate: service-template
+
+  - it: spec.configuration.cluster[0].templates volumeClaimTemplate should not exist if persistence is enabled and clickhouse.persistence.existingClaim is set
+    set:
+      clickhouse.persistence.enabled: false
+      clickhouse.persistence.existingClaim: pvc-claim
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.clusters[0].templates
+          value:
+            podTemplate: pod-template
+            clusterServiceTemplate: service-template
+
+  - it: spec.configuration.cluster[0].templates volumeClaimTemplate should exist if persistence is enabled
+    set:
+      clickhouse.persistence.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.clusters[0].templates
+          value:
+            podTemplate: pod-template
+            clusterServiceTemplate: service-template
+            dataVolumeClaimTemplate: data-volumeclaim-template
+
+
+  - it: pod-template spec.volumes should not exist if persistence is disabled
+    set:
+      clickhouse.persistence.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.volumes
+          value: null
+
+  - it: pod-template spec.volumes should have 'data-volumeclaim-template' if persistence is enabled
+    set:
+      clickhouse.persistence.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.volumes
+          value:
+            - name: data-volumeclaim-template
+              persistentVolumeClaim:
+                claimName: data-volumeclaim-template
+
+  - it: pod-template spec.volumes should have 'existing-volumeclaim' if clickhouse.persistence.existingClaim is set
+    set:
+      clickhouse.persistence.enabled: true
+      clickhouse.persistence.existingClaim: pvc-claim
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.volumes
+          value:
+            - name: existing-volumeclaim
+              persistentVolumeClaim:
+                claimName: pvc-claim
+
+  - it: pod-template spec.containers[0].volumeMounts should not exist if persistence is disabled
+    set:
+      clickhouse.persistence.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.containers[0].volumeMounts
+          value: null
+
+  - it: pod-template spec.containers[0].volumeMounts should exist if persistence is enabled
+    set:
+      clickhouse.persistence.enabled: enabled
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.containers[0].volumeMounts
+          value:
+            - mountPath: /var/lib/clickhouse
+              name: data-volumeclaim-template
+
+  - it: pod-template spec.containers[0].volumeMounts should have 'existing-volumeclaim' if clickhouse.persistence.existingClaim is set
+    set:
+      clickhouse.persistence.enabled: enabled
+      clickhouse.persistence.existingClaim: pvc-claim
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.containers[0].volumeMounts
+          value:
+            - mountPath: /var/lib/clickhouse
+              name: existing-volumeclaim
 
   - it: nodeSelector override via 'clickhouse.nodeSelector' works
     set:
@@ -49,3 +160,213 @@ tests:
           value:
             diskType: ssd
             nodeType: fast
+
+  - it: volumeClaimTemplates shouldn't exit if clickhouse.persistence.enabled is false
+    set:
+      clickhouse.persistence.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.volumeClaimTemplates
+          value: null
+
+  - it: volumeClaimTemplates shouldn't exit if clickhouse.persistence.enabled is true and clickhouse.persistence.existingClaim is set
+    set:
+      clickhouse.persistence.enabled: false
+      clickhouse.persistence.existingClaim: pvc-claim
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.volumeClaimTemplates
+          value: null
+
+  - it: The storageClassName value should be null using the default values
+    set:
+      clickhouse.persistence.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.volumeClaimTemplates[0].spec.storageClassName
+          value: null
+
+  - it: The storageClassName override should work
+    set:
+      clickhouse.persistence.enabled: true
+      clickhouse.persistence.storageClass: customStorageClass
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.volumeClaimTemplates[0].spec.storageClassName
+          value: customStorageClass
+
+  - it: default profiles configuration should be correct
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.profiles
+          value:
+            default/allow_experimental_window_functions: "1"
+
+  - it: handles custom profiles configuration
+    set:
+      clickhouse.profiles.default/max_execution_time: "90"
+      clickhouse.profiles.default/max_memory_usage: "20000000000"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.profiles
+          value:
+            default/allow_experimental_window_functions: "1"
+            default/max_execution_time: "90"
+            default/max_memory_usage: "20000000000"
+
+  - it: handles custom profiles overriding defaults
+    set:
+      clickhouse.profiles.default/allow_experimental_window_functions: "0"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.profiles
+          value:
+            default/allow_experimental_window_functions: "0"
+
+  - it: default configuration settings should be correct
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.settings
+          value:
+            format_schema_path: /etc/clickhouse-server/config.d/
+
+  - it: handles custom configuration settings
+    set:
+      clickhouse.settings:
+        prometheus/endpoint: /metrics
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.settings
+          value:
+            format_schema_path: /etc/clickhouse-server/config.d/
+            prometheus/endpoint: /metrics
+
+  - it: handles custom configuration settings overriding defaults
+    set:
+      clickhouse.settings:
+        format_schema_path: /custom_path
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.settings
+          value:
+            format_schema_path: /custom_path
+
+  - it: handles custom users and passwords
+    set:
+      clickhouse.user: someuser
+      clickhouse.password: somepass
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.users
+          value:
+            someuser/password: somepass
+            someuser/networks/ip: "0.0.0.0/0"
+            someuser/profile: default
+            someuser/quota: default
+
+  - it: sets default clickhouse-server image
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.containers[0].image
+          value: "yandex/clickhouse-server:21.6.5"
+
+  - it: allows modifying clickhouse-server version
+    set:
+      clickhouse.image.repository: altinity/clickhouse-server
+      clickhouse.image.tag: 22.1
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.containers[0].image
+          value: "altinity/clickhouse-server:22.1"
+
+  - it: allows overriding shard counts
+    set:
+      clickhouse.layout.shardsCount: 3
+      clickhouse.layout.replicasCount: 2
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.clusters[0].layout
+          value:
+            shardsCount: 3
+            replicasCount: 2
+
+  - it: allows passing custom sharding settings
+    set:
+      clickhouse.layout:
+        shardsCount: null
+        replicasCount: null
+        # From https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md
+        shards:
+          - name: shard0
+            replicasCount: 3
+            weight: 1
+            internalReplication: Disabled
+            templates:
+              podTemplate: clickhouse-v18.16.1
+              dataVolumeClaimTemplate: default-volume-claim
+              logVolumeClaimTemplate: default-volume-claim
+
+          - name: shard1
+            templates:
+              podTemplate: clickhouse-v18.16.1
+              dataVolumeClaimTemplate: default-volume-claim
+              logVolumeClaimTemplate: default-volume-claim
+            replicas:
+              - name: replica0
+              - name: replica1
+              - name: replica2
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot:
+          path: spec.configuration.clusters[0].layout
+
+  - it: spec.templates.podTemplates.[0].metadata should not be set by default
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].metadata
+          value: null
+
+  - it: podAnnotations setting should work
+    set:
+      clickhouse.podAnnotations:
+        key1: value1
+        key2: value2
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].metadata.annotations
+          value:
+            key1: value1
+            key2: value2

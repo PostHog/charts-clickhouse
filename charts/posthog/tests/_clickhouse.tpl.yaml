@@ -1,0 +1,89 @@
+# Tests charts/posthog/templates/_clickhouse.tpl
+suite: _clickhouse.tpl template
+templates:
+  - templates/test-templates.yaml
+
+tests:
+  - it: should render with defaults
+    set:
+      testTemplates.clickhouseEnvTest: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot:
+          path: data
+
+  - it: should render with custom values
+    set:
+      testTemplates.clickhouseEnvTest: true
+      clickhouse.cluster: customCluster
+      clickhouse.database: customDatabase
+      clickhouse.user: customUser
+      clickhouse.password: customPassword
+      clickhouse.secure: true
+      clickhouse.verify: true
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should fail to render with only clickhouse disabled
+    set:
+      testTemplates.clickhouseEnvTest: true
+      clickhouse.enabled: false
+    asserts:
+      - failedTemplate:
+          errorMessage: externalClickhouse.host is required if not clickhouse.enabled
+
+  - it: should render with external clickhouse
+    set:
+      testTemplates.clickhouseEnvTest: true
+      clickhouse.enabled: false
+      externalClickhouse.cluster: somecluster
+      externalClickhouse.host: foo.bar.net
+      externalClickhouse.user: adminuser
+      externalClickhouse.password: hello
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should render with external clickhouse with more custom settings
+    set:
+      testTemplates.clickhouseEnvTest: true
+      clickhouse.enabled: false
+      externalClickhouse.host: foo.bar.net
+      externalClickhouse.user: adminuser
+      externalClickhouse.password: hello
+      externalClickhouse.cluster: customCluster
+      externalClickhouse.database: customDatabase
+      externalClickhouse.secure: true
+      externalClickhouse.verify: true
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should render with external clickhouse with secrets
+    set:
+      testTemplates.clickhouseEnvTest: true
+      clickhouse.enabled: false
+      externalClickhouse.cluster: somecluster
+      externalClickhouse.host: foo.bar.net
+      externalClickhouse.user: adminuser
+      externalClickhouse.existingSecret: someExistingSecret
+      externalClickhouse.existingSecretPasswordKey: clickhousePassword
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should fail to render with external clickhouse but no auth
+    set:
+      testTemplates.clickhouseEnvTest: true
+      clickhouse.enabled: false
+      externalClickhouse.cluster: somecluster
+      externalClickhouse.host: foo.bar.net
+      externalClickhouse.user: adminuser
+    asserts:
+      - failedTemplate:
+          errorMessage: externalClickhouse.password or externalClickhouse.existingSecret is required if using external clickhouse
+
+
+
