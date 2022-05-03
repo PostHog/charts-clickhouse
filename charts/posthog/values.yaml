@@ -716,14 +716,14 @@ grafana:
       apiVersion: 1
       datasources:
 
-      # Uncomment if you are running with `prometheus.enabled: true`
+      # Comment the snippet below if you are running with `prometheus.enabled: false`
       - name: Prometheus
         type: prometheus
         url: http://posthog-prometheus-server
         access: proxy
         isDefault: true
 
-      # Uncomment if you are running with `loki.enabled: true`
+      # Comment the snippet below if you are running with `loki.enabled: false`
       - name: Loki
         type: loki
         url: http://posthog-loki:3100
