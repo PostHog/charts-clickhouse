@@ -445,6 +445,16 @@ redis:
 
       # -- Persistent Volume size.
       size: 5Gi
+    extraFlags:
+      ## The maxmemory configuration directive is used in order to configure Redis to use a specified
+      ## amount of memory for the data set. Setting maxmemory to zero results into no memory limits
+      ## see https://redis.io/topics/lru-cache for more details
+      - "--maxmemory 4500mb"
+      ## The exact behavior Redis follows when the maxmemory limit is reached is configured using the
+      ## maxmemory-policy configuration directive
+      ## allkeys-lru: evict keys by trying to remove the less recently used (LRU) keys first, in order
+      ## to make space for the new data added
+      - "--maxmemory-policy allkeys-lru"
 
 externalRedis:
   # -- External Redis host to use.
