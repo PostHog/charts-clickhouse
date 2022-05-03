@@ -13,7 +13,7 @@ dependencies:
   version: 8.6.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 14.6.2
+  version: 16.8.9
 - name: zookeeper
   repository: https://charts.bitnami.com/bitnami
   version: 7.0.5
@@ -41,5 +41,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:d842b735c34902d0ba9c5189df3e3219aede3e5b8dccfbe69740d8c16aa328fe
-generated: "2022-05-03T10:40:07.945328+02:00"
+digest: sha256:94605b93349e22b92b2a279ad6c4b2708b32dca48634c348fe60f3f82935c6e1
+generated: "2022-05-03T15:25:26.67283+02:00"
