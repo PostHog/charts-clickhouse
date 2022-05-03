@@ -99,7 +99,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | service.annotations | object | `{}` | PostHog service annotations. |
 | cert-manager.enabled | bool | `false` | Whether to install `cert-manager` resources. |
 | cert-manager.installCRDs | bool | `true` | Whether to install `cert-manager` CRDs. |
-| cert-manager.email | string | `nil` | Defaults to `notificationEmail` if it is available  |
+| cert-manager.email | string | `nil` | Defaults to `notificationEmail` if it is available |
 | cert-manager.podDnsPolicy | string | `"None"` |  |
 | cert-manager.podDnsConfig.nameservers[0] | string | `"8.8.8.8"` |  |
 | cert-manager.podDnsConfig.nameservers[1] | string | `"1.1.1.1"` |  |
@@ -218,7 +218,10 @@ The following table lists the configurable parameters of the PostHog chart and t
 | serviceAccount.annotations | object | `{}` | Configures annotation for the ServiceAccount |
 | grafana.enabled | bool | `false` | Whether to install Grafana or not. |
 | grafana.sidecar | object | `{"dashboards":{"enabled":true,"folderAnnotation":"grafana_folder","label":"grafana_dashboard","provider":{"foldersFromFilesStructure":true}}}` | Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info. |
-| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
+| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki:3100"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
+| loki.enabled | bool | `false` | Whether to install Loki or not. |
+| promtail.enabled | bool | `false` | Whether to install Promtail or not. |
+| promtail.config.lokiAddress | string | `"http://posthog-loki:3100/loki/api/v1/push"` |  |
 | prometheus.enabled | bool | `false` | Whether to enable a minimal prometheus installation for getting alerts/monitoring the stack |
 | prometheus.alertmanager.enabled | bool | `true` | If false, alertmanager will not be installed |
 | prometheus.alertmanager.resources | object | `{"limits":{"cpu":"100m"},"requests":{"cpu":"50m"}}` | alertmanager resource requests and limits |
