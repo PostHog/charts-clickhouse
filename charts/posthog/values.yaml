@@ -274,8 +274,8 @@ cert-manager:
   # -- Whether to install `cert-manager` CRDs.
   installCRDs: true
   # -- Who to email if the certificate is about to expire
-  # -- Defaults to `notificationEmail` if it is available 
-  email: null 
+  # -- Defaults to `notificationEmail` if it is available
+  email: null
 
   #
   # [Workaround] - do not use the local DNS for the 'cert-manager' pods since it would return local IPs
@@ -715,12 +715,41 @@ grafana:
     datasources.yaml:
       apiVersion: 1
       datasources:
+
+      # Comment the snippet below if you are running with `prometheus.enabled: false`
       - name: Prometheus
         type: prometheus
         url: http://posthog-prometheus-server
         access: proxy
         isDefault: true
 
+      # Comment the snippet below if you are running with `loki.enabled: false`
+      - name: Loki
+        type: loki
+        url: http://posthog-loki:3100
+        access: proxy
+        isDefault: false
+
+
+###
+###
+### ---- Loki ----
+###
+###
+loki:
+  # -- Whether to install Loki or not.
+  enabled: false
+
+###
+###
+### ---- Promtail ----
+###
+###
+promtail:
+  # -- Whether to install Promtail or not.
+  enabled: false
+  config:
+    lokiAddress: http://posthog-loki:3100/loki/api/v1/push
 
 ###
 ###
