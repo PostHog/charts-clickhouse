@@ -1,6 +1,9 @@
 # -- Cloud service being deployed on (example: `aws`, `azure`, `do`, `gcp`, `other`).
 cloud:
 
+# -- Notification email for notifications to be sent to from the PostHog stack
+notificationEmail:
+
 image:
   # -- PostHog image repository to use.
   repository: posthog/posthog
@@ -275,6 +278,7 @@ cert-manager:
   installCRDs: true
   # -- Who to email if the certificate is about to expire
   # -- Defaults to `notificationEmail` if it is available
+  # -- Base default is noreply@<your-ingress-hostname>
   email: null
 
   #
