@@ -445,6 +445,7 @@ redis:
 
       # -- Persistent Volume size.
       size: 5Gi
+    # -- Array with additional command line flags for Redis master.
     extraFlags:
       ## The maxmemory configuration directive is used in order to configure Redis to use a specified
       ## amount of memory for the data set. Setting maxmemory to zero results into no memory limits
