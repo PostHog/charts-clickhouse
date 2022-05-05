@@ -60,10 +60,8 @@ spec:
         image: {{ template "posthog.image.fullPath" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:
-          - /bin/sh
-          - -c
-          - |
-            ./bin/plugin-server --no-restart-loop
+          - ./bin/plugin-server
+          - --no-restart-loop
         ports:
         - containerPort: {{ .Values.service.internalPort }}
         env:
