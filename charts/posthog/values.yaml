@@ -449,7 +449,7 @@ redis:
       ## The maxmemory configuration directive is used in order to configure Redis to use a specified
       ## amount of memory for the data set. Setting maxmemory to zero results into no memory limits
       ## see https://redis.io/topics/lru-cache for more details
-      - "--maxmemory 4500mb"
+      - "--maxmemory 200mb"
       ## The exact behavior Redis follows when the maxmemory limit is reached is configured using the
       ## maxmemory-policy configuration directive
       ## allkeys-lru: evict keys by trying to remove the less recently used (LRU) keys first, in order
