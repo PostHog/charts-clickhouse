@@ -3,7 +3,7 @@
 #
 # NAMESPACE=posthog
 # COMMENT=
-# OPERATOR_IMAGE=altinity/clickhouse-operator:latest
+# OPERATOR_IMAGE=altinity/clickhouse-operator:0.19.0
 # METRICS_EXPORTER_IMAGE=altinity/metrics-exporter:latest
 #
 # Setup Deployment for clickhouse-operator
@@ -47,7 +47,7 @@ spec:
             name: etc-clickhouse-operator-usersd-files
       containers:
         - name: clickhouse-operator
-          image: altinity/clickhouse-operator:latest
+          image: altinity/clickhouse-operator:0.19.0
           imagePullPolicy: Always
           volumeMounts:
             - name: etc-clickhouse-operator-folder

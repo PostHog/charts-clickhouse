@@ -28,7 +28,7 @@ URL="https://raw.githubusercontent.com/Altinity/clickhouse-operator/${CLICKHOUSE
 #
 OPERATOR_NAMESPACE="${OPERATOR_NAMESPACE:-test-clickhouse-operator}"
 METRICS_EXPORTER_NAMESPACE="${OPERATOR_NAMESPACE}"
-OPERATOR_IMAGE="${OPERATOR_IMAGE:-altinity/clickhouse-operator:latest}"
+OPERATOR_IMAGE="${OPERATOR_IMAGE:-altinity/clickhouse-operator:0.19.0}"
 METRICS_EXPORTER_IMAGE="${METRICS_EXPORTER_IMAGE:-altinity/metrics-exporter:latest}"
 
 curl -s "${URL}" | \
@@ -57,16 +57,16 @@ kubectl-slice -f "$TMP_FOLDER/clickhouse-operator.yaml" -o "${CHART_PATH}/templa
 FILES="${CHART_PATH}/templates/clickhouse-operator/*"
 for f in $FILES
 do
-    sed -i '' '1i\
+    sed -i'' '1i\
 {{- if .Values.clickhouse.enabled }}
     ' "$f"
 
-    sed -i '' '$a\
+    sed -i'' '$a\
 {{- end }}
     ' "$f"
 
-    sed -i '' 's/#namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
+    sed -i'' 's/#namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
 
-    sed -i '' 's/namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
+    sed -i'' 's/namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
 
 done
