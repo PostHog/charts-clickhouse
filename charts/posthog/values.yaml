@@ -502,6 +502,16 @@ kafka:
 externalKafka:
   # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
   brokers: []
+  # -- mTLS settings
+  mtls:
+    # --- A secret from which to pull mTLS data.
+    secretName:
+    # --- Name of the key pointing to the public certificate. Must be base64 encoded.
+    certKey: tls.crt
+    # --- Name of the key pointing to the private key.
+    certKeyKey: tls.key
+    # --- Name of the key pointing to the mutually trusted certificate.
+    trustedCertKey: ca.crt
 
 
 ###

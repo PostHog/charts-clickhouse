@@ -45,4 +45,26 @@
 {{ else }}
   value: {{ join "," $hostsWithPrefix | quote }}
 {{- end }}
+{{- if .Values.externalKafka.mtls.secretName }}
+- name: KAFKA_BASE64_KEYS
+  value: "true"
+- name: KAFKA_CLIENT_CERT_B64
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.externalKafka.mtls.secretName }}
+      key: {{ .Values.externalKafka.mtls.certKey }}
+- name: KAFKA_CLIENT_CERT_KEY_B64
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.externalKafka.mtls.secretName }}
+      key: {{ .Values.externalKafka.mtls.certKeyKey }}
+- name: KAFKA_TRUSTED_CERT_B64
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.externalKafka.mtls.secretName }}
+      key: {{ .Values.externalKafka.mtls.trustedCertKey }}
+{{ else }}
+- name: KAFKA_BASE64_KEYS
+  value: "false"
+{{- end }}
 {{- end }}

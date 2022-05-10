@@ -6,6 +6,7 @@ templates:
   - templates/worker-deployment.yaml
   - templates/events-deployment.yaml
   - templates/migrate.job.yaml
+  - templates/plugins-deployment.yaml
   # NOTE: we need to include this as it is required by the other templates
   - templates/secrets.yaml
 
@@ -127,3 +128,73 @@ tests:
           content:
             name: KAFKA_URL
             value: kafka://broker1:port1,kafka://broker2:port2
+
+  - it: should configure mTLS when mTLS settings are specified
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalKafka:
+        mtls:
+          secretName: kafka-secret
+          certKey: some-cert
+          certKeyKey: some-cert-key
+          trustedCertKey: some-trusted-cert
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_BASE64_KEYS
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_CLIENT_CERT_B64
+            valueFrom:
+              secretKeyRef:
+                name: kafka-secret
+                key: some-cert
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_CLIENT_CERT_KEY_B64
+            valueFrom:
+              secretKeyRef:
+                name: kafka-secret
+                key: some-cert-key
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_TRUSTED_CERT_B64
+            valueFrom:
+              secretKeyRef:
+                name: kafka-secret
+                key: some-trusted-cert
+
+
+  - it: should not configure mTLS when mTLS settings aren't specified
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalKafka:
+        mtls:
+          secretName:
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_BASE64_KEYS
+            value: "false"
