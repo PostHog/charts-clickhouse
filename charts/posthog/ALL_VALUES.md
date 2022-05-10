@@ -149,6 +149,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | redis.auth.existingSecretPasswordKey | string | `""` | Password key to be retrieved from existing secret.    NOTE: ignored unless `redis.auth.existingSecret` parameter is set. |
 | redis.master.persistence.enabled | bool | `true` | Enable data persistence using PVC. |
 | redis.master.persistence.size | string | `"5Gi"` | Persistent Volume size. |
+| redis.master.extraFlags | list | `["--maxmemory 400mb","--maxmemory-policy allkeys-lru"]` | Array with additional command line flags for Redis master. |
 | externalRedis.host | string | `""` | External Redis host to use. |
 | externalRedis.port | int | `6379` | External Redis port to use. |
 | externalRedis.password | string | `""` | Password for the external Redis. Ignored if `externalRedis.existingSecret` is set. |
