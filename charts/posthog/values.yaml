@@ -545,6 +545,11 @@ zookeeper:
   metrics:
     # -- Enable Prometheus to access ZooKeeper metrics endpoint.
     enabled: false
+    service:
+      annotations:
+        "prometheus.io/scrape": "false" # let's make Prometheus skip the scraping of the
+                                        # service as we already scrape the pods (see below
+                                        # and https://github.com/bitnami/charts/issues/10101)
 
   ## -- Zookeeper pod(s) annotation.
   podAnnotations:
