@@ -55,6 +55,9 @@ spec:
       imagePullSecrets:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
+      {{- if .Values.plugins.securityContext.enabled }}
+      securityContext: {{- omit .Values.plugins.securityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}      
       containers:
       - name: {{ .Chart.Name }}-plugins
         image: {{ template "posthog.image.fullPath" . }}

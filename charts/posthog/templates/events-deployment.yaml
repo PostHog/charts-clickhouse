@@ -52,6 +52,10 @@ spec:
       imagePullSecrets:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
+     {{- if .Values.events.securityContext.enabled }}
+      securityContext: {{- omit .Values.events.securityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+
       containers:
       - name: {{ .Chart.Name }}-events
         image: {{ template "posthog.image.fullPath" . }}
