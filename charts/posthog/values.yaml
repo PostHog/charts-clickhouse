@@ -48,6 +48,13 @@ events:
     # -- Max pods for the events stack HorizontalPodAutoscaler.
     maxpods: 10
 
+  securityContext:
+    enabled: false
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
+
+
 
 web:
   # -- Whether to install the PostHog web stack or not.
@@ -119,6 +126,12 @@ web:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 2
 
+  securityContext:
+    enabled: false
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
+
 
 worker:
   # -- Whether to install the PostHog worker stack or not.
@@ -150,6 +163,12 @@ worker:
   tolerations: []
   # -- Affinity settings for the worker stack deployment.
   affinity: {}
+
+  securityContext:
+    enabled: false
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
 
 
 plugins:
@@ -187,6 +206,11 @@ plugins:
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
+  securityContext:
+    enabled: false
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
 
 email:
   # -- SMTP service host.
@@ -412,6 +436,12 @@ pgbouncer:
   extraVolumeMounts: []
   # -- Additional volumes to be added to the pgbouncer deployment
   extraVolumes: []
+
+  securityContext:
+    enabled: true
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
 
 
 ###

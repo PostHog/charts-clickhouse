@@ -26,6 +26,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | events.hpa.cputhreshold | int | `60` | CPU threshold percent for the events stack HorizontalPodAutoscaler. |
 | events.hpa.minpods | int | `1` | Min pods for the events stack HorizontalPodAutoscaler. |
 | events.hpa.maxpods | int | `10` | Max pods for the events stack HorizontalPodAutoscaler. |
+| events.securityContext.enabled | bool | `false` | SecurityContext for events. |
 | web.enabled | bool | `true` | Whether to install the PostHog web stack or not. |
 | web.replicacount | int | `1` | Count of web pods to run. This setting is ignored if `web.hpa.enabled` is set to `true`. |
 | web.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the web stack. |
@@ -52,6 +53,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.readinessProbe.periodSeconds | int | `10` | The readiness probe period seconds |
 | web.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | web.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
+| web.securityContext.enabled | bool | `false` | SecurityContext for webservice. |
 | worker.enabled | bool | `true` | Whether to install the PostHog worker stack or not. |
 | worker.replicacount | int | `1` | Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`. |
 | worker.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the worker stack. |
@@ -63,6 +65,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.nodeSelector | object | `{}` | Node labels for the worker stack deployment. |
 | worker.tolerations | list | `[]` | Toleration labels for the worker stack deployment. |
 | worker.affinity | object | `{}` | Affinity settings for the worker stack deployment. |
+| worker.securityContext.enabled | bool | `false` | SecurityContext for worker. |
 | plugins.enabled | bool | `true` | Whether to install the PostHog plugin-server stack or not. |
 | plugins.ingestion.enabled | bool | `true` | Whether to enable plugin-server based ingestion |
 | plugins.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `plugin-server.hpa.enabled` is set to `true`. |
@@ -75,6 +78,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | plugins.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
 | plugins.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
 | plugins.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
+| plugins.securityContext.enabled | bool | `false` | SecurityContext for plugins. |
 | email.host | string | `nil` | SMTP service host. |
 | email.port | string | `nil` | SMTP service port. |
 | email.user | string | `nil` | SMTP service user. |
