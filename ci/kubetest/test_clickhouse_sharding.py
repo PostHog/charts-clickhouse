@@ -52,7 +52,8 @@ def test_upgrading_to_more_shards(kube):
     install_chart(new_values)
 
     # Wait for new replicas to come up and for tables to be created
-    for attempt in range(24):
+    start = time.time()
+    while time.time() - start < 120:
         number_of_hosts, table_counts = get_clickhouse_table_counts_on_all_nodes(kube)
         if number_of_hosts == 6 and len(set(table_counts)) == 1:
             break
