@@ -28,7 +28,7 @@ URL="https://raw.githubusercontent.com/Altinity/clickhouse-operator/${CLICKHOUSE
 #
 OPERATOR_NAMESPACE="${OPERATOR_NAMESPACE:-test-clickhouse-operator}"
 METRICS_EXPORTER_NAMESPACE="${OPERATOR_NAMESPACE}"
-# NOTE: we pin to 0.19.0 here which is different to the 0.16.1 chart version.
+# NOTE: we pin to 0.19.0 here which is different to the 0.16.1 manifest version.
 # Prior to pinning we were specifying latest, so to ensure that the version
 # doesn't change on existing installs we pin to latest as of writing, thereby
 # mitigating the possibility that chart will unexpectedly update, while also 
