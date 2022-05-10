@@ -25,9 +25,11 @@ env: []
 #   - name: FOO
 #     value: bar
 
+
 migrate:
   # -- Whether to install the PostHog migrate job or not.
   enabled: true
+
 
 events:
   # -- Whether to install the PostHog events stack or not.
@@ -45,6 +47,7 @@ events:
     minpods: 1
     # -- Max pods for the events stack HorizontalPodAutoscaler.
     maxpods: 10
+
 
 web:
   # -- Whether to install the PostHog web stack or not.
@@ -115,6 +118,7 @@ web:
     successThreshold: 1
     # -- The readiness probe timeout seconds
     timeoutSeconds: 2
+
 
 worker:
   # -- Whether to install the PostHog worker stack or not.
@@ -301,6 +305,7 @@ cert-manager:
       - 1.1.1.1
       - 208.67.222.222
 
+
 ###
 ###
 ### ---- INGRESS ----
@@ -332,6 +337,7 @@ ingress:
   # -- TLS secret to be used by the ingress.
   secretName:
 
+
 ingress-nginx:
   controller:
     config:
@@ -340,6 +346,7 @@ ingress-nginx:
       # -- downstream proxy is using a secure connection. See the official
       # -- [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers)
       use-forwarded-headers: "true"
+
 
 ###
 ###
@@ -406,6 +413,7 @@ pgbouncer:
   # -- Additional volumes to be added to the pgbouncer deployment
   extraVolumes: []
 
+
 ###
 ###
 ### ---- REDIS ----
@@ -462,6 +470,7 @@ externalRedis:
   # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
 
+
 ###
 ###
 ### ---- KAFKA ----
@@ -510,15 +519,29 @@ externalKafka:
 ###
 ###
 zookeeper:
-  # -- Install zookeeper on kubernetes
+  # -- Whether to deploy Zookeeper as part of this release.
   enabled: true
-  # -- Name override for Zookeeper
+
   nameOverride: posthog-zookeeper
+
   # -- Number of ZooKeeper nodes
   replicaCount: 1
+
   autopurge:
     # -- The time interval (in hours) for which the purge task has to be triggered
     purgeInterval: 1
+
+  metrics:
+    # -- Enable Prometheus to access ZooKeeper metrics endpoint.
+    enabled: false
+
+  ## -- Zookeeper pod(s) annotation.
+  podAnnotations:
+    # Uncomment those lines if you want Prometheus server to scrape Zookeeper pods metrics.
+    # prometheus.io/scrape: "true"
+    # prometheus.io/path: /metrics
+    # prometheus.io/port: "9141"
+
 
 ###
 ###
@@ -684,6 +707,7 @@ hooks:
     # -- Hook job resource limits/requests
     resources: {}
 
+
 serviceAccount:
   # -- Configures if a ServiceAccount with this name should be created
   create: true
@@ -744,6 +768,7 @@ loki:
   # -- Whether to install Loki or not.
   enabled: false
 
+
 ###
 ###
 ### ---- Promtail ----
@@ -754,6 +779,7 @@ promtail:
   enabled: false
   config:
     lokiAddress: http://posthog-loki:3100/loki/api/v1/push
+
 
 ###
 ###

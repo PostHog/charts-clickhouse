@@ -1496,7 +1496,7 @@
   "timepicker": {},
   "timezone": "utc",
   "title": "ClickHouse (cluster overview)",
-  "uid": "6C23r9Lnz",
+  "uid": "clickhouse-cluster-overview",
   "version": 1,
-  "weekStart": ""
+  "weekStart": "monday"
 }
