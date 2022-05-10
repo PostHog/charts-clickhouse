@@ -15,7 +15,7 @@ tests:
       grafana.enabled: true
     asserts:
       - hasDocuments:
-          count: 3
+          count: 4
       - matchSnapshot: {}
 
   - it: should have the correct apiVersion
