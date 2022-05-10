@@ -165,10 +165,12 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.zookeeper.enabled | bool | `false` | Switch to enable or disable the ZooKeeper helm chart. !!! Please DO NOT override this (this chart installs Zookeeper separately) !!! |
 | kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | List of external zookeeper servers to use. |
 | externalKafka.brokers | list | `[]` |  |
-| zookeeper.enabled | bool | `true` | Install zookeeper on kubernetes |
-| zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for Zookeeper |
+| zookeeper.enabled | bool | `true` | Whether to deploy Zookeeper as part of this release. |
+| zookeeper.nameOverride | string | `"posthog-zookeeper"` |  |
 | zookeeper.replicaCount | int | `1` | Number of ZooKeeper nodes |
 | zookeeper.autopurge.purgeInterval | int | `1` | The time interval (in hours) for which the purge task has to be triggered |
+| zookeeper.metrics.enabled | bool | `false` | Enable Prometheus to access ZooKeeper metrics endpoint. |
+| zookeeper.podAnnotations | string | `nil` |  |
 | clickhouse.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouse.namespace | string | `nil` | Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to) |
 | clickhouse.cluster | string | `"posthog"` | Clickhouse cluster |
