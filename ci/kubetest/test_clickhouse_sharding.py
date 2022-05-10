@@ -1,4 +1,5 @@
 import pytest
+import time
 import yaml
 
 from helpers.clickhouse import get_clickhouse_table_counts_on_all_nodes
