@@ -92,7 +92,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "znode_count{job=\"kubernetes-pods\"}",
+                    "expr": "znode_count{}",
                     "format": "time_series",
                     "instant": false,
                     "interval": "",
@@ -106,7 +106,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "ephemerals_count{job=\"kubernetes-pods\"}",
+                    "expr": "ephemerals_count{}",
                     "format": "time_series",
                     "instant": false,
                     "interval": "",
@@ -195,7 +195,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(znode_count{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(znode_count{}[$interval])",
                     "format": "time_series",
                     "instant": false,
                     "interval": "",
@@ -204,7 +204,7 @@
                     "refId": "A"
                 },
                 {
-                    "expr": "rate(ephemerals_count{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(ephemerals_count{}[$interval])",
                     "format": "time_series",
                     "instant": false,
                     "interval": "",
@@ -299,7 +299,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "global_sessions{job=\"kubernetes-pods\"}",
+                    "expr": "global_sessions{}",
                     "format": "time_series",
                     "instant": false,
                     "intervalFactor": 2,
@@ -365,7 +365,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "local_sessions{job=\"kubernetes-pods\"}",
+                    "expr": "local_sessions{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}}",
@@ -421,7 +421,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "write_per_namespace_sum{job=\"kubernetes-pods\"}",
+                    "expr": "write_per_namespace_sum{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} write_per_namespace:{{key}}",
@@ -504,7 +504,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "read_per_namespace_sum{job=\"kubernetes-pods\"}",
+                    "expr": "read_per_namespace_sum{}",
                     "format": "time_series",
                     "hide": false,
                     "intervalFactor": 2,
@@ -588,7 +588,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "approximate_data_size{job=\"kubernetes-pods\"}",
+                    "expr": "approximate_data_size{}",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}} approximate_data_size",
@@ -671,7 +671,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "packets_received{job=\"kubernetes-pods\"}",
+                    "expr": "packets_received{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} packets_received",
@@ -754,7 +754,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "packets_sent{job=\"kubernetes-pods\"}",
+                    "expr": "packets_sent{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} packets_sent",
@@ -837,28 +837,28 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "response_packet_cache_misses{job=\"kubernetes-pods\"}",
+                    "expr": "response_packet_cache_misses{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} response_packet_cache_misses",
                     "refId": "A"
                 },
                 {
-                    "expr": "response_packet_cache_hits{job=\"kubernetes-pods\"}",
+                    "expr": "response_packet_cache_hits{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} response_packet_cache_hits",
                     "refId": "B"
                 },
                 {
-                    "expr": "response_packet_get_children_cache_misses{job=\"kubernetes-pods\"}",
+                    "expr": "response_packet_get_children_cache_misses{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} response_packet_get_children_cache_misses",
                     "refId": "C"
                 },
                 {
-                    "expr": "response_packet_get_children_cache_hits{job=\"kubernetes-pods\"}",
+                    "expr": "response_packet_get_children_cache_hits{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} response_packet_get_children_cache_hits",
@@ -941,7 +941,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "unrecoverable_error_count{job=\"kubernetes-pods\"}",
+                    "expr": "unrecoverable_error_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} unrecoverable_error_count",
@@ -1024,7 +1024,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "digest_mismatches_count{job=\"kubernetes-pods\"}",
+                    "expr": "digest_mismatches_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} digest_mismatches_count",
@@ -1123,7 +1123,7 @@
                     "refId": "B"
                 },
                 {
-                    "expr": "startup_snap_load_time_sum{job=\"kubernetes-pods\"}",
+                    "expr": "startup_snap_load_time_sum{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} startup_snap_load_time",
@@ -1222,7 +1222,7 @@
                     "refId": "B"
                 },
                 {
-                    "expr": "startup_txns_loaded_sum{job=\"kubernetes-pods\"}",
+                    "expr": "startup_txns_loaded_sum{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} startup_txns_loaded",
@@ -1321,7 +1321,7 @@
                     "refId": "B"
                 },
                 {
-                    "expr": "dbinittime_sum{job=\"kubernetes-pods\"}",
+                    "expr": "dbinittime_sum{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} db_init_time",
@@ -1438,7 +1438,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "max(quorum_size{job=\"kubernetes-pods\"})",
+                    "expr": "max(quorum_size{})",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "quorum_size",
@@ -1511,7 +1511,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "leader_uptime{job=\"kubernetes-pods\"}",
+                    "expr": "leader_uptime{}",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}}",
@@ -1584,7 +1584,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "leader_uptime{job=\"kubernetes-pods\"}",
+                    "expr": "leader_uptime{}",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}} leader_uptime",
@@ -1647,21 +1647,21 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "max(learners{job=\"kubernetes-pods\"})",
+                    "expr": "max(learners{})",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "learners",
                     "refId": "B"
                 },
                 {
-                    "expr": "max(synced_non_voting_followers{job=\"kubernetes-pods\"})",
+                    "expr": "max(synced_non_voting_followers{})",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "synced_non_voting_followers",
                     "refId": "C"
                 },
                 {
-                    "expr": "max(synced_observers{job=\"kubernetes-pods\"})",
+                    "expr": "max(synced_observers{})",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "synced_observers",
@@ -1726,7 +1726,7 @@
                     "refId": "A"
                 },
                 {
-                    "expr": "election_time_count{job=\"kubernetes-pods\"}",
+                    "expr": "election_time_count{}",
                     "format": "time_series",
                     "hide": false,
                     "intervalFactor": 2,
@@ -1734,7 +1734,7 @@
                     "refId": "B"
                 },
                 {
-                    "expr": "election_time_sum{job=\"kubernetes-pods\"}",
+                    "expr": "election_time_sum{}",
                     "format": "time_series",
                     "hide": false,
                     "intervalFactor": 2,
@@ -1742,7 +1742,7 @@
                     "refId": "C"
                 },
                 {
-                    "expr": "election_time_sum/election_time_count{job=\"kubernetes-pods\"}",
+                    "expr": "election_time_sum/election_time_count{}",
                     "format": "time_series",
                     "hide": false,
                     "intervalFactor": 2,
@@ -1825,7 +1825,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "uptime{job=\"kubernetes-pods\"}",
+                    "expr": "uptime{}",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}} uptime",
@@ -1907,7 +1907,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "learner_commit_received_count{job=\"kubernetes-pods\"}",
+                    "expr": "learner_commit_received_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} learner_commit_received_count",
@@ -1989,7 +1989,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "commit_count{job=\"kubernetes-pods\"}",
+                    "expr": "commit_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} commit_count",
@@ -2071,7 +2071,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "snap_count{job=\"kubernetes-pods\"}",
+                    "expr": "snap_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} snap_count",
@@ -2153,7 +2153,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "diff_count{job=\"kubernetes-pods\"}",
+                    "expr": "diff_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} diff_count",
@@ -2235,7 +2235,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "looking_count{job=\"kubernetes-pods\"}",
+                    "expr": "looking_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} looking_count",
@@ -2317,7 +2317,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "proposal_count{job=\"kubernetes-pods\"}",
+                    "expr": "proposal_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} proposal_count",
@@ -2399,21 +2399,21 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "last_proposal_size{job=\"kubernetes-pods\"}",
+                    "expr": "last_proposal_size{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} last_proposal_size",
                     "refId": "A"
                 },
                 {
-                    "expr": "max_proposal_size{job=\"kubernetes-pods\"}",
+                    "expr": "max_proposal_size{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} max_proposal_size",
                     "refId": "B"
                 },
                 {
-                    "expr": "min_proposal_size{job=\"kubernetes-pods\"}",
+                    "expr": "min_proposal_size{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} min_proposal_size",
@@ -2495,7 +2495,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(follower_sync_time_sum{job=\"kubernetes-pods\"}[1m])",
+                    "expr": "rate(follower_sync_time_sum{}[1m])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} follower_sync_time",
@@ -2577,7 +2577,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "learner_handler_qp_size_sum{job=\"kubernetes-pods\"}",
+                    "expr": "learner_handler_qp_size_sum{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} learner_handler_qp_size_sum sid:{{key}}",
@@ -2659,7 +2659,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "quit_leading_due_to_disloyal_voter{job=\"kubernetes-pods\"}",
+                    "expr": "quit_leading_due_to_disloyal_voter{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} quit_leading_due_to_disloyal_voter",
@@ -2741,14 +2741,14 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(om_commit_process_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(om_commit_process_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} om_commit_process_time",
                     "refId": "C"
                 },
                 {
-                    "expr": "rate(om_proposal_process_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(om_proposal_process_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} om_proposal_process_time",
@@ -2843,7 +2843,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "watch_count{job=\"kubernetes-pods\"}",
+                    "expr": "watch_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} watch_count",
@@ -2925,7 +2925,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "node_changed_watch_count_sum{job=\"kubernetes-pods\"}",
+                    "expr": "node_changed_watch_count_sum{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} node_changed_watch_count",
@@ -3007,7 +3007,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "node_children_watch_count_sum{job=\"kubernetes-pods\"}",
+                    "expr": "node_children_watch_count_sum{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} node_children_watch_count",
@@ -3089,7 +3089,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "node_deleted_watch_count_sum{job=\"kubernetes-pods\"}",
+                    "expr": "node_deleted_watch_count_sum{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} node_deleted_watch_count",
@@ -3171,7 +3171,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "node_created_watch_count_sum{job=\"kubernetes-pods\"}",
+                    "expr": "node_created_watch_count_sum{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} node_created_watch_count",
@@ -3253,7 +3253,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "revalidate_count{job=\"kubernetes-pods\"}",
+                    "expr": "revalidate_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} revalidate_count",
@@ -3335,7 +3335,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "stale_sessions_expired{job=\"kubernetes-pods\"}",
+                    "expr": "stale_sessions_expired{}",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}} stale_sessions_expired",
@@ -3417,21 +3417,21 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "dead_watchers_cleared{job=\"kubernetes-pods\"}",
+                    "expr": "dead_watchers_cleared{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} dead_watchers_cleared",
                     "refId": "A"
                 },
                 {
-                    "expr": "dead_watchers_queued{job=\"kubernetes-pods\"}",
+                    "expr": "dead_watchers_queued{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} dead_watchers_queued",
                     "refId": "B"
                 },
                 {
-                    "expr": "rate(dead_watchers_cleaner_latency_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(dead_watchers_cleaner_latency_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} dead_watchers_cleaner_latency",
@@ -3513,7 +3513,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "add_dead_watcher_stall_time{job=\"kubernetes-pods\"}",
+                    "expr": "add_dead_watcher_stall_time{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} add_dead_watcher_stall_time",
@@ -3608,7 +3608,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "outstanding_requests{job=\"kubernetes-pods\"}",
+                    "expr": "outstanding_requests{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} outstanding_requests",
@@ -3690,21 +3690,21 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "last_client_response_size{job=\"kubernetes-pods\"}",
+                    "expr": "last_client_response_size{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} last_client_response_size",
                     "refId": "A"
                 },
                 {
-                    "expr": "min_client_response_size{job=\"kubernetes-pods\"}",
+                    "expr": "min_client_response_size{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} min_client_response_size",
                     "refId": "B"
                 },
                 {
-                    "expr": "max_client_response_size{job=\"kubernetes-pods\"}",
+                    "expr": "max_client_response_size{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} max_client_response_size",
@@ -3786,7 +3786,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "bytes_received_count{job=\"kubernetes-pods\"}",
+                    "expr": "bytes_received_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} bytes_received_count",
@@ -3868,7 +3868,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "connection_request_count{job=\"kubernetes-pods\"}",
+                    "expr": "connection_request_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} connection_request_count",
@@ -3950,7 +3950,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "num_alive_connections{job=\"kubernetes-pods\"}",
+                    "expr": "num_alive_connections{}",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}} num_alive_connections",
@@ -4032,7 +4032,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "connection_rejected{job=\"kubernetes-pods\"}",
+                    "expr": "connection_rejected{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} connection_rejected",
@@ -4114,7 +4114,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "connection_drop_count{job=\"kubernetes-pods\"}",
+                    "expr": "connection_drop_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} connection_drop_count",
@@ -4196,7 +4196,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "connection_drop_probability{job=\"kubernetes-pods\"}",
+                    "expr": "connection_drop_probability{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} connection_drop_probability",
@@ -4278,7 +4278,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "sessionless_connections_expired{job=\"kubernetes-pods\"}",
+                    "expr": "sessionless_connections_expired{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} sessionless_connections_expired",
@@ -4360,7 +4360,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(connection_token_deficit_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(connection_token_deficit_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} connection_token_deficit",
@@ -4465,7 +4465,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "open_file_descriptor_count{job=\"kubernetes-pods\"}",
+                    "expr": "open_file_descriptor_count{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}}",
@@ -4523,7 +4523,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "fsynctime{job=\"kubernetes-pods\"}",
+                    "expr": "fsynctime{}",
                     "format": "time_series",
                     "hide": true,
                     "intervalFactor": 2,
@@ -4531,7 +4531,7 @@
                     "refId": "A"
                 },
                 {
-                    "expr": "fsynctime_count{job=\"kubernetes-pods\"}",
+                    "expr": "fsynctime_count{}",
                     "format": "time_series",
                     "hide": true,
                     "interval": "",
@@ -4540,7 +4540,7 @@
                     "refId": "B"
                 },
                 {
-                    "expr": "fsynctime_sum{job=\"kubernetes-pods\"}",
+                    "expr": "fsynctime_sum{}",
                     "format": "time_series",
                     "hide": true,
                     "intervalFactor": 2,
@@ -4548,7 +4548,7 @@
                     "refId": "C"
                 },
                 {
-                    "expr": "fsynctime_sum * 1000 /fsynctime_count{job=\"kubernetes-pods\"}",
+                    "expr": "fsynctime_sum * 1000 /fsynctime_count{}",
                     "format": "time_series",
                     "hide": false,
                     "intervalFactor": 2,
@@ -4556,7 +4556,7 @@
                     "refId": "D"
                 },
                 {
-                    "expr": "irate(fsynctime_sum{job=\"kubernetes-pods\"}[1m])",
+                    "expr": "irate(fsynctime_sum{}[1m])",
                     "format": "time_series",
                     "hide": false,
                     "intervalFactor": 2,
@@ -4644,7 +4644,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(snapshottime_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(snapshottime_sum{}[$interval])",
                     "format": "time_series",
                     "hide": false,
                     "intervalFactor": 2,
@@ -4652,7 +4652,7 @@
                     "refId": "C"
                 },
                 {
-                    "expr": "snapshottime_count{job=\"kubernetes-pods\"}",
+                    "expr": "snapshottime_count{}",
                     "format": "time_series",
                     "hide": true,
                     "intervalFactor": 2,
@@ -4660,7 +4660,7 @@
                     "refId": "A"
                 },
                 {
-                    "expr": "snapshottime_sum / snapshottime_count{job=\"kubernetes-pods\"}",
+                    "expr": "snapshottime_sum / snapshottime_count{}",
                     "format": "time_series",
                     "hide": true,
                     "intervalFactor": 2,
@@ -4757,7 +4757,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(prep_process_time_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(prep_process_time_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}} prep_process_time",
@@ -4840,7 +4840,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(prep_processor_queue_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(prep_processor_queue_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}} prep_processor_queue_time_ms",
@@ -4923,7 +4923,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(prep_processor_queue_size_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(prep_processor_queue_size_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} prep_processor_queue_size",
@@ -5006,7 +5006,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "prep_processor_request_queued{job=\"kubernetes-pods\"}",
+                    "expr": "prep_processor_request_queued{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} prep_processor_request_queued",
@@ -5089,14 +5089,14 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "outstanding_changes_queued{job=\"kubernetes-pods\"}",
+                    "expr": "outstanding_changes_queued{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} outstanding_changes_queued",
                     "refId": "A"
                 },
                 {
-                    "expr": "outstanding_changes_removed{job=\"kubernetes-pods\"}",
+                    "expr": "outstanding_changes_removed{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} outstanding_changes_removed",
@@ -5179,7 +5179,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(close_session_prep_time_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(close_session_prep_time_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} close_session_prep_time",
@@ -5275,7 +5275,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(sync_process_time_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(sync_process_time_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} sync_process_time",
@@ -5358,7 +5358,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(sync_processor_queue_flush_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(sync_processor_queue_flush_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} sync_processor_queue_flush_time",
@@ -5441,7 +5441,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(sync_processor_queue_size_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(sync_processor_queue_size_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} sync_processor_queue_size",
@@ -5524,7 +5524,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "sync_processor_request_queued{job=\"kubernetes-pods\"}",
+                    "expr": "sync_processor_request_queued{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} sync_processor_request_queued",
@@ -5607,7 +5607,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(sync_processor_batch_size_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(sync_processor_batch_size_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} sync_processor_batch_size",
@@ -5703,21 +5703,21 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(commit_process_time_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(commit_process_time_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} commit_process_time",
                     "refId": "C"
                 },
                 {
-                    "expr": "rate(read_commitproc_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(read_commitproc_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} read_commitproc_time",
                     "refId": "A"
                 },
                 {
-                    "expr": "rate(write_commitproc_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(write_commitproc_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} write_commitproc_time",
@@ -5800,21 +5800,21 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(write_commit_proc_req_queued_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(write_commit_proc_req_queued_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} write_commit_proc_req_queued",
                     "refId": "C"
                 },
                 {
-                    "expr": "rate(read_commit_proc_req_queued_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(read_commit_proc_req_queued_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} read_commit_proc_req_queued",
                     "refId": "A"
                 },
                 {
-                    "expr": "rate(commit_commit_proc_req_queued_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(commit_commit_proc_req_queued_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} commit_commit_proc_req_queued",
@@ -5897,7 +5897,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(requests_in_session_queue_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(requests_in_session_queue_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} requests_in_session_queue",
@@ -5980,14 +5980,14 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(read_commit_proc_issued_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(read_commit_proc_issued_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} read_commit_proc_issued",
                     "refId": "C"
                 },
                 {
-                    "expr": "rate(write_commit_proc_issued_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(write_commit_proc_issued_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} write_commit_proc_issued",
@@ -6070,7 +6070,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(concurrent_request_processing_in_commit_processor_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(concurrent_request_processing_in_commit_processor_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} concurrent_request_processing_in_commit_processor",
@@ -6153,7 +6153,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(time_waiting_empty_pool_in_commit_processor_read_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(time_waiting_empty_pool_in_commit_processor_read_ms_sum{}[$interval])",
                     "format": "time_series",
                     "hide": false,
                     "intervalFactor": 2,
@@ -6237,7 +6237,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(pending_session_queue_size_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(pending_session_queue_size_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} pending_session_queue_size",
@@ -6320,7 +6320,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(local_write_committed_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(local_write_committed_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} local_write_committed_time_ms",
@@ -6403,7 +6403,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(server_write_committed_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(server_write_committed_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} server_write_committed_time",
@@ -6486,7 +6486,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(write_batch_time_in_commit_processor_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(write_batch_time_in_commit_processor_sum{}[$interval])",
                     "format": "time_series",
                     "hide": false,
                     "intervalFactor": 2,
@@ -6570,7 +6570,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(reads_after_write_in_session_queue_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(reads_after_write_in_session_queue_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}} reads_after_write_in_session_queue",
@@ -6653,7 +6653,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(session_queues_drained_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(session_queues_drained_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} session_queues_drained",
@@ -6736,7 +6736,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(reads_issued_from_session_queue_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(reads_issued_from_session_queue_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} reads_issued_from_session_queue",
@@ -6819,7 +6819,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "request_commit_queued{job=\"kubernetes-pods\"}",
+                    "expr": "request_commit_queued{}",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "{{instance}} request_commit_queued",
@@ -6915,7 +6915,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(write_final_proc_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(write_final_proc_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} write_final_proc_time_ms",
@@ -6998,7 +6998,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(read_final_proc_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(read_final_proc_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} read_final_proc_time_ms",
@@ -7094,7 +7094,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(readlatency_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(readlatency_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} readlatency",
@@ -7179,7 +7179,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(updatelatency_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(updatelatency_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} updatelatency",
@@ -7263,14 +7263,14 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "max_latency{job=\"kubernetes-pods\"}",
+                    "expr": "max_latency{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} max_latency",
                     "refId": "A"
                 },
                 {
-                    "expr": "min_latency{job=\"kubernetes-pods\"}",
+                    "expr": "min_latency{}",
                     "format": "time_series",
                     "interval": "",
                     "intervalFactor": 2,
@@ -7278,7 +7278,7 @@
                     "refId": "B"
                 },
                 {
-                    "expr": "avg_latency{job=\"kubernetes-pods\"}",
+                    "expr": "avg_latency{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} avg_latency",
@@ -7361,7 +7361,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(proposal_latency_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(proposal_latency_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} proposal_latency",
@@ -7444,7 +7444,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(quorum_ack_latency_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(quorum_ack_latency_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} quorum_ack_latency",
@@ -7527,7 +7527,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(ack_latency_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(ack_latency_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} ack_latency_sum",
@@ -7610,7 +7610,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(propagation_latency_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(propagation_latency_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} propagation_latency",
@@ -7693,7 +7693,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(commit_propagation_latency_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(commit_propagation_latency_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} commit_propagation_latency",
@@ -7776,7 +7776,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "proposal_ack_creation_latency{job=\"kubernetes-pods\"}",
+                    "expr": "proposal_ack_creation_latency{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} proposal_ack_creation_latency-{{quantile}}",
@@ -7872,14 +7872,14 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "tls_handshake_exceeded{job=\"kubernetes-pods\"}",
+                    "expr": "tls_handshake_exceeded{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} tls_handshake_exceeded",
                     "refId": "C"
                 },
                 {
-                    "expr": "outstanding_tls_handshake{job=\"kubernetes-pods\"}",
+                    "expr": "outstanding_tls_handshake{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} outstanding_tls_handshake",
@@ -7962,21 +7962,21 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "ensemble_auth_fail{job=\"kubernetes-pods\"}",
+                    "expr": "ensemble_auth_fail{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} ensemble_auth_fail",
                     "refId": "A"
                 },
                 {
-                    "expr": "ensemble_auth_success{job=\"kubernetes-pods\"}",
+                    "expr": "ensemble_auth_success{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} ensemble_auth_success",
                     "refId": "B"
                 },
                 {
-                    "expr": "ensemble_auth_skip{job=\"kubernetes-pods\"}",
+                    "expr": "ensemble_auth_skip{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} ensemble_auth_skip",
@@ -8090,7 +8090,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "max(jvm_classes_loaded{job=\"kubernetes-pods\"})",
+                    "expr": "max(jvm_classes_loaded{})",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "",
@@ -8164,7 +8164,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "max(jvm_threads_current{job=\"kubernetes-pods\"})",
+                    "expr": "max(jvm_threads_current{})",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "",
@@ -8238,7 +8238,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "max(jvm_threads_deadlocked{job=\"kubernetes-pods\"})",
+                    "expr": "max(jvm_threads_deadlocked{})",
                     "format": "time_series",
                     "intervalFactor": 1,
                     "legendFormat": "",
@@ -8294,7 +8294,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(jvm_pause_time_ms_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(jvm_pause_time_ms_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} jvm_pause_time_ms",
@@ -8377,7 +8377,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "rate(jvm_gc_collection_seconds_sum{job=\"kubernetes-pods\"}[$interval])",
+                    "expr": "rate(jvm_gc_collection_seconds_sum{}[$interval])",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} gc:{{gc}}",
@@ -8460,7 +8460,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "jvm_threads_state{job=\"kubernetes-pods\"}",
+                    "expr": "jvm_threads_state{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} state:{{state}}",
@@ -8543,7 +8543,7 @@
             "steppedLine": false,
             "targets": [
                 {
-                    "expr": "jvm_memory_pool_bytes_used{job=\"kubernetes-pods\"}",
+                    "expr": "jvm_memory_pool_bytes_used{}",
                     "format": "time_series",
                     "intervalFactor": 2,
                     "legendFormat": "{{instance}} pool:{{pool}}",
