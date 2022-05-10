@@ -15,6 +15,7 @@ metadata:
   name: clickhouse-operator-metrics
   namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
+    clickhouse.altinity.com/chop: 0.18.4
     app: clickhouse-operator
 spec:
   ports:
