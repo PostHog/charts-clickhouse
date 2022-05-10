@@ -48,17 +48,15 @@ def test_upgrading_to_more_shards(kube):
     new_values["clickhouse"]["layout"]["shardsCount"] = 3
 
     install_chart(new_values)
-    wait_for_pods_to_be_ready(
-        kube,
-        labels={
-            "clickhouse.altinity.com/namespace": "posthog",
-            "clickhouse.altinity.com/chi": "posthog",
-        },
-        expected_count=6,
-    )
 
-    # Validate the ClickHouse node setup
-    number_of_hosts, table_counts = get_clickhouse_table_counts_on_all_nodes(kube)
+    # Wait for new replicas to come up and for tables to be created
+    for attempt in range(24):
+        number_of_hosts, table_counts = get_clickhouse_table_counts_on_all_nodes(kube)
+        if number_of_hosts == 6 and len(set(table_counts)) == 1:
+            break
+
+        time.sleep(5)
+
     assert number_of_hosts == 6
     assert len(set(table_counts)) == 1, "Schemas on some ClickHouse nodes are out of sync"
     assert table_counts[0] >= 31
