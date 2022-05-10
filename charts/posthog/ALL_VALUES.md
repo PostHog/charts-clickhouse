@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 19.0.2](https://img.shields.io/badge/Version-19.0.2-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
+![Version: 19.1.0](https://img.shields.io/badge/Version-19.1.0-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -171,6 +171,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | zookeeper.replicaCount | int | `1` | Number of ZooKeeper nodes |
 | zookeeper.autopurge.purgeInterval | int | `1` | The time interval (in hours) for which the purge task has to be triggered |
 | zookeeper.metrics.enabled | bool | `false` | Enable Prometheus to access ZooKeeper metrics endpoint. |
+| zookeeper.metrics.service.annotations."prometheus.io/scrape" | string | `"false"` |  |
 | zookeeper.podAnnotations | string | `nil` |  |
 | clickhouse.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouse.namespace | string | `nil` | Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to) |
