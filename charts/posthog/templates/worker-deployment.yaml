@@ -55,8 +55,8 @@ spec:
       imagePullSecrets:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
-      {{- if .Values.worker.securityContext.enabled }}
-      securityContext: {{- omit .Values.worker.securityContext "enabled" | toYaml | nindent 8 }}
+      {{- if .Values.worker.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.worker.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
       containers:
       - name: {{ .Chart.Name }}-workers
@@ -109,6 +109,9 @@ spec:
 {{- end }}
         resources:
 {{ toYaml .Values.worker.resources | indent 12 }}
+        {{- if .Values.worker.securityContext.enabled }}
+        securityContext: {{- omit .Values.worker.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}

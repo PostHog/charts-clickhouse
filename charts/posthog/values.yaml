@@ -47,14 +47,12 @@ events:
     minpods: 1
     # -- Max pods for the events stack HorizontalPodAutoscaler.
     maxpods: 10
-
+  # -- Container security context for the events stack HorizontalPodAutoscaler.
   securityContext:
     enabled: false
-    runAsUser: 101
-    runAsGroup: 101
-    fsGroup: 101
-
-
+  # -- Pod security context for the events stack HorizontalPodAutoscaler.
+  podSecurityContext:
+    enabled: false
 
 web:
   # -- Whether to install the PostHog web stack or not.
@@ -125,13 +123,12 @@ web:
     successThreshold: 1
     # -- The readiness probe timeout seconds
     timeoutSeconds: 2
-
+  # -- Container security context for web stack deployment.
   securityContext:
     enabled: false
-    runAsUser: 101
-    runAsGroup: 101
-    fsGroup: 101
-
+  # -- Pod security context for web stack deployment.
+  podSecurityContext:
+    enabled: false
 
 worker:
   # -- Whether to install the PostHog worker stack or not.
@@ -164,12 +161,12 @@ worker:
   # -- Affinity settings for the worker stack deployment.
   affinity: {}
 
+  # -- Container security context for the worker stack deployment.
   securityContext:
     enabled: false
-    runAsUser: 101
-    runAsGroup: 101
-    fsGroup: 101
-
+  # -- Pod security context for the worker stack deployment.
+  podSecurityContext:
+    enabled: false
 
 plugins:
    # -- Whether to install the PostHog plugin-server stack or not.
@@ -205,12 +202,13 @@ plugins:
   tolerations: []
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
-
+  
+  # -- Container security context for the plugin-server stack deployment.
   securityContext:
     enabled: false
-    runAsUser: 101
-    runAsGroup: 101
-    fsGroup: 101
+  # -- Pod security context for the plugin-server stack deployment.
+  podSecurityContext:
+    enabled: false
 
 email:
   # -- SMTP service host.
@@ -436,13 +434,12 @@ pgbouncer:
   extraVolumeMounts: []
   # -- Additional volumes to be added to the pgbouncer deployment
   extraVolumes: []
-
+  # -- Container security context for the pgbouncer deployment
   securityContext:
-    enabled: true
-    runAsUser: 101
-    runAsGroup: 101
-    fsGroup: 101
-
+    enabled: false
+  # -- Pod security context for the pgbouncer deployment
+  podSecurityContext:
+    enabled: false
 
 ###
 ###
