@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 16.2.1](https://img.shields.io/badge/Version-16.2.1-informational?style=flat-square) ![AppVersion: 1.33.0](https://img.shields.io/badge/AppVersion-1.33.0-informational?style=flat-square)
+![Version: 19.1.1](https://img.shields.io/badge/Version-19.1.1-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -11,10 +11,11 @@ The following table lists the configurable parameters of the PostHog chart and t
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | cloud | string | `nil` | Cloud service being deployed on (example: `aws`, `azure`, `do`, `gcp`, `other`). |
+| notificationEmail | string | `nil` | Notification email for notifications to be sent to from the PostHog stack |
 | image.repository | string | `"posthog/posthog"` | PostHog image repository to use. |
 | image.sha | string | `nil` | PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`). |
-| image.tag | string | `nil` | PostHog image tag to use (example: `release-1.33.0`). |
-| image.default | string | `":release-1.33.0"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
+| image.tag | string | `nil` | PostHog image tag to use (example: `release-1.35.0`). |
+| image.default | string | `":release-1.35.0"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
 | image.pullPolicy | string | `"IfNotPresent"` | PostHog image pull policy. |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to. |
 | env | list | `[]` | Environment variables to inject into every PostHog deployment. |
@@ -99,6 +100,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | service.annotations | object | `{}` | PostHog service annotations. |
 | cert-manager.enabled | bool | `false` | Whether to install `cert-manager` resources. |
 | cert-manager.installCRDs | bool | `true` | Whether to install `cert-manager` CRDs. |
+| cert-manager.email | string | `nil` | Base default is noreply@<your-ingress-hostname> |
 | cert-manager.podDnsPolicy | string | `"None"` |  |
 | cert-manager.podDnsConfig.nameservers[0] | string | `"8.8.8.8"` |  |
 | cert-manager.podDnsConfig.nameservers[1] | string | `"1.1.1.1"` |  |
@@ -114,6 +116,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | ingress.nginx.redirectToTLS | bool | `true` | Whether to redirect to TLS with nginx ingress. |
 | ingress.annotations | object | `{}` | Extra annotations |
 | ingress.secretName | string | `nil` | TLS secret to be used by the ingress. |
+| ingress-nginx.controller.config.use-forwarded-headers | string | `"true"` | [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers) |
 | postgresql.enabled | bool | `true` | Whether to deploy a PostgreSQL server to satisfy the applications requirements. To use an external PostgreSQL instance set this to `false` and configure the `externalPostgresql` parameters. |
 | postgresql.nameOverride | string | `"posthog-postgresql"` | Name override for PostgreSQL app. |
 | postgresql.postgresqlDatabase | string | `"posthog"` | PostgreSQL database name. |
@@ -146,6 +149,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | redis.auth.existingSecretPasswordKey | string | `""` | Password key to be retrieved from existing secret.    NOTE: ignored unless `redis.auth.existingSecret` parameter is set. |
 | redis.master.persistence.enabled | bool | `true` | Enable data persistence using PVC. |
 | redis.master.persistence.size | string | `"5Gi"` | Persistent Volume size. |
+| redis.master.extraFlags | list | `["--maxmemory 400mb","--maxmemory-policy allkeys-lru"]` | Array with additional command line flags for Redis master. |
 | externalRedis.host | string | `""` | External Redis host to use. |
 | externalRedis.port | int | `6379` | External Redis port to use. |
 | externalRedis.password | string | `""` | Password for the external Redis. Ignored if `externalRedis.existingSecret` is set. |
@@ -158,13 +162,17 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.logRetentionHours | int | `24` | The minimum age of a log file to be eligible for deletion due to age. |
 | kafka.numPartitions | int | `1` | The default number of log partitions per topic. |
 | kafka.persistence.enabled | bool | `true` |  |
-| kafka.persistence.size | string | `"20Gi"` | Persistent Volume size. |
-| kafka.zookeeper.enabled | bool | `false` | Please DO NOT override this value. This chart installs Zookeeper separately. |
-| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | Server or list of external Zookeeper servers to use. |
+| kafka.persistence.size | string | `"20Gi"` | PVC Storage Request for Kafka data volume. |
+| kafka.zookeeper.enabled | bool | `false` | Switch to enable or disable the ZooKeeper helm chart. !!! Please DO NOT override this (this chart installs Zookeeper separately) !!! |
+| kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | List of external zookeeper servers to use. |
 | externalKafka.brokers | list | `[]` |  |
-| zookeeper.enabled | bool | `true` | Install zookeeper on kubernetes |
-| zookeeper.nameOverride | string | `"posthog-zookeeper"` | Name override for zookeeper app |
-| zookeeper.replicaCount | int | `1` | replica count for zookeeper |
+| zookeeper.enabled | bool | `true` | Whether to deploy Zookeeper as part of this release. |
+| zookeeper.nameOverride | string | `"posthog-zookeeper"` |  |
+| zookeeper.replicaCount | int | `1` | Number of ZooKeeper nodes |
+| zookeeper.autopurge.purgeInterval | int | `1` | The time interval (in hours) for which the purge task has to be triggered |
+| zookeeper.metrics.enabled | bool | `false` | Enable Prometheus to access ZooKeeper metrics endpoint. |
+| zookeeper.metrics.service.annotations."prometheus.io/scrape" | string | `"false"` |  |
+| zookeeper.podAnnotations | string | `nil` |  |
 | clickhouse.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
 | clickhouse.namespace | string | `nil` | Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to) |
 | clickhouse.cluster | string | `"posthog"` | Clickhouse cluster |
@@ -191,6 +199,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.defaultProfiles.default/allow_experimental_window_functions | string | `"1"` |  |
 | clickhouse.layout.shardsCount | int | `1` |  |
 | clickhouse.layout.replicasCount | int | `1` |  |
+| clickhouse.settings | object | `{}` |  |
+| clickhouse.defaultSettings.format_schema_path | string | `"/etc/clickhouse-server/config.d/"` |  |
+| clickhouse.podAnnotations | string | `nil` |  |
 | externalClickhouse.host | string | `nil` | Host of the external cluster. This is required when clickhouse.enabled is false |
 | externalClickhouse.cluster | string | `nil` | Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false |
 | externalClickhouse.database | string | `"posthog"` | Database name for the external cluster |
@@ -212,7 +223,10 @@ The following table lists the configurable parameters of the PostHog chart and t
 | serviceAccount.annotations | object | `{}` | Configures annotation for the ServiceAccount |
 | grafana.enabled | bool | `false` | Whether to install Grafana or not. |
 | grafana.sidecar | object | `{"dashboards":{"enabled":true,"folderAnnotation":"grafana_folder","label":"grafana_dashboard","provider":{"foldersFromFilesStructure":true}}}` | Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info. |
-| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
+| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki:3100"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
+| loki.enabled | bool | `false` | Whether to install Loki or not. |
+| promtail.enabled | bool | `false` | Whether to install Promtail or not. |
+| promtail.config.lokiAddress | string | `"http://posthog-loki:3100/loki/api/v1/push"` |  |
 | prometheus.enabled | bool | `false` | Whether to enable a minimal prometheus installation for getting alerts/monitoring the stack |
 | prometheus.alertmanager.enabled | bool | `true` | If false, alertmanager will not be installed |
 | prometheus.alertmanager.resources | object | `{"limits":{"cpu":"100m"},"requests":{"cpu":"50m"}}` | alertmanager resource requests and limits |

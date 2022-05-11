@@ -1,15 +1,18 @@
 # -- Cloud service being deployed on (example: `aws`, `azure`, `do`, `gcp`, `other`).
 cloud:
 
+# -- Notification email for notifications to be sent to from the PostHog stack
+notificationEmail:
+
 image:
   # -- PostHog image repository to use.
   repository: posthog/posthog
   # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
   sha:
-  # -- PostHog image tag to use (example: `release-1.33.0`).
+  # -- PostHog image tag to use (example: `release-1.35.0`).
   tag:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
-  default: ":release-1.33.0"
+  default: ":release-1.35.0"
   # -- PostHog image pull policy.
   pullPolicy: IfNotPresent
 
@@ -22,9 +25,11 @@ env: []
 #   - name: FOO
 #     value: bar
 
+
 migrate:
   # -- Whether to install the PostHog migrate job or not.
   enabled: true
+
 
 events:
   # -- Whether to install the PostHog events stack or not.
@@ -42,6 +47,7 @@ events:
     minpods: 1
     # -- Max pods for the events stack HorizontalPodAutoscaler.
     maxpods: 10
+
 
 web:
   # -- Whether to install the PostHog web stack or not.
@@ -112,6 +118,7 @@ web:
     successThreshold: 1
     # -- The readiness probe timeout seconds
     timeoutSeconds: 2
+
 
 worker:
   # -- Whether to install the PostHog worker stack or not.
@@ -273,6 +280,10 @@ cert-manager:
   enabled: false
   # -- Whether to install `cert-manager` CRDs.
   installCRDs: true
+  # -- Who to email if the certificate is about to expire
+  # -- Defaults to `notificationEmail` if it is available
+  # -- Base default is noreply@<your-ingress-hostname>
+  email: null
 
   #
   # [Workaround] - do not use the local DNS for the 'cert-manager' pods since it would return local IPs
@@ -293,6 +304,7 @@ cert-manager:
       - 8.8.8.8
       - 1.1.1.1
       - 208.67.222.222
+
 
 ###
 ###
@@ -324,6 +336,17 @@ ingress:
   annotations: {}
   # -- TLS secret to be used by the ingress.
   secretName:
+
+
+ingress-nginx:
+  controller:
+    config:
+      # -- Whether to forward "X-Forwarded-*" headers to upstream services.
+      # -- This is needed to ensure the PostHog application knows e.g. if the
+      # -- downstream proxy is using a secure connection. See the official
+      # -- [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers)
+      use-forwarded-headers: "true"
+
 
 ###
 ###
@@ -390,6 +413,7 @@ pgbouncer:
   # -- Additional volumes to be added to the pgbouncer deployment
   extraVolumes: []
 
+
 ###
 ###
 ### ---- REDIS ----
@@ -433,6 +457,17 @@ redis:
 
       # -- Persistent Volume size.
       size: 5Gi
+    # -- Array with additional command line flags for Redis master.
+    extraFlags:
+      ## The maxmemory configuration directive is used in order to configure Redis to use a specified
+      ## amount of memory for the data set. Setting maxmemory to zero results into no memory limits
+      ## see https://redis.io/topics/lru-cache for more details
+      - "--maxmemory 400mb"
+      ## The exact behavior Redis follows when the maxmemory limit is reached is configured using the
+      ## maxmemory-policy configuration directive
+      ## allkeys-lru: evict keys by trying to remove the less recently used (LRU) keys first, in order
+      ## to make space for the new data added
+      - "--maxmemory-policy allkeys-lru"
 
 externalRedis:
   # -- External Redis host to use.
@@ -445,6 +480,7 @@ externalRedis:
   existingSecret: ""
   # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
+
 
 ###
 ###
@@ -471,15 +507,15 @@ kafka:
   persistence:
     # - Enable data persistence using PVC.
     enabled: true
-    # -- Persistent Volume size.
+    # -- PVC Storage Request for Kafka data volume.
     size: 20Gi
 
   zookeeper:
-    # -- Please DO NOT override this value. This chart installs Zookeeper separately.
+    # -- Switch to enable or disable the ZooKeeper helm chart. !!! Please DO NOT override this (this chart installs Zookeeper separately) !!!
     enabled: false
 
   externalZookeeper:
-    # -- Server or list of external Zookeeper servers to use.
+    # -- List of external zookeeper servers to use.
     servers:
       - posthog-posthog-zookeeper:2181
 
@@ -494,12 +530,34 @@ externalKafka:
 ###
 ###
 zookeeper:
-  # -- Install zookeeper on kubernetes
+  # -- Whether to deploy Zookeeper as part of this release.
   enabled: true
-  # -- Name override for zookeeper app
+
   nameOverride: posthog-zookeeper
-  # -- replica count for zookeeper
+
+  # -- Number of ZooKeeper nodes
   replicaCount: 1
+
+  autopurge:
+    # -- The time interval (in hours) for which the purge task has to be triggered
+    purgeInterval: 1
+
+  metrics:
+    # -- Enable Prometheus to access ZooKeeper metrics endpoint.
+    enabled: false
+    service:
+      annotations:
+        "prometheus.io/scrape": "false" # let's make Prometheus skip the scraping of the
+                                        # service as we already scrape the pods (see below
+                                        # and https://github.com/bitnami/charts/issues/10101)
+
+  ## -- Zookeeper pod(s) annotation.
+  podAnnotations:
+    # Uncomment those lines if you want Prometheus server to scrape Zookeeper pods metrics.
+    # prometheus.io/scrape: "true"
+    # prometheus.io/path: /metrics
+    # prometheus.io/port: "9141"
+
 
 ###
 ###
@@ -577,11 +635,13 @@ clickhouse:
     size: 20Gi
 
   ## -- Clickhouse user profile configuration.
-  ## You can use this to override settings, for example `default/max_memory_usage: 40000000000`
-  ## For a full list of clickhouse settings, see https://clickhouse.com/docs/en/operations/settings/settings/
+  ## You can use this to override profile settings, for example `default/max_memory_usage: 40000000000`
+  ## For the full list of settings, see:
+  ## - https://clickhouse.com/docs/en/operations/settings/settings-profiles/
+  ## - https://clickhouse.com/docs/en/operations/settings/settings/
   profiles: {}
 
-  ## -- Default user profile configuration for Clickhouse. Don't overwrite this!
+  ## -- Default user profile configuration for Clickhouse. !!! Please DO NOT override this !!!
   defaultProfiles:
     default/allow_experimental_window_functions: "1"
 
@@ -591,6 +651,29 @@ clickhouse:
   layout:
     shardsCount: 1
     replicasCount: 1
+
+  ## -- ClickHouse settings configuration.
+  ## You can use this to override settings, for example `prometheus/port: 9363`
+  ## For the full list of settings, see:
+  ## - https://clickhouse.com/docs/en/operations/settings/settings/
+  settings: {}
+    # Uncomment those lines if you want to enable the built-in Prometheus HTTP endpoint in ClickHouse.
+    # prometheus/endpoint: /metrics
+    # prometheus/port: 9363
+    # prometheus/metrics: true
+    # prometheus/events: true
+    # prometheus/asynchronous_metrics: true
+
+  ## -- Default settings configuration for ClickHouse. !!! Please DO NOT override this !!!
+  defaultSettings:
+    format_schema_path: /etc/clickhouse-server/config.d/
+
+  ## -- ClickHouse pod(s) annotation.
+  podAnnotations:
+    # Uncomment those lines if you want Prometheus server to scrape ClickHouse pods metrics.
+    # prometheus.io/scrape: "true"
+    # prometheus.io/path: /metrics
+    # prometheus.io/port: "9363"
 
 ## External clickhouse configuration
 ##
@@ -640,6 +723,7 @@ hooks:
     # -- Hook job resource limits/requests
     resources: {}
 
+
 serviceAccount:
   # -- Configures if a ServiceAccount with this name should be created
   create: true
@@ -675,11 +759,42 @@ grafana:
     datasources.yaml:
       apiVersion: 1
       datasources:
+
+      # Comment the snippet below if you are running with `prometheus.enabled: false`
       - name: Prometheus
         type: prometheus
         url: http://posthog-prometheus-server
         access: proxy
         isDefault: true
+
+      # Comment the snippet below if you are running with `loki.enabled: false`
+      - name: Loki
+        type: loki
+        url: http://posthog-loki:3100
+        access: proxy
+        isDefault: false
+
+
+###
+###
+### ---- Loki ----
+###
+###
+loki:
+  # -- Whether to install Loki or not.
+  enabled: false
+
+
+###
+###
+### ---- Promtail ----
+###
+###
+promtail:
+  # -- Whether to install Promtail or not.
+  enabled: false
+  config:
+    lokiAddress: http://posthog-loki:3100/loki/api/v1/push
 
 
 ###

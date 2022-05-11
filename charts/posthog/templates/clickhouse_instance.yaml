@@ -26,7 +26,7 @@ spec:
           {{- toYaml .Values.clickhouse.layout | nindent 10 }}
 
     settings:
-      format_schema_path: /etc/clickhouse-server/config.d/
+      {{- merge dict .Values.clickhouse.settings .Values.clickhouse.defaultSettings | toYaml | nindent 6 }}
 
     files:
       events.proto: |
@@ -54,6 +54,10 @@ spec:
   templates:
     podTemplates:
       - name: pod-template
+          {{- if .Values.clickhouse.podAnnotations }}
+        metadata:
+          annotations: {{ toYaml .Values.clickhouse.podAnnotations | nindent 12 }}
+          {{- end }}
         spec:
           {{- if .Values.clickhouse.affinity }}
           affinity: {{ toYaml .Values.clickhouse.affinity | nindent 12 }}

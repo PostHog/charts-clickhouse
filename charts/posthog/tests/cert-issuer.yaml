@@ -94,3 +94,52 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
+
+  - it: should have default email address for let's encrypt
+    set:
+      ingress.hostname: posthog.cc
+      ingress.letsencrypt: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.acme.email
+          value: "noreply@posthog.cc"
+
+  - it: should have given email address for let's encrypt
+    set:
+      ingress.hostname: posthog.cc
+      cert-manager.email: james.g@posthog.com
+      ingress.letsencrypt: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.acme.email
+          value: "james.g@posthog.com"
+
+  - it: should have given notification email address for let's encrypt
+    set:
+      notificationEmail: jams@posthog.com 
+      ingress.hostname: posthog.cc
+      ingress.letsencrypt: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.acme.email
+          value: "jams@posthog.com"
+
+  - it: should have given ingress email address for let's encrypt
+    set:
+      notificationEmail: jams@posthog.com 
+      ingress.hostname: posthog.cc
+      cert-manager.email: james.g@posthog.com
+      ingress.letsencrypt: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.acme.email
+          value: "james.g@posthog.com"
+  

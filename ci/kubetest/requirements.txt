@@ -14,3 +14,6 @@ git+https://github.com/macobo/pytest-split.git@group-tests-by-file
 black==21.12b0
 flake8==4.0.1
 isort==5.10.1
+
+# Pin click due to https://github.com/psf/black/issues/2964
+click==8.0.4

@@ -7,19 +7,25 @@ dependencies:
   version: 4.0.13
 - name: kafka
   repository: https://charts.bitnami.com/bitnami
-  version: 12.6.0
+  version: 14.9.3
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 8.6.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 14.6.2
+  version: 16.8.9
 - name: zookeeper
   repository: https://charts.bitnami.com/bitnami
   version: 7.0.5
 - name: grafana
   repository: https://grafana.github.io/helm-charts
-  version: 6.21.2
+  version: 6.24.1
+- name: loki
+  repository: https://grafana.github.io/helm-charts
+  version: 2.10.2
+- name: promtail
+  repository: https://grafana.github.io/helm-charts
+  version: 4.2.0
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 15.1.3
@@ -35,5 +41,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:dc564924a37a755706e88e4d3760b207fa6ea3e0d6617d0fda1fb0824ff64fe4
-generated: "2022-02-08T17:37:18.034653+01:00"
+digest: sha256:94605b93349e22b92b2a279ad6c4b2708b32dca48634c348fe60f3f82935c6e1
+generated: "2022-05-03T15:25:26.67283+02:00"

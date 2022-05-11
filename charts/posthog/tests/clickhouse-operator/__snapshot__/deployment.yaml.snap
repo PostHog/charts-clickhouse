@@ -5,6 +5,7 @@ the manifest should match the snapshot when using default values:
     metadata:
       labels:
         app: clickhouse-operator
+        clickhouse.altinity.com/chop: 0.18.4
       name: clickhouse-operator
       namespace: NAMESPACE
     spec:
@@ -62,7 +63,7 @@ the manifest should match the snapshot when using default values:
                 resourceFieldRef:
                   containerName: clickhouse-operator
                   resource: limits.memory
-            image: altinity/clickhouse-operator:latest
+            image: altinity/clickhouse-operator:0.19.0
             imagePullPolicy: Always
             name: clickhouse-operator
             volumeMounts:
@@ -79,6 +80,9 @@ the manifest should match the snapshot when using default values:
           - image: altinity/metrics-exporter:latest
             imagePullPolicy: Always
             name: metrics-exporter
+            ports:
+            - containerPort: 8888
+              name: metrics
             volumeMounts:
             - mountPath: /etc/clickhouse-operator
               name: etc-clickhouse-operator-folder

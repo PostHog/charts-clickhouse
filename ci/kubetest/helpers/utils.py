@@ -171,6 +171,7 @@ def install_custom_resources(filename, namespace="posthog"):
 
 
 def exec_subprocess(cmd, ignore_errors=False):
+    log.debug(f"Running: `{cmd}`")
     cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     cmd_return_code = cmd_run.returncode
     if cmd_return_code and not ignore_errors:

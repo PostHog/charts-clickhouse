@@ -226,7 +226,6 @@ tests:
             default/max_execution_time: "90"
             default/max_memory_usage: "20000000000"
 
-
   - it: handles custom profiles overriding defaults
     set:
       clickhouse.profiles.default/allow_experimental_window_functions: "0"
@@ -238,11 +237,47 @@ tests:
           value:
             default/allow_experimental_window_functions: "0"
 
+  - it: default configuration settings should be correct
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.settings
+          value:
+            format_schema_path: /etc/clickhouse-server/config.d/
+
+  - it: handles custom configuration settings
+    set:
+      clickhouse.settings:
+        prometheus/endpoint: /metrics
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.settings
+          value:
+            format_schema_path: /etc/clickhouse-server/config.d/
+            prometheus/endpoint: /metrics
+
+  - it: handles custom configuration settings overriding defaults
+    set:
+      clickhouse.settings:
+        format_schema_path: /custom_path
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.settings
+          value:
+            format_schema_path: /custom_path
+
   - it: handles custom users and passwords
     set:
       clickhouse.user: someuser
       clickhouse.password: somepass
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.configuration.users
           value:
@@ -253,6 +288,8 @@ tests:
 
   - it: sets default clickhouse-server image
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.templates.podTemplates[0].spec.containers[0].image
           value: "yandex/clickhouse-server:21.11.11.1"
@@ -262,6 +299,8 @@ tests:
       clickhouse.image.repository: altinity/clickhouse-server
       clickhouse.image.tag: 22.1
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.templates.podTemplates[0].spec.containers[0].image
           value: "altinity/clickhouse-server:22.1"
@@ -271,6 +310,8 @@ tests:
       clickhouse.layout.shardsCount: 3
       clickhouse.layout.replicasCount: 2
     asserts:
+      - hasDocuments:
+          count: 1
       - equal:
           path: spec.configuration.clusters[0].layout
           value:
@@ -303,5 +344,29 @@ tests:
               - name: replica1
               - name: replica2
     asserts:
+      - hasDocuments:
+          count: 1
       - matchSnapshot:
           path: spec.configuration.clusters[0].layout
+
+  - it: spec.templates.podTemplates.[0].metadata should not be set by default
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].metadata
+          value: null
+
+  - it: podAnnotations setting should work
+    set:
+      clickhouse.podAnnotations:
+        key1: value1
+        key2: value2
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].metadata.annotations
+          value:
+            key1: value1
+            key2: value2

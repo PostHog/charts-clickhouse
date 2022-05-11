@@ -3,6 +3,8 @@ the manifest should match the snapshot when using default values:
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding
     metadata:
+      labels:
+        clickhouse.altinity.com/chop: 0.18.4
       name: clickhouse-operator-posthog
       namespace: NAMESPACE
     roleRef:
