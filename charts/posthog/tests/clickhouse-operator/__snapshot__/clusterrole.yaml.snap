@@ -3,6 +3,8 @@ the manifest should match the snapshot when using default values:
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRole
     metadata:
+      labels:
+        clickhouse.altinity.com/chop: 0.18.4
       name: clickhouse-operator-posthog
       namespace: NAMESPACE
     rules:
@@ -12,13 +14,13 @@ the manifest should match the snapshot when using default values:
       - configmaps
       - services
       verbs:
-      - create
-      - delete
       - get
+      - list
       - patch
       - update
-      - list
       - watch
+      - create
+      - delete
     - apiGroups:
       - ""
       resources:
@@ -38,12 +40,12 @@ the manifest should match the snapshot when using default values:
       resources:
       - persistentvolumeclaims
       verbs:
-      - delete
       - get
       - list
       - patch
       - update
       - watch
+      - delete
     - apiGroups:
       - ""
       resources:
@@ -60,22 +62,22 @@ the manifest should match the snapshot when using default values:
       resources:
       - statefulsets
       verbs:
-      - create
-      - delete
       - get
+      - list
       - patch
       - update
-      - list
       - watch
+      - create
+      - delete
     - apiGroups:
       - apps
       resources:
       - replicasets
       verbs:
-      - delete
       - get
       - patch
       - update
+      - delete
     - apiGroups:
       - apps
       resourceNames:
@@ -92,22 +94,22 @@ the manifest should match the snapshot when using default values:
       resources:
       - poddisruptionbudgets
       verbs:
-      - create
-      - delete
       - get
+      - list
       - patch
       - update
-      - list
       - watch
+      - create
+      - delete
     - apiGroups:
       - clickhouse.altinity.com
       resources:
       - clickhouseinstallations
       verbs:
-      - delete
       - get
       - patch
       - update
+      - delete
     - apiGroups:
       - clickhouse.altinity.com
       resources:
@@ -133,15 +135,22 @@ the manifest should match the snapshot when using default values:
       - clickhouseinstallationtemplates/status
       - clickhouseoperatorconfigurations/status
       verbs:
-      - create
-      - delete
       - get
       - update
       - patch
+      - create
+      - delete
     - apiGroups:
       - ""
       resources:
       - secrets
+      verbs:
+      - get
+      - list
+    - apiGroups:
+      - apiextensions.k8s.io
+      resources:
+      - customresourcedefinitions
       verbs:
       - get
       - list
