@@ -504,13 +504,13 @@ externalKafka:
   brokers: []
   # -- mTLS settings
   mtls:
-    # --- A secret from which to pull mTLS data.
+    # --- A secret from which to pull mTLS data. Note that values must be base64 encoded.
     secretName:
     # --- Name of the key pointing to the public certificate. Must be base64 encoded.
     certKey: tls.crt
-    # --- Name of the key pointing to the private key.
+    # --- Name of the key pointing to the private key. Must be base64 encoded.
     certKeyKey: tls.key
-    # --- Name of the key pointing to the mutually trusted certificate.
+    # --- Name of the key pointing to the mutually trusted certificate. Must be base64 encoded.
     trustedCertKey: ca.crt
 
 
