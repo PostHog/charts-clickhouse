@@ -62,9 +62,7 @@ kubectl-slice -f "$TMP_FOLDER/clickhouse-operator.yaml" -o "${CHART_PATH}/templa
 FILES="${CHART_PATH}/templates/clickhouse-operator/*"
 for f in $FILES
 do
-    sed -i'' '1i\
-{{- if .Values.clickhouse.enabled }}
-    ' "$f"
+    perl -pi -e 'print "{{- if .Values.clickhouse.enabled }}\n" if $. == 1' "$f"
 
     sed -i'' '$a\
 {{- end }}
