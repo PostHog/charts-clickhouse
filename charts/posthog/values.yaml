@@ -636,9 +636,9 @@ clickhouse:
 
   image:
     # -- ClickHouse image repository.
-    repository: yandex/clickhouse-server
+    repository: clickhouse/clickhouse-server
     # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-    tag: "21.6.5"
+    tag: "22.3"
 
   # -- Toleration labels for clickhouse pod assignment
   tolerations: []
