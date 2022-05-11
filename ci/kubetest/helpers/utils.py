@@ -65,6 +65,7 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
             ignore_errors=True,
         )
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
+        exec_subprocess(f"kubectl delete secrets --all -n {namespace}")
 
     log.debug("✅ Done!")
 
