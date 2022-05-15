@@ -13,7 +13,10 @@ spec:
         {{- end }}
       {{ .Values.clickhouse.user }}/profile: default
       {{ .Values.clickhouse.user }}/quota: default
-
+      {{- if .Values.clickhouse.backup.enabled }}
+      {{ .Values.clickhouse.backup.backup_user }}/networks/ip: 0.0.0.0/0
+      {{ .Values.clickhouse.backup.backup_user }}/password_sha256_hex: {{ .Values.clickhouse.backup.backup_password }}
+      {{- end}}
     profiles:
       {{- merge dict .Values.clickhouse.profiles .Values.clickhouse.defaultProfiles | toYaml | nindent 6 }}
 
@@ -119,6 +122,37 @@ spec:
               {{- if .Values.clickhouse.resources }}
               resources: {{ toYaml .Values.clickhouse.resources | nindent 16 }}
               {{- end }}
+            {{- if .Values.clickhouse.backup.enabled }}
+            - name: clickhouse-backup
+              image: altinity/clickhouse-backup:master
+              imagePullPolicy: Always
+              command:
+                - bash
+                - -xc
+                - "/bin/clickhouse-backup server"
+              env:
+                - name: LOG_LEVEL
+                  value: "debug"
+                - name: ALLOW_EMPTY_BACKUPS
+                  value: "true"
+                - name: API_LISTEN
+                  value: "0.0.0.0:7171"
+                # INSERT INTO system.backup_actions to execute backup
+                - name: API_CREATE_INTEGRATION_TABLES
+                  value: "true"
+                - name: BACKUPS_TO_KEEP_REMOTE
+                  value: "5"
+                {{- range $key, $val := .Values.clickhouse.backup.remote_settings }}
+                - name: {{ $key }}
+                  value: {{ $val }}
+                {{- end}}
+                - name: S3_DEBUG
+                  value: "{{ .Values.clickhouse.backup.debug }}"
+              # require to avoid double scraping clickhouse and clickhouse-backup containers
+              ports:
+                - name: backup-rest
+                  containerPort: 7171
+            {{- end }}
 
     serviceTemplates:
       - name: service-template
