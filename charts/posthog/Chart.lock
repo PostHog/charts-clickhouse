@@ -44,5 +44,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:9d71dc8a2ee76df84d61f9dfa358971fa601ca843695c2bb2ce329759ffed479
-generated: "2022-03-30T21:41:24.549704Z"
+digest: sha256:2dbdb1e06977bef5bdeffed072c43fb4e246a0b3905effdf0e41e79324374cd3
+generated: "2022-05-16T14:32:56.542833+02:00"

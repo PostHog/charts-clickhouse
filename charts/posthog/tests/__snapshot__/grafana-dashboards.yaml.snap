@@ -1855,111 +1855,16 @@ the manifest should match the snapshot when using default values:
               },
               "targets": [
                 {
-                  "current": {
-                    "selected": false,
-                    "text": "10.244.0.8:9187",
-                    "value": "10.244.0.8:9187"
+                  "datasource": {
+                    "type": "prometheus",
+                    "uid": "PBFA97CFB590B2093"
                   },
-                  "definition": "label_values(pg_up{}, instance)",
-                  "hide": 0,
-                  "includeAll": false,
-                  "label": "Instance",
-                  "multi": false,
-                  "name": "instance",
-                  "options": [],
-                  "query": {
-                    "query": "label_values(pg_up{}, instance)",
-                    "refId": "StandardVariableQuery"
-                  },
-                  "refresh": 1,
-                  "regex": "",
-                  "skipUrlSync": false,
-                  "sort": 0,
-                  "type": "query"
-                },
-                {
-                  "current": {
-                    "selected": false,
-                    "text": "postgres",
-                    "value": "postgres"
-                  },
-                  "definition": "label_values(datname)",
-                  "hide": 0,
-                  "includeAll": false,
-                  "label": "Database",
-                  "multi": false,
-                  "name": "database",
-                  "options": [],
-                  "query": {
-                    "query": "label_values(datname)",
-                    "refId": "StandardVariableQuery"
-                  },
-                  "refresh": 1,
-                  "regex": "",
-                  "skipUrlSync": false,
-                  "sort": 1,
-                  "type": "query"
+                  "exemplar": true,
+                  "expr": "sum(\n  rate(pg_slow_queries{instance=\"$instance\"}[$__interval])\n)",
+                  "interval": "",
+                  "legendFormat": "Slow queries",
+                  "refId": "A"
                 }
-              ]
-            },
-            "time": {
-              "from": "now-1h",
-              "to": "now"
-            },
-            "timepicker": {},
-            "timezone": "utc",
-            "title": "PostgreSQL",
-            "uid": "LRsMe3a7k",
-            "version": 1,
-            "weekStart": ""
-          }
-    kind: ConfigMap
-    metadata:
-      annotations:
-        grafana_folder: PostHog
-      labels:
-        grafana_dashboard: "1"
-      name: posthog-grafana-dashboard-postgresql
-  4: |
-    apiVersion: v1
-    data:
-      redis.json: |-
-        {
-          "annotations": {
-            "list": [
-              {
-                "$$hashKey": "object:1820",
-                "builtIn": 1,
-                "datasource": "-- Grafana --",
-                "enable": true,
-                "hide": true,
-                "iconColor": "rgba(0, 211, 255, 1)",
-                "name": "Annotations & Alerts",
-                "target": {
-                  "limit": 100,
-                  "matchAny": false,
-                  "tags": [],
-                  "type": "dashboard"
-                },
-                "type": "dashboard"
-              }
-            ]
-          },
-          "description": "",
-          "editable": true,
-          "fiscalYearStartMonth": 0,
-          "graphTooltip": 1,
-          "id": 3,
-          "iteration": 1644854451957,
-          "links": [
-            {
-              "asDropdown": true,
-              "icon": "external link",
-              "includeVars": true,
-              "keepTime": true,
-              "tags": [
-                "prometheus",
-                "drilldown"
               ],
               "title": "Slow queries",
               "type": "timeseries"
@@ -2765,7 +2670,7 @@ the manifest should match the snapshot when using default values:
       labels:
         grafana_dashboard: "1"
       name: posthog-grafana-dashboard-postgresql
-  3: |
+  4: |
     apiVersion: v1
     data:
       redis.json: |-
@@ -4154,7 +4059,7 @@ the manifest should match the snapshot when using default values:
       labels:
         grafana_dashboard: "1"
       name: posthog-grafana-dashboard-redis
-  4: |
+  5: |
     apiVersion: v1
     data:
       zookeeper.json: |-
