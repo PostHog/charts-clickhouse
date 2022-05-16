@@ -10,7 +10,7 @@ dependencies:
   version: 14.9.3
 - name: minio
   repository: https://charts.bitnami.com/bitnami
-  version: 11.1.4
+  version: 11.3.5
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 8.6.1
@@ -44,5 +44,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:2dbdb1e06977bef5bdeffed072c43fb4e246a0b3905effdf0e41e79324374cd3
-generated: "2022-05-16T14:32:56.542833+02:00"
+digest: sha256:d73fab40e6cf26ae6f2ab6f9471b49eceede5082eb1f1fb6943b07d8dc3101ca
+generated: "2022-05-16T14:55:51.053591+02:00"
