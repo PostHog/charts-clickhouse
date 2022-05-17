@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 19.1.1](https://img.shields.io/badge/Version-19.1.1-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
+![Version: 20.0.0](https://img.shields.io/badge/Version-20.0.0-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -251,6 +251,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | prometheus-redis-exporter.annotations | object | `{"prometheus.io/path":"/metrics","prometheus.io/port":"9121","prometheus.io/scrape":"true"}` | Map of annotations to add to the pods. |
 | prometheus-redis-exporter.redisAddress | string | `"redis://posthog-posthog-redis-master:6379"` | Specify the target Redis instance to monitor. |
 | installCustomStorageClass | bool | `false` |  |
+| busybox.image | string | `"busybox:1.34"` | Specify the image to use for e.g. init containers |
 
 Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
 
