@@ -644,6 +644,8 @@ clickhouse:
   ## -- Default user profile configuration for Clickhouse. !!! Please DO NOT override this !!!
   defaultProfiles:
     default/allow_experimental_window_functions: "1"
+    default/allow_nondeterministic_mutations: "1"
+
 
   ## -- Clickhouse cluster layout. (Experimental, use at own risk)
   ## For a full list of options, see https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md
