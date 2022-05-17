@@ -52,6 +52,9 @@ spec:
       imagePullSecrets:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
+     {{- if .Values.events.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.events.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}-events
         image: {{ template "posthog.image.fullPath" . }}
@@ -130,6 +133,9 @@ spec:
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
         resources:
 {{ toYaml .Values.web.resources | indent 12 }}
+        {{- if .Values.events.securityContext.enabled }}
+        securityContext: {{- omit .Values.events.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}

@@ -53,3 +53,62 @@ tests:
           path: spec.template.spec.initContainers[0].image
           value: busybox:1.34
 
+  - it: should have a pod securityContext
+    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      web.podSecurityContext.enabled: true
+      web.podSecurityContext.runAsUser: 1001
+      web.podSecurityContext.fsGroup: 2000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+  
+  - it: should have a container securityContext
+    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      web.securityContext.enabled: true
+      web.securityContext.runAsUser: 1001
+      web.securityContext.allowPrivilegeEscalation: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false            
+          
+  - it: should not have a pod securityContext
+    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      web.podSecurityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.securityContext
+          value: 1001
+  
+  - it: should not have a container securityContext
+    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      web.securityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.containers[0].securityContext
+         
+  
+  

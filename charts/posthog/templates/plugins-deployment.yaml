@@ -55,6 +55,9 @@ spec:
       imagePullSecrets:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
+      {{- if .Values.plugins.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.plugins.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}      
       containers:
       - name: {{ .Chart.Name }}-plugins
         image: {{ template "posthog.image.fullPath" . }}
@@ -101,6 +104,9 @@ spec:
 {{- end }}
         resources:
 {{ toYaml .Values.plugins.resources | indent 12 }}
+        {{- if .Values.plugins.securityContext.enabled }}
+        securityContext: {{- omit .Values.plugins.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}      
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}

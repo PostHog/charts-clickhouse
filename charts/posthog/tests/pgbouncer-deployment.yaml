@@ -32,3 +32,60 @@ tests:
           count: 1
       - isKind:
           of: Deployment
+
+  - it: should have a pod securityContext
+    template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncer.podSecurityContext.enabled: true
+      pgbouncer.podSecurityContext.runAsUser: 1001
+      pgbouncer.podSecurityContext.fsGroup: 2000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+    
+  - it: should have a container securityContext
+    template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncer.securityContext.enabled: true
+      pgbouncer.securityContext.runAsUser: 1001
+      pgbouncer.securityContext.allowPrivilegeEscalation: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false            
+          
+  - it: should not have a pod securityContext
+    template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncer.podSecurityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.securityContext
+          value: 1001
+  
+  - it: should not have a container securityContext
+    template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncer.securityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.containers[0].securityContext  
