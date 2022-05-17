@@ -742,7 +742,7 @@ serviceAccount:
 ###
 ###
 minio:
-  # -- Whether to install MinIO (object storage system) or not. If false, `externalObjectStorage` must be set and configured.
+  # -- Whether to install MinIO (object storage system) or not. You can keep it disabled or rely on `externalObjectStorage` if you want to use a managed object storage service (AWS S3, Google Cloud Storage, ...).
   enabled: true
   auth:
     # -- MinIO root username
@@ -761,23 +761,19 @@ minio:
   ## -- MinIO pod(s) annotation.
   podAnnotations:
     # Uncomment those lines if you want Prometheus server to scrape MinIO pods metrics.
-    prometheus.io/scrape: "true"
-    prometheus.io/path: "/minio/v2/metrics/cluster"
-    prometheus.io/port: "9000"
+    # prometheus.io/scrape: "true"
+    # prometheus.io/path: "/minio/v2/metrics/cluster"
+    # prometheus.io/port: "9000"
 
 ## External Object Storage configuration
 ##
 externalObjectStorage:
-  # -- Host of the external object storage. This is required when `minio.enabled` is `false`.
+  # -- Host of the external object storage.
   host:
-  # -- Port of the external object storage. This is required when `minio.enabled` is false.
+  # -- Port of the external object storage.
   port:
   # -- Bucket name to use.
   bucket:
-  # -- Access key to use to interact with the external object storage.
-  access_key_id:
-  # -- Secret access key to use to interact with the external object storage.
-  secret_access_key:
   # -- Name of an existing Kubernetes secret object containing the `access_key_id` and `secret_access_key`. The secret has to contain the keys `root-user` and `root-password`).
   existingSecret:
 
