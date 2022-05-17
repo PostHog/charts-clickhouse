@@ -2,13 +2,6 @@
    ------ Object Storage ------
 *}
 
-{{/* Return true if the Object Storage functionality is enabled */}}
-{{- define "posthog.objectStorage.enabled" -}}
-{{- if (.Values.minio.enabled) or (.Values.externalObjectStorage.host) }}
-    {{- true -}}
-{{- end -}}
-{{- end -}}
-
 {{/* Return the Object Storage fullname */}}
 {{- define "posthog.objectStorage.fullname" -}}
 {{- if .Values.minio.fullnameOverride -}}
@@ -20,73 +13,54 @@
 {{- end -}}
 {{- end -}}
 
-{{/* Return the Object Storage host */}}
-{{- define "posthog.objectStorage.host" -}}
-{{- if .Values.minio.enabled }}
-    {{- printf "%s" (include "posthog.objectStorage.fullname" .) -}}
-{{- else if .Values.externalObjectStorage.host -}}
-    {{- printf "%s" .Values.externalObjectStorage.host -}}
-{{- end -}}
-{{- end -}}
-
-{{/* Return the Object Storage port */}}
-{{- define "posthog.objectStorage.port" -}}
-{{- if .Values.minio.enabled }}
-    "9000"
-{{- else if .Values.externalObjectStorage.port -}}
-    {{- .Values.externalObjectStorage.port | quote -}}
-{{- end -}}
-{{- end -}}
-
-{{/* Return the Object Storage bucket */}}
-{{- define "posthog.objectStorage.bucket" -}}
-{{- if .Values.minio.enabled }}
-    "posthog"
-{{- else if .Values.externalObjectStorage.bucket -}}
-    {{- printf "%s" .Values.externalObjectStorage.bucket -}}
-{{- end -}}
-{{- end -}}
-
-{{/* Return the objectStorage secret name */}}
-{{- define "posthog.objectStorage.secretName" -}}
-{{- if .Values.minio.enabled }}
-    {{- if .Values.minio.auth.existingSecret }}
-        {{- printf "%s" .Values.minio.auth.existingSecret -}}
-    {{- else -}}
-        {{- printf "%s" (include "posthog.objectStorage.fullname" .) -}}
-    {{- end -}}
-{{- else if .Values.externalObjectStorage.existingSecret }}
-    {{- printf "%s" .Values.externalObjectStorage.existingSecret -}}
-{{- end -}}
-{{- end -}}
-
 {{/* Common Object Storage ENV variables and helpers used by PostHog */}}
 {{- define "snippet.objectstorage-env" }}
+
+{{/* MINIO */}}
 {{- if .Values.minio.enabled }}
 - name: OBJECT_STORAGE_HOST
-  value: {{ template "posthog.objectStorage.host" . }}
+  value: {{ include "posthog.objectStorage.fullname" . }}
 - name: OBJECT_STORAGE_PORT
-  value: {{ template "posthog.objectStorage.port" . }}
+  value: {{ .Values.minio.service.ports.api }}
 - name: OBJECT_STORAGE_BUCKET
-  value: {{ template "posthog.objectStorage.bucket" . }}
-{{- else if .Values.externalObjectStorage.host -}}
-- name: OBJECT_STORAGE_HOST
-  value: {{ template ".Values.externalObjectStorage.host" . }}
-- name: OBJECT_STORAGE_PORT
-  value: {{ template  ".Values.externalObjectStorage.port" . }}
-- name: OBJECT_STORAGE_BUCKET
-  value: {{ template ".Values.externalObjectStorage.bucket" . }}
-{{- end }}
-{{- if "posthog.objectStorage.secretName" }}
+  value: "posthog"
+{{/* MINIO - with secret */}}
+{{- if .Values.minio.auth.existingSecret }}
 - name: OBJECT_STORAGE_ACCESS_KEY_ID
   valueFrom:
     secretKeyRef:
-      name: {{ include "posthog.objectStorage.secretName" . }}
+      name: {{ .Values.minio.auth.existingSecret }}
       key: 'root-user'
 - name: OBJECT_STORAGE_SECRET_ACCESS_KEY
   valueFrom:
     secretKeyRef:
-      name: {{ include "posthog.objectStorage.secretName" . }}
+      name: {{ .Values.minio.auth.existingSecret }}
+      key: 'root-password'
+{{- else -}}
+{{/* MINIO - with login */}}
+- name: OBJECT_STORAGE_ACCESS_KEY_ID
+  value: {{ .Values.minio.auth.rootUser }}
+- name: OBJECT_STORAGE_SECRET_ACCESS_KEY
+  value: {{ .Values.minio.auth.rootPassword }}
+{{- end -}}
+
+{{/* External Object Storage */}}
+{{- else if .Values.externalObjectStorage.host }}
+- name: OBJECT_STORAGE_HOST
+  value: {{ .Values.externalObjectStorage.host }}
+- name: OBJECT_STORAGE_PORT
+  value: {{ .Values.externalObjectStorage.port }}
+- name: OBJECT_STORAGE_BUCKET
+  value: {{ .Values.externalObjectStorage.bucket }}
+- name: OBJECT_STORAGE_ACCESS_KEY_ID
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.externalObjectStorage.existingSecret }}
+      key: 'root-user'
+- name: OBJECT_STORAGE_SECRET_ACCESS_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.externalObjectStorage.existingSecret }}
       key: 'root-password'
 {{- end }}
 {{- end }}

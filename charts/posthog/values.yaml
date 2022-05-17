@@ -743,7 +743,7 @@ serviceAccount:
 ###
 minio:
   # -- Whether to install MinIO (object storage system) or not. You can keep it disabled or rely on `externalObjectStorage` if you want to use a managed object storage service (AWS S3, Google Cloud Storage, ...).
-  enabled: true
+  enabled: false
   auth:
     # -- MinIO root username
     rootUser: root-user

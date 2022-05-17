@@ -10,7 +10,38 @@ templates:
   - templates/secrets.yaml
 
 tests:
-  - it: should use the default variables when `minio.enabled` is `true`
+  - it: should not contain any object storage related settings with the default chart settings
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_HOST
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_PORT
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_BUCKET
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_ACCESS_KEY_ID
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_SECRET_ACCESS_KEY
+
+
+  - it: should use the correct variables when `minio.enabled` is `true`
     templates: # TODO: remove once secrets.yaml will be fixed/removed
       - templates/web-deployment.yaml
       - templates/worker-deployment.yaml
@@ -29,7 +60,45 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_PORT
-            value: "9000"
+            value: 9000
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_BUCKET
+            value: posthog
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_ACCESS_KEY_ID
+            value: root-user
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_SECRET_ACCESS_KEY
+            value: root-password-change-me-please
+
+
+  - it: should use the correct variables when `minio.enabled` is `true` and `minio.auth.existingSecret` is used
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      minio.enabled: true
+      minio.auth.existingSecret: secret_name
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_HOST
+            value: RELEASE-NAME-posthog-minio
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_PORT
+            value: 9000
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -41,7 +110,7 @@ tests:
             name: OBJECT_STORAGE_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:
-                name: my-existing-secret
+                name: secret_name
                 key: root-user
       - contains:
           path: spec.template.spec.containers[0].env
@@ -49,97 +118,51 @@ tests:
             name: OBJECT_STORAGE_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
-                name: my-existing-secret
+                name: secret_name
                 key: root-password
 
-  # - it: should use internal Kafka when `kafka.enabled` is set to `true` and `externalKafka.brokers` is configured
-  #   templates: # TODO: remove once secrets.yaml will be fixed/removed
-  #     - templates/web-deployment.yaml
-  #     - templates/worker-deployment.yaml
-  #     - templates/events-deployment.yaml
-  #     - templates/migrate.job.yaml
-  #   set:
-  #     cloud: local
-  #     kafka:
-  #       enabled: true
-  #     externalKafka:
-  #       brokers:
-  #         - "broker1:port1"
-  #         - "broker2:port2"
-  #   asserts:
-  #     - contains:
-  #         path: spec.template.spec.containers[0].env
-  #         content:
-  #           name: KAFKA_ENABLED
-  #           value: "true"
-  #     - contains:
-  #         path: spec.template.spec.containers[0].env
-  #         content:
-  #           name: KAFKA_HOSTS
-  #           value: RELEASE-NAME-posthog-kafka:9092
-  #     - contains:
-  #         path: spec.template.spec.containers[0].env
-  #         content:
-  #           name: KAFKA_URL
-  #           value: kafka://RELEASE-NAME-posthog-kafka:9092
-
-  # - it: should use external Kafka when `kafka.enabled` is set to `false` and `externalKafka.brokers` is configured
-  #   templates: # TODO: remove once secrets.yaml will be fixed/removed
-  #     - templates/web-deployment.yaml
-  #     - templates/worker-deployment.yaml
-  #     - templates/events-deployment.yaml
-  #     - templates/migrate.job.yaml
-  #   set:
-  #     cloud: local
-  #     kafka:
-  #       enabled: false
-  #     externalKafka:
-  #       brokers:
-  #         - broker1:port1
-  #   asserts:
-  #     - contains:
-  #         path: spec.template.spec.containers[0].env
-  #         content:
-  #           name: KAFKA_ENABLED
-  #           value: "true"
-  #     - contains:
-  #         path: spec.template.spec.containers[0].env
-  #         content:
-  #           name: KAFKA_HOSTS
-  #           value: "broker1:port1"
-  #     - contains:
-  #         path: spec.template.spec.containers[0].env
-  #         content:
-  #           name: KAFKA_URL
-  #           value: kafka://broker1:port1
-
-  # - it: should use external Kafka when `kafka.enabled` is set to `false` and `externalKafka.brokers` is configured (multiple brokers)
-  #   templates: # TODO: remove once secrets.yaml will be fixed/removed
-  #     - templates/web-deployment.yaml
-  #     - templates/worker-deployment.yaml
-  #     - templates/events-deployment.yaml
-  #     - templates/migrate.job.yaml
-  #   set:
-  #     cloud: local
-  #     kafka:
-  #       enabled: false
-  #     externalKafka:
-  #       brokers:
-  #         - broker1:port1
-  #         - broker2:port2
-  #   asserts:
-  #     - contains:
-  #         path: spec.template.spec.containers[0].env
-  #         content:
-  #           name: KAFKA_ENABLED
-  #           value: "true"
-  #     - contains:
-  #         path: spec.template.spec.containers[0].env
-  #         content:
-  #           name: KAFKA_HOSTS
-  #           value: "broker1:port1,broker2:port2"
-  #     - contains:
-  #         path: spec.template.spec.containers[0].env
-  #         content:
-  #           name: KAFKA_URL
-  #           value: kafka://broker1:port1,kafka://broker2:port2
+  - it: should use the correct variables when `externalObjectStorage.host` is configured
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      externalObjectStorage:
+        host: host_name
+        port: 12345
+        bucket: bucket_name
+        existingSecret: existing_secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_HOST
+            value: host_name
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_PORT
+            value: 12345
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_BUCKET
+            value: bucket_name
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: existing_secret
+                key: root-user
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: existing_secret
+                key: root-password
