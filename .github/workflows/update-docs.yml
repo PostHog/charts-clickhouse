@@ -21,5 +21,7 @@ jobs:
       - name: Commit bump
         uses: EndBug/add-and-commit@v7
         with:
+            author_name: Max Hedgehog
+            author_email: max.hedgehog@posthog.com 
             branch: ${{ github.event.pull_request.base.ref }}
             message: 'Regenerate chart ALL_VALUES.md'
