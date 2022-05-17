@@ -5,6 +5,7 @@ templates:
   - templates/web-deployment.yaml
   - templates/worker-deployment.yaml
   - templates/events-deployment.yaml
+  - templates/plugins-deployment.yaml
   - templates/migrate.job.yaml
   # NOTE: we need to include this as it is required by the other templates
   - templates/secrets.yaml
@@ -15,6 +16,7 @@ tests:
       - templates/web-deployment.yaml
       - templates/worker-deployment.yaml
       - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
@@ -46,6 +48,7 @@ tests:
       - templates/web-deployment.yaml
       - templates/worker-deployment.yaml
       - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
@@ -83,6 +86,7 @@ tests:
       - templates/web-deployment.yaml
       - templates/worker-deployment.yaml
       - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
@@ -126,6 +130,7 @@ tests:
       - templates/web-deployment.yaml
       - templates/worker-deployment.yaml
       - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
