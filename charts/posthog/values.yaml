@@ -749,26 +749,7 @@ clickhouse:
   # servers:
   # - host: posthog-posthog-zookeeper
   #   port: 2181
-  backup:
-    enabled: true
-    backup_user: backup
-    # PASSWORD=backup_password; echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
-    backup_password: eb94c11d77f46a0290ba8c4fca1a7fd315b72e1e6c83146e42117c568cc3ea4d
-    backup_schedule: "0 0 * * *"
-    # storage variables
-    remote_settings:
-      # REMOTE_STORAGE: #"s3", "gcs"
-      # S3_BUCKET | GCS_BUCKET : 
-      # S3_PATH|GCS_PATH : backup
-      # S3_ACCESS_KEY: and S3_SECRET_KEY: 
-      #or GCS_CREDENTIALS_FILE
-      REMOTE_STORAGE: "s3"
-      S3_BUCKET: "backup-bucket"
-      S3_PATH: "backup"
-      S3_ACCESS_KEY: my_access_key
-      S3_SECRET_KEY: backup-secret-key
-    debug: false
-
+  
   image:
     # -- ClickHouse image repository.
     repository: clickhouse/clickhouse-server
@@ -869,6 +850,56 @@ clickhouse:
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9363"
+  
+  client:
+    image:
+    # -- Clickhouse client image repository.
+      repository: yandex/clickhouse-client
+      # -- ClickHouse backup image tag.
+      tag: "21.3.20.1"
+
+  backup:
+    # https://posthog.com/docs/self-host/runbook/clickhouse/backup
+    # https://github.com/AlexAkulov/clickhouse-backup
+    enabled: true
+    image:
+      # -- Clickhouse backup image repository.
+      repository: altinity/clickhouse-backup
+      # -- ClickHouse backup image tag.
+      tag: "1.4.0"
+    backup_user: backup
+    # PASSWORD=backup_password; echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
+    backup_password: eb94c11d77f46a0290ba8c4fca1a7fd315b72e1e6c83146e42117c568cc3ea4d
+    backup_schedule: "0 0 * * *" #backup every day at 0:00
+    clickhouse_services: "chi-posthog-posthog-0-0" # use first replica in each shard, use `kubectl get svc | grep chi-posthog-posthog`
+    
+    # All options: https://github.com/AlexAkulov/clickhouse-backup#default-config
+    env: 
+      - name: LOG_LEVEL
+        value: "debug"
+      - name: ALLOW_EMPTY_BACKUPS
+        value: "true"
+      - name: API_LISTEN
+        value: "0.0.0.0:7171"
+      # INSERT INTO system.backup_actions to execute backup
+      - name: API_CREATE_INTEGRATION_TABLES
+        value: "true"
+      - name: BACKUPS_TO_KEEP_REMOTE
+        value: "0"
+      # settings for remote backup storage. For instance for GCS
+      # - name: GCS_CREDENTIALS_JSON
+      #   value: "credentails.json"
+      # - name: GCS_BUCKET
+      #   value: "backup-storage"
+      # - name: GCS_PATH
+      #   value: "backup"
+      # - name: GCS_COMPRESSION_LEVEL
+      #   value: "1"
+      # - name: GCS_COMPRESSION_FORMAT
+      #   value: "tar"
+      # - name: GCS_DEBUG
+      #   value: "false"
+
 
 ## External clickhouse configuration
 ##

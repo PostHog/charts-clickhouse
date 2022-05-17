@@ -124,30 +124,17 @@ spec:
               {{- end }}
             {{- if .Values.clickhouse.backup.enabled }}
             - name: clickhouse-backup
-              image: altinity/clickhouse-backup:master
+              image: {{ template "posthog_backup.clickhouse.image" . }}
               imagePullPolicy: Always
               command:
-                - bash
-                - -xc
-                - "/bin/clickhouse-backup server"
+                - /bin/bash
+                - -c
+                - /bin/clickhouse-backup server
               env:
-                - name: LOG_LEVEL
-                  value: "debug"
-                - name: ALLOW_EMPTY_BACKUPS
-                  value: "true"
-                - name: API_LISTEN
-                  value: "0.0.0.0:7171"
-                # INSERT INTO system.backup_actions to execute backup
-                - name: API_CREATE_INTEGRATION_TABLES
-                  value: "true"
-                - name: BACKUPS_TO_KEEP_REMOTE
-                  value: "5"
-                {{- range $key, $val := .Values.clickhouse.backup.remote_settings }}
+                {{- range $key, $value := $.Values.clickhouse.backup.env }}
                 - name: {{ $key }}
-                  value: {{ $val }}
-                {{- end}}
-                - name: S3_DEBUG
-                  value: "{{ .Values.clickhouse.backup.debug }}"
+                  value: {{ $value | quote }}
+                {{- end }}
               # require to avoid double scraping clickhouse and clickhouse-backup containers
               ports:
                 - name: backup-rest
