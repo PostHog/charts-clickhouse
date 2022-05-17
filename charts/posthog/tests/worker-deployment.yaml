@@ -67,4 +67,28 @@ tests:
           path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
           value: false            
           
+  - it: should not have a pod securityContext
+    template: templates/worker-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      worker.podSecurityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.securityContext
+          value: 1001
+  
+  - it: should not have a container securityContext
+    template: templates/worker-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      worker.securityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.containers[0].securityContext
+         
+  
   
