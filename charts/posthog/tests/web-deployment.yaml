@@ -33,6 +33,26 @@ tests:
       - isKind:
           of: Deployment
 
+  - it: should allow specifying a custom busybox image for init containers
+    template: templates/web-deployment.yaml
+    set:
+      cloud: local
+      busybox:
+        image: some-customer-image
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: some-customer-image
+
+  - it: should have a default image for init containers
+    template: templates/web-deployment.yaml
+    set:
+      cloud: local
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].image
+          value: busybox:1.34
+
   - it: should have a pod securityContext
     template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
@@ -67,4 +87,5 @@ tests:
           path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
           value: false            
           
+  
   

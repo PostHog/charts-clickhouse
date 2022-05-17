@@ -18,7 +18,7 @@ TMP_FOLDER="$(mktemp -d)"
 trap 'rm -rf -- "$TMP_FOLDER"' EXIT
 
 OPERATOR_NAMESPACE="posthog"
-CLICKHOUSE_OPERATOR_TAG="0.16.1"
+CLICKHOUSE_OPERATOR_TAG="0.18.4"
 URL="https://raw.githubusercontent.com/Altinity/clickhouse-operator/${CLICKHOUSE_OPERATOR_TAG}/deploy/operator/clickhouse-operator-install-template.yaml"
 
 #
@@ -31,7 +31,7 @@ METRICS_EXPORTER_NAMESPACE="${OPERATOR_NAMESPACE}"
 # NOTE: we pin to 0.19.0 here which is different to the 0.16.1 manifest version.
 # Prior to pinning we were specifying latest, so to ensure that the version
 # doesn't change on existing installs we pin to latest as of writing, thereby
-# mitigating the possibility that chart will unexpectedly update, while also 
+# mitigating the possibility that chart will unexpectedly update, while also
 # maintaining current functionality.
 OPERATOR_IMAGE="${OPERATOR_IMAGE:-altinity/clickhouse-operator:0.19.0}"
 METRICS_EXPORTER_IMAGE="${METRICS_EXPORTER_IMAGE:-altinity/metrics-exporter:latest}"
@@ -62,16 +62,15 @@ kubectl-slice -f "$TMP_FOLDER/clickhouse-operator.yaml" -o "${CHART_PATH}/templa
 FILES="${CHART_PATH}/templates/clickhouse-operator/*"
 for f in $FILES
 do
-    sed -i'' '1i\
-{{- if .Values.clickhouse.enabled }}
-    ' "$f"
+    # NOTE: previously we were using sed with the `-i` option to specify that we
+    # should to the modifications in place. The option behaviour between GNU and
+    # BSD versions, hence here we opt for using perl instead.
+    perl -pi -e 'print "{{- if .Values.clickhouse.enabled }}\n" if $. == 1' "$f"
 
-    sed -i'' '$a\
-{{- end }}
-    ' "$f"
+    echo "{{- end }}" >> "$f"
 
-    sed -i'' 's/#namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
+    perl -pi -e 's/#namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
 
-    sed -i'' 's/namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
+    perl -pi -e 's/namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
 
 done

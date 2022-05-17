@@ -1,7 +1,7 @@
 {{/* Common initContainers-wait-for-service-dependencies definition */}}
 {{- define "_snippet-initContainers-wait-for-service-dependencies" }}
 - name: wait-for-service-dependencies
-  image: busybox:1.34
+  image: {{ .Values.busybox.image }}
   env:
     {{- include "snippet.clickhouse-env" . | nindent 4 }}
   command:

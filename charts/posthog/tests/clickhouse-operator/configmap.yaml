@@ -28,7 +28,9 @@ tests:
           value:
             name: etc-clickhouse-operator-files
             namespace: custom-namespace
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: ConfigMap/etc-clickhouse-operator-files metadata.namespace override via Release.Namespace should work
     release:
@@ -42,7 +44,9 @@ tests:
           value:
             name: etc-clickhouse-operator-files
             namespace: custom-namespace-from-release
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: ConfigMap/etc-clickhouse-operator-confd-files metadata.namespace override via clickhouse.namespace should work
     set:
@@ -56,7 +60,9 @@ tests:
           value:
             name: etc-clickhouse-operator-confd-files
             namespace: custom-namespace
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: ConfigMap/etc-clickhouse-operator-confd-files metadata.namespace override via Release.Namespace should work
     release:
@@ -70,7 +76,9 @@ tests:
           value:
             name: etc-clickhouse-operator-confd-files
             namespace: custom-namespace-from-release
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: ConfigMap/etc-clickhouse-operator-configd-files metadata.namespace override via clickhouse.namespace should work
     set:
@@ -84,7 +92,9 @@ tests:
           value:
             name: etc-clickhouse-operator-configd-files
             namespace: custom-namespace
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: ConfigMap/etc-clickhouse-operator-configd-files metadata.namespace override via Release.Namespace should work
     release:
@@ -98,7 +108,9 @@ tests:
           value:
             name: etc-clickhouse-operator-configd-files
             namespace: custom-namespace-from-release
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: ConfigMap/etc-clickhouse-operator-templatesd-files metadata.namespace override via clickhouse.namespace should work
     set:
@@ -112,7 +124,9 @@ tests:
           value:
             name: etc-clickhouse-operator-templatesd-files
             namespace: custom-namespace
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: ConfigMap/etc-clickhouse-operator-templatesd-files metadata.namespace override via Release.Namespace should work
     release:
@@ -126,7 +140,9 @@ tests:
           value:
             name: etc-clickhouse-operator-templatesd-files
             namespace: custom-namespace-from-release
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: ConfigMap/etc-clickhouse-operator-usersd-files metadata.namespace override via clickhouse.namespace should work
     set:
@@ -140,7 +156,9 @@ tests:
           value:
             name: etc-clickhouse-operator-usersd-files
             namespace: custom-namespace
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: ConfigMap/etc-clickhouse-operator-usersd-files metadata.namespace override via Release.Namespace should work
     release:
@@ -154,4 +172,6 @@ tests:
           value:
             name: etc-clickhouse-operator-usersd-files
             namespace: custom-namespace-from-release
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
