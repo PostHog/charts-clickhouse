@@ -42,6 +42,9 @@ spec:
       {{- if .Values.pgbouncer.schedulerName }}
       schedulerName: "{{ .Values.pgbouncer.schedulerName }}"
       {{- end }}
+      {{- if .Values.pgbouncer.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.pgbouncer.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}     
       containers:
       - name: {{ .Chart.Name }}-pgbouncer
       {{- if .Values.pgbouncer.image }}
@@ -93,6 +96,9 @@ spec:
         resources:
 {{ toYaml .Values.pgbouncer.resources | indent 12 }}
 {{- end }}
+        {{- if .Values.pgbouncer.securityContext.enabled }}
+        securityContext: {{- omit .Values.pgbouncer.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}     
     {{- if .Values.pgbouncer.extraVolumes }}
       volumes: {{- toYaml .Values.pgbouncer.extraVolumes | nindent 6 }}
     {{- end }}
