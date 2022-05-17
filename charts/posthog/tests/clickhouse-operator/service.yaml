@@ -27,7 +27,9 @@ tests:
           value:
             name: clickhouse-operator-metrics
             namespace: custom-namespace
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
 
   - it: metadata.namespace override via Release.Namespace should work
     release:
@@ -40,4 +42,6 @@ tests:
           value:
             name: clickhouse-operator-metrics
             namespace: custom-namespace-from-release
-            labels: { app: clickhouse-operator }
+            labels:
+              app: clickhouse-operator
+              clickhouse.altinity.com/chop: 0.18.4
