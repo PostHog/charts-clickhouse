@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 20.0.0](https://img.shields.io/badge/Version-20.0.0-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
+![Version: 20.0.1](https://img.shields.io/badge/Version-20.0.1-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -197,6 +197,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.persistence.size | string | `"20Gi"` | Persistent Volume size |
 | clickhouse.profiles | object | `{}` |  |
 | clickhouse.defaultProfiles.default/allow_experimental_window_functions | string | `"1"` |  |
+| clickhouse.defaultProfiles.default/allow_nondeterministic_mutations | string | `"1"` |  |
 | clickhouse.layout.shardsCount | int | `1` |  |
 | clickhouse.layout.replicasCount | int | `1` |  |
 | clickhouse.settings | object | `{}` |  |
