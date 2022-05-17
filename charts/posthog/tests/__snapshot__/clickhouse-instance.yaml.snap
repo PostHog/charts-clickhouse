@@ -50,6 +50,7 @@ the manifest should match the snapshot when using default values:
             }
         profiles:
           default/allow_experimental_window_functions: "1"
+          default/allow_nondeterministic_mutations: "1"
         settings:
           format_schema_path: /etc/clickhouse-server/config.d/
         users:
