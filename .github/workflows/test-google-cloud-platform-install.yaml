@@ -45,7 +45,8 @@ jobs:
 
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v0
-      install_components: 'gke-gcloud-auth-plugin'
+      with:
+        install_components: 'gke-gcloud-auth-plugin'
 
     - name: Install doctl to manage 'posthog.cc' DNS
       uses: digitalocean/action-doctl@v2
