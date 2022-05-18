@@ -10,7 +10,8 @@ name: e2e - Google Cloud Platform (install)
 on:
   workflow_dispatch:
   push:
-
+    branches:
+      - main
 env:
   # This is needed until k8s v1.25
   # https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
