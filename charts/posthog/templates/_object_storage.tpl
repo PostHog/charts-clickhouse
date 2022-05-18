@@ -21,7 +21,7 @@
 - name: OBJECT_STORAGE_HOST
   value: {{ include "posthog.objectStorage.fullname" . }}
 - name: OBJECT_STORAGE_PORT
-  value: {{ .Values.minio.service.ports.api }}
+  value: {{ .Values.minio.service.ports.api | quote }}
 - name: OBJECT_STORAGE_BUCKET
   value: "posthog"
 {{/* MINIO - with secret */}}
@@ -49,7 +49,7 @@
 - name: OBJECT_STORAGE_HOST
   value: {{ .Values.externalObjectStorage.host }}
 - name: OBJECT_STORAGE_PORT
-  value: {{ .Values.externalObjectStorage.port }}
+  value: {{ .Values.externalObjectStorage.port | quote }}
 - name: OBJECT_STORAGE_BUCKET
   value: {{ .Values.externalObjectStorage.bucket }}
 - name: OBJECT_STORAGE_ACCESS_KEY_ID

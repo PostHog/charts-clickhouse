@@ -63,7 +63,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_PORT
-            value: 9000
+            value: "19000"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -102,7 +102,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_PORT
-            value: 9000
+            value: "19000"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -136,7 +136,7 @@ tests:
       cloud: local
       externalObjectStorage:
         host: host_name
-        port: 12345
+        port: "12345"
         bucket: bucket_name
         existingSecret: existing_secret
     asserts:
@@ -149,7 +149,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_PORT
-            value: 12345
+            value: "12345"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
