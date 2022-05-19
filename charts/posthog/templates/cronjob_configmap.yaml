@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backup-configmap
+data:
+{{ (.Files.Glob "scripts/backup_script.sh").AsConfig | indent 2 }}
