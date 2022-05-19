@@ -759,7 +759,7 @@ minio:
   # -- Disable MinIO Web UI
   disableWebUI: true
 
-  # We are overriding the default ports as they collide with ClickHouse
+  # We are overriding the default service ports as they collide with ClickHouse
   service:
     ports:
       # -- MinIO API service port
@@ -772,7 +772,7 @@ minio:
     # Uncomment those lines if you want Prometheus server to scrape MinIO pods metrics.
     # prometheus.io/scrape: "true"
     # prometheus.io/path: "/minio/v2/metrics/cluster"
-    # prometheus.io/port: "19000"
+    # prometheus.io/port: "9000"
 
 ## External Object Storage configuration
 ##
