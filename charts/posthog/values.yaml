@@ -202,7 +202,7 @@ plugins:
   tolerations: []
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
-  
+
   # -- Container security context for the plugin-server stack deployment.
   securityContext:
     enabled: false
@@ -368,6 +368,14 @@ ingress-nginx:
       # -- downstream proxy is using a secure connection. See the official
       # -- [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers)
       use-forwarded-headers: "true"
+
+    # Uncomment those lines if you want Prometheus server to scrape NGINX Ingress controller pods metrics.
+    # metrics:
+    #   enabled: true
+    #   service:
+    #     annotations:
+    #       prometheus.io/port: "10254"
+    #       prometheus.io/scrape: "true"
 
 
 ###
