@@ -67,6 +67,9 @@ spec:
         # Kafka env variables
         {{- include "snippet.kafka-env" . | indent 8 }}
 
+        # Object Storage env variables
+        {{- include "snippet.objectstorage-env" . | indent 8 }}
+
         # Redis env variables
         {{- include "snippet.redis-env" . | indent 8 }}
 
