@@ -242,8 +242,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | minio.service.ports.api | string | `"19000"` | MinIO API service port |
 | minio.service.ports.console | string | `"19001"` | MinIO Console service port |
 | minio.podAnnotations | string | `nil` |  |
-| externalObjectStorage.host | string | `nil` | Host of the external object storage. |
-| externalObjectStorage.port | string | `nil` | Port of the external object storage. |
+| externalObjectStorage.endpoint | string | `nil` | Endpoint of the external object storage. e.g. https://s3.us-east-1.amazonaws.com |
+| externalObjectStorage.host | string | `nil` | Host of the external object storage. Deprecated: use endpoint instead |
+| externalObjectStorage.port | string | `nil` | Port of the external object storage. Deprecated: use endpoint instead |
 | externalObjectStorage.bucket | string | `nil` | Bucket name to use. |
 | externalObjectStorage.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the `access_key_id` and `secret_access_key`. The secret has to contain the keys `root-user` and `root-password`). |
 | grafana.enabled | bool | `false` | Whether to install Grafana or not. |
