@@ -24,11 +24,7 @@ tests:
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
-            name: OBJECT_STORAGE_HOST
-      - notContains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: OBJECT_STORAGE_PORT
+            name: OBJECT_STORAGE_ENDPOINT
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
@@ -57,13 +53,8 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: OBJECT_STORAGE_HOST
-            value: RELEASE-NAME-posthog-minio
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: OBJECT_STORAGE_PORT
-            value: "19000"
+            name: OBJECT_STORAGE_ENDPOINT
+            value: http://RELEASE-NAME-posthog-minio:19000
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -96,13 +87,8 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: OBJECT_STORAGE_HOST
-            value: RELEASE-NAME-posthog-minio
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: OBJECT_STORAGE_PORT
-            value: "19000"
+            name: OBJECT_STORAGE_ENDPOINT
+            value: http://RELEASE-NAME-posthog-minio:19000
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -143,13 +129,49 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: OBJECT_STORAGE_HOST
-            value: host_name
+            name: OBJECT_STORAGE_ENDPOINT
+            value: https://host_name:12345
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: OBJECT_STORAGE_PORT
-            value: "12345"
+            name: OBJECT_STORAGE_BUCKET
+            value: bucket_name
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: existing_secret
+                key: root-user
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: existing_secret
+                key: root-password
+
+  - it: should use the correct variables when `externalObjectStorage.endpoint` is configured
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      externalObjectStorage:
+        endpoint: https://host_name:12345
+        bucket: bucket_name
+        existingSecret: existing_secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_ENDPOINT
+            value: https://host_name:12345
       - contains:
           path: spec.template.spec.containers[0].env
           content:

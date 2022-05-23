@@ -806,9 +806,11 @@ minio:
 ## External Object Storage configuration
 ##
 externalObjectStorage:
-  # -- Host of the external object storage.
+  # -- Endpoint of the external object storage. e.g. https://s3.us-east-1.amazonaws.com
+  endpoint: 
+  # -- Host of the external object storage. Deprecated: use endpoint instead
   host:
-  # -- Port of the external object storage.
+  # -- Port of the external object storage. Deprecated: use endpoint instead
   port:
   # -- Bucket name to use.
   bucket:
