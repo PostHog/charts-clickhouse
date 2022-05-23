@@ -18,7 +18,8 @@
 {{- if .Values.externalObjectStorage.endpoint -}}
 {{- .Values.externalObjectStorage.endpoint -}}
 {{- else if .Values.externalObjectStorage.host -}}
-{{- .Values.externalObjectStorage.host -}}:{{- .Values.externalObjectStorage.port -}}
+{{- /* NOTE: if host is specified we default to https. Use endpoint for more flexibility */ -}}
+https://{{- .Values.externalObjectStorage.host -}}:{{- .Values.externalObjectStorage.port -}}
 {{- end -}}
 {{- end -}}
 
@@ -28,7 +29,7 @@
 {{/* MINIO */}}
 {{- if .Values.minio.enabled }}
 - name: OBJECT_STORAGE_ENDPOINT
-  value: {{ include "posthog.objectStorage.fullname" . }}:{{ .Values.minio.service.ports.api }}
+  value: http://{{ include "posthog.objectStorage.fullname" . }}:{{ .Values.minio.service.ports.api }}
 - name: OBJECT_STORAGE_PORT
   value: {{ .Values.minio.service.ports.api | quote }}
 - name: OBJECT_STORAGE_BUCKET

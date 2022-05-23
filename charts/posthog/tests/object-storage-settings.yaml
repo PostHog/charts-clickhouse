@@ -54,7 +54,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_ENDPOINT
-            value: RELEASE-NAME-posthog-minio:19000
+            value: http://RELEASE-NAME-posthog-minio:19000
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -88,7 +88,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_ENDPOINT
-            value: RELEASE-NAME-posthog-minio:19000
+            value: http://RELEASE-NAME-posthog-minio:19000
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -130,7 +130,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_ENDPOINT
-            value: host_name:12345
+            value: https://host_name:12345
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -163,7 +163,7 @@ tests:
     set:
       cloud: local
       externalObjectStorage:
-        endpoint: host_name:12345
+        endpoint: https://host_name:12345
         bucket: bucket_name
         existingSecret: existing_secret
     asserts:
@@ -171,7 +171,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_ENDPOINT
-            value: host_name:12345
+            value: https://host_name:12345
       - contains:
           path: spec.template.spec.containers[0].env
           content:
