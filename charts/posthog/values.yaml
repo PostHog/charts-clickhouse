@@ -806,9 +806,11 @@ minio:
 ## External Object Storage configuration
 ##
 externalObjectStorage:
-  # -- Host of the external object storage.
+  # -- Endpoint of the external object storage.
+  endpoint: 
+  # -- Host of the external object storage. Deprecated: use endpoint instead
   host:
-  # -- Port of the external object storage.
+  # -- Port of the external object storage. Deprecated: use endpoint instead
   port:
   # -- Bucket name to use.
   bucket:

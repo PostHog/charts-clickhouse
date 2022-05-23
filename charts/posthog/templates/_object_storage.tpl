@@ -13,13 +13,22 @@
 {{- end -}}
 {{- end -}}
 
+{{/* Unify endpoint logic to support host, port specification */}}
+{{- define "posthog.externalObjectStorage.endpoint" -}}
+{{- if .Values.externalObjectStorage.endpoint -}}
+{{- .Values.externalObjectStorage.endpoint -}}
+{{- else if .Values.externalObjectStorage.host -}}
+{{- .Values.externalObjectStorage.host -}}:{{- .Values.externalObjectStorage.port -}}
+{{- end -}}
+{{- end -}}
+
 {{/* Common Object Storage ENV variables and helpers used by PostHog */}}
 {{- define "snippet.objectstorage-env" }}
 
 {{/* MINIO */}}
 {{- if .Values.minio.enabled }}
-- name: OBJECT_STORAGE_HOST
-  value: {{ include "posthog.objectStorage.fullname" . }}
+- name: OBJECT_STORAGE_ENDPOINT
+  value: {{ include "posthog.objectStorage.fullname" . }}:{{ .Values.minio.service.ports.api }}
 - name: OBJECT_STORAGE_PORT
   value: {{ .Values.minio.service.ports.api | quote }}
 - name: OBJECT_STORAGE_BUCKET
@@ -45,11 +54,9 @@
 {{- end -}}
 
 {{/* External Object Storage */}}
-{{- else if .Values.externalObjectStorage.host }}
-- name: OBJECT_STORAGE_HOST
-  value: {{ .Values.externalObjectStorage.host }}
-- name: OBJECT_STORAGE_PORT
-  value: {{ .Values.externalObjectStorage.port | quote }}
+{{- else if include "posthog.externalObjectStorage.endpoint" . }}
+- name: OBJECT_STORAGE_ENDPOINT
+  value: {{ include "posthog.externalObjectStorage.endpoint" . }}
 - name: OBJECT_STORAGE_BUCKET
   value: {{ .Values.externalObjectStorage.bucket }}
 - name: OBJECT_STORAGE_ACCESS_KEY_ID
