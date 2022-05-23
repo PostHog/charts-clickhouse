@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 20.0.3](https://img.shields.io/badge/Version-20.0.3-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
+![Version: 20.1.0](https://img.shields.io/badge/Version-20.1.0-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
 
 ## Configuration
 
