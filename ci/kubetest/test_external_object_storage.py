@@ -2,6 +2,7 @@ from base64 import b64encode
 import tempfile
 import pytest
 from helpers.utils import (
+    apply_manifest,
     cleanup_k8s,
     create_namespace_if_not_exists,
     exec_subprocess,
@@ -62,10 +63,3 @@ def test_can_use_external_object_storage_with_secret_specified():
 def before_each_cleanup():
     cleanup_k8s()
     create_namespace_if_not_exists()
-
-
-def apply_manifest(manifest_yaml: str):
-    with tempfile.NamedTemporaryFile() as manifest_file_obj:
-        manifest_file_obj.write(manifest_yaml.encode("utf-8"))
-        manifest_file_obj.flush()
-        return exec_subprocess(cmd=f"kubectl apply -f {manifest_file_obj.name}")
