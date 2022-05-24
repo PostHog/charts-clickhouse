@@ -27,17 +27,17 @@ def test_can_use_external_object_storage_with_secret_specified():
     # Use a separately installed minio as the external object storage
     exec_subprocess(
         cmd=f"""
-        helm install minio minio \
-            --debug --namespace posthog \
-            --set persistence.enabled=false \
-            --set mode=standalone \
-            --set resources.requests.memory=100Mi \
-            --set buckets[0].name=posthog \
-            --set buckets[0].policy=none \
-            --set buckets[0].purge=false \
-            --set rootUser={username} \
-            --set rootPassword={password} \
-            --repo https://charts.min.io/
+            helm install minio minio \
+                --debug --namespace posthog \
+                --set persistence.enabled=false \
+                --set mode=standalone \
+                --set resources.requests.memory=100Mi \
+                --set buckets[0].name=posthog \
+                --set buckets[0].policy=none \
+                --set buckets[0].purge=false \
+                --set rootUser={username} \
+                --set rootPassword={password} \
+                --repo https://charts.min.io/
         """
     )
 
