@@ -182,7 +182,7 @@ def exec_subprocess(cmd, ignore_errors=False):
     for chunk in iter(lambda: cmd_stdout.read(1), b""):
         sys.stdout.buffer.write(chunk)
         stdout_cumulative += chunk
-    cmd_run.wait()
+    cmd_run.wait()  # Make sure we have a return code
     cmd_return_code = cmd_run.returncode
     if cmd_return_code and not ignore_errors:
         pytest.fail(
