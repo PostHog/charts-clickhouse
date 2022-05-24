@@ -1,13 +1,8 @@
 from base64 import b64encode
-import tempfile
+
 import pytest
-from helpers.utils import (
-    apply_manifest,
-    cleanup_k8s,
-    create_namespace_if_not_exists,
-    exec_subprocess,
-    install_chart,
-)
+
+from helpers.utils import apply_manifest, cleanup_k8s, create_namespace_if_not_exists, exec_subprocess, install_chart
 
 
 def test_can_use_external_object_storage_with_secret_specified():
