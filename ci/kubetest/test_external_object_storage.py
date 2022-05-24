@@ -68,8 +68,4 @@ def apply_manifest(manifest_yaml: str):
     with tempfile.NamedTemporaryFile() as manifest_file_obj:
         manifest_file_obj.write(manifest_yaml.encode("utf-8"))
         manifest_file_obj.flush()
-        return exec_subprocess(
-            f"""
-            kubectl apply -f {manifest_file_obj.name}
-        """
-        )
+        return exec_subprocess(cmd=f"kubectl apply -f {manifest_file_obj.name}")
