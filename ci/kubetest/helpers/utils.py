@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import sys
 import tempfile
 import time
 
@@ -65,6 +66,8 @@ def cleanup_k8s(namespaces=["default", NAMESPACE]):
             ignore_errors=True,
         )
         exec_subprocess(f"kubectl delete all --all -n {namespace}")
+        exec_subprocess(f"kubectl delete configmaps --all -n {namespace}")
+        exec_subprocess(f"kubectl delete secrets --all -n {namespace}")
 
     log.debug("✅ Done!")
 
@@ -172,7 +175,11 @@ def install_custom_resources(filename, namespace="posthog"):
 
 def exec_subprocess(cmd, ignore_errors=False):
     log.debug(f"Running: `{cmd}`")
-    cmd_run = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    cmd_run = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    stdout = cmd_run.stdout
+    assert stdout is not None
+    for c in iter(lambda: stdout.read(1), b""):
+        sys.stdout.buffer.write(c)
     cmd_return_code = cmd_run.returncode
     if cmd_return_code and not ignore_errors:
         pytest.fail(
