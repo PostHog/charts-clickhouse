@@ -38,8 +38,9 @@ def test_can_use_external_object_storage_with_secret_specified():
             --set rootUser={username} \
             --set rootPassword={password} \
             --repo https://charts.min.io/
-    """
+        """
     )
+
     # Install PostHog with internal MinIO disabled, but configured to point to
     # separate MinIO installation.
     install_chart(
