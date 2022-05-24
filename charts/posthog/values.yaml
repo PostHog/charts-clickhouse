@@ -861,7 +861,7 @@ clickhouse:
   backup:
     # https://posthog.com/docs/self-host/runbook/clickhouse/backup
     # https://github.com/AlexAkulov/clickhouse-backup
-    enabled: true
+    enabled: false
     image:
       # -- Clickhouse backup image repository.
       repository: altinity/clickhouse-backup
