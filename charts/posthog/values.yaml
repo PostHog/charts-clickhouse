@@ -172,10 +172,6 @@ plugins:
    # -- Whether to install the PostHog plugin-server stack or not.
   enabled: true
 
-  ingestion:
-    # -- Whether to enable plugin-server based ingestion
-    enabled: true
-
   # -- Count of plugin-server pods to run. This setting is ignored if `plugin-server.hpa.enabled` is set to `true`.
   replicacount: 1
 
