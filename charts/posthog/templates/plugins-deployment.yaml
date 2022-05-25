@@ -18,9 +18,9 @@ spec:
     metadata:
       annotations:
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
-      {{- if .Values.plugins.podAnnotations }}
-{{ toYaml .Values.plugins.podAnnotations | indent 8 }}
-      {{- end }}
+        {{- if .Values.plugins.podAnnotations }}
+        {{- toYaml .Values.plugins.podAnnotations | nindent 8 }}
+        {{- end }}
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
@@ -29,21 +29,21 @@ spec:
         date: "{{ now | unixEpoch }}"
         {{- end }}
         {{- if .Values.plugins.podLabels }}
-{{ toYaml .Values.plugins.podLabels | indent 8 }}
+        {{- toYaml .Values.plugins.podLabels | nindent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.plugins.affinity }}
       affinity:
-{{ toYaml .Values.plugins.affinity | indent 8 }}
+        {{- toYaml .Values.plugins.affinity | nindent 8 }}
       {{- end }}
       {{- if .Values.plugins.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.plugins.nodeSelector | indent 8 }}
+        {{- toYaml .Values.plugins.nodeSelector | nindent 8 }}
       {{- end }}
       {{- if .Values.plugins.tolerations }}
       tolerations:
-{{ toYaml .Values.plugins.tolerations | indent 8 }}
+        {{- toYaml .Values.plugins.tolerations | nindent 8 }}
       {{- end }}
       {{- if .Values.plugins.schedulerName }}
       schedulerName: "{{ .Values.plugins.schedulerName }}"
@@ -53,11 +53,11 @@ spec:
       {{- end }}
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets:
-{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+        {{- toYaml .Values.image.imagePullSecrets | nindent 8 }}
       {{- end }}
       {{- if .Values.plugins.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.plugins.podSecurityContext "enabled" | toYaml | nindent 8 }}
-      {{- end }}      
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}-plugins
         image: {{ template "posthog.image.fullPath" . }}
@@ -69,16 +69,16 @@ spec:
         - containerPort: {{ .Values.service.internalPort }}
         env:
         # Kafka env variables
-        {{- include "snippet.kafka-env" . | indent 8 }}
+        {{- include "snippet.kafka-env" . | nindent 8 }}
 
         # Object Storage env variables
-        {{- include "snippet.objectstorage-env" . | indent 8 }}
+        {{- include "snippet.objectstorage-env" . | nindent 8 }}
 
         # Redis env variables
-        {{- include "snippet.redis-env" . | indent 8 }}
+        {{- include "snippet.redis-env" . | nindent 8 }}
 
         # statsd env variables
-        {{- include "snippet.statsd-env" . | indent 8 }}
+        {{- include "snippet.statsd-env" . | nindent 8 }}
 
         - name: SENTRY_DSN
           value: {{ .Values.sentryDSN | quote }}
@@ -99,17 +99,18 @@ spec:
         {{- end }}
         - name: HELM_INSTALL_INFO
           value: {{ template "posthog.helmInstallInfo" . }}
-{{- if .Values.env }}
-{{ toYaml .Values.env | indent 8 }}
-{{- end }}
-{{- if .Values.plugins.env }}
-{{ toYaml .Values.plugins.env | indent 8 }}
-{{- end }}
+        {{- if .Values.env }}
+        {{- toYaml .Values.env | nindent 8 }}
+        {{- end }}
+        {{- if .Values.plugins.env }}
+        {{- toYaml .Values.plugins.env | nindent 8 }}
+        {{- end }}
         resources:
-{{ toYaml .Values.plugins.resources | indent 12 }}
+          {{- toYaml .Values.plugins.resources | nindent 12 }}
         {{- if .Values.plugins.securityContext.enabled }}
-        securityContext: {{- omit .Values.plugins.securityContext "enabled" | toYaml | nindent 12 }}
-        {{- end }}      
+        securityContext:
+          {{- omit .Values.plugins.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
