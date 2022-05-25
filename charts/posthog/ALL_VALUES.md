@@ -70,7 +70,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.securityContext | object | `{"enabled":false}` | Container security context for the worker stack deployment. |
 | worker.podSecurityContext | object | `{"enabled":false}` | Pod security context for the worker stack deployment. |
 | plugins.enabled | bool | `true` | Whether to install the PostHog plugin-server stack or not. |
-| plugins.ingestion.enabled | bool | `true` | Whether to enable plugin-server based ingestion |
 | plugins.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `plugin-server.hpa.enabled` is set to `true`. |
 | plugins.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
 | plugins.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
