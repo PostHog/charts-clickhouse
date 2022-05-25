@@ -112,10 +112,10 @@ def install_chart(values, namespace=NAMESPACE):
 
 def kubectl_exec(pod, command):
     log.debug(f"🔄 Executing command '{command}' in pod {pod}")
-    cmd_run = exec_subprocess(f"kubectl exec {pod} --namespace {NAMESPACE} -- {command}")
+    output = exec_subprocess(f"kubectl exec {pod} --namespace {NAMESPACE} -- {command}")
     log.debug("✅ Done!")
 
-    return cmd_run.stdout
+    return output
 
 
 def wait_for_pods_to_be_ready(kube, labels={}, expected_count=None):
@@ -202,7 +202,7 @@ def exec_subprocess(cmd, ignore_errors=False):
         OUTPUT: {stdout_cumulative}
         """
         )
-    return cmd_run
+    return stdout_cumulative
 
 
 def install_external_kafka(namespace="posthog"):
