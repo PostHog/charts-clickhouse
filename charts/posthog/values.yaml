@@ -12,7 +12,7 @@ image:
   # -- PostHog image tag to use (example: `release-1.35.0`).
   tag:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
-  default: "release-1.36.0-unstable"
+  default: ":release-1.36.0-unstable" # !!!! CHANGE THIS BEFORE MERGING !!!!!
   # -- PostHog image pull policy.
   pullPolicy: IfNotPresent
 
@@ -198,7 +198,7 @@ plugins:
   tolerations: []
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
-  
+
   # -- Container security context for the plugin-server stack deployment.
   securityContext:
     enabled: false
@@ -827,7 +827,7 @@ minio:
 ##
 externalObjectStorage:
   # -- Endpoint of the external object storage. e.g. https://s3.us-east-1.amazonaws.com
-  endpoint: 
+  endpoint:
   # -- Host of the external object storage. Deprecated: use endpoint instead
   host:
   # -- Port of the external object storage. Deprecated: use endpoint instead
