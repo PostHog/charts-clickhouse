@@ -28,6 +28,8 @@ https://{{- .Values.externalObjectStorage.host -}}:{{- .Values.externalObjectSto
 
 {{/* MINIO */}}
 {{- if .Values.minio.enabled }}
+- name: OBJECT_STORAGE_ENABLED
+  value: "true"
 - name: OBJECT_STORAGE_ENDPOINT
   value: http://{{ include "posthog.objectStorage.fullname" . }}:{{ .Values.minio.service.ports.api }}
 - name: OBJECT_STORAGE_PORT
@@ -56,6 +58,8 @@ https://{{- .Values.externalObjectStorage.host -}}:{{- .Values.externalObjectSto
 
 {{/* External Object Storage */}}
 {{- else if include "posthog.externalObjectStorage.endpoint" . }}
+- name: OBJECT_STORAGE_ENABLED
+  value: "true"
 - name: OBJECT_STORAGE_ENDPOINT
   value: {{ include "posthog.externalObjectStorage.endpoint" . }}
 - name: OBJECT_STORAGE_BUCKET

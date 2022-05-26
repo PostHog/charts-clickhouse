@@ -24,6 +24,10 @@ tests:
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
+            name: OBJECT_STORAGE_ENABLED
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
             name: OBJECT_STORAGE_ENDPOINT
       - notContains:
           path: spec.template.spec.containers[0].env
@@ -50,6 +54,11 @@ tests:
       cloud: local
       minio.enabled: true
     asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_ENABLED
+            value: "true"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -84,6 +93,11 @@ tests:
       minio.enabled: true
       minio.auth.existingSecret: secret_name
     asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_ENABLED
+            value: "true"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -129,6 +143,11 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
+            name: OBJECT_STORAGE_ENABLED
+            value: "true"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
             name: OBJECT_STORAGE_ENDPOINT
             value: https://host_name:12345
       - contains:
@@ -167,6 +186,11 @@ tests:
         bucket: bucket_name
         existingSecret: existing_secret
     asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_ENABLED
+            value: "true"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
