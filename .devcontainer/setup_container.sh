@@ -42,4 +42,7 @@ EOF
 # NOTE: I've pinned the version here
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/d8c9a6c238f714587da4d2ac2dcd0d3d39419ccf/deploy/static/provider/kind/deploy.yaml
 
+# Install k9s for easy debugging https://k9scli.io/
+curl -sS https://webinstall.dev/k9s | bash
+
 echo "printf 'Hello 🦔! To install PostHog into k8s run this:\n\n "helm upgrade --install posthog charts/posthog --set cloud=private"\n'" >> ~/.zshrc
