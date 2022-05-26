@@ -66,7 +66,8 @@ spec:
           - ./bin/plugin-server
           - --no-restart-loop
         ports:
-        - containerPort: {{ .Values.service.internalPort }}
+        # Expose the port on which the healtchheck endpoint listens
+        - containerPort: 6738
         env:
         # Kafka env variables
         {{- include "snippet.kafka-env" . | nindent 8 }}
@@ -114,8 +115,8 @@ spec:
         readinessProbe:
           failureThreshold: {{ .Values.plugins.readinessProbe.failureThreshold }}
           httpGet:
-            path: /_health/
-            port: {{ .Values.service.internalPort }}
+            path: /_health
+            port: 6738
             scheme: HTTP
           initialDelaySeconds: {{ .Values.plugins.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.plugins.readinessProbe.periodSeconds }}
