@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 20.1.1](https://img.shields.io/badge/Version-20.1.1-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
+![Version: 20.1.2](https://img.shields.io/badge/Version-20.1.2-informational?style=flat-square) ![AppVersion: 1.35.0](https://img.shields.io/badge/AppVersion-1.35.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -82,6 +82,16 @@ The following table lists the configurable parameters of the PostHog chart and t
 | plugins.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
 | plugins.securityContext | object | `{"enabled":false}` | Container security context for the plugin-server stack deployment. |
 | plugins.podSecurityContext | object | `{"enabled":false}` | Pod security context for the plugin-server stack deployment. |
+| plugins.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| plugins.livenessProbe.initialDelaySeconds | int | `10` | The liveness probe initial delay seconds |
+| plugins.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| plugins.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| plugins.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| plugins.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| plugins.readinessProbe.initialDelaySeconds | int | `50` | The readiness probe initial delay seconds |
+| plugins.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
+| plugins.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| plugins.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | email.host | string | `nil` | SMTP service host. |
 | email.port | string | `nil` | SMTP service port. |
 | email.user | string | `nil` | SMTP service user. |
