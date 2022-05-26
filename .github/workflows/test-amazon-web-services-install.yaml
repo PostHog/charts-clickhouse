@@ -74,6 +74,15 @@ jobs:
           --version 1.21 \
           --nodes 3
 
+        # EKS clusters use IAM users and roles to control access to the cluster.
+        # The rules are implemented in a config map called aws-auth.
+        # eksctl provides commands to read and edit this config map.
+        ./eksctl create iamidentitymapping \
+          --cluster ${{ steps.vars.outputs.k8s_cluster_name }} \
+          --arn arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_TO_ASSUME }} \
+          --username admin \
+          --group system:masters
+
     - name: Install PostHog using the Helm chart
       id: helm_install
       run: |
