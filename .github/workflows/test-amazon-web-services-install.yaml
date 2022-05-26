@@ -10,8 +10,7 @@ name: e2e - Amazon Web Services (install)
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    # Temporary removed it to kick in the workflow
 
 jobs:
   aws-install:
