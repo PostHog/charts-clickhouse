@@ -206,6 +206,18 @@ plugins:
   podSecurityContext:
     enabled: false
 
+  readinessProbe:
+    # -- The readiness probe failure threshold
+    failureThreshold: 6
+    # -- The readiness probe initial delay seconds
+    initialDelaySeconds: 50
+    # -- The readiness probe period seconds
+    periodSeconds: 10
+    # -- The readiness probe success threshold
+    successThreshold: 1
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
 email:
   # -- SMTP service host.
   host:

@@ -101,6 +101,16 @@ spec:
         {{- if .Values.plugins.env }}
         {{- toYaml .Values.plugins.env | nindent 8 }}
         {{- end }}
+        readinessProbe:
+          failureThreshold: {{ .Values.plugins.readinessProbe.failureThreshold }}
+          httpGet:
+            path: /_health/
+            port: {{ .Values.service.internalPort }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.plugins.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.plugins.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.plugins.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.plugins.readinessProbe.timeoutSeconds }}
         resources:
           {{- toYaml .Values.plugins.resources | nindent 12 }}
         {{- if .Values.plugins.securityContext.enabled }}
