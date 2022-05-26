@@ -73,12 +73,23 @@ jobs:
           --version 1.21 \
           --nodes 3
 
+        # WORKAROUND: the latest eksctl release (at the time of writing 0.98.0)
+        # write the .kubeconfig file with a now deprecated apiVersion
+        # client.authentication.k8s.io/v1alpha1. Until a new release with the fix
+        # is deployed, let's manually rewrite the kubeconfig via aws cli.
+        #
+        # Ref: https://github.com/elastic/cloud-on-k8s/issues/5668
+        aws eks update-kubeconfig \
+          --name ${{ steps.vars.outputs.k8s_cluster_name }} \
+          --region us-east-1
+
         # EKS clusters use IAM users and roles to control access to the cluster.
         # The rules are implemented in a config map called aws-auth.
         # eksctl provides commands to read and edit this config map.
         ./eksctl create iamidentitymapping \
           --cluster ${{ steps.vars.outputs.k8s_cluster_name }} \
-          --arn arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_TO_ASSUME }} \
+          --region us-east-1 \
+          --arn arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/OrganizationAccountAccessRole \
           --username admin \
           --group system:masters
 
