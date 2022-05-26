@@ -101,6 +101,16 @@ spec:
         {{- if .Values.plugins.env }}
         {{- toYaml .Values.plugins.env | nindent 8 }}
         {{- end }}
+        livenessProbe:
+          exec:
+            command:
+              # Just check that we can at least exec to the container
+              - "true"
+          failureThreshold: {{ .Values.plugins.livenessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.plugins.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.plugins.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.plugins.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.plugins.livenessProbe.timeoutSeconds }}
         readinessProbe:
           failureThreshold: {{ .Values.plugins.readinessProbe.failureThreshold }}
           httpGet:

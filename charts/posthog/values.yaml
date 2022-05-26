@@ -206,13 +206,25 @@ plugins:
   podSecurityContext:
     enabled: false
 
+  livenessProbe:
+    # -- The liveness probe failure threshold
+    failureThreshold: 3
+    # -- The liveness probe initial delay seconds
+    initialDelaySeconds: 10
+    # -- The liveness probe period seconds
+    periodSeconds: 10
+    # -- The liveness probe success threshold
+    successThreshold: 1
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 2
+
   readinessProbe:
     # -- The readiness probe failure threshold
-    failureThreshold: 6
+    failureThreshold: 3
     # -- The readiness probe initial delay seconds
     initialDelaySeconds: 50
     # -- The readiness probe period seconds
-    periodSeconds: 10
+    periodSeconds: 30
     # -- The readiness probe success threshold
     successThreshold: 1
     # -- The readiness probe timeout seconds
