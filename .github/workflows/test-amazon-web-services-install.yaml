@@ -10,7 +10,8 @@ name: e2e - Amazon Web Services (install)
 on:
   workflow_dispatch:
   push:
-    # Temporary removed it to kick in the workflow
+    branches:
+      - main
 
 jobs:
   aws-install:
@@ -46,8 +47,10 @@ jobs:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
     - name: Install eksctl to easily manage EKS clusters
+      env:
+        EKSCTL_VERSION: 0.98.0
       run: |
-        curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz
+        curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/v${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar xz
         ./eksctl version
 
     - name: Declare variables that we can share across steps
