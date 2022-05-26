@@ -66,7 +66,8 @@ spec:
           - ./bin/plugin-server
           - --no-restart-loop
         ports:
-        - containerPort: {{ .Values.service.internalPort }}
+        # Expose the port on which the healtchheck endpoint listens
+        - containerPort: 6738
         env:
         # Kafka env variables
         {{- include "snippet.kafka-env" . | nindent 8 }}
@@ -101,6 +102,26 @@ spec:
         {{- if .Values.plugins.env }}
         {{- toYaml .Values.plugins.env | nindent 8 }}
         {{- end }}
+        livenessProbe:
+          exec:
+            command:
+              # Just check that we can at least exec to the container
+              - "true"
+          failureThreshold: {{ .Values.plugins.livenessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.plugins.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.plugins.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.plugins.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.plugins.livenessProbe.timeoutSeconds }}
+        readinessProbe:
+          failureThreshold: {{ .Values.plugins.readinessProbe.failureThreshold }}
+          httpGet:
+            path: /_health
+            port: 6738
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.plugins.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.plugins.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.plugins.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.plugins.readinessProbe.timeoutSeconds }}
         resources:
           {{- toYaml .Values.plugins.resources | nindent 12 }}
         {{- if .Values.plugins.securityContext.enabled }}

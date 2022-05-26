@@ -14,8 +14,7 @@ cloud: local
 
 externalKafka:
   brokers:
-    - "kafka0:9092"
-    - "kafka1:9092"
+    - "kafka-headless:9092"
 
 #
 # For the purpose of this test, let's disable service persistence
