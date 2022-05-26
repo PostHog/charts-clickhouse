@@ -47,8 +47,10 @@ jobs:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
     - name: Install eksctl to easily manage EKS clusters
+      env:
+        EKSCTL_VERSION: 0.98.0
       run: |
-        curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz
+        curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/v${EKSCTL_VERSION}/eksctl_$(uname -s)_amd64.tar.gz" | tar xz
         ./eksctl version
 
     - name: Declare variables that we can share across steps
@@ -73,6 +75,26 @@ jobs:
           --tags="provisioned_by=github_action" \
           --version 1.21 \
           --nodes 3
+
+        # WORKAROUND: the latest eksctl release (at the time of writing 0.98.0)
+        # write the .kubeconfig file with a now deprecated apiVersion
+        # client.authentication.k8s.io/v1alpha1. Until a new release with the fix
+        # is deployed, let's manually rewrite the kubeconfig via aws cli.
+        #
+        # Ref: https://github.com/elastic/cloud-on-k8s/issues/5668
+        aws eks update-kubeconfig \
+          --name ${{ steps.vars.outputs.k8s_cluster_name }} \
+          --region us-east-1
+
+        # EKS clusters use IAM users and roles to control access to the cluster.
+        # The rules are implemented in a config map called aws-auth.
+        # eksctl provides commands to read and edit this config map.
+        ./eksctl create iamidentitymapping \
+          --cluster ${{ steps.vars.outputs.k8s_cluster_name }} \
+          --region us-east-1 \
+          --arn arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/OrganizationAccountAccessRole \
+          --username admin \
+          --group system:masters
 
     - name: Install PostHog using the Helm chart
       id: helm_install
