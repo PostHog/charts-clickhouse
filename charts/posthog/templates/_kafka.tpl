@@ -29,8 +29,6 @@
 {{- $hostWithPrefix := (printf "kafka://%s" $host) }}
 {{- $hostsWithPrefix = append $hostsWithPrefix $hostWithPrefix }}
 {{- end }}
-- name: KAFKA_ENABLED
-  value: "true"
 # Used by PostHog/plugin-server. There is no specific reason for the difference. Expected format: comma-separated list of "host:port"
 - name: KAFKA_HOSTS
 {{- if .Values.kafka.enabled }}
