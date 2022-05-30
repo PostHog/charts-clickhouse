@@ -4,7 +4,7 @@ kind: CronJob
 metadata:
   name: clickhouse-backup-cron
 spec:
-  schedule: {{ .Values.clickhouse.backup.backup_schedule }}
+  schedule: {{ .Values.clickhouse.backup.backup_schedule | quote }}
   concurrencyPolicy: "Forbid"
   jobTemplate:
     spec:
@@ -12,6 +12,9 @@ spec:
       completions: 1
       parallelism: 1
       template:
+        metadata:
+          labels:
+            job: clickhouse-backup
         spec:
           restartPolicy: Never
           containers:
@@ -27,12 +30,14 @@ spec:
                   value: {{ .Values.clickhouse.backup.backup_user }}
                 - name: BACKUP_PASSWORD
                   value: {{ .Values.clickhouse.backup.backup_password }}
-              command: ["/bin/sh", "-c", "/scripts-data/backup_script.sh"]
+              command: ["/bin/sh", "-c", "/scripts/backup_script.sh"]
               volumeMounts:
-              - name: scripts-data
-                mountPath: /scripts-data
+              - name: airbyte-backup-script
+                mountPath: /scripts/backup_script.sh
+                subPath: backup_script.sh
           volumes:
-          - name: scripts-data
+          - name: airbyte-backup-script
             configMap:
-            name: backup-configmap
+              name: airbyte-backup-script
+              defaultMode: 0777
 {{- end }}

@@ -868,8 +868,8 @@ clickhouse:
       # -- ClickHouse backup image tag.
       tag: "1.4.0"
     backup_user: backup
-    # PASSWORD=backup_password; echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
-    backup_password: eb94c11d77f46a0290ba8c4fca1a7fd315b72e1e6c83146e42117c568cc3ea4d
+    # password in plain text because it's using in cronjob
+    backup_password: backup_password
     backup_schedule: "0 0 * * *" #backup every day at 0:00
     clickhouse_services: "chi-posthog-posthog-0-0" # use first replica in each shard, use `kubectl get svc | grep chi-posthog-posthog`
     
@@ -886,19 +886,7 @@ clickhouse:
         value: "true"
       - name: BACKUPS_TO_KEEP_REMOTE
         value: "0"
-      # settings for remote backup storage. For instance for GCS
-      # - name: GCS_CREDENTIALS_JSON
-      #   value: "credentails.json"
-      # - name: GCS_BUCKET
-      #   value: "backup-storage"
-      # - name: GCS_PATH
-      #   value: "backup"
-      # - name: GCS_COMPRESSION_LEVEL
-      #   value: "1"
-      # - name: GCS_COMPRESSION_FORMAT
-      #   value: "tar"
-      # - name: GCS_DEBUG
-      #   value: "false"
+      # Add settings for remote backup storage.
 
 
 ## External clickhouse configuration

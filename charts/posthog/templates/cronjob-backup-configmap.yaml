@@ -1,6 +1,8 @@
+{{- if .Values.clickhouse.backup.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: backup-configmap
+  name: airbyte-backup-script
 data:
 {{ (.Files.Glob "scripts/backup_script.sh").AsConfig | indent 2 }}
+{{- end }}
