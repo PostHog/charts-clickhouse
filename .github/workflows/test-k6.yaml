@@ -6,7 +6,7 @@ on:
     paths:
       - ci/**
       - charts/**
-      - .github/workflows/test-helm-chart.yaml
+      - .github/workflows/test-k6.yaml
 
 jobs:
   test-chart:
