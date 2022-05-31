@@ -11,7 +11,7 @@ on:
 jobs:
   test-chart:
     runs-on: ubuntu-20.04
-    timeout-minutes: 30
+    timeout-minutes: 60
 
     strategy:
       # Keep running even if one variation of the job fail
