@@ -22,11 +22,6 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: KAFKA_ENABLED
-            value: "true"
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
             name: KAFKA_HOSTS
             value: RELEASE-NAME-posthog-kafka:9092
       - contains:
@@ -51,11 +46,6 @@ tests:
           - "broker1:port1"
           - "broker2:port2"
     asserts:
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: KAFKA_ENABLED
-            value: "true"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
@@ -84,11 +74,6 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: KAFKA_ENABLED
-            value: "true"
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
             name: KAFKA_HOSTS
             value: "broker1:port1"
       - contains:
@@ -112,11 +97,6 @@ tests:
           - broker1:port1
           - broker2:port2
     asserts:
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: KAFKA_ENABLED
-            value: "true"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
