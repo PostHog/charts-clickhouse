@@ -32,12 +32,12 @@ spec:
                   value: {{ .Values.clickhouse.backup.backup_password }}
               command: ["/bin/sh", "-c", "/scripts/backup_script.sh"]
               volumeMounts:
-              - name: airbyte-backup-script
+              - name: clickhouse-backup-script
                 mountPath: /scripts/backup_script.sh
                 subPath: backup_script.sh
           volumes:
-          - name: airbyte-backup-script
+          - name: clickhouse-backup-script
             configMap:
-              name: airbyte-backup-script
+              name: clickhouse-backup-script
               defaultMode: 0777
 {{- end }}

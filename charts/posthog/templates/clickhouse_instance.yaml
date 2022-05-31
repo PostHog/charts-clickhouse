@@ -14,7 +14,7 @@ spec:
       {{ .Values.clickhouse.user }}/profile: default
       {{ .Values.clickhouse.user }}/quota: default
       {{- if .Values.clickhouse.backup.enabled }}
-      {{ .Values.clickhouse.backup.backup_user }}/networks/ip: 0.0.0.0/0
+      {{ .Values.clickhouse.backup.backup_user }}/networks/ip: "0.0.0.0/0"
       {{ .Values.clickhouse.backup.backup_user }}/password: {{ .Values.clickhouse.backup.backup_password }}
       {{- end}}
     profiles:

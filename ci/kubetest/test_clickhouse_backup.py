@@ -1,5 +1,7 @@
+import logging
 import pytest
 import time
+from typing import Optional
 
 from helpers.clickhouse import get_clickhouse_cluster_service_spec
 from helpers.utils import cleanup_k8s, cleanup_helm, helm_install, wait_for_pods_to_be_ready, install_chart
@@ -14,9 +16,8 @@ from helpers.utils import (
     wait_for_pods_to_be_ready,
 )
 
-
-
-from typing import Optional
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger()
 
 VALUES_WITH_BACKUP = """
 clickhouse:
@@ -35,7 +36,6 @@ clickhouse:
       value: "true"
     - name: BACKUPS_TO_KEEP_REMOTE
       value: "3"
-    # change it for production S3
     - name: REMOTE_STORAGE
       value: "s3"
     - name: S3_ACL
@@ -52,8 +52,7 @@ clickhouse:
       value: backup-secret-key
     - name: S3_FORCE_PATH_STYLE
       value: "true"
-    # remove it for production S3
-    - name: S3_DISTABLE_SSL
+    - name: S3_DISABLE_SSL
       value: "true"
     - name: S3_DEBUG
       value: "true"
@@ -68,10 +67,10 @@ def test_backup(kube):
 
 
 def verify_backup(kube):
-    "Check backup creation"
-    wait_timeout = 300
+    log.debug("🔄 Waiting when job pod is started...")
     start = time.time()
-    while True:
+    timeout = 300
+    while time.time() < start + timeout:
       pods = kube.get_pods(namespace=NAMESPACE, labels={"job": "clickhouse-backup"})
       if len(pods) > 0:
         for pod in pods.values():
@@ -84,7 +83,7 @@ def verify_backup(kube):
     # check backup pod status
     for pod in pods.values():
       if pod.status().phase == "Succeeded":
-        print(f"Backup was created successfully for pod {pod.name}")
+        log.debug(f"✅ Backup was created successfully for pod {pod.name}!")
         break
     else:
       pytest.fail("Backup is not succeeded for pod {pod.name}")
