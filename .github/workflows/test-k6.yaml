@@ -27,8 +27,6 @@ jobs:
             test: install
           - k3s-channel: v1.21
             test: install
-          - k3s-channel: v1.20
-            test: install
 
           # We run an upgrade test where we first install an already released
           # Helm chart version and then upgrade to the version we are now
@@ -36,7 +34,7 @@ jobs:
           #
           # It can be very useful to see the "Helm diff" step's output from the
           # latest dev version.
-          - k3s-channel: v1.21
+          - k3s-channel: v1.22
             test: upgrade
 
     steps:
