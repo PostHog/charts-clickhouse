@@ -35,7 +35,7 @@ should render with external clickhouse:
     - name: CLICKHOUSE_HOST
       value: foo.bar.net
     - name: CLICKHOUSE_PORT
-      value: 9000 
+      value: "9000"
     - name: CLICKHOUSE_CLUSTER
       value: somecluster
     - name: CLICKHOUSE_DATABASE
@@ -53,7 +53,7 @@ should render with external clickhouse with more custom settings:
     - name: CLICKHOUSE_HOST
       value: foo.bar.net
     - name: CLICKHOUSE_PORT
-      value: 9000 
+      value: "9000"
     - name: CLICKHOUSE_CLUSTER
       value: customCluster
     - name: CLICKHOUSE_DATABASE
@@ -71,7 +71,7 @@ should render with external clickhouse with secrets:
     - name: CLICKHOUSE_HOST
       value: foo.bar.net
     - name: CLICKHOUSE_PORT
-      value: 9000 
+      value: "9000"
     - name: CLICKHOUSE_CLUSTER
       value: somecluster
     - name: CLICKHOUSE_DATABASE
