@@ -737,6 +737,8 @@ clickhouse:
 externalClickhouse:
   # -- Host of the external cluster. This is required when clickhouse.enabled is false
   host:
+  # -- Port of the external cluster. 
+  port: 9000
   # -- Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false
   cluster:
   # -- Database name for the external cluster

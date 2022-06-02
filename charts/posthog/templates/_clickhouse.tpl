@@ -18,6 +18,8 @@
 {{- else -}}
 - name: CLICKHOUSE_HOST
   value: {{ required "externalClickhouse.host is required if not clickhouse.enabled" .Values.externalClickhouse.host | quote }}
+- name: CLICKHOUSE_PORT
+  value: {{ .Values.externalClickhouse.port | quote }}
 - name: CLICKHOUSE_CLUSTER
   value: {{ required "externalClickhouse.cluster is required if not clickhouse.enabled" .Values.externalClickhouse.cluster | quote }}
 - name: CLICKHOUSE_DATABASE
