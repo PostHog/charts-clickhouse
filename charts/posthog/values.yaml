@@ -10,7 +10,7 @@ image:
   # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
   sha:
   # -- PostHog image tag to use (example: `release-1.35.0`).
-  tag:
+  tag: "latest"
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
   default: ":release-1.36.0"
   # -- PostHog image pull policy.
@@ -835,7 +835,7 @@ minio:
 ##
 externalObjectStorage:
   # -- Endpoint of the external object storage. e.g. https://s3.us-east-1.amazonaws.com
-  endpoint: 
+  endpoint:
   # -- Host of the external object storage. Deprecated: use endpoint instead
   host:
   # -- Port of the external object storage. Deprecated: use endpoint instead
