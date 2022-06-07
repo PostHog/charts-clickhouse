@@ -69,7 +69,7 @@ jobs:
           ${{ steps.vars.outputs.k8s_cluster_name }} \
           --project ${{ secrets.GCP_PROJECT_ID }} \
           --region us-central1 \
-          --cluster-version 1.21 \
+          --cluster-version 1.22 \
           --labels="provisioned_by=github_action" \
           --machine-type e2-small \
           --num-nodes 2
