@@ -84,7 +84,7 @@ jobs:
       - name: (Upgrade) Workaround
         if: matrix.test == 'upgrade'
         run: |
-          timeout 10m kubectl -n posthog logs -f deployment/posthog-plugins
+          timeout 10m kubectl -n posthog logs -f deployment/posthog-plugins || ( [[ $? -eq 124 ]] && echo "Timeout reached, but that's OK" )
 
       #
       # Wait for all k8s resources to be ready.
