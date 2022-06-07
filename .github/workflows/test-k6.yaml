@@ -21,13 +21,13 @@ jobs:
         # specified below, these parameters have no meaning on their own and
         # gain meaning on how job steps use them.
         include:
+          - k3s-channel: testing # v1.24 not released yet as channel https://update.k3s.io/v1-release/channels
+            test: install
           - k3s-channel: v1.23
             test: install
           - k3s-channel: v1.22
             test: install
           - k3s-channel: v1.21
-            test: install
-          - k3s-channel: v1.20
             test: install
 
           # We run an upgrade test where we first install an already released
@@ -36,17 +36,13 @@ jobs:
           #
           # It can be very useful to see the "Helm diff" step's output from the
           # latest dev version.
-          - k3s-channel: v1.21
+          - k3s-channel: v1.22
             test: upgrade
 
     steps:
       - uses: actions/checkout@v2
 
-      # Starts a k8s cluster with NetworkPolicy enforcement and installs both
-      # kubectl and helm
-      #
-      # ref: https://github.com/jupyterhub/action-k3s-helm/
-      - uses: jupyterhub/action-k3s-helm@v1
+      - uses: jupyterhub/action-k3s-helm@v2
         with:
           k3s-channel: ${{ matrix.k3s-channel }}
           metrics-enabled: false
