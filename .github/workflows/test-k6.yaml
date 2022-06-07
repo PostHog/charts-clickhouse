@@ -81,6 +81,11 @@ jobs:
         run: |
           helm upgrade --debug --install -f ci/values/k3s.yaml --timeout 30m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
 
+      - name: (Upgrade) Workaround
+        if: matrix.test == 'upgrade'
+        run: |
+          kubectl -n posthog logs -f deployment/posthog-plugins
+
       #
       # Wait for all k8s resources to be ready.
       #
