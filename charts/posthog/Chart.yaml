@@ -40,7 +40,7 @@ dependencies:
 
   - name: postgresql
     version: 8.6.1
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/defb094c658024e4aa8245622dab202874880cbc/bitnami
     condition: postgresql.enabled
 
   - name: redis
@@ -50,7 +50,7 @@ dependencies:
 
   - name: zookeeper
     version: 7.0.5
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/defb094c658024e4aa8245622dab202874880cbc/bitnami
     condition: zookeeper.enabled
 
   # Monitoring & observability
