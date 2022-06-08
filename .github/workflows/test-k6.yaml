@@ -57,7 +57,7 @@ jobs:
       - name: (Upgrade) Install our helm chart from main branch
         if: matrix.test == 'upgrade'
         run: |
-          helm upgrade --install -f ci/values/k3s.yaml --timeout 20m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs --debug
+          helm upgrade --install -f ci/values/k3s.yaml --timeout 30m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs --debug
 
       - name: "(Upgrade) Install helm diff"
         if: matrix.test == 'upgrade'
@@ -79,7 +79,7 @@ jobs:
 
       - name: Install our helm chart
         run: |
-          helm upgrade --debug --install -f ci/values/k3s.yaml --timeout 20m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
+          helm upgrade --debug --install -f ci/values/k3s.yaml --timeout 30m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
 
       #
       # Wait for all k8s resources to be ready.
@@ -124,7 +124,6 @@ jobs:
         with:
           filename: ci/k6/ingestion-test.js
 
-      # GitHub Action reference: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
         if: always()
