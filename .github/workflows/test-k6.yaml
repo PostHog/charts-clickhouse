@@ -40,7 +40,7 @@ jobs:
             test: upgrade
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: jupyterhub/action-k3s-helm@v2
         with:
@@ -48,7 +48,7 @@ jobs:
           metrics-enabled: false
           traefik-enabled: false
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         if: matrix.test == 'upgrade'
         with:
           ref: main
