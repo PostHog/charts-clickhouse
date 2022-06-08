@@ -108,7 +108,7 @@ jobs:
           -f ci/values/google_cloud_platform.yaml \
           --set "ingress.hostname=${{ steps.vars.outputs.fqdn_record }}" \
           --set "ingress.gcp.ip_name=${{ steps.vars.outputs.dns_record }}" \
-          --timeout 20m \
+          --timeout 30m \
           --create-namespace \
           --namespace posthog \
           posthog ./charts/posthog \
@@ -181,6 +181,12 @@ jobs:
     #   uses: k6io/action@v0.2.0
     #   with:
     #     filename: ci/k6/ingestion-test.js
+
+    - name: Emit namespace report
+      uses: jupyterhub/action-k8s-namespace-report@v1
+      if: always()
+      with:
+        namespace: posthog
 
     #
     # Due to what I consider as a bad design choice from Google, when a GKE cluster is deleted,

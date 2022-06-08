@@ -102,7 +102,7 @@ jobs:
         helm upgrade --install \
           -f ci/values/amazon_web_services.yaml \
           --set "ingress.hostname=${{ steps.vars.outputs.fqdn_record }}" \
-          --timeout 20m \
+          --timeout 30m \
           --create-namespace \
           --namespace posthog \
           posthog ./charts/posthog \
