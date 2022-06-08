@@ -32,7 +32,7 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -73,7 +73,7 @@ jobs:
           --zones="us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1f" \
           --instance-types="t3a.medium" \
           --tags="provisioned_by=github_action" \
-          --version 1.21 \
+          --version 1.22 \
           --nodes 3
 
         # WORKAROUND: the latest eksctl release (at the time of writing 0.98.0)
