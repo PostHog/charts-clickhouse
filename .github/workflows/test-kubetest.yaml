@@ -36,7 +36,6 @@ jobs:
           python -m pip install -r ci/kubetest/requirements.txt
 
       - name: Run kubetest
-        timeout-minutes: 60
         run: |
           cd ci/kubetest && \
           python -m pytest . -s \
