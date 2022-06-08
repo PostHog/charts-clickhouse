@@ -81,11 +81,6 @@ jobs:
         run: |
           helm upgrade --debug --install -f ci/values/k3s.yaml --timeout 30m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
 
-      - name: (Upgrade) Workaround
-        if: matrix.test == 'upgrade'
-        run: |
-          timeout 10m kubectl -n posthog logs -f deployment/posthog-plugins || ( [[ $? -eq 124 ]] && echo "Timeout reached, but that's OK" )
-
       #
       # Wait for all k8s resources to be ready.
       #
@@ -128,6 +123,12 @@ jobs:
         uses: k6io/action@v0.2.0
         with:
           filename: ci/k6/ingestion-test.js
+
+      - name: (Upgrade) Workaround
+        if: matrix.test == 'upgrade' && always()
+        run: |
+          timeout 10m kubectl -n posthog logs -f deployment/posthog-plugins || ( [[ $? -eq 124 ]] && echo "Timeout reached, but that's OK" )
+
 
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
