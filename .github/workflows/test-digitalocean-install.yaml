@@ -20,7 +20,7 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Install doctl to manage 'posthog.cc' DNS
       uses: digitalocean/action-doctl@v2
@@ -39,7 +39,7 @@ jobs:
       id: k8s_cluster_creation
       run: |
         # Get the DO K8 version slug
-        DO_K8S_VERSION=$(doctl k8s options versions -ojson | jq --raw-output 'first(.[] | select(.slug | test("^1.21.[0-9]+-do.[0-9]+$")) | .slug)')
+        DO_K8S_VERSION=$(doctl k8s options versions -ojson | jq --raw-output 'first(.[] | select(.slug | test("^1.22.[0-9]+-do.[0-9]+$")) | .slug)')
 
         doctl k8s clusters create \
           ${{ steps.vars.outputs.k8s_cluster_name }} \
@@ -57,7 +57,7 @@ jobs:
           --set ingress.hostname="${{ steps.vars.outputs.fqdn_record }}" \
           --set ingress-nginx.controller.service.annotations."service\.beta\.kubernetes\.io/do-loadbalancer-name"="${{ steps.vars.outputs.k8s_cluster_name }}" \
           --set ingress-nginx.controller.service.annotations."service\.beta\.kubernetes\.io/do-loadbalancer-hostname"="${{ steps.vars.outputs.fqdn_record }}" \
-          --timeout 20m \
+          --timeout 30m \
           --create-namespace \
           --namespace posthog \
           posthog ./charts/posthog \
@@ -141,6 +141,12 @@ jobs:
       uses: k6io/action@v0.2.0
       with:
         filename: ci/k6/ingestion-test.js
+
+    - name: Emit namespace report
+      uses: jupyterhub/action-k8s-namespace-report@v1
+      if: always()
+      with:
+        namespace: posthog
 
     - name: Delete the k8s cluster and all the associated resources
       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}

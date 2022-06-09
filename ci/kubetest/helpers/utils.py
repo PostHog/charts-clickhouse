@@ -212,7 +212,7 @@ def install_external_kafka(namespace="posthog"):
           helm upgrade --install \
             --namespace {namespace} \
             kafka bitnami/kafka \
-            --version "12.6.0" \
+            --version "14.9.3" \
             --set zookeeper.enabled=true \
             --set replicaCount=2
         """.format(

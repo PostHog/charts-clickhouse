@@ -22,12 +22,12 @@ jobs:
             group: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         name: Checkout
 
-      - uses: jupyterhub/action-k3s-helm@v1
+      - uses: jupyterhub/action-k3s-helm@v2
         with:
-          k3s-channel: v1.21
+          k3s-channel: v1.22
           metrics-enabled: false
           traefik-enabled: false
 
@@ -44,7 +44,6 @@ jobs:
             --splitting-algorithm=least_duration \
             --group-by file
 
-      # GitHub Action reference: https://github.com/jupyterhub/action-k8s-namespace-report
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
         if: always()

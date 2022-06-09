@@ -20,7 +20,7 @@ This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [
 
 
 ## Prerequisites
-- Kubernetes >=1.20 <= 1.23
+- Kubernetes >=1.21 <= 1.24
 - Helm >= 3.7.0
 
 ## Installation
@@ -54,6 +54,34 @@ To run the test suite you can execute: `helm unittest --helm3 --strict --file 't
 - [k6](https://github.com/PostHog/charts-clickhouse/tree/main/ci/k6): HTTP test used to verify the reliability, performance and compliance of the PostHog installation (example: is the PostHog ingestion working correctly?)
 - [e2e - k3s](https://github.com/PostHog/charts-clickhouse/tree/main/.github/workflows/test-helm-chart.yaml): to verify Helm install/upgrade commands on a local k3s cluster
 - [e2e - Amazon Web Services](https://github.com/PostHog/charts-clickhouse/tree/main/.github/workflows/test-amazon-web-services-install.yaml), [e2e - DigitalOcean](https://github.com/PostHog/charts-clickhouse/tree/main/.github/workflows/test-digitalocean-install.yaml), [e2e - Google Cloud Platform](https://github.com/PostHog/charts-clickhouse/tree/main/.github/workflows/test-google-cloud-platform-install.yaml): to verify Helm install command on the officially supported cloud platforms
+
+
+### Running k3s for tests locally
+
+k6 test is using [k3s](https://k3s.io/) for running things on localhost, which might be tricky to get running locally. Here's one method:
+
+```bash
+# Install k3s without system daemon
+curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_ENABLE=true sh
+# Once done run k3s manually, disabling conflicting services
+sudo k3s server --write-kubeconfig-mode 644 --disable traefik --docker --disable-network-policy
+
+# Deploy the chart
+helm upgrade --install -f ci/values/k3s.yaml --timeout 20m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
+
+# Once done, prepare the data/environment
+./ci/setup_ingestion_test.sh
+
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+export POSTHOG_API_ADDRESS=$(kubectl get svc -n posthog posthog-web -o jsonpath="{.spec.clusterIP}")
+export POSTHOG_EVENTS_ADDRESS=$(kubectl get svc -n posthog posthog-events -o jsonpath="{.spec.clusterIP}")
+export "POSTHOG_API_ENDPOINT=http://${POSTHOG_API_ADDRESS}:8000"
+export "POSTHOG_EVENT_ENDPOINT=http://${POSTHOG_EVENTS_ADDRESS}:8000"
+export "SKIP_SOURCE_IP_ADDRESS_CHECK=true"
+
+# Run test
+k6 run ci/k6/ingestion-test.js
+```
 
 ### Release
 Add one of the following labels to your PR _before merging_ to bump the version and release it to the Helm repository:

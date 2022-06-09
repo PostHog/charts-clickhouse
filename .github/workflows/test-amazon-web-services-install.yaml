@@ -32,7 +32,7 @@ jobs:
     steps:
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -73,7 +73,7 @@ jobs:
           --zones="us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1f" \
           --instance-types="t3a.medium" \
           --tags="provisioned_by=github_action" \
-          --version 1.21 \
+          --version 1.22 \
           --nodes 3
 
         # WORKAROUND: the latest eksctl release (at the time of writing 0.98.0)
@@ -102,7 +102,7 @@ jobs:
         helm upgrade --install \
           -f ci/values/amazon_web_services.yaml \
           --set "ingress.hostname=${{ steps.vars.outputs.fqdn_record }}" \
-          --timeout 20m \
+          --timeout 30m \
           --create-namespace \
           --namespace posthog \
           posthog ./charts/posthog \
@@ -181,6 +181,12 @@ jobs:
       uses: k6io/action@v0.2.0
       with:
         filename: ci/k6/ingestion-test.js
+
+    - name: Emit namespace report
+      uses: jupyterhub/action-k8s-namespace-report@v1
+      if: always()
+      with:
+        namespace: posthog
 
     - name: Delete the k8s cluster and all the associated resources
       if: ${{ always() && steps.k8s_cluster_creation.outcome == 'success' }}

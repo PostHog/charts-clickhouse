@@ -35,7 +35,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v0
@@ -69,7 +69,7 @@ jobs:
           ${{ steps.vars.outputs.k8s_cluster_name }} \
           --project ${{ secrets.GCP_PROJECT_ID }} \
           --region us-central1 \
-          --cluster-version 1.21 \
+          --cluster-version 1.22 \
           --labels="provisioned_by=github_action" \
           --machine-type e2-small \
           --num-nodes 2
@@ -108,7 +108,7 @@ jobs:
           -f ci/values/google_cloud_platform.yaml \
           --set "ingress.hostname=${{ steps.vars.outputs.fqdn_record }}" \
           --set "ingress.gcp.ip_name=${{ steps.vars.outputs.dns_record }}" \
-          --timeout 20m \
+          --timeout 30m \
           --create-namespace \
           --namespace posthog \
           posthog ./charts/posthog \
@@ -181,6 +181,12 @@ jobs:
     #   uses: k6io/action@v0.2.0
     #   with:
     #     filename: ci/k6/ingestion-test.js
+
+    - name: Emit namespace report
+      uses: jupyterhub/action-k8s-namespace-report@v1
+      if: always()
+      with:
+        namespace: posthog
 
     #
     # Due to what I consider as a bad design choice from Google, when a GKE cluster is deleted,

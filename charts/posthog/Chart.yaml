@@ -2,7 +2,7 @@ apiVersion: v2
 name: posthog
 description: 🦔 PostHog is developer-friendly, open-source product analytics.
 icon: https://camo.githubusercontent.com/11f72f57f33d7d34807bafc1314844f7a91bcdea/68747470733a2f2f706f7374686f672d7374617469632d66696c65732e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f576562736974652d4173736574732f6769746875622d636f7665722e706e67
-kubeVersion: ">= 1.20-0 <= 1.23-0"
+kubeVersion: ">= 1.21-0 <= 1.24-0"
 home: https://posthog.com
 sources:
   - https://github.com/PostHog/charts-clickhouse
@@ -11,11 +11,11 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 20.2.1
+version: 21.0.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: 1.36.0
+appVersion: 1.36.1
 
 dependencies:
   - name: cert-manager
@@ -40,7 +40,7 @@ dependencies:
 
   - name: postgresql
     version: 8.6.1
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/defb094c658024e4aa8245622dab202874880cbc/bitnami
     condition: postgresql.enabled
 
   - name: redis
@@ -50,7 +50,7 @@ dependencies:
 
   - name: zookeeper
     version: 7.0.5
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/defb094c658024e4aa8245622dab202874880cbc/bitnami
     condition: zookeeper.enabled
 
   # Monitoring & observability
