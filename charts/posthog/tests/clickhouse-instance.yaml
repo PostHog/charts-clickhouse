@@ -295,7 +295,7 @@ tests:
           count: 1
       - equal:
           path: spec.templates.podTemplates[0].spec.containers[0].image
-          value: "yandex/clickhouse-server:21.6.5"
+          value: "clickhouse/clickhouse-server:22.3.6.5"
 
   - it: allows modifying clickhouse-server version
     set:
