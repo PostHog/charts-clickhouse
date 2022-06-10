@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 21.0.0](https://img.shields.io/badge/Version-21.0.0-informational?style=flat-square) ![AppVersion: 1.36.1](https://img.shields.io/badge/AppVersion-1.36.1-informational?style=flat-square)
+![Version: 21.0.1](https://img.shields.io/badge/Version-21.0.1-informational?style=flat-square) ![AppVersion: 1.36.1](https://img.shields.io/badge/AppVersion-1.36.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -201,7 +201,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.secure | bool | `false` | Whether to use TLS connection connecting to ClickHouse |
 | clickhouse.verify | bool | `false` | Whether to verify TLS certificate on connection to ClickHouse |
 | clickhouse.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
-| clickhouse.image.tag | string | `"22.3"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
+| clickhouse.image.tag | string | `"22.3.6.5"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
 | clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod |
 | clickhouse.resources | object | `{}` | Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
