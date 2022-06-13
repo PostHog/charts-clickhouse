@@ -22,6 +22,6 @@
   {{- include "snippet.clickhouse-env" . | nindent 2 }}
 
   # Django specific settings
-  {{- include "snippet.django-env" . | nindent 2 }}
+  {{- include "snippet.posthog-env" . | nindent 2 }}
 
 {{- end }}

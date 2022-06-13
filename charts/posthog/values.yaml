@@ -20,7 +20,7 @@ image:
 sentryDSN:
 
 # -- Django SECRET_KEY to use for hashing e.g. passwords
-djangoSecretKey:
+posthogSecretKey:
   # -- Specify that the key should be pulled from an existing secret key. By
   # default the chart will generate a secret and create a Kubernetes Secret
   # containing it.

@@ -85,7 +85,7 @@ spec:
           value: {{ .Values.sentryDSN | quote }}
         - name: DEPLOYMENT
           value: {{ template "posthog.deploymentEnv" . }}
-        {{- include "snippet.django-env" . | indent 8 }}
+        {{- include "snippet.posthog-env" . | indent 8 }}
         {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS

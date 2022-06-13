@@ -91,7 +91,7 @@ spec:
           value: '0'
       {{- end }}
         # Django env variables
-        {{- include "snippet.django-env" . | indent 8 }}
+        {{- include "snippet.posthog-env" . | indent 8 }}
         - name: PRIMARY_DB
           value: clickhouse
         {{- include "snippet.postgresql-env" . | nindent 8 }}
