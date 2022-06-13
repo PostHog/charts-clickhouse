@@ -1,17 +1,21 @@
 name: Bump chart version & release workflow dispatch
 
 on:
-    workflow_dispatch:
-      inputs:
-        bumptype:
-          description: 'Specify the type "major", "minor" or "patch" (default).'
-          required: true
-          default: 'patch'
+  workflow_dispatch:
+    inputs:
+      bumptype:
+        description: 'Specify the type "major", "minor" or "patch" (default).'
+        required: true
+        default: 'patch'
+  # Please do not add 'pull_request' here as without the proper
+  # GitHub settings might lead 3rd party users to run this
+  # workflow with untrusted inputs.
 
 jobs:
   release:
     name: Bump version based on workflow dispatch input
     runs-on: ubuntu-20.04
+    if: github.repository == 'PostHog/charts-clickhouse'
     steps:
       - name: Checkout
         uses: actions/checkout@v3

@@ -1,16 +1,20 @@
 name: Bump chart version & release
 
 on:
-    pull_request:
-        types: [closed]
+  pull_request:
+    types: [closed]
 
 jobs:
   release:
     name: Bump version based on PR label
     runs-on: ubuntu-20.04
     if: |
-        github.event.pull_request.merged
-        && (
+        # Please do not remove the first if condition as without
+        # it might lead 3rd party users to run this workflow
+        # with untrusted inputs.
+        github.repository == 'PostHog/charts-clickhouse' &&
+        github.event.pull_request.merged &&
+        (
             contains(github.event.pull_request.labels.*.name, 'bump patch')
             || contains(github.event.pull_request.labels.*.name, 'bump minor')
             || contains(github.event.pull_request.labels.*.name, 'bump major')

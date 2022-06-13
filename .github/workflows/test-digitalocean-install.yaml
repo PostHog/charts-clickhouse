@@ -3,12 +3,14 @@
 #
 # TODO:
 # - run k8s spec test
-# - run action only when necessary
 #
 name: e2e - DigitalOcean (install)
 
 on:
   workflow_dispatch:
+  # Please do not add 'pull_request' here as without the proper
+  # GitHub settings might lead 3rd party users to run commands
+  # into our cloud account for testing
   push:
     branches:
       - main
