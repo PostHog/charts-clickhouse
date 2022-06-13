@@ -22,10 +22,6 @@
   {{- include "snippet.clickhouse-env" . | nindent 2 }}
 
   # Django specific settings
-  - name: SECRET_KEY
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "posthog.fullname" . }}
-        key: posthog-secret
+  {{- include "snippet.django-env" . | nindent 2 }}
 
 {{- end }}

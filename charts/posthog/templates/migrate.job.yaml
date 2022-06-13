@@ -66,11 +66,8 @@ spec:
           value: {{ template "posthog.site.url" . }}
         - name: DEPLOYMENT
           value: {{ template "posthog.deploymentEnv" . }}
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "posthog.fullname" . }}
-              key: posthog-secret
+        # Django env variables
+        {{- include "snippet.django-env" . | indent 8 }}
         - name: PRIMARY_DB
           value: clickhouse
         {{- include "snippet.postgresql-migrate-env" . | nindent 8 }}
