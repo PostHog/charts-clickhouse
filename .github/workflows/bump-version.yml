@@ -9,9 +9,6 @@ jobs:
     name: Bump version based on PR label
     runs-on: ubuntu-20.04
     if: |
-      # Please do not remove the first if condition as without
-      # it might lead 3rd party users to run this workflow
-      # with untrusted inputs.
       github.repository == 'PostHog/charts-clickhouse' &&
       github.event.pull_request.merged &&
       (
@@ -19,6 +16,11 @@ jobs:
           || contains(github.event.pull_request.labels.*.name, 'bump minor')
           || contains(github.event.pull_request.labels.*.name, 'bump major')
       )
+
+      # Please do not remove the first if condition as without
+      # it might lead 3rd party users to run this workflow
+      # with untrusted inputs.
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
