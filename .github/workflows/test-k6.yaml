@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 60
 
     strategy:
-      # Keep running even if one variation of the job fail
+      # Keep running even if one variation of the job fail trigger workflow
       fail-fast: false
       matrix:
         # We run this job multiple times with different parameterization
