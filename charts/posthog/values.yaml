@@ -19,6 +19,16 @@ image:
 # -- Sentry endpoint to send errors to.
 sentryDSN:
 
+# -- Django SECRET_KEY to use for hashing e.g. passwords. See
+# https://docs.djangoproject.com/en/4.0/ref/settings/#secret-key
+posthogSecretKey:
+  # -- Specify that the key should be pulled from an existing secret key. By
+  # default the chart will generate a secret and create a Kubernetes Secret
+  # containing it.
+  existingSecret:
+  # -- Specify the key within the secret from which SECRET_KEY should be taken.
+  existingSecretKey: posthog-secret
+
 # -- Environment variables to inject into every PostHog deployment.
 env: []
 # env:

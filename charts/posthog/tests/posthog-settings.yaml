@@ -1,0 +1,91 @@
+suite: PostHog settings propagated to pods
+templates:
+  # This list may be too broad or too narrow, I've just added to all deployments
+  # that use the django backend.
+  - templates/web-deployment.yaml
+  - templates/worker-deployment.yaml
+  - templates/events-deployment.yaml
+  - templates/plugins-deployment.yaml
+  - templates/migrate.job.yaml
+  # NOTE: we need to include this as it is required by the other templates
+  - templates/secrets.yaml
+
+tests:
+  - it: should generate SECRET_KEY if not explicitly set
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: RELEASE-NAME-posthog
+                key: posthog-secret
+
+  - it: should generate a Kubernetes Secret if an existing one isn't specified
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/secrets.yaml
+    set:
+      cloud: local
+    asserts:
+      - isNotNull:
+          path: data.posthog-secret
+
+  - it: should use specified secret for SECRET_KEY
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      posthogSecretKey:
+        existingSecret: abc
+        existingSecretKey: xyz
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: abc
+                key: xyz
+
+  - it: should not generate a Kubernetes Secret if an existing one is specified
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/secrets.yaml
+    set:
+      cloud: local
+      posthogSecretKey:
+        existingSecret: abc
+        existingSecretKey: xyz
+    asserts:
+      - isNull:
+          path: data.posthog-secret
+
+  # NOTE: I couldn't see a way to test this case, but am leaving it here to
+  # capture the expected functionality
+  # - it: should reuse existing SECRET_KEY on subsequent runs
+  #   templates: # TODO: remove once secrets.yaml will be fixed/removed
+  #     - templates/web-deployment.yaml
+  #     - templates/worker-deployment.yaml
+  #     - templates/events-deployment.yaml
+  #     - templates/migrate.job.yaml
+  #   set:
+  #     cloud: local
+  #   asserts:
+  #     - contains:
+  #         path: spec.template.spec.containers[0].env
+  #         content:
+  #           name: SECRET_KEY
+  #           value: <should be the same as before>

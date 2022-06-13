@@ -86,13 +86,9 @@ spec:
           value: {{ template "posthog.deploymentEnv" . }}
         - name: SENTRY_DSN
           value: {{ .Values.sentryDSN | quote }}
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "posthog.fullname" . }}
-              key: posthog-secret
         - name: PRIMARY_DB
           value: clickhouse
+        {{- include "snippet.posthog-env" . | indent 8 }}
         {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
         {{- include "snippet.email-env" . | nindent 8 }}

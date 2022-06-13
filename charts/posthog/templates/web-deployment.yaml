@@ -74,7 +74,7 @@ spec:
         {{- include "snippet.redis-env" . | indent 8 }}
 
         # statsd env variables
-        {{- include "snippet.statsd-env" . | indent 8 }}
+      {{- include "snippet.statsd-env" . | indent 8 }}
 
         - name: SITE_URL
           value: {{ template "posthog.site.url" . }}
@@ -90,11 +90,8 @@ spec:
         - name: SECURE_COOKIES
           value: '0'
       {{- end }}
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "posthog.fullname" . }}
-              key: posthog-secret
+        # PostHog app settings
+        {{- include "snippet.posthog-env" . | indent 8 }}
         - name: SAML_ENTITY_ID
           value: {{ default "" .Values.saml.entity_id | quote }}
         - name: SAML_ACS_URL

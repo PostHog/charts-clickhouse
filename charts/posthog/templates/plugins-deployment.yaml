@@ -85,11 +85,7 @@ spec:
           value: {{ .Values.sentryDSN | quote }}
         - name: DEPLOYMENT
           value: {{ template "posthog.deploymentEnv" . }}
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "posthog.fullname" . }}
-              key: posthog-secret
+        {{- include "snippet.posthog-env" . | indent 8 }}
         {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
         - name: CAPTURE_INTERNAL_METRICS

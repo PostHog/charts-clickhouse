@@ -90,11 +90,8 @@ spec:
         - name: SECURE_COOKIES
           value: '0'
       {{- end }}
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "posthog.fullname" . }}
-              key: posthog-secret
+        # PostHog app settings
+        {{- include "snippet.posthog-env" . | indent 8 }}
         - name: PRIMARY_DB
           value: clickhouse
         {{- include "snippet.postgresql-env" . | nindent 8 }}
