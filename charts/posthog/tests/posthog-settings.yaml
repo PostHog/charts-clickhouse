@@ -1,4 +1,4 @@
-suite: Django settings propagated to pods
+suite: PostHog settings propagated to pods
 templates:
   # This list may be too broad or too narrow, I've just added to all deployments
   # that use the django backend.
