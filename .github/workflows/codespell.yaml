@@ -4,7 +4,8 @@
 # - https://github.com/codespell-project/codespell
 #
 name: Codespell
-on: [pull_request]
+on:
+  pull_request
 jobs:
   codespell:
     name: Check for spelling errors
