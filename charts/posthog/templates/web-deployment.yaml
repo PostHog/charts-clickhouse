@@ -90,7 +90,7 @@ spec:
         - name: SECURE_COOKIES
           value: '0'
       {{- end }}
-        # Django env variables
+        # PostHog app settings
         {{- include "snippet.posthog-env" . | indent 8 }}
         - name: SAML_ENTITY_ID
           value: {{ default "" .Values.saml.entity_id | quote }}

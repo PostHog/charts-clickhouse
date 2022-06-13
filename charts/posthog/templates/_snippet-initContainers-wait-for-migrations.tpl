@@ -21,7 +21,7 @@
   # ClickHouse env variables
   {{- include "snippet.clickhouse-env" . | nindent 2 }}
 
-  # Django specific settings
+  # PostHog app settings
   {{- include "snippet.posthog-env" . | nindent 2 }}
 
 {{- end }}
