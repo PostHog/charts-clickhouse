@@ -79,17 +79,6 @@ def test_can_connect_from_web_pod(values, resources_to_install, kube):
     install_chart(values)
     wait_for_pods_to_be_ready(kube)
 
-    verify_can_connect_to_postgresql(kube)
-
-
-def verify_can_connect_to_postgresql(kube):
-    pods = kube.get_pods(namespace=NAMESPACE, labels={"role": "web"})
-    pod = list(pods.values())[0]
-    # _preflight endpoint returns the status of most of our services
-    preflight_response = pod.http_proxy_get("/_preflight").json()
-
-    assert preflight_response["db"], f"Web pod couldn't connect to postgresql, preflight response: {preflight_response}"
-
 
 @pytest.fixture(autouse=True)
 def before_each_cleanup():

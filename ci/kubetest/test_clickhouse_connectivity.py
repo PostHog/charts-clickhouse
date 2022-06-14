@@ -88,15 +88,11 @@ def test_can_connect_from_web_pod(kube):
     install_chart(VALUES_ACCESS_CLICKHOUSE)
     wait_for_pods_to_be_ready(kube)
 
-    verify_can_connect_to_clickhouse(kube)
-
 
 def test_can_connect_external_clickhouse_via_password(kube):
     setup_external_clickhouse()
     install_chart(VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD)
     wait_for_pods_to_be_ready(kube)
-
-    verify_can_connect_to_clickhouse(kube)
 
 
 def test_can_connect_external_clickhouse_via_secret(kube):
@@ -105,30 +101,10 @@ def test_can_connect_external_clickhouse_via_secret(kube):
     install_chart(VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET)
     wait_for_pods_to_be_ready(kube)
 
-    verify_can_connect_to_clickhouse(kube)
-
 
 def setup_external_clickhouse():
     # :TRICKY: We can't use a single docker image since posthog relies on clickhouse being installed in a cluster
     install_chart(VALUES_EXTERNAL_CLICKHOUSE, namespace="clickhouse")
-
-
-def verify_can_connect_to_clickhouse(kube):
-    "Checks whether clickhouse is connectable from the web pod"
-    pods = kube.get_pods(namespace=NAMESPACE, labels={"role": "web"})
-    pod = list(pods.values())[0]
-
-    command = " ".join(
-        [
-            f"kubectl exec --stdin --tty {pod.name} -n posthog",
-            "--",
-            "python manage.py shell_plus -c",
-            "\"print('connection check success', sync_execute('select count() from events')[0][0])\"",
-        ]
-    )
-
-    # This command will exit with an error code if clickhouse is not connectable
-    exec_subprocess(command)
 
 
 @pytest.fixture(autouse=True)
