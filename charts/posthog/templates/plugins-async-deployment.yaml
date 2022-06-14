@@ -1,9 +1,9 @@
-{{- if .Values.plugins.enabled -}}
-# Keep this in sync with `pluginsAsync-deployment.yaml`
+{{- if .Values.pluginsAsync.enabled -}}
+# Keep this in sync with `plugins-deployment.yaml`
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "posthog.fullname" . }}-plugins
+  name: {{ template "posthog.fullname" . }}-pluginsAsync
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
 spec:
@@ -11,56 +11,56 @@ spec:
     matchLabels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: plugins
-  {{- if not .Values.plugins.hpa.enabled }}
-  replicas: {{ .Values.plugins.replicacount }}
+        role: pluginsAsync
+  {{- if not .Values.pluginsAsync.hpa.enabled }}
+  replicas: {{ .Values.pluginsAsync.replicacount }}
   {{- end }}
   template:
     metadata:
       annotations:
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
-        {{- if .Values.plugins.podAnnotations }}
-        {{- toYaml .Values.plugins.podAnnotations | nindent 8 }}
+        {{- if .Values.pluginsAsync.podAnnotations }}
+        {{- toYaml .Values.pluginsAsync.podAnnotations | nindent 8 }}
         {{- end }}
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: plugins
+        role: pluginsAsync
         {{- if (eq (default .Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
-        {{- if .Values.plugins.podLabels }}
-        {{- toYaml .Values.plugins.podLabels | nindent 8 }}
+        {{- if .Values.pluginsAsync.podLabels }}
+        {{- toYaml .Values.pluginsAsync.podLabels | nindent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
-      {{- if .Values.plugins.affinity }}
+      {{- if .Values.pluginsAsync.affinity }}
       affinity:
-        {{- toYaml .Values.plugins.affinity | nindent 8 }}
+        {{- toYaml .Values.pluginsAsync.affinity | nindent 8 }}
       {{- end }}
-      {{- if .Values.plugins.nodeSelector }}
+      {{- if .Values.pluginsAsync.nodeSelector }}
       nodeSelector:
-        {{- toYaml .Values.plugins.nodeSelector | nindent 8 }}
+        {{- toYaml .Values.pluginsAsync.nodeSelector | nindent 8 }}
       {{- end }}
-      {{- if .Values.plugins.tolerations }}
+      {{- if .Values.pluginsAsync.tolerations }}
       tolerations:
-        {{- toYaml .Values.plugins.tolerations | nindent 8 }}
+        {{- toYaml .Values.pluginsAsync.tolerations | nindent 8 }}
       {{- end }}
-      {{- if .Values.plugins.schedulerName }}
-      schedulerName: "{{ .Values.plugins.schedulerName }}"
+      {{- if .Values.pluginsAsync.schedulerName }}
+      schedulerName: "{{ .Values.pluginsAsync.schedulerName }}"
       {{- end }}
-      {{- if .Values.plugins.priorityClassName }}
-      priorityClassName: "{{ .Values.plugins.priorityClassName }}"
+      {{- if .Values.pluginsAsync.priorityClassName }}
+      priorityClassName: "{{ .Values.pluginsAsync.priorityClassName }}"
       {{- end }}
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml .Values.image.imagePullSecrets | nindent 8 }}
       {{- end }}
-      {{- if .Values.plugins.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.plugins.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- if .Values.pluginsAsync.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.pluginsAsync.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}-plugins
+      - name: {{ .Chart.Name }}-pluginsAsync
         image: {{ template "posthog.image.fullPath" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:
@@ -70,10 +70,8 @@ spec:
         # Expose the port on which the healtchheck endpoint listens
         - containerPort: 6738
         env:
-        {{- if .Values.pluginsAsync.enabled }}
         - name: PLUGIN_SERVER_MODE
-          value: "ingestion"
-        {{- end }}
+          value: "async"
         # Kafka env variables
         {{- include "snippet.kafka-env" . | nindent 8 }}
 
@@ -86,8 +84,6 @@ spec:
         # statsd env variables
         {{- include "snippet.statsd-env" . | nindent 8 }}
 
-        - name: SITE_URL
-          value: {{ template "posthog.site.url" . }}
         - name: SENTRY_DSN
           value: {{ .Values.sentryDSN | quote }}
         - name: DEPLOYMENT
@@ -102,34 +98,34 @@ spec:
         {{- if .Values.env }}
         {{- toYaml .Values.env | nindent 8 }}
         {{- end }}
-        {{- if .Values.plugins.env }}
-        {{- toYaml .Values.plugins.env | nindent 8 }}
+        {{- if .Values.pluginsAsync.env }}
+        {{- toYaml .Values.pluginsAsync.env | nindent 8 }}
         {{- end }}
         livenessProbe:
           exec:
             command:
               # Just check that we can at least exec to the container
               - "true"
-          failureThreshold: {{ .Values.plugins.livenessProbe.failureThreshold }}
-          initialDelaySeconds: {{ .Values.plugins.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.plugins.livenessProbe.periodSeconds }}
-          successThreshold: {{ .Values.plugins.livenessProbe.successThreshold }}
-          timeoutSeconds: {{ .Values.plugins.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.pluginsAsync.livenessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.pluginsAsync.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.pluginsAsync.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.pluginsAsync.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.pluginsAsync.livenessProbe.timeoutSeconds }}
         readinessProbe:
-          failureThreshold: {{ .Values.plugins.readinessProbe.failureThreshold }}
+          failureThreshold: {{ .Values.pluginsAsync.readinessProbe.failureThreshold }}
           httpGet:
             path: /_health
             port: 6738
             scheme: HTTP
-          initialDelaySeconds: {{ .Values.plugins.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.plugins.readinessProbe.periodSeconds }}
-          successThreshold: {{ .Values.plugins.readinessProbe.successThreshold }}
-          timeoutSeconds: {{ .Values.plugins.readinessProbe.timeoutSeconds }}
+          initialDelaySeconds: {{ .Values.pluginsAsync.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.pluginsAsync.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.pluginsAsync.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.pluginsAsync.readinessProbe.timeoutSeconds }}
         resources:
-          {{- toYaml .Values.plugins.resources | nindent 12 }}
-        {{- if .Values.plugins.securityContext.enabled }}
+          {{- toYaml .Values.pluginsAsync.resources | nindent 12 }}
+        {{- if .Values.pluginsAsync.securityContext.enabled }}
         securityContext:
-          {{- omit .Values.plugins.securityContext "enabled" | toYaml | nindent 12 }}
+          {{- omit .Values.pluginsAsync.securityContext "enabled" | toYaml | nindent 12 }}
         {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
