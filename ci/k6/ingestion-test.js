@@ -75,6 +75,22 @@ export function checkEvents() {
   })
   failedTestCases.add(success === false);
 
+  success = describe('Check onEvent called enough times', (t) => {
+
+    // :TRICKY: We generate there being a plugin generating $pluginEvent events, see setup_ingestion_test.sh
+    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/2/events/?event=$pluginEvent`)
+    const res = http.get(URI.toString(), {
+      headers: {
+        Authorization: `Bearer e2e_demo_api_key`
+      }
+    })
+
+    t.expect(res.status).as('HTTP response status').toEqual(200)
+    t.expect(res).toHaveValidJson()
+
+    t.expect(res.json()['results'].length).as('Count of $pluginEvents').toBeGreaterThan(0)
+  })
+
   // This test case doesn't work in all the environments (e.g. k3s) so we made it optional
   if (!SKIP_SOURCE_IP_ADDRESS_CHECK) {
     success = describe('Check if the source IP address of a random ingested event is not part of a private range', (t) => {
