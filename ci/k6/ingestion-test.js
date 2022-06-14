@@ -90,6 +90,7 @@ export function checkEvents() {
 
     t.expect(res.json()['results'].length).as('Count of $pluginEvents').toBeGreaterThan(0)
   })
+  failedTestCases.add(success === false);
 
   // This test case doesn't work in all the environments (e.g. k3s) so we made it optional
   if (!SKIP_SOURCE_IP_ADDRESS_CHECK) {
