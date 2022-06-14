@@ -12,13 +12,13 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   version: 11.3.5
 - name: postgresql
-  repository: https://raw.githubusercontent.com/bitnami/charts/defb094c658024e4aa8245622dab202874880cbc/bitnami
+  repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
   version: 8.6.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 16.8.9
 - name: zookeeper
-  repository: https://raw.githubusercontent.com/bitnami/charts/defb094c658024e4aa8245622dab202874880cbc/bitnami
+  repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
   version: 7.0.5
 - name: grafana
   repository: https://grafana.github.io/helm-charts
@@ -44,5 +44,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:65823161f700dc9af30822f8a09fe63e92e8426998509eebfd315cffabe1de8b
-generated: "2022-06-07T16:21:57.942414+02:00"
+digest: sha256:69c5f92687fdc5a7e37e359e346398abbcfd5342fbe40703bf8c5d9451c34875
+generated: "2022-06-14T14:46:39.948468+02:00"
