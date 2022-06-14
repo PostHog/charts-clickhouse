@@ -52,8 +52,3 @@ jobs:
         if: always()
         with:
           namespace: posthog
-
-    # Cancel pending and in-progress runs of this workflow if a newer ref is pushed to CI.
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true

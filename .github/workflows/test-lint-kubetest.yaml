@@ -29,8 +29,3 @@ jobs:
       - name: Lint with flake8
         run: |
           flake8 --config ci/kubetest/.flake8 ci/kubetest
-
-    # Cancel pending and in-progress runs of this workflow if a newer ref is pushed to CI.
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
