@@ -3,10 +3,12 @@ name: Lint test
 on:
   workflow_dispatch:
   pull_request:
-  push:
     paths:
       - 'ci/kubetest/**'
       - .github/workflows/test-lint-flake8.yaml
+  push:
+    branches:
+      - main
 
 jobs:
   kubetest:
@@ -27,3 +29,8 @@ jobs:
       - name: Lint with flake8
         run: |
           flake8 --config ci/kubetest/.flake8 ci/kubetest
+
+    # Cancel pending and in-progress runs of this workflow if a newer ref is pushed to CI.
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true

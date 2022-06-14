@@ -3,11 +3,13 @@ name: e2e - k6 ingestion test
 on:
   workflow_dispatch:
   pull_request:
-  push:
     paths:
       - ci/**
       - charts/**
       - .github/workflows/test-k6.yaml
+  push:
+    branches:
+      - main
 
 jobs:
   test-chart:
@@ -130,3 +132,8 @@ jobs:
         if: always()
         with:
           namespace: posthog
+
+    # Cancel pending and in-progress runs of this workflow if a newer ref is pushed to CI.
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true

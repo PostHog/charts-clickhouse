@@ -3,11 +3,13 @@ name: Unit tests
 on:
   workflow_dispatch:
   pull_request:
-  push:
     paths:
       - charts/**
       - ct.yaml
       - .github/workflows/test-unit-helm.yaml
+  push:
+    branches:
+      - main
 
 jobs:
   helm-unittest:
@@ -24,3 +26,8 @@ jobs:
 
       - name: Run test suite
         run: helm unittest --helm3 --strict --file 'tests/*.yaml' --file 'tests/clickhouse-operator/*.yaml' charts/posthog
+
+    # Cancel pending and in-progress runs of this workflow if a newer ref is pushed to CI.
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
