@@ -3,13 +3,13 @@ import { check } from 'k6'
 import { Counter } from 'k6/metrics'
 import { URL } from './lib/url_1_0_0.js'
 import { describe } from './lib/expect_0_0_5.js';
-import { isPrivateIP }  from './utils.js'
+import { isPrivateIP } from './utils.js'
 import {
-    POSTHOG_API_ENDPOINT,
-    POSTHOG_EVENT_ENDPOINT,
-    SKIP_SOURCE_IP_ADDRESS_CHECK,
-    checkPrerequisites
-  } from './common.js';
+  POSTHOG_API_ENDPOINT,
+  POSTHOG_EVENT_ENDPOINT,
+  SKIP_SOURCE_IP_ADDRESS_CHECK,
+  checkPrerequisites
+} from './common.js';
 
 
 checkPrerequisites();
@@ -30,7 +30,7 @@ export let options = {
       executor: 'per-vu-iterations',
       vus: 1,           // Number of VUs to run concurrently.
       iterations: 1,    // only run a single iteration after generateEvents() completes
-      startTime: '40s',  // duration + gracefulStop of the above
+      startTime: '100s',  // duration + gracefulStop of the above + 1m
     },
   },
   thresholds: {
@@ -92,9 +92,9 @@ export function checkEvents() {
       var random_event = res.json()["results"].pop()
       var source_ip = random_event["properties"]["$ip"]
 
-      t.expect(! isPrivateIP(source_ip))
-      .as(`The source IP address of a random ingested event (${source_ip}) is not part of a private range`)
-      .toEqual(true)
+      t.expect(!isPrivateIP(source_ip))
+        .as(`The source IP address of a random ingested event (${source_ip}) is not part of a private range`)
+        .toEqual(true)
     })
     failedTestCases.add(success === false);
   }
