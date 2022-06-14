@@ -3,10 +3,12 @@ name: Lint test
 on:
   workflow_dispatch:
   pull_request:
-  push:
     paths:
       - 'ci/kubetest/**'
       - .github/workflows/test-lint-flake8.yaml
+  push:
+    branches:
+      - main
 
 jobs:
   kubetest:
