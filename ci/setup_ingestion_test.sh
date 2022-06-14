@@ -7,9 +7,9 @@ sleep 10 # TODO: remove this. It was added as the command below often errors wit
 
 WEB_POD=$(kubectl get pods -n posthog -l role=web -o jsonpath="{.items[].metadata.name}")
 
-kubectl exec "$WEB_POD" -n posthog -- python manage.py setup_dev --no-data --create-e2e-test-plugin
+kubectl exec "$WEB_POD" -n posthog -- python manage.py setup_dev --no-data # --create-e2e-test-plugin
 
-# :KLUDGE: Inline this setup script until 1.37.0 is out and `--create-e2e-test-plugin` does something.
+# :KLUDGE: Inline this setup script until 1.37.0 is out and `setup_dev --create-e2e-test-plugin` does something.
 echo << EOF
 from django.utils.timezone import now
 
