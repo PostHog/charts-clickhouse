@@ -81,6 +81,8 @@ spec:
         # statsd env variables
         {{- include "snippet.statsd-env" . | nindent 8 }}
 
+        - name: SITE_URL
+          value: {{ template "posthog.site.url" . }}
         - name: SENTRY_DSN
           value: {{ .Values.sentryDSN | quote }}
         - name: DEPLOYMENT
