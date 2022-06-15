@@ -13,7 +13,11 @@ APP VERSION: {{ .Chart.AppVersion }}
     For security reasons, we strongly suggest you to switch back to "ClusterIP"
     if you don't need any direct external access. Otherwise, please keep in
     mind to review the service security posture (example: use unique credentials,
-    restrict network access to a range of IPs, use TLS, etc...)
+    restrict network access to a range of IPs, use TLS, etc...).
+
+    See
+    https://posthog.com/docs/self-host/deploy/configuration#securing-clickhouse
+    for guidance.
 
 -------------------------------------------------------------------------------
 {{- end }}
