@@ -70,8 +70,8 @@ export function checkEvents() {
     t.expect(res.status).as('HTTP response status').toEqual(200)
     t.expect(res).toHaveValidJson()
 
-    var event_count = res.json()["result"][0]["count"]
-    t.expect(event_count).as(`Count of ingested events (${event_count})`).toBeGreaterThan(100)
+    const eventCount = res.json()["result"][0]["count"]
+    t.expect(eventCount).as(`Count of ingested events (${eventCount})`).toBeGreaterThan(100)
   })
   failedTestCases.add(success === false);
 
@@ -88,7 +88,8 @@ export function checkEvents() {
     t.expect(res.status).as('HTTP response status').toEqual(200)
     t.expect(res).toHaveValidJson()
 
-    t.expect(res.json()['results'].length).as('Count of $pluginEvents').toBeGreaterThan(0)
+    const eventCount = res.json()['results'].length
+    t.expect(eventCount).as(`Count of $pluginEvents (${eventCount})`).toBeGreaterThan(0)
   })
   failedTestCases.add(success === false);
 
