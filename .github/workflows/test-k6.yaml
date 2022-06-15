@@ -132,3 +132,4 @@ jobs:
         if: always()
         with:
           namespace: posthog
+          important-workloads: deployments/posthog-plugins
