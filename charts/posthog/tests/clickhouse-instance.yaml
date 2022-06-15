@@ -285,8 +285,10 @@ tests:
           path: spec.configuration.users
           value:
             someuser/password: somepass
-            someuser/networks/host_regexp: ([a-zA-Z-]+)\.NAMESPACE\.svc\.cluster\.local$
             someuser/networks/ip: 
+              - "10.0.0.0/8"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
             someuser/profile: default
             someuser/quota: default
 
@@ -377,12 +379,12 @@ tests:
 
   - it: by default only allows access from in-cluster and with the namespace
     asserts:
-      - equal:
-          path: spec.configuration.users.admin/networks/host_regexp
-          value: ([a-zA-Z-]+)\.NAMESPACE\.svc\.cluster\.local$
       - equal: 
           path: spec.configuration.users.admin/networks/ip
           value:
+            - "10.0.0.0/8"
+            - "172.16.0.0/12"
+            - "192.168.0.0/16"
 
   - it: renders allowedNetworkIps when set
     set:

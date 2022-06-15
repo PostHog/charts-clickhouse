@@ -54,8 +54,10 @@ the manifest should match the snapshot when using default values:
         settings:
           format_schema_path: /etc/clickhouse-server/config.d/
         users:
-          admin/networks/host_regexp: ([a-zA-Z-]+)\.NAMESPACE\.svc\.cluster\.local$
-          admin/networks/ip: null
+          admin/networks/ip:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
           admin/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
           admin/profile: default
           admin/quota: default
