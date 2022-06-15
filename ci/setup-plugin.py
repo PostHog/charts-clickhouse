@@ -10,7 +10,7 @@ import django
 
 django.setup()
 
-from posthog.models import Organization, Plugin, PluginConfig, PluginSourceFile
+from posthog.models import Organization, Plugin, PluginConfig, PluginSourceFile, Team
 
 organization = Organization.objects.last()
 team = organization.teams.last()
