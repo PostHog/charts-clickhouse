@@ -14,4 +14,3 @@ kubectl exec "$WEB_POD" -n posthog -- python manage.py setup_dev --no-data # --c
 # :KLUDGE: Inline this setup script until 1.37.0 is out and `setup_dev --create-e2e-test-plugin` does something.
 kubectl cp ci/setup-plugin.py "$WEB_POD:." -n posthog
 kubectl exec "$WEB_POD" -n posthog -- python setup-plugin.py
-echo 'Setup done'

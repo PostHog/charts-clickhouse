@@ -10,7 +10,7 @@ import django
 
 django.setup()
 
-from posthog.models import Organization, Plugin, PluginConfig, PluginSourceFile, Team
+from posthog.models import Organization, Plugin, PluginConfig, PluginSourceFile
 
 organization = Organization.objects.last()
 team = organization.teams.last()
@@ -36,9 +36,3 @@ PluginSourceFile.objects.update_or_create(
 
 plugin_config.enabled = True
 plugin_config.save()
-
-for team in Team.objects.all():
-    print(team.__dict__)
-
-for plugin in Plugin.objects.all():
-    print(plugin.__dict__)
