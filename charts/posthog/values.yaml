@@ -180,7 +180,7 @@ worker:
 
 plugins:
   # -- Whether to install the PostHog plugin-server stack or not.
-  # This service handles data ingestion into clickhouse, running apps and async jobs.
+  # This service handles data ingestion into ClickHouse, running apps and async jobs.
   # See `pluginsAsync` to scale this separately.
   enabled: true
 
