@@ -9,9 +9,9 @@ spec:
       {{ .Values.clickhouse.user }}/password: {{ .Values.clickhouse.password }}
       {{ .Values.clickhouse.user }}/networks/host_regexp: ([a-zA-Z-]+)\.{{ .Release.Namespace }}\.svc\.cluster\.local$
       {{ .Values.clickhouse.user }}/networks/ip:
-        - "10.0.0.0/8"
-        - "172.16.0.0/12"
-        - "192.168.0.0/16"
+        {{- range $.Values.clickhouse.allowedNetworkIps }}
+        - {{ . | quote }}
+        {{- end }}
       {{ .Values.clickhouse.user }}/profile: default
       {{ .Values.clickhouse.user }}/quota: default
 
