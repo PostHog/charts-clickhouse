@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "posthog.fullname" . }}-pluginsAsync
+  name: {{ template "posthog.fullname" . }}-plugins-async
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
 spec:
@@ -11,7 +11,7 @@ spec:
     matchLabels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: pluginsAsync
+        role: plugins-async
   {{- if not .Values.pluginsAsync.hpa.enabled }}
   replicas: {{ .Values.pluginsAsync.replicacount }}
   {{- end }}
@@ -25,7 +25,7 @@ spec:
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: pluginsAsync
+        role: plugins-async
         {{- if (eq (default .Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
@@ -60,7 +60,7 @@ spec:
       securityContext: {{- omit .Values.pluginsAsync.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}-pluginsAsync
+      - name: {{ .Chart.Name }}-plugins-async
         image: {{ template "posthog.image.fullPath" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:

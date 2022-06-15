@@ -45,7 +45,7 @@ jobs:
           # latest dev version.
           - k3s-channel: v1.22
             test: upgrade
-            values: ci/k3s.yaml
+            values: ci/values/k3s.yaml
 
           # We run one install test with split plugin-server ingestion
           - k3s-channel: v1.22
