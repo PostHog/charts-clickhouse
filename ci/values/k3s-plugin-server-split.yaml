@@ -1,0 +1,38 @@
+cloud: k3s
+
+image:
+  # :TODO: Remove this once 1.37.0 is out
+  tag: latest
+
+pluginsAsync:
+  enabled: true
+
+ingress:
+  nginx:
+    enabled: true
+    redirectToTLS: false
+  letsencrypt: false
+
+web:
+  secureCookies: false
+
+internalMetrics:
+  capture: false
+
+# Use small PVC in CI
+clickhouse:
+  persistence:
+    size: 1Gi
+kafka:
+  persistence:
+    size: 1Gi
+postgresql:
+  persistence:
+    size: 1Gi
+redis:
+  master:
+    persistence:
+      size: 1Gi
+zookeeper:
+  persistence:
+    size: 1Gi
