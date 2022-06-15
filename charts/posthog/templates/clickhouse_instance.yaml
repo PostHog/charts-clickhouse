@@ -7,7 +7,6 @@ spec:
   configuration:
     users:
       {{ .Values.clickhouse.user }}/password: {{ .Values.clickhouse.password }}
-      {{ .Values.clickhouse.user }}/networks/host_regexp: ([a-zA-Z-]+)\.{{ .Release.Namespace }}\.svc\.cluster\.local$
       {{ .Values.clickhouse.user }}/networks/ip:
         {{- range $.Values.clickhouse.allowedNetworkIps }}
         - {{ . | quote }}

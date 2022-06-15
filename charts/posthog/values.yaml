@@ -680,11 +680,15 @@ clickhouse:
   serviceType: ClusterIP
 
   # -- An allowlist of IP addresses or network masks the ClickHouse user is
-  # allowed to access from. By default anything within the PostHog Kubernetes
-  # namespace will be allow access, this should be sufficient for most usecases.
+  # allowed to access from. By default anything within a private network will be
+  # allowed. This should suffice for most use case although to expose to other
+  # networks you will need to update this setting.
   # 
   # For more details on usage, see https://posthog.com/docs/self-host/deploy/configuration#securing-clickhouse
-  allowedNetworkIps: []
+  allowedNetworkIps:
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+    - "192.168.0.0/16"
 
   persistence:
     # -- Enable data persistence using PVC.
