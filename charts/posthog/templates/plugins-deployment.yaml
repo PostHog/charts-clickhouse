@@ -1,5 +1,5 @@
 {{- if .Values.plugins.enabled -}}
-# Keep this in sync with `pluginsAsync-deployment.yaml`
+# Keep this in sync with `plugins-async-deployment.yaml`
 apiVersion: apps/v1
 kind: Deployment
 metadata:
