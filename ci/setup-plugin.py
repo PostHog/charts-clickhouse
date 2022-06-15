@@ -1,5 +1,5 @@
-organization = Organization.objects.first()
-team = organization.teams.first()
+organization = Organization.objects.last()
+team = organization.teams.last()
 plugin = Plugin.objects.create(organization=organization, name="e2e test plugin", plugin_type="source")
 plugin_config = PluginConfig.objects.create(plugin=plugin, team=team, order=1, config={})
 
