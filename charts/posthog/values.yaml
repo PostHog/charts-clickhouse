@@ -679,7 +679,7 @@ clickhouse:
   # -- Kubernetes Service type.
   serviceType: ClusterIP
 
-  # -- A whitelist of IP addresses or network masks the ClickHouse user is
+  # -- An allowlist of IP addresses or network masks the ClickHouse user is
   # allowed to access from. By default anything within the PostHog Kubernetes
   # namespace will be allow access, this should be sufficient for most usecases.
   # 
