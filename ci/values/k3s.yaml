@@ -9,6 +9,9 @@ ingress:
 web:
   secureCookies: false
 
+internalMetrics:
+  capture: false
+
 # Use small PVC in CI
 clickhouse:
   persistence:

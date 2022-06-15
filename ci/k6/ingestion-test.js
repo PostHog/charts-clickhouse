@@ -60,7 +60,7 @@ export function checkEvents() {
 
   success = describe('Check the count of events ingested', (t) => {
 
-    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/2/insights/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`)
+    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/1/insights/trend/?events=[{"id":"k6s_custom_event","type":"events"}]&refresh=true`)
     const res = http.get(URI.toString(), {
       headers: {
         Authorization: `Bearer e2e_demo_api_key`
@@ -78,7 +78,7 @@ export function checkEvents() {
   success = describe('Check onEvent called enough times', (t) => {
 
     // :TRICKY: We generate there being a plugin generating $pluginEvent events, see setup_ingestion_test.sh
-    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/2/events/?event=$pluginEvent`)
+    const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/1/events/?event=$pluginEvent`)
     const res = http.get(URI.toString(), {
       headers: {
         Authorization: `Bearer e2e_demo_api_key`
@@ -97,7 +97,7 @@ export function checkEvents() {
   if (!SKIP_SOURCE_IP_ADDRESS_CHECK) {
     success = describe('Check if the source IP address of a random ingested event is not part of a private range', (t) => {
 
-      const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/2/events/?event=k6s_custom_event`)
+      const URI = new URL(`${POSTHOG_API_ENDPOINT}/api/projects/1/events/?event=k6s_custom_event`)
       const res = http.get(URI.toString(), {
         headers: {
           Authorization: `Bearer e2e_demo_api_key`

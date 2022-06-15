@@ -1,3 +1,17 @@
+import os
+import sys
+
+from os.path import dirname
+
+os.environ["DJANGO_SETTINGS_MODULE"] = "posthog.settings"
+sys.path.append(dirname(__file__))
+
+import django
+
+django.setup()
+
+from posthog.models import Organization, Plugin, PluginConfig, PluginSourceFile
+
 organization = Organization.objects.last()
 team = organization.teams.last()
 plugin = Plugin.objects.create(organization=organization, name="e2e test plugin", plugin_type="source")

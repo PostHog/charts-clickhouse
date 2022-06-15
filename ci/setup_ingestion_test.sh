@@ -12,5 +12,6 @@ WEB_POD=$(kubectl get pods -n posthog -l role=web -o jsonpath="{.items[].metadat
 kubectl exec "$WEB_POD" -n posthog -- python manage.py setup_dev --no-data # --create-e2e-test-plugin
 
 # :KLUDGE: Inline this setup script until 1.37.0 is out and `setup_dev --create-e2e-test-plugin` does something.
-cat ci/setup-plugin.py | kubectl exec "$WEB_POD" -n posthog -- python manage.py shell_plus
+kubectl cp ci/setup-plugin.py "$WEB_POD:." -n posthog
+kubectl exec "$WEB_POD" -n posthog -- python setup-plugin.py
 echo 'Setup done'
