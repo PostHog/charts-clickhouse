@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 22.1.1](https://img.shields.io/badge/Version-22.1.1-informational?style=flat-square) ![AppVersion: 1.36.1](https://img.shields.io/badge/AppVersion-1.36.1-informational?style=flat-square)
+![Version: 22.1.2](https://img.shields.io/badge/Version-22.1.2-informational?style=flat-square) ![AppVersion: 1.36.1](https://img.shields.io/badge/AppVersion-1.36.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -211,7 +211,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.securityContext.runAsUser | int | `101` |  |
 | clickhouse.securityContext.runAsGroup | int | `101` |  |
 | clickhouse.securityContext.fsGroup | int | `101` |  |
-| clickhouse.serviceType | string | `"NodePort"` | Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost) |
+| clickhouse.serviceType | string | `"ClusterIP"` | Kubernetes Service type. |
+| clickhouse.allowedNetworkIps | list | `["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16"]` | An allowlist of IP addresses or network masks the ClickHouse user is allowed to access from. By default anything within a private network will be allowed. This should suffice for most use case although to expose to other networks you will need to update this setting.  For more details on usage, see https://posthog.com/docs/self-host/deploy/configuration#securing-clickhouse |
 | clickhouse.persistence.enabled | bool | `true` | Enable data persistence using PVC. |
 | clickhouse.persistence.existingClaim | string | `""` | Use a manually managed Persistent Volume and Claim.    If defined, PVC must be created manually before volume will be bound. |
 | clickhouse.persistence.storageClass | string | `nil` | Persistent Volume Storage Class to use.    If defined, `storageClassName: <storageClass>`.    If set to `storageClassName: ""`, disables dynamic provisioning.    If undefined (the default) or set to `null`, no storageClassName spec is    set, choosing the default provisioner. |
