@@ -676,8 +676,8 @@ clickhouse:
     runAsGroup: 101
     fsGroup: 101
 
-  # -- Service Type: LoadBalancer (allows external access) or NodePort (more secure, no extra cost)
-  serviceType: NodePort
+  # -- Kubernetes Service type.
+  serviceType: ClusterIP
 
   persistence:
     # -- Enable data persistence using PVC.
