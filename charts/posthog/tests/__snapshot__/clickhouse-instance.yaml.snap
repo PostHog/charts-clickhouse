@@ -54,7 +54,10 @@ the manifest should match the snapshot when using default values:
         settings:
           format_schema_path: /etc/clickhouse-server/config.d/
         users:
-          admin/networks/ip: 0.0.0.0/0
+          admin/networks/ip:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
           admin/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
           admin/profile: default
           admin/quota: default
@@ -100,7 +103,7 @@ the manifest should match the snapshot when using default values:
               port: 8123
             - name: tcp
               port: 9000
-            type: NodePort
+            type: ClusterIP
         volumeClaimTemplates:
         - name: data-volumeclaim-template
           spec:

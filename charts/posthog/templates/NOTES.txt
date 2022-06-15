@@ -1,4 +1,27 @@
 
+CHART NAME: {{ .Chart.Name }}
+CHART VERSION: {{ .Chart.Version }}
+APP VERSION: {{ .Chart.AppVersion }}
+
+{{- if (not (contains .Values.clickhouse.serviceType "ClusterIP")) }}
+-------------------------------------------------------------------------------
+ WARNING
+
+    By specifying "clickhouse.serviceType={{ .Values.clickhouse.serviceType }}"
+    you are exposing the ClickHouse service externally to the cluster.
+
+    For security reasons, we strongly suggest you to switch back to "ClusterIP"
+    if you don't need any direct external access. Otherwise, please keep in
+    mind to review the service security posture (example: use unique credentials,
+    restrict network access to a range of IPs, use TLS, etc...).
+
+    See
+    https://posthog.com/docs/self-host/deploy/configuration#securing-clickhouse
+    for guidance.
+
+-------------------------------------------------------------------------------
+{{- end }}
+
 ** Please be patient while the chart is being deployed **
 
 To access your PostHog site from outside the cluster follow the steps below:

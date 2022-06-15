@@ -285,7 +285,10 @@ tests:
           path: spec.configuration.users
           value:
             someuser/password: somepass
-            someuser/networks/ip: "0.0.0.0/0"
+            someuser/networks/ip: 
+              - "10.0.0.0/8"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
             someuser/profile: default
             someuser/quota: default
 
@@ -373,3 +376,24 @@ tests:
           value:
             key1: value1
             key2: value2
+
+  - it: by default only allows access from in-cluster and with the namespace
+    asserts:
+      - equal: 
+          path: spec.configuration.users.admin/networks/ip
+          value:
+            - "10.0.0.0/8"
+            - "172.16.0.0/12"
+            - "192.168.0.0/16"
+
+  - it: renders allowedNetworkIps when set
+    set:
+      clickhouse.allowedNetworkIps:
+        - "192.168.0.1"
+        - "172.31.0.0/16"
+    asserts:
+      - equal:
+          path: spec.configuration.users.admin/networks/ip
+          value:
+            - "192.168.0.1"
+            - "172.31.0.0/16"
