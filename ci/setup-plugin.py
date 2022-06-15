@@ -24,7 +24,6 @@ PluginSourceFile.objects.update_or_create(
     plugin=plugin, filename="index.ts", source="""
         export async function onEvent(event, meta) {
             const ratelimit = await meta.cache.get('ratelimit')
-            console.log('e2e log', { event, ratelimit })
             if (!ratelimit && event.event !== '$pluginEvent') {
                 posthog.capture('$pluginEvent', { event: event.event })
                 await meta.cache.set('ratelimit', 1)
