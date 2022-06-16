@@ -26,12 +26,16 @@ jobs:
         include:
           - k3s-channel: testing # v1.24 not released yet as channel https://update.k3s.io/v1-release/channels
             test: install
+            values: ci/values/k3s.yaml
           - k3s-channel: v1.23
             test: install
+            values: ci/values/k3s.yaml
           - k3s-channel: v1.22
             test: install
+            values: ci/values/k3s.yaml
           - k3s-channel: v1.21
             test: install
+            values: ci/values/k3s.yaml
 
           # We run an upgrade test where we first install an already released
           # Helm chart version and then upgrade to the version we are now
@@ -41,6 +45,12 @@ jobs:
           # latest dev version.
           - k3s-channel: v1.22
             test: upgrade
+            values: ci/values/k3s.yaml
+
+          # We run one install test with split plugin-server ingestion
+          - k3s-channel: v1.22
+            test: install
+            values: ci/values/k3s-plugin-server-split.yaml
 
     steps:
       - uses: actions/checkout@v3
@@ -60,7 +70,7 @@ jobs:
       - name: (Upgrade) Install our helm chart from main branch
         if: matrix.test == 'upgrade'
         run: |
-          helm upgrade --install -f ci/values/k3s.yaml --timeout 30m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs --debug
+          helm upgrade --install -f ${{ matrix.values }} --timeout 30m --create-namespace --namespace posthog posthog ./main/charts/posthog --wait --wait-for-jobs --debug
 
       - name: "(Upgrade) Install helm diff"
         if: matrix.test == 'upgrade'
@@ -70,7 +80,7 @@ jobs:
       - name: "(Upgrade) Helm diff - 'main' branch VS local version"
         if: matrix.test == 'upgrade'
         run: |
-          helm diff upgrade --install -f ci/values/k3s.yaml --namespace posthog posthog ./charts/posthog --debug
+          helm diff upgrade --install -f ${{ matrix.values }} --namespace posthog posthog ./charts/posthog --debug
 
       - name: "(Upgrade) Await chart install"
         if: matrix.test == 'upgrade'
@@ -82,7 +92,7 @@ jobs:
 
       - name: Install our helm chart
         run: |
-          helm upgrade --debug --install -f ci/values/k3s.yaml --timeout 30m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
+          helm upgrade --debug --install -f ${{ matrix.values }} --timeout 30m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
 
       #
       # Wait for all k8s resources to be ready.
@@ -132,3 +142,4 @@ jobs:
         if: always()
         with:
           namespace: posthog
+          important-workloads: deployments/posthog-plugins
