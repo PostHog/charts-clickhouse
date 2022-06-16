@@ -2,7 +2,7 @@ cloud: k3s
 
 image:
   # :TODO: Remove this once 1.37.0 is out
-  tag: latest
+  sha: "sha256:c16d6dbd0c2bb13a22cc48114092c9741ee51c5318517c15ef5b12428b5f5c31"
 
 pluginsAsync:
   enabled: true
@@ -15,9 +15,8 @@ ingress:
 
 web:
   secureCookies: false
-
-internalMetrics:
-  capture: false
+  internalMetrics:
+    capture: false
 
 # Use small PVC in CI
 clickhouse:
