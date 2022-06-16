@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 22.1.2](https://img.shields.io/badge/Version-22.1.2-informational?style=flat-square) ![AppVersion: 1.36.1](https://img.shields.io/badge/AppVersion-1.36.1-informational?style=flat-square)
+![Version: 23.0.0](https://img.shields.io/badge/Version-23.0.0-informational?style=flat-square) ![AppVersion: 1.36.1](https://img.shields.io/badge/AppVersion-1.36.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -71,8 +71,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.affinity | object | `{}` | Affinity settings for the worker stack deployment. |
 | worker.securityContext | object | `{"enabled":false}` | Container security context for the worker stack deployment. |
 | worker.podSecurityContext | object | `{"enabled":false}` | Pod security context for the worker stack deployment. |
-| plugins.enabled | bool | `true` | Whether to install the PostHog plugin-server stack or not. |
-| plugins.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `plugin-server.hpa.enabled` is set to `true`. |
+| plugins.enabled | bool | `true` | Whether to install the PostHog plugin-server stack or not. This service handles data ingestion into ClickHouse, running apps and async jobs. See `pluginsAsync` to scale this separately. |
+| plugins.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`. |
 | plugins.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
 | plugins.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
 | plugins.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
@@ -94,6 +94,29 @@ The following table lists the configurable parameters of the PostHog chart and t
 | plugins.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
 | plugins.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | plugins.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| pluginsAsync.enabled | bool | `false` | Whether to install the PostHog plugin-server async stack or not. If disabled (default), plugins service handles both ingestion and running of async tasks. Allows for separate scaling of this service. |
+| pluginsAsync.replicacount | int | `1` | Count of plugin-server-async pods to run. This setting is ignored if `pluginsAsync.hpa.enabled` is set to `true`. |
+| pluginsAsync.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
+| pluginsAsync.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsAsync.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsAsync.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsAsync.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
+| pluginsAsync.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
+| pluginsAsync.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
+| pluginsAsync.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
+| pluginsAsync.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
+| pluginsAsync.securityContext | object | `{"enabled":false}` | Container security context for the plugin-server stack deployment. |
+| pluginsAsync.podSecurityContext | object | `{"enabled":false}` | Pod security context for the plugin-server stack deployment. |
+| pluginsAsync.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| pluginsAsync.livenessProbe.initialDelaySeconds | int | `10` | The liveness probe initial delay seconds |
+| pluginsAsync.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| pluginsAsync.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| pluginsAsync.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| pluginsAsync.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| pluginsAsync.readinessProbe.initialDelaySeconds | int | `50` | The readiness probe initial delay seconds |
+| pluginsAsync.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
+| pluginsAsync.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| pluginsAsync.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | email.host | string | `nil` | SMTP service host. |
 | email.port | string | `nil` | SMTP service port. |
 | email.user | string | `nil` | SMTP service user. |
