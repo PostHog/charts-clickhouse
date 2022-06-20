@@ -715,11 +715,15 @@ clickhouse:
   secure: false
   # -- Whether to verify TLS certificate on connection to ClickHouse
   verify: false
+  # -- List of external Zookeeper servers to use.
   # externalZookeeper:
-  # -- URL for zookeeper.
-  # servers:
-  # - host: posthog-posthog-zookeeper
-  #   port: 2181
+  #   servers:
+  #     - host: host1
+  #       port: 2181
+  #     - host: host2
+  #       port: 2181
+  #     - host: host3
+  #       port: 2181
 
   image:
     # -- ClickHouse image repository.
@@ -752,7 +756,7 @@ clickhouse:
   # allowed to access from. By default anything within a private network will be
   # allowed. This should suffice for most use case although to expose to other
   # networks you will need to update this setting.
-  # 
+  #
   # For more details on usage, see https://posthog.com/docs/self-host/deploy/configuration#securing-clickhouse
   allowedNetworkIps:
     - "10.0.0.0/8"
