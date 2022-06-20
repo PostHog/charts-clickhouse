@@ -285,7 +285,7 @@ tests:
           path: spec.configuration.users
           value:
             someuser/password: somepass
-            someuser/networks/ip: 
+            someuser/networks/ip:
               - "10.0.0.0/8"
               - "172.16.0.0/12"
               - "192.168.0.0/16"
@@ -379,7 +379,7 @@ tests:
 
   - it: by default only allows access from in-cluster and with the namespace
     asserts:
-      - equal: 
+      - equal:
           path: spec.configuration.users.admin/networks/ip
           value:
             - "10.0.0.0/8"
@@ -397,3 +397,24 @@ tests:
           value:
             - "192.168.0.1"
             - "172.31.0.0/16"
+
+  - it: externalZookeeper override should work
+    set:
+      clickhouse.externalZookeeper.servers:
+        - host: host1
+          port: 2181
+        - host: host2
+          port: 2181
+        - host: host3
+          port: 2181
+    asserts:
+      - equal:
+          path: spec.configuration.zookeeper
+          value:
+            nodes:
+              - host: host1
+                port: 2181
+              - host: host2
+                port: 2181
+              - host: host3
+                port: 2181
