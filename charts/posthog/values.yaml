@@ -14,7 +14,7 @@ image:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
   default: ":release-1.37.0-unstable" # TODO - remove unstable before merging!
   # -- PostHog image pull policy.
-  pullPolicy: IfNotPresent
+  pullPolicy: Always # TODO - move back to IfNotPresent before merging!
 
 # -- Sentry endpoint to send errors to.
 sentryDSN:
