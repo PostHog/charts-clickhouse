@@ -24,7 +24,7 @@ jobs:
         # specified below, these parameters have no meaning on their own and
         # gain meaning on how job steps use them.
         include:
-          - k3s-channel: v1.24
+          - k3s-channel: v1.24.1+k3s1
             test: install
             values: ci/values/k3s.yaml
           - k3s-channel: v1.23
