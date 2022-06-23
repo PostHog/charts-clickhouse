@@ -48,6 +48,13 @@ events:
   # -- Count of events pods to run. This setting is ignored if `events.hpa.enabled` is set to `true`.
   replicacount: 1
 
+  # -- HPA spec to be used for autoscaling the events pods. See
+  # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+  # for configuration options
+  autoscaling:
+
+  # -- Deprecated: settings to be used for hpa. Use `autoscaling` instead, which
+  # does not try to abstract the HPA interface.
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the events stack.
     enabled: false
@@ -57,6 +64,7 @@ events:
     minpods: 1
     # -- Max pods for the events stack HorizontalPodAutoscaler.
     maxpods: 10
+
   # -- Container security context for the events stack HorizontalPodAutoscaler.
   securityContext:
     enabled: false
@@ -71,6 +79,13 @@ web:
   # -- Count of web pods to run. This setting is ignored if `web.hpa.enabled` is set to `true`.
   replicacount: 1
 
+  # -- HPA spec to be used for autoscaling the web pods. See
+  # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+  # for configuration options
+  autoscaling:
+
+  # -- Deprecated: settings to be used for hpa. Use `autoscaling` instead, which
+  # does not try to abstract the HPA interface.
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the web stack.
     enabled: false
@@ -147,6 +162,13 @@ worker:
   # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1
 
+  # -- HPA spec to be used for autoscaling the worker pods. See
+  # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+  # for configuration options
+  autoscaling:
+
+  # -- Deprecated: settings to be used for hpa. Use `autoscaling` instead, which
+  # does not try to abstract the HPA interface.
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the worker stack.
     enabled: false
@@ -187,6 +209,13 @@ plugins:
   # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.
   replicacount: 1
 
+  # -- HPA spec to be used for autoscaling the plugin pods. See
+  # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+  # for configuration options
+  autoscaling:
+
+  # -- Deprecated: settings to be used for hpa. Use `autoscaling` instead, which
+  # does not try to abstract the HPA interface.
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
     enabled: false

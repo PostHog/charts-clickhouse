@@ -46,3 +46,13 @@ tests:
           count: 1
       - isKind:
           of: HorizontalPodAutoscaler
+
+  - it: uses the `autoscaling` settings if set
+    set:
+      web.enabled: true
+      web.autoscaling:
+        minReplicas: 1
+        maxReplicas: 5
+        behavior:
+          scaleDown:
+            stabilizationWindowSeconds: 3600

@@ -9,7 +9,11 @@ spec:
     kind: Deployment
     apiVersion: apps/v1
     name: {{ template "posthog.fullname" . }}-worker
+  {{ if .Values.worker.autoscaling }}
+  {{ .Values.worker.autoscaling | nindent 2 }}
+  {{ else }}
   minReplicas: {{ .Values.worker.hpa.minpods }}
   maxReplicas: {{ .Values.worker.hpa.maxpods }}
   targetCPUUtilizationPercentage: {{ .Values.worker.hpa.cputhreshold }}
+  {{ end }}
 {{- end }}
