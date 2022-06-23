@@ -11,7 +11,15 @@ spec:
     name: {{ template "posthog.fullname" . }}-plugins
   minReplicas: {{ .Values.plugins.hpa.minpods }}
   maxReplicas: {{ .Values.plugins.hpa.maxpods }}
-  targetCPUUtilizationPercentage: {{ .Values.plugins.hpa.cputhreshold }}
+  metrics:
+  {{- with .Values.plugins.hpa.cputhreshold }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ . }}
+  {{- end }}
   behavior: 
     {{ toYaml .Values.plugins.hpa.behavior | nindent 4 }}
 {{- end }}
