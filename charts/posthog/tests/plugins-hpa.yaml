@@ -47,12 +47,29 @@ tests:
       - isKind:
           of: HorizontalPodAutoscaler
 
-  - it: uses the `autoscaling` settings if set
+  - it: sets hpa spec
     set:
       plugins.enabled: true
-      plugins.autoscaling:
-        minReplicas: 1
-        maxReplicas: 5
-        behavior:
-          scaleDown:
-            stabilizationWindowSeconds: 3600
+      plugins:
+        hpa:
+          enabled: true
+          minpods: 2
+          maxpods: 10
+          cputhreshold: 70
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 3600
+    asserts:
+      - equal:
+          path: spec
+          value:
+            scaleTargetRef:
+              apiVersion: apps/v1
+              kind: Deployment
+              name: RELEASE-NAME-posthog-plugins
+            minReplicas: 2
+            maxReplicas: 10
+            targetCPUUtilizationPercentage: 70
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 3600

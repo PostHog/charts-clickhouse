@@ -48,13 +48,6 @@ events:
   # -- Count of events pods to run. This setting is ignored if `events.hpa.enabled` is set to `true`.
   replicacount: 1
 
-  # -- HPA spec to be used for autoscaling the events pods. See
-  # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-  # for configuration options
-  autoscaling:
-
-  # -- Deprecated: settings to be used for hpa. Use `autoscaling` instead, which
-  # does not try to abstract the HPA interface.
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the events stack.
     enabled: false
@@ -64,6 +57,10 @@ events:
     minpods: 1
     # -- Max pods for the events stack HorizontalPodAutoscaler.
     maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
 
   # -- Container security context for the events stack HorizontalPodAutoscaler.
   securityContext:
@@ -79,13 +76,6 @@ web:
   # -- Count of web pods to run. This setting is ignored if `web.hpa.enabled` is set to `true`.
   replicacount: 1
 
-  # -- HPA spec to be used for autoscaling the web pods. See
-  # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-  # for configuration options
-  autoscaling:
-
-  # -- Deprecated: settings to be used for hpa. Use `autoscaling` instead, which
-  # does not try to abstract the HPA interface.
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the web stack.
     enabled: false
@@ -95,6 +85,10 @@ web:
     minpods: 1
     # -- Max pods for the web stack HorizontalPodAutoscaler.
     maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
 
   # -- Resource limits for web service.
   resources:
@@ -162,13 +156,6 @@ worker:
   # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1
 
-  # -- HPA spec to be used for autoscaling the worker pods. See
-  # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-  # for configuration options
-  autoscaling:
-
-  # -- Deprecated: settings to be used for hpa. Use `autoscaling` instead, which
-  # does not try to abstract the HPA interface.
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the worker stack.
     enabled: false
@@ -178,6 +165,10 @@ worker:
     minpods: 1
     # -- Max pods for the worker stack HorizontalPodAutoscaler.
     maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
 
   # -- Additional env variables to inject into the worker stack deployment.
   env: []
@@ -209,13 +200,6 @@ plugins:
   # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.
   replicacount: 1
 
-  # -- HPA spec to be used for autoscaling the plugin pods. See
-  # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-  # for configuration options
-  autoscaling:
-
-  # -- Deprecated: settings to be used for hpa. Use `autoscaling` instead, which
-  # does not try to abstract the HPA interface.
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
     enabled: false
@@ -225,6 +209,10 @@ plugins:
     minpods: 1
     # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
     maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
 
   # -- Additional env variables to inject into the plugin-server stack deployment.
   env: []
