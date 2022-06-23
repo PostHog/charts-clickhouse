@@ -1,8 +1,8 @@
 cloud: k3s
 
 image:
-  # :TODO: verify this makes sense to update
-  sha: latest
+  # :TODO: update this sha to an appropriate one
+  sha: "sha256:daf43a4a4cd06658e41273bb8fe4a74f17b295d67c6f1e16c17243b5d09af7ee"
 
 pluginsAsync:
   enabled: true

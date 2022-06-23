@@ -8,7 +8,8 @@ image:
   # -- PostHog image repository to use.
   repository: posthog/posthog
   # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
-  sha:
+  sha: "sha256:daf43a4a4cd06658e41273bb8fe4a74f17b295d67c6f1e16c17243b5d09af7ee"
+
   # -- PostHog image tag to use (example: `release-1.35.0`).
   tag:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
