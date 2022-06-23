@@ -1,8 +1,8 @@
 cloud: k3s
 
 image:
-  # :TODO: Remove this once 1.37.0 is out
-  sha: "sha256:c16d6dbd0c2bb13a22cc48114092c9741ee51c5318517c15ef5b12428b5f5c31"
+  # :TODO: verify this makes sense to update
+  sha: "sha256:daf43a4a4cd06658e41273bb8fe4a74f17b295d67c6f1e16c17243b5d09af7ee"
 
 pluginsAsync:
   enabled: true
