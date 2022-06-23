@@ -35,7 +35,7 @@ tests:
       - hasDocuments:
           count: 1
       - isAPIVersion:
-          of: autoscaling/v1
+          of: autoscaling/v2beta2
 
   - it: should be the correct kind
     set:
