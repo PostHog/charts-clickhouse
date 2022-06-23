@@ -4,6 +4,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "posthog.fullname" . }}-web
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations:
+    autoscaling.alpha.kubernetes.io/behavior: {{ toJson .Values.web.hpa.behavior | quote }}
 spec:
   scaleTargetRef:
     kind: Deployment
@@ -12,6 +14,4 @@ spec:
   minReplicas: {{ .Values.web.hpa.minpods }}
   maxReplicas: {{ .Values.web.hpa.maxpods }}
   targetCPUUtilizationPercentage: {{ .Values.web.hpa.cputhreshold }}
-  behavior: 
-    {{ toYaml .Values.web.hpa.behavior | nindent 4 }}
 {{- end }}
