@@ -12,4 +12,6 @@ spec:
   minReplicas: {{ .Values.web.hpa.minpods }}
   maxReplicas: {{ .Values.web.hpa.maxpods }}
   targetCPUUtilizationPercentage: {{ .Values.web.hpa.cputhreshold }}
+  behavior: 
+    {{ toYaml .Values.web.hpa.behavior | nindent 4 }}
 {{- end }}

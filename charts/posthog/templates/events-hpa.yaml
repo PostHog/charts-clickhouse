@@ -12,4 +12,6 @@ spec:
   minReplicas: {{ .Values.events.hpa.minpods }}
   maxReplicas: {{ .Values.events.hpa.maxpods }}
   targetCPUUtilizationPercentage: {{ .Values.events.hpa.cputhreshold }}
+  behavior: 
+    {{ toYaml .Values.events.hpa.behavior | nindent 4 }}
 {{- end }}
