@@ -278,6 +278,10 @@ pluginsAsync:
     minpods: 1
     # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
     maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
 
   # -- Additional env variables to inject into the plugin-server stack deployment.
   env: []
