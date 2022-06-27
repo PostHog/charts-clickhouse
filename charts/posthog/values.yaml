@@ -12,7 +12,7 @@ image:
   # -- PostHog image tag to use (example: `release-1.35.0`).
   tag:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
-  default: ":release-1.37.0-unstable" # TODO - remove unstable before merging!
+  default: ":release-1.37.0"
   # -- PostHog image pull policy.
   pullPolicy: IfNotPresent
 
