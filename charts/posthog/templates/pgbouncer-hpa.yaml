@@ -1,5 +1,5 @@
 {{- if and .Values.pgbouncer.enabled .Values.pgbouncer.hpa.enabled -}}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "posthog.fullname" . }}-pgbouncer
@@ -11,5 +11,13 @@ spec:
     name: {{ template "posthog.fullname" . }}-pgbouncer
   minReplicas: {{ .Values.pgbouncer.hpa.minpods }}
   maxReplicas: {{ .Values.pgbouncer.hpa.maxpods }}
-  targetCPUUtilizationPercentage: {{ .Values.pgbouncer.hpa.cputhreshold }}
+  metrics:
+  {{- with .Values.pgbouncer.hpa.cputhreshold }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ . }}
+  {{- end }}
 {{- end }}

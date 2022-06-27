@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 23.1.0](https://img.shields.io/badge/Version-23.1.0-informational?style=flat-square) ![AppVersion: 1.37.0](https://img.shields.io/badge/AppVersion-1.37.0-informational?style=flat-square)
+![Version: 23.2.0](https://img.shields.io/badge/Version-23.2.0-informational?style=flat-square) ![AppVersion: 1.37.0](https://img.shields.io/badge/AppVersion-1.37.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -28,6 +28,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | events.hpa.cputhreshold | int | `60` | CPU threshold percent for the events stack HorizontalPodAutoscaler. |
 | events.hpa.minpods | int | `1` | Min pods for the events stack HorizontalPodAutoscaler. |
 | events.hpa.maxpods | int | `10` | Max pods for the events stack HorizontalPodAutoscaler. |
+| events.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
 | events.securityContext | object | `{"enabled":false}` | Container security context for the events stack HorizontalPodAutoscaler. |
 | events.podSecurityContext | object | `{"enabled":false}` | Pod security context for the events stack HorizontalPodAutoscaler. |
 | web.enabled | bool | `true` | Whether to install the PostHog web stack or not. |
@@ -36,6 +37,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.hpa.cputhreshold | int | `60` | CPU threshold percent for the web stack HorizontalPodAutoscaler. |
 | web.hpa.minpods | int | `1` | Min pods for the web stack HorizontalPodAutoscaler. |
 | web.hpa.maxpods | int | `10` | Max pods for the web stack HorizontalPodAutoscaler. |
+| web.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
 | web.resources | object | `{}` | Resource limits for web service. |
 | web.env | list | `[{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_KEY","value":null},{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET","value":null},{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS","value":"posthog.com"}]` | Additional env variables to inject into the web stack deployment. |
 | web.env[0] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_KEY","value":null}` | Set google oauth 2 key. Requires posthog ee license. |
@@ -64,6 +66,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.hpa.cputhreshold | int | `60` | CPU threshold percent for the worker stack HorizontalPodAutoscaler. |
 | worker.hpa.minpods | int | `1` | Min pods for the worker stack HorizontalPodAutoscaler. |
 | worker.hpa.maxpods | int | `10` | Max pods for the worker stack HorizontalPodAutoscaler. |
+| worker.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
 | worker.env | list | `[]` | Additional env variables to inject into the worker stack deployment. |
 | worker.resources | object | `{}` | Resource limits for the worker stack deployment. |
 | worker.nodeSelector | object | `{}` | Node labels for the worker stack deployment. |
@@ -77,6 +80,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | plugins.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
 | plugins.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
 | plugins.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| plugins.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
 | plugins.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
 | plugins.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
 | plugins.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |

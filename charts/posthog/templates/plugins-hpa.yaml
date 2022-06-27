@@ -1,5 +1,5 @@
 {{- if and .Values.plugins.enabled .Values.plugins.hpa.enabled -}}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "posthog.fullname" . }}-plugins
@@ -11,5 +11,15 @@ spec:
     name: {{ template "posthog.fullname" . }}-plugins
   minReplicas: {{ .Values.plugins.hpa.minpods }}
   maxReplicas: {{ .Values.plugins.hpa.maxpods }}
-  targetCPUUtilizationPercentage: {{ .Values.plugins.hpa.cputhreshold }}
+  metrics:
+  {{- with .Values.plugins.hpa.cputhreshold }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ . }}
+  {{- end }}
+  behavior: 
+    {{ toYaml .Values.plugins.hpa.behavior | nindent 4 }}
 {{- end }}
