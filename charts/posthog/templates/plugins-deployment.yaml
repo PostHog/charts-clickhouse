@@ -86,19 +86,9 @@ spec:
         # statsd env variables
         {{- include "snippet.statsd-env" . | nindent 8 }}
 
-        - name: SITE_URL
-          value: {{ template "posthog.site.url" . }}
-        - name: SENTRY_DSN
-          value: {{ .Values.sentryDSN | quote }}
-        - name: DEPLOYMENT
-          value: {{ template "posthog.deploymentEnv" . }}
         {{- include "snippet.posthog-env" . | indent 8 }}
         {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
-        - name: CAPTURE_INTERNAL_METRICS
-          value: {{ .Values.web.internalMetrics.capture| quote }}
-        - name: HELM_INSTALL_INFO
-          value: {{ template "posthog.helmInstallInfo" . }}
         {{- if .Values.env }}
         {{- toYaml .Values.env | nindent 8 }}
         {{- end }}

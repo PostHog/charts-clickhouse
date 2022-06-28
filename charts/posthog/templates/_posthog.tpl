@@ -14,4 +14,14 @@
     secretKeyRef:
       name: {{ template "posthog.posthogSecretKey.existingSecret" . }}
       key: {{ .Values.posthogSecretKey.existingSecretKey }}
+- name: SITE_URL
+  value: {{ template "posthog.site.url" . }}
+- name: SENTRY_DSN
+  value: {{ .Values.sentryDSN | quote }}
+- name: DEPLOYMENT
+  value: {{ template "posthog.deploymentEnv" . }}
+- name: CAPTURE_INTERNAL_METRICS
+  value: {{ .Values.web.internalMetrics.capture| quote }}
+- name: HELM_INSTALL_INFO
+  value: {{ template "posthog.helmInstallInfo" . }}
 {{- end }}
