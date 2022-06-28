@@ -1,0 +1,81 @@
+suite: PostHog plugins async HPA definition
+templates:
+  - templates/plugins-async-hpa.yaml
+
+tests:
+  - it: should be empty if pluginsAsync.enabled and pluginsAsync.hpa.enabled are set to false
+    set:
+      pluginsAsync.enabled: false
+      pluginsAsync.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if pluginsAsync.enabled is true and pluginsAsync.hpa.enabled is set to false
+    set:
+      pluginsAsync.enabled: true
+      pluginsAsync.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be not empty if pluginsAsync.enabled and pluginsAsync.hpa.enabled are set to true
+    set:
+      pluginsAsync.enabled: true
+      pluginsAsync.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should have the correct apiVersion
+    set:
+      pluginsAsync.enabled: true
+      pluginsAsync.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: autoscaling/v2beta2
+
+  - it: should be the correct kind
+    set:
+      pluginsAsync.enabled: true
+      pluginsAsync.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HorizontalPodAutoscaler
+
+  - it: sets hpa spec
+    set:
+      pluginsAsync.enabled: true
+      pluginsAsync:
+        hpa:
+          enabled: true
+          minpods: 2
+          maxpods: 10
+          cputhreshold: 70
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 3600
+    asserts:
+      - equal:
+          path: spec
+          value:
+            scaleTargetRef:
+              apiVersion: apps/v1
+              kind: Deployment
+              name: RELEASE-NAME-posthog-plugins-async
+            minReplicas: 2
+            maxReplicas: 10
+            metrics:
+            - type: Resource
+              resource:
+                name: cpu
+                target:
+                  type: Utilization
+                  averageUtilization: 70
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 3600
