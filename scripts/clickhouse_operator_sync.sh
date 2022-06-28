@@ -26,7 +26,7 @@ URL="https://raw.githubusercontent.com/Altinity/clickhouse-operator/${CLICKHOUSE
 #
 # see: https://github.com/Altinity/clickhouse-operator/blob/master/docs/quick_start.md#in-case-you-can-not-run-scripts-from-internet-in-your-protected-environment
 #
-OPERATOR_NAMESPACE="${OPERATOR_NAMESPACE:-test-clickhouse-operator}"
+OPERATOR_NAMESPACE="'{{ .Values.clickhouse.namespace | default .Release.Namespace }}'"
 METRICS_EXPORTER_NAMESPACE="${OPERATOR_NAMESPACE}"
 # NOTE: we pin to 0.19.0 here which is different to the 0.16.1 manifest version.
 # Prior to pinning we were specifying latest, so to ensure that the version
@@ -68,9 +68,4 @@ do
     perl -pi -e 'print "{{- if .Values.clickhouse.enabled }}\n" if $. == 1' "$f"
 
     echo "{{- end }}" >> "$f"
-
-    perl -pi -e 's/#namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
-
-    perl -pi -e 's/namespace: posthog$/namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
-
 done
