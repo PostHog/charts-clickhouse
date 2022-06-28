@@ -120,28 +120,29 @@ web:
   secureCookies: true
 
   livenessProbe:
-    # -- The liveness probe failure threshold
-    failureThreshold: 5
     # -- The liveness probe initial delay seconds
-    initialDelaySeconds: 50
+    initialDelaySeconds: 30
     # -- The liveness probe period seconds
     periodSeconds: 10
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 5
+    # -- The liveness probe failure threshold
+    failureThreshold: 6
     # -- The liveness probe success threshold
     successThreshold: 1
-    # -- The liveness probe timeout seconds
-    timeoutSeconds: 2
 
   readinessProbe:
-    # -- The readiness probe failure threshold
-    failureThreshold: 10
     # -- The readiness probe initial delay seconds
-    initialDelaySeconds: 50
+    initialDelaySeconds: 5
     # -- The readiness probe period seconds
-    periodSeconds: 10
+    periodSeconds: 5
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 3
+    # -- The readiness probe failure threshold
+    failureThreshold: 6
     # -- The readiness probe success threshold
     successThreshold: 1
-    # -- The readiness probe timeout seconds
-    timeoutSeconds: 2
+
   # -- Container security context for web stack deployment.
   securityContext:
     enabled: false
@@ -236,28 +237,28 @@ plugins:
     enabled: false
 
   livenessProbe:
-    # -- The liveness probe failure threshold
-    failureThreshold: 3
     # -- The liveness probe initial delay seconds
-    initialDelaySeconds: 10
+    initialDelaySeconds: 30
     # -- The liveness probe period seconds
     periodSeconds: 10
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 5
+    # -- The liveness probe failure threshold
+    failureThreshold: 6
     # -- The liveness probe success threshold
     successThreshold: 1
-    # -- The liveness probe timeout seconds
-    timeoutSeconds: 2
 
   readinessProbe:
-    # -- The readiness probe failure threshold
-    failureThreshold: 3
     # -- The readiness probe initial delay seconds
-    initialDelaySeconds: 50
+    initialDelaySeconds: 5
     # -- The readiness probe period seconds
-    periodSeconds: 30
+    periodSeconds: 5
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 3
+    # -- The readiness probe failure threshold
+    failureThreshold: 6
     # -- The readiness probe success threshold
     successThreshold: 1
-    # -- The readiness probe timeout seconds
-    timeoutSeconds: 5
 
 
 pluginsAsync:
@@ -305,29 +306,28 @@ pluginsAsync:
     enabled: false
 
   livenessProbe:
-    # -- The liveness probe failure threshold
-    failureThreshold: 3
     # -- The liveness probe initial delay seconds
-    initialDelaySeconds: 10
+    initialDelaySeconds: 30
     # -- The liveness probe period seconds
     periodSeconds: 10
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 5
+    # -- The liveness probe failure threshold
+    failureThreshold: 6
     # -- The liveness probe success threshold
     successThreshold: 1
-    # -- The liveness probe timeout seconds
-    timeoutSeconds: 2
 
   readinessProbe:
-    # -- The readiness probe failure threshold
-    failureThreshold: 3
     # -- The readiness probe initial delay seconds
-    initialDelaySeconds: 50
+    initialDelaySeconds: 5
     # -- The readiness probe period seconds
-    periodSeconds: 30
+    periodSeconds: 5
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 3
+    # -- The readiness probe failure threshold
+    failureThreshold: 6
     # -- The readiness probe success threshold
     successThreshold: 1
-    # -- The readiness probe timeout seconds
-    timeoutSeconds: 5
-
 
 
 email:
