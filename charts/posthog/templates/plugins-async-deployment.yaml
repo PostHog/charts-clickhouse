@@ -84,10 +84,6 @@ spec:
         # statsd env variables
         {{- include "snippet.statsd-env" . | nindent 8 }}
 
-        - name: SENTRY_DSN
-          value: {{ .Values.sentryDSN | quote }}
-        - name: DEPLOYMENT
-          value: {{ template "posthog.deploymentEnv" . }}
         {{- include "snippet.posthog-env" . | indent 8 }}
         {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
