@@ -76,12 +76,6 @@ spec:
         # statsd env variables
         {{- include "snippet.statsd-env" . | indent 8 }}
 
-        - name: SITE_URL
-          value: {{ template "posthog.site.url" . }}
-        - name: DEPLOYMENT
-          value: {{ template "posthog.deploymentEnv" . }}
-        - name: SENTRY_DSN
-          value: {{ .Values.sentryDSN | quote }}
         - name: DISABLE_SECURE_SSL_REDIRECT
           value: '1'
         - name: IS_BEHIND_PROXY

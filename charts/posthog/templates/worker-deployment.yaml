@@ -80,12 +80,6 @@ spec:
         # statsd env variables
         {{- include "snippet.statsd-env" . | indent 8 }}
 
-        - name: SITE_URL
-          value: {{ template "posthog.site.url" . }}
-        - name: DEPLOYMENT
-          value: {{ template "posthog.deploymentEnv" . }}
-        - name: SENTRY_DSN
-          value: {{ .Values.sentryDSN | quote }}
         - name: PRIMARY_DB
           value: clickhouse
         {{- include "snippet.posthog-env" . | indent 8 }}
