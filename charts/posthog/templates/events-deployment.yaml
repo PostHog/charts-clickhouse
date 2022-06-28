@@ -128,7 +128,11 @@ spec:
           successThreshold: {{ .Values.web.readinessProbe.successThreshold }}
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
         resources:
+        {{ if not .Values.events.resources }}
 {{ toYaml .Values.web.resources | indent 12 }}
+        {{ else }}
+{{ toYaml .Values.events.resources | indent 12 }}
+        {{ end }}
         {{- if .Values.events.securityContext.enabled }}
         securityContext: {{- omit .Values.events.securityContext "enabled" | toYaml | nindent 12 }}
         {{- end }}
