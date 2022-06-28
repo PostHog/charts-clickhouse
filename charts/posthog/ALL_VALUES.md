@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 23.3.0](https://img.shields.io/badge/Version-23.3.0-informational?style=flat-square) ![AppVersion: 1.37.0](https://img.shields.io/badge/AppVersion-1.37.0-informational?style=flat-square)
+![Version: 23.4.0](https://img.shields.io/badge/Version-23.4.0-informational?style=flat-square) ![AppVersion: 1.37.0](https://img.shields.io/badge/AppVersion-1.37.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -104,6 +104,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsAsync.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsAsync.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsAsync.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsAsync.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
 | pluginsAsync.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
 | pluginsAsync.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
 | pluginsAsync.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
