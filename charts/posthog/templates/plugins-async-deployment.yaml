@@ -87,10 +87,6 @@ spec:
         {{- include "snippet.posthog-env" . | indent 8 }}
         {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
-        - name: CAPTURE_INTERNAL_METRICS
-          value: {{ .Values.web.internalMetrics.capture| quote }}
-        - name: HELM_INSTALL_INFO
-          value: {{ template "posthog.helmInstallInfo" . }}
         {{- if .Values.env }}
         {{- toYaml .Values.env | nindent 8 }}
         {{- end }}
