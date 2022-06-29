@@ -418,3 +418,13 @@ tests:
                 port: 2181
               - host: host3
                 port: 2181
+  - it: tests creation of backup user
+    set:
+      clickhouse.backup.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: ClickHouseInstallation
+      - isNotNull:
+          path: spec.configuration.users.[backup/networks/ip]

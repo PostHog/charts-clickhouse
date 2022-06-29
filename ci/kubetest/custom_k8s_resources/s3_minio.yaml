@@ -1,0 +1,44 @@
+---
+apiVersion: "apps/v1"
+kind: Deployment
+metadata:
+  name: s3-backup-minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: s3-backup-minio
+  template:
+    metadata:
+      labels:
+        app: s3-backup-minio
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:latest
+          env:
+            - name: MINIO_ACCESS_KEY
+              value: backup-access-key
+            - name: MINIO_SECRET_KEY
+              value: backup-secret-key
+          command:
+            - sh
+            - -xc
+            - mkdir -p doc_gen_minio/export/clickhouse && minio server doc_gen_minio/export
+          ports:
+              - name: minio
+                containerPort: 9000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: s3-backup-minio
+spec:
+  type: ClusterIP
+  selector:
+    app: s3-backup-minio
+  ports:
+    - name: s3
+      port: 9000
+      protocol: TCP
+      targetPort: minio

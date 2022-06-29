@@ -745,7 +745,11 @@ clickhouse:
   #       port: 2181
   #     - host: host3
   #       port: 2181
-
+  # -- URL for zookeeper.
+  # servers:
+  # - host: posthog-posthog-zookeeper
+  #   port: 2181
+  
   image:
     # -- ClickHouse image repository.
     repository: clickhouse/clickhouse-server
@@ -846,6 +850,44 @@ clickhouse:
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9363"
+  
+  client:
+    image:
+    # -- Clickhouse client image repository.
+      repository: yandex/clickhouse-client
+      # -- ClickHouse backup image tag.
+      tag: "21.3.20.1"
+
+  backup:
+    # https://posthog.com/docs/self-host/runbook/clickhouse/backup
+    # https://github.com/AlexAkulov/clickhouse-backup
+    enabled: false
+    image:
+      # -- Clickhouse backup image repository.
+      repository: altinity/clickhouse-backup
+      # -- ClickHouse backup image tag.
+      tag: "1.4.0"
+    backup_user: backup
+    # password in plain text because it's using in cronjob
+    backup_password: backup_password
+    backup_schedule: "0 0 * * *" #backup every day at 0:00
+    clickhouse_services: "chi-posthog-posthog-0-0" # use first replica in each shard, use `kubectl get svc | grep chi-posthog-posthog`
+    
+    # All options: https://github.com/AlexAkulov/clickhouse-backup#default-config
+    env: 
+      - name: LOG_LEVEL
+        value: "debug"
+      - name: ALLOW_EMPTY_BACKUPS
+        value: "true"
+      - name: API_LISTEN
+        value: "0.0.0.0:7171"
+      # INSERT INTO system.backup_actions to execute backup
+      - name: API_CREATE_INTEGRATION_TABLES
+        value: "true"
+      - name: BACKUPS_TO_KEEP_REMOTE
+        value: "0"
+      # Add settings for remote backup storage.
+
 
 ## External clickhouse configuration
 ##

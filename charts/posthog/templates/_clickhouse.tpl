@@ -95,3 +95,17 @@ Return the ClickHouse image
 {{- define "posthog.clickhouse.image" -}}
 "{{ .Values.clickhouse.image.repository }}:{{ .Values.clickhouse.image.tag }}"
 {{- end -}}
+
+{{/*
+Return the ClickHouse backup image
+*/}}
+{{- define "posthog_backup.clickhouse.image" -}}
+"{{ .Values.clickhouse.backup.image.repository }}:{{ .Values.clickhouse.backup.image.tag }}"
+{{- end -}}
+
+{{/*
+Return the ClickHouse client image
+*/}}
+{{- define "client.clickhouse.image" -}}
+"{{ .Values.clickhouse.client.image.repository }}:{{ .Values.clickhouse.client.image.tag }}"
+{{- end -}}

@@ -13,7 +13,10 @@ spec:
         {{- end }}
       {{ .Values.clickhouse.user }}/profile: default
       {{ .Values.clickhouse.user }}/quota: default
-
+      {{- if .Values.clickhouse.backup.enabled }}
+      {{ .Values.clickhouse.backup.backup_user }}/networks/ip: "0.0.0.0/0"
+      {{ .Values.clickhouse.backup.backup_user }}/password: {{ .Values.clickhouse.backup.backup_password }}
+      {{- end}}
     profiles:
       {{- merge dict .Values.clickhouse.profiles .Values.clickhouse.defaultProfiles | toYaml | nindent 6 }}
 
@@ -105,7 +108,6 @@ spec:
                   containerPort: 9000
                 - name: interserver
                   containerPort: 9009
-
               {{- if .Values.clickhouse.persistence.enabled }}
               volumeMounts:
               {{- if .Values.clickhouse.persistence.existingClaim }}
@@ -119,6 +121,22 @@ spec:
               {{- if .Values.clickhouse.resources }}
               resources: {{ toYaml .Values.clickhouse.resources | nindent 16 }}
               {{- end }}
+            {{- if .Values.clickhouse.backup.enabled }}
+            - name: clickhouse-backup
+              image: {{ template "posthog_backup.clickhouse.image" . }}
+              imagePullPolicy: Always
+              command:
+                - /bin/bash
+                - -c
+                - /bin/clickhouse-backup server
+              {{- with .Values.clickhouse.backup.env }}
+              env:
+                {{- toYaml . | nindent 16 }}
+              {{- end}}
+              ports:
+                - name: backup-rest
+                  containerPort: 7171
+            {{- end }}
 
     serviceTemplates:
       - name: service-template
