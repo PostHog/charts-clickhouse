@@ -39,7 +39,11 @@ spec:
           - |
             set -e
             python manage.py notify_helm_install || true
-            ./bin/migrate
+            python manage.py migrate &
+            python manage.py migrate_clickhouse &
+            wait
+            python manage.py run_async_migrations --check
+            python manage.py sync_replicated_schema
 
         env:
         # Kafka env variables

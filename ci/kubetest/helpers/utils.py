@@ -130,7 +130,7 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None):
         for pod in pods.values():
             assert pod.get_restart_count() == 0, f"Detected restart in pod {pod.obj.metadata.name}"
 
-        if all(pod.is_ready() for pod in pods.values()):
+        if all(pod.is_ready() for pod in pods.values() if "job-name" not in pod.obj.metadata.labels):
             break
 
         time.sleep(5)
