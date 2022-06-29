@@ -7,7 +7,6 @@ HELM_INSTALL_CMD = """
 helm upgrade \
     --install \
     -f ../../ci/values/kubetest/test_clickhouse_service_loadbalancer.yaml \
-    --timeout 30m \
     --create-namespace \
     --namespace posthog \
     posthog ../../charts/posthog

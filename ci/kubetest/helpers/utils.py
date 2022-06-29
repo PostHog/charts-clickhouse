@@ -99,12 +99,12 @@ def install_chart(values, namespace=NAMESPACE):
                 --install \
                 -f {values_file.name} \
                 --set cloud=local \
-                --timeout 30m \
                 --create-namespace \
                 --namespace {namespace} \
                 posthog ../../charts/posthog
         """
         )
+
     log.debug("✅ Done!")
 
 

@@ -17,7 +17,6 @@ log = logging.getLogger()
 HELM_INSTALL_CMD = """
 helm upgrade \
     --install \
-    --timeout 30m \
     -f ../../ci/values/kubetest/test_redis_external_with_existing_secret.yaml \
     --create-namespace \
     --namespace posthog \
