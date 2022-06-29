@@ -62,7 +62,7 @@ VALUES_WITH_BACKUP = merge_yaml(
         - name: S3_DEBUG
           value: "true"
     """,
-    )
+)
 
 
 def test_backup(kube):
