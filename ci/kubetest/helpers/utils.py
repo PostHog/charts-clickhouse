@@ -102,9 +102,7 @@ def install_chart(values, namespace=NAMESPACE):
                 --timeout 30m \
                 --create-namespace \
                 --namespace {namespace} \
-                posthog ../../charts/posthog \
-                --wait-for-jobs \
-                --wait
+                posthog ../../charts/posthog
         """
         )
     log.debug("✅ Done!")
@@ -118,9 +116,9 @@ def kubectl_exec(pod, command):
     return output
 
 
-def wait_for_pods_to_be_ready(kube, labels={}, expected_count=None):
+def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None):
     log.debug("🔄 Waiting for all pods to be ready...")
-    time.sleep(30)
+    labels = labels or {"app": "posthog"}
     start = time.time()
     timeout = 300
     while time.time() < start + timeout:
@@ -130,9 +128,12 @@ def wait_for_pods_to_be_ready(kube, labels={}, expected_count=None):
             continue
 
         for pod in pods.values():
-            if not pod.is_ready():
-                continue
-        break
+            assert pod.get_restart_count() == 0, f"Detected restart in pod {pod.obj.metadata.name}"
+
+        if all(pod.is_ready() for pod in pods.values()):
+            break
+
+        time.sleep(5)
     else:
         pytest.fail("❌ Timeout raised while waiting for pods to be ready")
     log.debug("✅ Done!")
@@ -190,6 +191,7 @@ def exec_subprocess(cmd, ignore_errors=False):
     assert cmd_stdout is not None
     for chunk in iter(lambda: cmd_stdout.read(1), b""):
         sys.stdout.buffer.write(chunk)
+        sys.stdout.buffer.flush()
         stdout_cumulative += chunk
     cmd_run.wait()  # Make sure we have a return code
     cmd_return_code = cmd_run.returncode
