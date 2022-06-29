@@ -1,15 +1,17 @@
 import logging
-import pytest
 import time
 from typing import Optional
 
+import pytest
+
 from helpers.clickhouse import get_clickhouse_cluster_service_spec
-from helpers.utils import cleanup_k8s, cleanup_helm, helm_install, wait_for_pods_to_be_ready, install_chart
 from helpers.utils import (
     NAMESPACE,
     cleanup_helm,
     cleanup_k8s,
+    create_namespace_if_not_exists,
     exec_subprocess,
+    helm_install,
     install_chart,
     install_custom_resources,
     merge_yaml,
@@ -60,6 +62,7 @@ clickhouse:
 
 
 def test_backup(kube):
+    create_namespace_if_not_exists(),
     install_custom_resources("./custom_k8s_resources/s3_minio.yaml")
     install_chart(VALUES_WITH_BACKUP)
     wait_for_pods_to_be_ready(kube)
@@ -71,22 +74,23 @@ def verify_backup(kube):
     start = time.time()
     timeout = 300
     while time.time() < start + timeout:
-      pods = kube.get_pods(namespace=NAMESPACE, labels={"job": "clickhouse-backup"})
-      if len(pods) > 0:
-        for pod in pods.values():
-          if pod.status().phase == "Running":
-            continue
+        pods = kube.get_pods(namespace=NAMESPACE, labels={"job": "clickhouse-backup"})
+        if len(pods) > 0:
+            for pod in pods.values():
+                if pod.status().phase == "Running":
+                    continue
+            else:
+                break
         else:
-          break
-      else:
-        time.sleep(30)
+            time.sleep(30)
     # check backup pod status
     for pod in pods.values():
-      if pod.status().phase == "Succeeded":
-        log.debug(f"✅ Backup was created successfully for pod {pod.name}!")
-        break
+        if pod.status().phase == "Succeeded":
+            log.debug(f"✅ Backup was created successfully for pod {pod.name}!")
+            break
     else:
-      pytest.fail("Backup is not succeeded for pod {pod.name}")
+        pytest.fail("Backup is not succeeded for pod {pod.name}")
+
 
 @pytest.fixture(autouse=True)
 def before_each_cleanup():
