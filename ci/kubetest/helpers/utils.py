@@ -118,7 +118,7 @@ def kubectl_exec(pod, command):
 
 def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None):
     log.debug("🔄 Waiting for all pods to be ready...")
-    labels = labels or {"app": "posthog"}
+    labels = labels or {}
     start = time.time()
     timeout = 600
     while time.time() < start + timeout:
@@ -128,7 +128,9 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None):
             continue
 
         for pod in pods.values():
-            assert pod.get_restart_count() == 0, f"Detected restart in pod {pod.obj.metadata.name}"
+            if pod.obj.metadata.labels.get('app') == "posthog":
+                # Only ever expect things we have control over to not restart
+                assert pod.get_restart_count() == 0, f"Detected restart in pod {pod.obj.metadata.name}"
 
         if all(pod.is_ready() for pod in pods.values() if "job-name" not in pod.obj.metadata.labels):
             break
