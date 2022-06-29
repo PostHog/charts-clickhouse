@@ -7,6 +7,7 @@ import pytest
 from helpers.clickhouse import get_clickhouse_cluster_service_spec
 from helpers.utils import (
     NAMESPACE,
+    VALUES_DISABLE_EVERYTHING,
     cleanup_helm,
     cleanup_k8s,
     create_namespace_if_not_exists,
@@ -21,44 +22,47 @@ from helpers.utils import (
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 
-VALUES_WITH_BACKUP = """
-clickhouse:
-  backup:
-    enabled: true
-    backup_schedule: "*/2 * * * *"
-    env:
-    - name: LOG_LEVEL
-      value: "debug"
-    - name: ALLOW_EMPTY_BACKUPS
-      value: "true"
-    - name: API_LISTEN
-      value: "0.0.0.0:7171"
-    # INSERT INTO system.backup_actions to execute backup
-    - name: API_CREATE_INTEGRATION_TABLES
-      value: "true"
-    - name: BACKUPS_TO_KEEP_REMOTE
-      value: "3"
-    - name: REMOTE_STORAGE
-      value: "s3"
-    - name: S3_ACL
-      value: "private"
-    - name: S3_ENDPOINT
-      value: http://s3-backup-minio:9000
-    - name: S3_BUCKET
-      value: clickhouse
-    - name: S3_PATH
-      value: backup
-    - name: S3_ACCESS_KEY
-      value: backup-access-key
-    - name: S3_SECRET_KEY
-      value: backup-secret-key
-    - name: S3_FORCE_PATH_STYLE
-      value: "true"
-    - name: S3_DISABLE_SSL
-      value: "true"
-    - name: S3_DEBUG
-      value: "true"
-"""
+VALUES_WITH_BACKUP = merge_yaml(
+    VALUES_DISABLE_EVERYTHING,
+    """
+    clickhouse:
+      backup:
+        enabled: true
+        backup_schedule: "*/2 * * * *"
+        env:
+        - name: LOG_LEVEL
+          value: "debug"
+        - name: ALLOW_EMPTY_BACKUPS
+          value: "true"
+        - name: API_LISTEN
+          value: "0.0.0.0:7171"
+        # INSERT INTO system.backup_actions to execute backup
+        - name: API_CREATE_INTEGRATION_TABLES
+          value: "true"
+        - name: BACKUPS_TO_KEEP_REMOTE
+          value: "3"
+        - name: REMOTE_STORAGE
+          value: "s3"
+        - name: S3_ACL
+          value: "private"
+        - name: S3_ENDPOINT
+          value: http://s3-backup-minio:9000
+        - name: S3_BUCKET
+          value: clickhouse
+        - name: S3_PATH
+          value: backup
+        - name: S3_ACCESS_KEY
+          value: backup-access-key
+        - name: S3_SECRET_KEY
+          value: backup-secret-key
+        - name: S3_FORCE_PATH_STYLE
+          value: "true"
+        - name: S3_DISABLE_SSL
+          value: "true"
+        - name: S3_DEBUG
+          value: "true"
+    """,
+    )
 
 
 def test_backup(kube):
