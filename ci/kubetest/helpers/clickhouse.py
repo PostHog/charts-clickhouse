@@ -6,7 +6,7 @@ def get_clickhouse_statefulset_spec(kube):
         namespace="posthog",
         labels={"clickhouse.altinity.com/namespace": "posthog"},
     )
-    statefulset = next(iter(statefulsets.values()))
+    statefulset = list(statefulsets.values())[0]
     return statefulset.obj.spec
 
 
@@ -18,7 +18,7 @@ def get_clickhouse_cluster_service_spec(kube):
             "clickhouse.altinity.com/Service": "cluster",
         },
     )
-    service = next(iter(services.values()))
+    service = list(services.values())[0]
     return service.obj.spec
 
 
@@ -33,12 +33,12 @@ def get_clickhouse_pods(kube):
 
 
 def get_clickhouse_pod_spec(kube):
-    pod = next(iter(get_clickhouse_pods(kube).values()))
+    pod = list(get_clickhouse_pods(kube).values())[0]
     return pod.obj.spec
 
 
 def run_query_on_clickhouse_nodes(kube, user, password, query):
-    pod = next(iter(get_clickhouse_pods(kube).values()))
+    pod = list(get_clickhouse_pods(kube).values())[0]
     response = pod.http_proxy_get(
         "/",
         {
