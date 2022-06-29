@@ -26,6 +26,7 @@ VALUES_WITH_BACKUP = merge_yaml(
     VALUES_DISABLE_EVERYTHING,
     """
     clickhouse:
+      enabled: true
       backup:
         enabled: true
         backup_schedule: "*/2 * * * *"
