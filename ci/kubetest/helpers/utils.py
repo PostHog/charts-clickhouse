@@ -128,7 +128,7 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None):
             continue
 
         for pod in pods.values():
-            if pod.obj.metadata.labels.get('app') == "posthog":
+            if pod.obj.metadata.labels.get("app") == "posthog":
                 # Only ever expect things we have control over to not restart
                 assert pod.get_restart_count() == 0, f"Detected restart in pod {pod.obj.metadata.name}"
 
