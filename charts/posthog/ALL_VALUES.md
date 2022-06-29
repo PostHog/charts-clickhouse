@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 23.5.0](https://img.shields.io/badge/Version-23.5.0-informational?style=flat-square) ![AppVersion: 1.37.0](https://img.shields.io/badge/AppVersion-1.37.0-informational?style=flat-square)
+![Version: 23.5.1](https://img.shields.io/badge/Version-23.5.1-informational?style=flat-square) ![AppVersion: 1.37.0](https://img.shields.io/badge/AppVersion-1.37.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -253,6 +253,25 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.settings | object | `{}` |  |
 | clickhouse.defaultSettings.format_schema_path | string | `"/etc/clickhouse-server/config.d/"` |  |
 | clickhouse.podAnnotations | string | `nil` |  |
+| clickhouse.client.image.repository | string | `"yandex/clickhouse-client"` | Clickhouse client image repository. |
+| clickhouse.client.image.tag | string | `"21.3.20.1"` | ClickHouse backup image tag. |
+| clickhouse.backup.enabled | bool | `false` |  |
+| clickhouse.backup.image.repository | string | `"altinity/clickhouse-backup"` | Clickhouse backup image repository. |
+| clickhouse.backup.image.tag | string | `"1.4.0"` | ClickHouse backup image tag. |
+| clickhouse.backup.backup_user | string | `"backup"` |  |
+| clickhouse.backup.backup_password | string | `"backup_password"` |  |
+| clickhouse.backup.backup_schedule | string | `"0 0 * * *"` |  |
+| clickhouse.backup.clickhouse_services | string | `"chi-posthog-posthog-0-0"` |  |
+| clickhouse.backup.env[0].name | string | `"LOG_LEVEL"` |  |
+| clickhouse.backup.env[0].value | string | `"debug"` |  |
+| clickhouse.backup.env[1].name | string | `"ALLOW_EMPTY_BACKUPS"` |  |
+| clickhouse.backup.env[1].value | string | `"true"` |  |
+| clickhouse.backup.env[2].name | string | `"API_LISTEN"` |  |
+| clickhouse.backup.env[2].value | string | `"0.0.0.0:7171"` |  |
+| clickhouse.backup.env[3].name | string | `"API_CREATE_INTEGRATION_TABLES"` |  |
+| clickhouse.backup.env[3].value | string | `"true"` |  |
+| clickhouse.backup.env[4].name | string | `"BACKUPS_TO_KEEP_REMOTE"` |  |
+| clickhouse.backup.env[4].value | string | `"0"` |  |
 | externalClickhouse.host | string | `nil` | Host of the external cluster. This is required when clickhouse.enabled is false |
 | externalClickhouse.cluster | string | `nil` | Name of the external cluster to run DDL queries on. This is required when clickhouse.enabled is false |
 | externalClickhouse.database | string | `"posthog"` | Database name for the external cluster |
