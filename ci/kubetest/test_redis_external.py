@@ -1,6 +1,7 @@
 import logging
 
 import pytest
+from helpers.kube import get_kube_client
 
 from helpers.utils import (
     cleanup_k8s,
@@ -21,19 +22,18 @@ helm upgrade \
     -f ../../ci/values/kubetest/test_redis_external.yaml \
     --create-namespace \
     --namespace posthog \
-    posthog ../../charts/posthog \
-    --wait-for-jobs \
-    --wait
+    posthog ../../charts/posthog
 """
 
 
 @pytest.fixture
 def setup(kube):
+    kube_client = get_kube_client()
     cleanup_k8s()
     create_namespace_if_not_exists()
     install_custom_resources("./custom_k8s_resources/redis_external.yaml")
     helm_install(HELM_INSTALL_CMD)
-    wait_for_pods_to_be_ready(kube)
+    wait_for_pods_to_be_ready(kube_client)
 
 
 def test_helm_install(setup, kube):

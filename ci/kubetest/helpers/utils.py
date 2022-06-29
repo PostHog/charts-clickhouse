@@ -3,9 +3,14 @@ import subprocess
 import sys
 import tempfile
 import time
+from typing import Optional
+from kubernetes import client
 
 import pytest
 import yaml
+
+from helpers.kube import get_pods, get_restart_count, is_ready
+
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
@@ -118,21 +123,23 @@ def kubectl_exec(pod, command):
     return output
 
 
-def wait_for_pods_to_be_ready(kube, labels={}, expected_count=None):
+def wait_for_pods_to_be_ready(
+    kube_client: client.CoreV1Api, label_selector: str = "app=posthog", expected_count: Optional[int] = None
+):
     log.debug("🔄 Waiting for all pods to be ready...")
-    time.sleep(30)
     start = time.time()
     timeout = 300
     while time.time() < start + timeout:
-        pods = kube.get_pods(namespace="posthog", labels=labels)
+        pods = get_pods(kube_client, namespace="posthog", label_selector=label_selector)
 
         if expected_count is not None and len(pods) < expected_count:
             continue
 
-        for pod in pods.values():
-            if not pod.is_ready():
-                continue
-        break
+        for pod in pods:
+            assert get_restart_count(pod) == 0, f"Restart detected in pod {pod.metadata.name}"
+
+        if all(is_ready(pod) for pod in pods):
+            break
     else:
         pytest.fail("❌ Timeout raised while waiting for pods to be ready")
     log.debug("✅ Done!")
@@ -190,6 +197,7 @@ def exec_subprocess(cmd, ignore_errors=False):
     assert cmd_stdout is not None
     for chunk in iter(lambda: cmd_stdout.read(1), b""):
         sys.stdout.buffer.write(chunk)
+        sys.stdout.buffer.flush()
         stdout_cumulative += chunk
     cmd_run.wait()  # Make sure we have a return code
     cmd_return_code = cmd_run.returncode
