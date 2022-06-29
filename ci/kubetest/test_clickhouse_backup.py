@@ -76,7 +76,7 @@ def test_backup(kube):
 def verify_backup(kube):
     log.debug("🔄 Waiting when job pod is started...")
     start = time.time()
-    timeout = 300
+    timeout = 5000
     while time.time() < start + timeout:
         pods = kube.get_pods(namespace=NAMESPACE, labels={"job": "clickhouse-backup"})
         if len(pods) > 0:
