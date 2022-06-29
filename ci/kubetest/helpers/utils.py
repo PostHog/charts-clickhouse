@@ -120,7 +120,7 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None):
     log.debug("🔄 Waiting for all pods to be ready...")
     labels = labels or {"app": "posthog"}
     start = time.time()
-    timeout = 300
+    timeout = 600
     while time.time() < start + timeout:
         pods = kube.get_pods(namespace="posthog", labels=labels)
 
