@@ -15,7 +15,6 @@ def helm_upgrade_posthog(namespace: str, release: str):
             --create-namespace \
             --namespace {namespace} \
             --debug \
-            --wait \
             {release} ../../charts/posthog
         """
     )
