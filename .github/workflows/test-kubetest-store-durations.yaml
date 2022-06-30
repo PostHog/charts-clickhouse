@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v3
         name: Checkout
 
-      - uses: jupyterhub/action-k3s-helm@v2
+      - uses: jupyterhub/action-k3s-helm@v3
         with:
           k3s-channel: v1.22
           metrics-enabled: false
