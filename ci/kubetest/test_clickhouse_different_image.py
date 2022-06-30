@@ -18,18 +18,12 @@ clickhouse:
 """
 
 
-@pytest.fixture
-def setup(kube):
+def test_clickhouse_pod_image(kube):
     cleanup_k8s()
     cleanup_helm()
     install_chart(VALUES_WITH_DIFFERENT_CLICKHOUSE_IMAGE)
     wait_for_pods_to_be_ready(kube)
 
-
-def test_posthog_healthy(setup, kube):
     is_posthog_healthy(kube)
-
-
-def test_clickhouse_pod_image(kube):
     pod_spec = get_clickhouse_pod_spec(kube)
     assert pod_spec.containers[0].image == "clickhouse/clickhouse-server:22.3.6.5-alpine"

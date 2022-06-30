@@ -6,6 +6,9 @@ from helpers.utils import apply_manifest, cleanup_k8s, create_namespace_if_not_e
 
 
 def test_can_use_external_object_storage_with_secret_specified():
+    cleanup_k8s()
+    create_namespace_if_not_exists()
+
     # MinIO credentials
     username = "some-user"
     password = "some-password"
@@ -54,8 +57,3 @@ def test_can_use_external_object_storage_with_secret_specified():
         """
     )
 
-
-@pytest.fixture(autouse=True)
-def before_each_cleanup():
-    cleanup_k8s()
-    create_namespace_if_not_exists()

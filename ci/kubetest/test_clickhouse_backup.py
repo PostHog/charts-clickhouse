@@ -61,7 +61,10 @@ clickhouse:
 
 
 def test_backup(kube):
-    create_namespace_if_not_exists(),
+    cleanup_k8s([NAMESPACE, "posthog"])
+    cleanup_helm([NAMESPACE, "posthog"])
+
+    create_namespace_if_not_exists()
     install_custom_resources("./custom_k8s_resources/s3_minio.yaml")
     install_chart(VALUES_WITH_BACKUP)
     wait_for_pods_to_be_ready(kube)
@@ -90,8 +93,3 @@ def verify_backup(kube):
     else:
         pytest.fail("Backup is not succeeded for pod {pod.name}")
 
-
-@pytest.fixture(autouse=True)
-def before_each_cleanup():
-    cleanup_k8s([NAMESPACE, "posthog"])
-    cleanup_helm([NAMESPACE, "posthog"])

@@ -85,17 +85,26 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET = merge_yaml(
 
 
 def test_can_connect_from_web_pod(kube):
+    cleanup_k8s([NAMESPACE, "clickhouse"])
+    cleanup_helm([NAMESPACE, "clickhouse"])
+
     install_chart(VALUES_ACCESS_CLICKHOUSE)
     wait_for_pods_to_be_ready(kube)
 
 
 def test_can_connect_external_clickhouse_via_password(kube):
+    cleanup_k8s([NAMESPACE, "clickhouse"])
+    cleanup_helm([NAMESPACE, "clickhouse"])
+
     setup_external_clickhouse()
     install_chart(VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD)
     wait_for_pods_to_be_ready(kube)
 
 
 def test_can_connect_external_clickhouse_via_secret(kube):
+    cleanup_k8s([NAMESPACE, "clickhouse"])
+    cleanup_helm([NAMESPACE, "clickhouse"])
+
     install_custom_resources("./custom_k8s_resources/clickhouse_external_secret.yaml")
     setup_external_clickhouse()
     install_chart(VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET)
@@ -106,8 +115,3 @@ def setup_external_clickhouse():
     # :TRICKY: We can't use a single docker image since posthog relies on clickhouse being installed in a cluster
     install_chart(VALUES_EXTERNAL_CLICKHOUSE, namespace="clickhouse")
 
-
-@pytest.fixture(autouse=True)
-def before_each_cleanup():
-    cleanup_k8s([NAMESPACE, "clickhouse"])
-    cleanup_helm([NAMESPACE, "clickhouse"])

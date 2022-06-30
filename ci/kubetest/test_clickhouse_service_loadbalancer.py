@@ -1,5 +1,3 @@
-import pytest
-
 from helpers.clickhouse import get_clickhouse_cluster_service_spec
 from helpers.utils import cleanup_k8s, helm_install, wait_for_pods_to_be_ready
 
@@ -13,7 +11,7 @@ helm upgrade \
 """
 
 
-def test_cluster_service(setup, kube):
+def test_cluster_service(kube):
     cleanup_k8s()
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
