@@ -68,6 +68,7 @@ jobs:
         run: |
           cd ci/kubetest && \
           python -m pytest . -s \
+            --maxfail=1 \
             --splits ${{ matrix.concurrency }} \
             --group ${{ matrix.group }} \
             --splitting-algorithm=least_duration
