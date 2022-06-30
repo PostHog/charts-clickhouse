@@ -24,24 +24,15 @@ helm upgrade \
 """
 
 
-@pytest.fixture
-def setup(kube):
+def test_redis_secret(kube):
     cleanup_k8s()
     create_namespace_if_not_exists()
     install_custom_resources("./custom_k8s_resources/redis_external_with_existing_secret.yaml")
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
 
-
-def test_helm_install(setup, kube):
-    pass
-
-
-def test_posthog_healthy(kube):
     is_posthog_healthy(kube)
 
-
-def test_redis_secret(kube):
     secrets = kube.get_secrets(namespace="posthog", fields={"type": "Opaque"})
 
     default_redis_secret_name = "posthog-posthog-redis-external"
