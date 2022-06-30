@@ -120,7 +120,7 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None):
     log.debug("🔄 Waiting for all pods to be ready...")
     labels = labels or {}
     start = time.time()
-    timeout = 600
+    timeout = 900
     while time.time() < start + timeout:
         pods = kube.get_pods(namespace="posthog", labels=labels)
 
@@ -132,7 +132,15 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None):
                 # Only ever expect things we have control over to not restart
                 assert pod.get_restart_count() == 0, f"Detected restart in pod {pod.obj.metadata.name}"
 
-        if all(pod.is_ready() for pod in pods.values() if "job-name" not in pod.obj.metadata.labels):
+        # Note we assume that if "job-name" is a label then it is a job pod.
+        non_job_pods = [pod for pod in pods.values() if "job-name" not in pod.obj.metadata.labels]
+        job_pods = [pod for pod in pods.values() if "job-name" in pod.obj.metadata.labels]
+
+        for job_pod in job_pods:
+            assert job_pod.status().phase != "Failed", f"Detected failed job {job_pod.obj.metadata.name}"
+
+        if len(pods) > 0 and all(pod.is_ready() for pod in non_job_pods):
+            # If all non-job pods are ready, we should be ready to proceed.
             break
 
         time.sleep(5)
