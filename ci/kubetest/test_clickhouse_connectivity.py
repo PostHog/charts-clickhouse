@@ -114,4 +114,3 @@ def test_can_connect_external_clickhouse_via_secret(kube):
 def setup_external_clickhouse():
     # :TRICKY: We can't use a single docker image since posthog relies on clickhouse being installed in a cluster
     install_chart(VALUES_EXTERNAL_CLICKHOUSE, namespace="clickhouse")
-

@@ -82,4 +82,3 @@ def test_can_connect_from_web_pod(values, resources_to_install, kube):
 
     install_chart(values)
     wait_for_pods_to_be_ready(kube)
-

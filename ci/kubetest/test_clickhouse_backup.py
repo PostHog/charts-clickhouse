@@ -92,4 +92,3 @@ def verify_backup(kube):
             break
     else:
         pytest.fail("Backup is not succeeded for pod {pod.name}")
-

@@ -56,4 +56,3 @@ def test_can_use_external_object_storage_with_secret_specified():
                 existingSecret: object-storage-config
         """
     )
-
