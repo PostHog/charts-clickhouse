@@ -4,7 +4,6 @@ from typing import Optional
 
 import pytest
 
-from helpers.clickhouse import get_clickhouse_cluster_service_spec
 from helpers.utils import (
     NAMESPACE,
     cleanup_helm,

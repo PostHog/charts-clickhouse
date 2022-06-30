@@ -22,7 +22,7 @@ clickhouse:
 """
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def setup(kube):
     cleanup_k8s()
     cleanup_helm()
@@ -30,7 +30,7 @@ def setup(kube):
     wait_for_pods_to_be_ready(kube)
 
 
-def test_posthog_healthy(kube):
+def test_posthog_healthy(setup, kube):
     is_posthog_healthy(kube)
 
 
