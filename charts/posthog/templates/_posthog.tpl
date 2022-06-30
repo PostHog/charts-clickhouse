@@ -16,8 +16,10 @@
       key: {{ .Values.posthogSecretKey.existingSecretKey }}
 - name: SITE_URL
   value: {{ template "posthog.site.url" . }}
+{{ if .Values.sentryDSN }}
 - name: SENTRY_DSN
   value: {{ .Values.sentryDSN | quote }}
+{{ end }}
 - name: DEPLOYMENT
   value: {{ template "posthog.deploymentEnv" . }}
 - name: CAPTURE_INTERNAL_METRICS
