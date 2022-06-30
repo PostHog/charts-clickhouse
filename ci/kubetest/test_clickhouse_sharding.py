@@ -32,7 +32,7 @@ clickhouse:
 # I don't think this ever worked, but this was being masked by the issue that
 # there was a fixture that was being initialized for each test_ hence we were
 # just testing that we could perform the initial install with more shards.
-@pytest.skip("Broken, clickhouse-operator fails to replicate tables to new shards")
+@pytest.mark.skip("Broken, clickhouse-operator fails to replicate tables to new shards")
 def test_upgrading_to_more_shards(kube):
     cleanup_k8s()
     cleanup_helm()
