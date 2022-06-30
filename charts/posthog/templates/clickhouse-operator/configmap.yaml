@@ -2,14 +2,14 @@
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-files
-# NAMESPACE='{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-files
-  namespace: '{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     clickhouse.altinity.com/chop: 0.18.4
     app: clickhouse-operator
@@ -234,14 +234,14 @@ data:
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-confd-files
-# NAMESPACE='{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-confd-files
-  namespace: '{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     clickhouse.altinity.com/chop: 0.18.4
     app: clickhouse-operator
@@ -252,14 +252,14 @@ data:
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-configd-files
-# NAMESPACE='{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-configd-files
-  namespace: '{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     clickhouse.altinity.com/chop: 0.18.4
     app: clickhouse-operator
@@ -312,14 +312,14 @@ data:
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-templatesd-files
-# NAMESPACE='{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-templatesd-files
-  namespace: '{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     clickhouse.altinity.com/chop: 0.18.4
     app: clickhouse-operator
@@ -414,14 +414,14 @@ data:
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-usersd-files
-# NAMESPACE='{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: etc-clickhouse-operator-usersd-files
-  namespace: '{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     clickhouse.altinity.com/chop: 0.18.4
     app: clickhouse-operator

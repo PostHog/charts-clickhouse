@@ -1,7 +1,7 @@
 import pytest
 
 from helpers.clickhouse import get_clickhouse_statefulset_spec
-from helpers.utils import cleanup_k8s, helm_install, wait_for_pods_to_be_ready
+from helpers.utils import helm_install, wait_for_pods_to_be_ready
 
 HELM_INSTALL_CMD = """
 helm upgrade \
@@ -18,7 +18,6 @@ helm upgrade \
 
 @pytest.fixture
 def setup(kube):
-    cleanup_k8s()
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
 

@@ -44,8 +44,7 @@ jobs:
           python -m pytest . -s \
             --splits ${{ matrix.concurrency }} \
             --group ${{ matrix.group }} \
-            --splitting-algorithm=least_duration \
-            --group-by file
+            --splitting-algorithm=least_duration
 
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1

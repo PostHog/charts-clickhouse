@@ -1,7 +1,6 @@
 import pytest
 
 from helpers.utils import (
-    cleanup_k8s,
     create_namespace_if_not_exists,
     install_chart,
     install_external_kafka,
@@ -42,18 +41,10 @@ zookeeper:
 """
 
 
-@pytest.fixture
-def setup(kube):
-    cleanup_k8s()
+def test_posthog_healthy(kube):
     create_namespace_if_not_exists()
     install_external_kafka()
     install_chart(VALUES_YAML)
     wait_for_pods_to_be_ready(kube)
 
-
-def test_helm_install(setup, kube):
-    pass
-
-
-def test_posthog_healthy(kube):
     is_posthog_healthy(kube)

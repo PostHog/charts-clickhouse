@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from helpers.utils import cleanup_k8s, install_chart, kubectl_exec, wait_for_pods_to_be_ready
+from helpers.utils import install_chart, kubectl_exec, wait_for_pods_to_be_ready
 
 VALUES_YAML = """
 cloud: local
@@ -44,7 +44,6 @@ pgbouncer:
 
 @pytest.fixture
 def setup(kube):
-    cleanup_k8s()
     install_chart(VALUES_YAML)
     wait_for_pods_to_be_ready(kube)
 
