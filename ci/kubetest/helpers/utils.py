@@ -115,13 +115,13 @@ def kubectl_exec(pod, command):
     return output
 
 
-def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None):
+def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace="posthog"):
     log.debug("🔄 Waiting for all pods to be ready...")
     labels = labels or {}
     start = time.time()
     timeout = 900
     while time.time() < start + timeout:
-        pods = kube.get_pods(namespace="posthog", labels=labels)
+        pods = kube.get_pods(namespace=namespace, labels=labels)
 
         if expected_count is not None and len(pods) < expected_count:
             continue
