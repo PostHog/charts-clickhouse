@@ -20,7 +20,7 @@ This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [
 
 
 ## Prerequisites
-- Kubernetes >=1.21 <= 1.24
+- Kubernetes >=1.22 <= 1.24
 - Helm >= 3.7.0
 
 ## Installation
