@@ -1,6 +1,6 @@
 import logging
+import time
 
-import pytest
 from kubernetes import client
 
 from helpers.clickhouse import get_clickhouse_statefulset_spec
@@ -26,15 +26,12 @@ def create_custom_pvc():
     log.debug("✅ Done!")
 
 
-@pytest.fixture
-def setup(kube):
+def test_volume_claim(kube):
     cleanup_k8s()
     create_custom_pvc()
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
 
-
-def test_volume_claim(setup, kube):
     statefulset_spec = get_clickhouse_statefulset_spec(kube)
 
     # Verify the spec.volumes configuration
