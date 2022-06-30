@@ -39,8 +39,12 @@ spec:
           - |
             set -e
             python manage.py notify_helm_install || true
-            python manage.py migrate
+            python manage.py migrate &
+            migrate_pid=$!
             python manage.py migrate_clickhouse
+            migrate_clickhouse_pid=$!
+            wait $migrate_pid
+            wait $migrate_clickhouse_pid
             python manage.py run_async_migrations --check
             python manage.py sync_replicated_schema
 
