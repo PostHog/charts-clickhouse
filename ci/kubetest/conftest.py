@@ -86,3 +86,17 @@ def reset_helm() -> None:
     log.info("🔄 Resetting Helm...")
     exec_subprocess("helm list --short | xargs -L1 helm delete", ignore_errors=True)
     log.info("✅ Done!")
+
+
+class NoParsingFilter(logging.Filter):
+    def filter(self, record):
+        return "falling back to preferred version" not in record.getMessage()
+
+
+@pytest.fixture(autouse=True)
+def hide_kubetest_logging():
+    """
+    Kubetest appears to
+    """
+    logger = logging.getLogger("kubetest")
+    logger.addFilter(NoParsingFilter())
