@@ -35,7 +35,7 @@ VALUES_EXTERNAL_CLICKHOUSE = merge_yaml(
     """
     clickhouse:
       enabled: true
-      cluster: kubetest-cluster
+      cluster: name-with-dash
       database: kubetest_db
       user: kubeuser
       password: kubetestpw
@@ -64,7 +64,7 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD = merge_yaml(
 
     externalClickhouse:
       host: "clickhouse-posthog.clickhouse.svc.cluster.local"
-      cluster: kubetest-cluster
+      cluster: name-with-dash
       database: kubetest_db
       user: kubeuser
       password: kubetestpw
@@ -79,7 +79,7 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET = merge_yaml(
 
     externalClickhouse:
       host: "clickhouse-posthog.clickhouse.svc.cluster.local"
-      cluster: kubetest-cluster
+      cluster: name-with-dash
       database: kubetest_db
       user: kubeuser
       existingSecret: clickhouse-existing-secret
