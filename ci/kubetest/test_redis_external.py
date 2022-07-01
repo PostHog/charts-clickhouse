@@ -19,9 +19,7 @@ helm upgrade \
     -f ../../ci/values/kubetest/test_redis_external.yaml \
     --create-namespace \
     --namespace posthog \
-    posthog ../../charts/posthog \
-    --wait-for-jobs \
-    --wait
+    posthog ../../charts/posthog
 """
 
 

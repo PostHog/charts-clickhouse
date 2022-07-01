@@ -10,9 +10,7 @@ helm upgrade \
     --timeout 30m \
     --create-namespace \
     --namespace posthog \
-    posthog ../../charts/posthog \
-    --wait-for-jobs \
-    --wait
+    posthog ../../charts/posthog
 """
 
 

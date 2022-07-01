@@ -69,14 +69,12 @@ def install_chart(values, namespace=NAMESPACE):
                 --install \
                 -f {values_file.name} \
                 --set cloud=local \
-                --timeout 30m \
                 --create-namespace \
                 --namespace {namespace} \
-                posthog ../../charts/posthog \
-                --wait-for-jobs \
-                --wait
+                posthog ../../charts/posthog
         """
         )
+
     log.debug("✅ Done!")
 
 
@@ -88,11 +86,11 @@ def kubectl_exec(pod, command):
     return output
 
 
-def wait_for_pods_to_be_ready(kube, labels={}, expected_count=None, namespace=NAMESPACE):
+def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace=NAMESPACE):
     log.debug("🔄 Waiting for all pods to be ready...")
-    time.sleep(30)
+    labels = labels or {}
     start = time.time()
-    timeout = 300
+    timeout = 900
     while time.time() < start + timeout:
         pods = kube.get_pods(namespace=namespace, labels=labels)
 
@@ -100,9 +98,22 @@ def wait_for_pods_to_be_ready(kube, labels={}, expected_count=None, namespace=NA
             continue
 
         for pod in pods.values():
-            if not pod.is_ready():
-                continue
-        break
+            if pod.obj.metadata.labels.get("app") == "posthog":
+                # Only ever expect things we have control over to not restart
+                assert pod.get_restart_count() == 0, f"Detected restart in pod {pod.obj.metadata.name}"
+
+        # Note we assume that if "job-name" is a label then it is a job pod.
+        non_job_pods = [pod for pod in pods.values() if "job-name" not in pod.obj.metadata.labels]
+        job_pods = [pod for pod in pods.values() if "job-name" in pod.obj.metadata.labels]
+
+        for job_pod in job_pods:
+            assert job_pod.status().phase != "Failed", f"Detected failed job {job_pod.obj.metadata.name}"
+
+        if len(pods) > 0 and all(pod.is_ready() for pod in non_job_pods):
+            # If all non-job pods are ready, we should be ready to proceed.
+            break
+
+        time.sleep(5)
     else:
         pytest.fail("❌ Timeout raised while waiting for pods to be ready")
     log.debug("✅ Done!")
@@ -160,6 +171,7 @@ def exec_subprocess(cmd, ignore_errors=False):
     assert cmd_stdout is not None
     for chunk in iter(lambda: cmd_stdout.read(1), b""):
         sys.stdout.buffer.write(chunk)
+        sys.stdout.buffer.flush()
         stdout_cumulative += chunk
     cmd_run.wait()  # Make sure we have a return code
     cmd_return_code = cmd_run.returncode
