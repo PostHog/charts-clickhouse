@@ -10,6 +10,7 @@ prometheus-postgres-exporter:
     enabled: true
 """
 
+
 def test_prometheus_postgres_exporter(kube):
     install_chart(VALUES_YAML)
     wait_for_pods_to_be_ready(kube)
