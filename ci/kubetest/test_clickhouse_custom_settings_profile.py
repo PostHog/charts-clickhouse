@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from helpers.utils import cleanup_k8s, install_chart, kubectl_exec, wait_for_pods_to_be_ready
+from helpers.utils import install_chart, kubectl_exec, wait_for_pods_to_be_ready
 
 VALUES_YAML = """
 cloud: local
@@ -42,14 +42,10 @@ pgbouncer:
 """
 
 
-@pytest.fixture
-def setup(kube):
-    cleanup_k8s()
+def test_custom_clickhouse_settings_profile(kube):
     install_chart(VALUES_YAML)
     wait_for_pods_to_be_ready(kube)
 
-
-def test_custom_clickhouse_settings_profile(setup, kube):
     command = f"clickhouse-client -q \"SELECT name, value FROM system.settings WHERE name IN ('max_execution_time', 'max_memory_usage') ORDER BY name FORMAT JSON\""
     result = kubectl_exec("chi-posthog-posthog-0-0-0", command)
     settings = json.loads(result)["data"]

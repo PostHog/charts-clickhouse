@@ -25,7 +25,11 @@ jobs:
 
       - name: Run kubetest
         run: |
-          cd ci/kubetest && python -m pytest . -s --store-durations
+          cd ci/kubetest
+          export PYTHONUNBUFFERED=1
+          python -m pytest . \
+            -s \
+            --store-durations
 
       - name: Save test durations
         if: ${{ github.repository == 'PostHog/charts-clickhouse' && github.ref == 'refs/heads/main' }}
