@@ -21,6 +21,6 @@ def helm_upgrade_posthog(namespace: str, release: str):
 
 
 def test_multiple_installs_in_different_namespaces(kube):
-    for namespace in [str(uuid4())] * 3:
+    for namespace in [str(uuid4())] * 2:
         helm_upgrade_posthog(release="posthog", namespace=namespace)
         wait_for_pods_to_be_ready(kube, namespace=namespace)

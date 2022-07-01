@@ -15,13 +15,10 @@ helm upgrade \
 """
 
 
-@pytest.fixture
-def setup(kube):
+def test_volume_claim(kube):
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
 
-
-def test_volume_claim(setup, kube):
     statefulset_spec = get_clickhouse_statefulset_spec(kube)
 
     # Verify the spec.volumes configuration

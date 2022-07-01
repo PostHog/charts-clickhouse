@@ -66,8 +66,10 @@ jobs:
 
       - name: Run kubetest
         run: |
-          cd ci/kubetest && \
-          python -m pytest . -s \
+          cd ci/kubetest
+          export PYTHONUNBUFFERED=1
+          python -m pytest . \
+            -s \
             --maxfail=1 \
             --splits ${{ matrix.concurrency }} \
             --group ${{ matrix.group }} \
