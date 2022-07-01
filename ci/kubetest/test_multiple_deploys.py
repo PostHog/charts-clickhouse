@@ -1,9 +1,11 @@
-from helpers.utils import cleanup_k8s, exec_subprocess, wait_for_pods_to_be_ready
 from uuid import uuid4
+
+from helpers.utils import exec_subprocess, wait_for_pods_to_be_ready
 
 
 def helm_upgrade_posthog(namespace: str, release: str):
-    exec_subprocess(f"""
+    exec_subprocess(
+        f"""
         helm upgrade \
             --install \
             --set cloud=private \
@@ -19,9 +21,7 @@ def helm_upgrade_posthog(namespace: str, release: str):
     )
 
 
-def test_install_as_not_posthog(kube):
-    namespace_1 = str(uuid4())
-    helm_upgrade_posthog(release="posthog", namespace=namespace_1)
-    namespace_2 = str(uuid4())
-    helm_upgrade_posthog(release="posthog", namespace=namespace_2)
-    wait_for_pods_to_be_ready(kube, namespace=namespace)
+def test_multiple_installs_in_different_namespaces(kube):
+    for namespace in [str(uuid4())] * 2:
+        helm_upgrade_posthog(release="posthog", namespace=namespace)
+        wait_for_pods_to_be_ready(kube, namespace=namespace)

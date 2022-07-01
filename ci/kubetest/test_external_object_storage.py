@@ -2,10 +2,12 @@ from base64 import b64encode
 
 import pytest
 
-from helpers.utils import apply_manifest, cleanup_k8s, create_namespace_if_not_exists, exec_subprocess, install_chart
+from helpers.utils import NAMESPACE, apply_manifest, create_namespace_if_not_exists, exec_subprocess, install_chart
 
 
 def test_can_use_external_object_storage_with_secret_specified():
+    create_namespace_if_not_exists()
+
     # MinIO credentials
     username = "some-user"
     password = "some-password"
@@ -20,7 +22,7 @@ def test_can_use_external_object_storage_with_secret_specified():
                 root-password: {b64encode(password.encode()).decode()}
             metadata:
                 name: object-storage-config
-                namespace: posthog
+                namespace: {NAMESPACE}
         """
     )
 
@@ -28,7 +30,7 @@ def test_can_use_external_object_storage_with_secret_specified():
     exec_subprocess(
         cmd=f"""
             helm install minio minio \
-                --debug --namespace posthog \
+                --debug --namespace {NAMESPACE} \
                 --set persistence.enabled=false \
                 --set mode=standalone \
                 --set resources.requests.memory=100Mi \
@@ -53,9 +55,3 @@ def test_can_use_external_object_storage_with_secret_specified():
                 existingSecret: object-storage-config
         """
     )
-
-
-@pytest.fixture(autouse=True)
-def before_each_cleanup():
-    cleanup_k8s()
-    create_namespace_if_not_exists()

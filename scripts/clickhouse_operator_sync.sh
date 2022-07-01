@@ -17,7 +17,6 @@ CHART_PATH=$(cd "$CHART_PATH_RAW" 2> /dev/null && pwd -P)
 TMP_FOLDER="$(mktemp -d)"
 trap 'rm -rf -- "$TMP_FOLDER"' EXIT
 
-OPERATOR_NAMESPACE="posthog"
 CLICKHOUSE_OPERATOR_TAG="0.18.4"
 URL="https://raw.githubusercontent.com/Altinity/clickhouse-operator/${CLICKHOUSE_OPERATOR_TAG}/deploy/operator/clickhouse-operator-install-template.yaml"
 
@@ -26,7 +25,7 @@ URL="https://raw.githubusercontent.com/Altinity/clickhouse-operator/${CLICKHOUSE
 #
 # see: https://github.com/Altinity/clickhouse-operator/blob/master/docs/quick_start.md#in-case-you-can-not-run-scripts-from-internet-in-your-protected-environment
 #
-OPERATOR_NAMESPACE="'{{ .Values.clickhouse.namespace | default .Release.Namespace }}'"
+OPERATOR_NAMESPACE="PLACEHOLDER"
 METRICS_EXPORTER_NAMESPACE="${OPERATOR_NAMESPACE}"
 # NOTE: we pin to 0.19.0 here which is different to the 0.16.1 manifest version.
 # Prior to pinning we were specifying latest, so to ensure that the version
@@ -47,7 +46,7 @@ curl -s "${URL}" | \
 # Use 'altinity/clickhouse-operator' definition file we fetched and parsed and slice it
 # in different files, based on the resource kind
 #
-go install github.com/patrickdappollonio/kubectl-slice@v1.1.0
+go install github.com/patrickdappollonio/kubectl-slice@v1.2.3
 
 rm -rf "${CHART_PATH}/templates/clickhouse-operator"
 mkdir -p "${CHART_PATH}/templates/clickhouse-operator"
@@ -68,4 +67,7 @@ do
     perl -pi -e 'print "{{- if .Values.clickhouse.enabled }}\n" if $. == 1' "$f"
 
     echo "{{- end }}" >> "$f"
+
+    perl -pi -e 's/PLACEHOLDER$/{{ .Values.clickhouse.namespace | default .Release.Namespace }}/g' "$f"
+    perl -pi -e 's/#namespace: /namespace: /g' "$f"
 done

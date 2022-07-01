@@ -40,12 +40,13 @@ jobs:
 
       - name: Run kubetest
         run: |
-          cd ci/kubetest && \
-          python -m pytest . -s \
+          cd ci/kubetest
+          export PYTHONUNBUFFERED=1
+          python -m pytest . \
+            -s \
             --splits ${{ matrix.concurrency }} \
             --group ${{ matrix.group }} \
-            --splitting-algorithm=least_duration \
-            --group-by file
+            --splitting-algorithm=least_duration
 
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1

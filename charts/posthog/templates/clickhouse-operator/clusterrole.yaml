@@ -1,18 +1,18 @@
 {{- if .Values.clickhouse.enabled }}
 # Template Parameters:
 #
-# NAMESPACE='{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=#
 # ROLE_KIND=ClusterRole
-# ROLE_NAME=clickhouse-operator-'{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+# ROLE_NAME=clickhouse-operator-{{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # ROLE_BINDING_KIND=ClusterRoleBinding
-# ROLE_BINDING_NAME=clickhouse-operator-'{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+# ROLE_BINDING_NAME=clickhouse-operator-{{ .Values.clickhouse.namespace | default .Release.Namespace }}
 #
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: clickhouse-operator-'{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
-  #namespace: '{{ .Values.clickhouse.namespace | default .Release.Namespace }}'
+  name: clickhouse-operator-{{ .Values.clickhouse.namespace | default .Release.Namespace }}
+  namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     clickhouse.altinity.com/chop: 0.18.4
 rules:
