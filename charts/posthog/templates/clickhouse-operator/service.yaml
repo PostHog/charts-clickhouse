@@ -1,7 +1,7 @@
 {{- if .Values.clickhouse.enabled }}
 # Template Parameters:
 #
-# NAMESPACE=posthog
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 # Setup ClusterIP Service to provide monitoring metrics for Prometheus

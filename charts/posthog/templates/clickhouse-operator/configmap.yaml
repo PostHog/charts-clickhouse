@@ -2,7 +2,7 @@
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-files
-# NAMESPACE=posthog
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1
@@ -234,7 +234,7 @@ data:
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-confd-files
-# NAMESPACE=posthog
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1
@@ -252,7 +252,7 @@ data:
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-configd-files
-# NAMESPACE=posthog
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1
@@ -312,7 +312,7 @@ data:
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-templatesd-files
-# NAMESPACE=posthog
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1
@@ -414,7 +414,7 @@ data:
 # Template Parameters:
 #
 # NAME=etc-clickhouse-operator-usersd-files
-# NAMESPACE=posthog
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 #
 apiVersion: v1

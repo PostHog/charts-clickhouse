@@ -1,13 +1,11 @@
 import pytest
 
 from helpers.utils import (
-    NAMESPACE,
     VALUES_DISABLE_EVERYTHING,
-    cleanup_helm,
-    cleanup_k8s,
-    exec_subprocess,
+    create_namespace_if_not_exists,
     install_chart,
     install_custom_resources,
+    is_posthog_healthy,
     merge_yaml,
     wait_for_pods_to_be_ready,
 )
@@ -61,6 +59,9 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD = merge_yaml(
     pgbouncer:
       enabled: true
 
+    clickhouse:
+      enabled: false
+
     externalClickhouse:
       host: "clickhouse-posthog.clickhouse.svc.cluster.local"
       cluster: kubetest
@@ -73,6 +74,9 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD = merge_yaml(
 VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET = merge_yaml(
     VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD,
     """
+    clickhouse:
+      enabled: false
+
     externalClickhouse:
       host: "clickhouse-posthog.clickhouse.svc.cluster.local"
       cluster: kubetest
@@ -88,26 +92,22 @@ def test_can_connect_from_web_pod(kube):
     install_chart(VALUES_ACCESS_CLICKHOUSE)
     wait_for_pods_to_be_ready(kube)
 
+    is_posthog_healthy(kube)
+
 
 def test_can_connect_external_clickhouse_via_password(kube):
-    setup_external_clickhouse()
+    install_chart(VALUES_EXTERNAL_CLICKHOUSE, namespace="clickhouse")  # setup external ClickHouse
     install_chart(VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD)
     wait_for_pods_to_be_ready(kube)
 
+    is_posthog_healthy(kube)
+
 
 def test_can_connect_external_clickhouse_via_secret(kube):
+    create_namespace_if_not_exists()
     install_custom_resources("./custom_k8s_resources/clickhouse_external_secret.yaml")
-    setup_external_clickhouse()
+    install_chart(VALUES_EXTERNAL_CLICKHOUSE, namespace="clickhouse")  # setup external ClickHouse
     install_chart(VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_SECRET)
     wait_for_pods_to_be_ready(kube)
 
-
-def setup_external_clickhouse():
-    # :TRICKY: We can't use a single docker image since posthog relies on clickhouse being installed in a cluster
-    install_chart(VALUES_EXTERNAL_CLICKHOUSE, namespace="clickhouse")
-
-
-@pytest.fixture(autouse=True)
-def before_each_cleanup():
-    cleanup_k8s([NAMESPACE, "clickhouse"])
-    cleanup_helm([NAMESPACE, "clickhouse"])
+    is_posthog_healthy(kube)

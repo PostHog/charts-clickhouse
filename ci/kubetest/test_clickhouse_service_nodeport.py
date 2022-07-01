@@ -1,7 +1,7 @@
 import pytest
 
 from helpers.clickhouse import get_clickhouse_cluster_service_spec
-from helpers.utils import cleanup_k8s, helm_install, wait_for_pods_to_be_ready
+from helpers.utils import helm_install, is_posthog_healthy, wait_for_pods_to_be_ready
 
 HELM_INSTALL_CMD = """
 helm upgrade \
@@ -10,23 +10,14 @@ helm upgrade \
     --timeout 30m \
     --create-namespace \
     --namespace posthog \
-    posthog ../../charts/posthog \
-    --wait-for-jobs \
-    --wait
+    posthog ../../charts/posthog
 """
 
 
-@pytest.fixture
-def setup(kube):
-    cleanup_k8s()
+def test_cluster_service(kube):
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
 
-
-def test_helm_install(setup, kube):
-    pass
-
-
-def test_cluster_service(kube):
+    is_posthog_healthy(kube)
     cluster_service = get_clickhouse_cluster_service_spec(kube)
     assert cluster_service.type == "NodePort", "ClickHouse cluster service type is {}".format(cluster_service.type)

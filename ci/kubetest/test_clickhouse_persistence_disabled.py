@@ -1,7 +1,7 @@
 import pytest
 
 from helpers.clickhouse import get_clickhouse_statefulset_spec
-from helpers.utils import cleanup_k8s, helm_install, wait_for_pods_to_be_ready
+from helpers.utils import helm_install, wait_for_pods_to_be_ready
 
 HELM_INSTALL_CMD = """
 helm upgrade \
@@ -10,20 +10,14 @@ helm upgrade \
     --timeout 30m \
     --create-namespace \
     --namespace posthog \
-    posthog ../../charts/posthog \
-    --wait-for-jobs \
-    --wait
+    posthog ../../charts/posthog
 """
 
 
-@pytest.fixture
-def setup(kube):
-    cleanup_k8s()
+def test_volume_claim(kube):
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
 
-
-def test_volume_claim(setup, kube):
     statefulset_spec = get_clickhouse_statefulset_spec(kube)
 
     # Verify the spec.volumes configuration

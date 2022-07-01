@@ -7,7 +7,6 @@ import time
 import pytest
 import yaml
 
-logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 
 YamlString = str
@@ -50,35 +49,6 @@ def merge_yaml(*yamls):
     return yaml.dump(result)
 
 
-def cleanup_k8s(namespaces=["default", NAMESPACE]):
-    log.debug("🔄 Making sure the k8s cluster is empty...")
-
-    exec_subprocess("kubectl delete clusterrolebinding clickhouse-operator-posthog --ignore-not-found")
-    exec_subprocess("kubectl delete clusterrole clickhouse-operator-posthog --ignore-not-found")
-    for namespace in namespaces:
-        patch = '{"metadata":{"finalizers":null}}'
-        exec_subprocess(
-            f"kubectl patch chi posthog -n {namespace} -p '{patch}' --type=merge",
-            ignore_errors=True,
-        )
-        exec_subprocess(
-            f"kubectl delete chi posthog -n {namespace} --ignore-not-found",
-            ignore_errors=True,
-        )
-        exec_subprocess(f"kubectl delete all --all -n {namespace}")
-        exec_subprocess(f"kubectl delete configmaps --all -n {namespace}")
-        exec_subprocess(f"kubectl delete secrets --all -n {namespace}")
-
-    log.debug("✅ Done!")
-
-
-def cleanup_helm(namespaces=[NAMESPACE]):
-    log.debug("🔄 Making sure helm releases get removed...")
-    for namespace in namespaces:
-        exec_subprocess(f"helm uninstall posthog --namespace {namespace} || true")
-    log.debug("✅ Done!")
-
-
 def helm_install(HELM_INSTALL_CMD):
     log.debug("🔄 Deploying PostHog...")
     exec_subprocess(HELM_INSTALL_CMD)
@@ -99,14 +69,12 @@ def install_chart(values, namespace=NAMESPACE):
                 --install \
                 -f {values_file.name} \
                 --set cloud=local \
-                --timeout 30m \
                 --create-namespace \
                 --namespace {namespace} \
-                posthog ../../charts/posthog \
-                --wait-for-jobs \
-                --wait
+                posthog ../../charts/posthog
         """
         )
+
     log.debug("✅ Done!")
 
 
@@ -118,21 +86,34 @@ def kubectl_exec(pod, command):
     return output
 
 
-def wait_for_pods_to_be_ready(kube, labels={}, expected_count=None):
+def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace=NAMESPACE):
     log.debug("🔄 Waiting for all pods to be ready...")
-    time.sleep(30)
+    labels = labels or {}
     start = time.time()
-    timeout = 300
+    timeout = 900
     while time.time() < start + timeout:
-        pods = kube.get_pods(namespace="posthog", labels=labels)
+        pods = kube.get_pods(namespace=namespace, labels=labels)
 
         if expected_count is not None and len(pods) < expected_count:
             continue
 
         for pod in pods.values():
-            if not pod.is_ready():
-                continue
-        break
+            if pod.obj.metadata.labels.get("app") == "posthog":
+                # Only ever expect things we have control over to not restart
+                assert pod.get_restart_count() == 0, f"Detected restart in pod {pod.obj.metadata.name}"
+
+        # Note we assume that if "job-name" is a label then it is a job pod.
+        non_job_pods = [pod for pod in pods.values() if "job-name" not in pod.obj.metadata.labels]
+        job_pods = [pod for pod in pods.values() if "job-name" in pod.obj.metadata.labels]
+
+        for job_pod in job_pods:
+            assert job_pod.status().phase != "Failed", f"Detected failed job {job_pod.obj.metadata.name}"
+
+        if len(pods) > 0 and all(pod.is_ready() for pod in non_job_pods):
+            # If all non-job pods are ready, we should be ready to proceed.
+            break
+
+        time.sleep(5)
     else:
         pytest.fail("❌ Timeout raised while waiting for pods to be ready")
     log.debug("✅ Done!")
@@ -159,14 +140,14 @@ def test_if_posthog_deployments_are_healthy(kube):
             assert pod.is_ready(), "Pod {} of deployment {} is not ready".format(pod.name, deployment_name)
 
 
-def create_namespace_if_not_exists(name="posthog"):
+def create_namespace_if_not_exists(name=NAMESPACE):
     log.debug("🔄 Creating namespace {} (if not exists)...".format(name))
     cmd = "kubectl create namespace {} --dry-run=client -o yaml | kubectl apply -f -".format(name)
     exec_subprocess(cmd)
     log.debug("✅ Done!")
 
 
-def install_custom_resources(filename, namespace="posthog"):
+def install_custom_resources(filename, namespace=NAMESPACE):
     log.debug("🔄 Setting up custom resources for this test...")
     cmd = "kubectl apply -n {namespace} -f {filename}".format(namespace=namespace, filename=filename)
     exec_subprocess(cmd)
@@ -183,13 +164,14 @@ def apply_manifest(manifest_yaml: str):
 
 
 def exec_subprocess(cmd, ignore_errors=False):
-    log.debug(f"Running: `{cmd}`")
+    log.debug(f"🔄 Running: {cmd}")
     cmd_run = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     cmd_stdout = cmd_run.stdout
     stdout_cumulative = b""
     assert cmd_stdout is not None
     for chunk in iter(lambda: cmd_stdout.read(1), b""):
         sys.stdout.buffer.write(chunk)
+        sys.stdout.buffer.flush()
         stdout_cumulative += chunk
     cmd_run.wait()  # Make sure we have a return code
     cmd_return_code = cmd_run.returncode
@@ -202,10 +184,11 @@ def exec_subprocess(cmd, ignore_errors=False):
         OUTPUT: {stdout_cumulative}
         """
         )
+    log.debug("✅ Done!")
     return stdout_cumulative
 
 
-def install_external_kafka(namespace="posthog"):
+def install_external_kafka(namespace=NAMESPACE):
     log.debug("🔄 Setting up external Kafka...")
     cmd = """
           helm repo add bitnami https://charts.bitnami.com/bitnami && \

@@ -5,7 +5,7 @@ the manifest should match the snapshot when using default values:
     metadata:
       labels:
         clickhouse.altinity.com/chop: 0.18.4
-      name: clickhouse-operator-posthog
+      name: clickhouse-operator-NAMESPACE
       namespace: NAMESPACE
     rules:
     - apiGroups:

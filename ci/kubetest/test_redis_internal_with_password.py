@@ -3,9 +3,8 @@ import logging
 
 import pytest
 
-from helpers.utils import cleanup_k8s, helm_install, is_posthog_healthy, wait_for_pods_to_be_ready
+from helpers.utils import helm_install, is_posthog_healthy, wait_for_pods_to_be_ready
 
-logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 
 HELM_INSTALL_CMD = """
@@ -15,28 +14,17 @@ helm upgrade \
     -f ../../ci/values/kubetest/test_redis_internal_with_password.yaml \
     --create-namespace \
     --namespace posthog \
-    posthog ../../charts/posthog \
-    --wait-for-jobs \
-    --wait
+    posthog ../../charts/posthog
 """
 
 
-@pytest.fixture
-def setup(kube):
-    cleanup_k8s()
+def test_redis_secret(kube):
+
     helm_install(HELM_INSTALL_CMD)
     wait_for_pods_to_be_ready(kube)
 
-
-def test_helm_install(setup, kube):
-    pass
-
-
-def test_posthog_healthy(kube):
     is_posthog_healthy(kube)
 
-
-def test_redis_secret(kube):
     secrets = kube.get_secrets(namespace="posthog", fields={"type": "Opaque"})
 
     default_redis_secret_name = "posthog-posthog-redis-external"

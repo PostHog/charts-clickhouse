@@ -1,6 +1,7 @@
 .idea
-node_modules/
-.virtualenv/
-.venv/
 .pytest_cache/
+.venv/
+.virtualenv/
 __pycache__
+env/
+node_modules/

@@ -1,7 +1,7 @@
 {{- if .Values.clickhouse.enabled }}
 # Template Parameters:
 #
-# NAMESPACE=posthog
+# NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 # OPERATOR_IMAGE=altinity/clickhouse-operator:0.19.0
 # METRICS_EXPORTER_IMAGE=altinity/metrics-exporter:latest
