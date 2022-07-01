@@ -745,11 +745,7 @@ clickhouse:
   #       port: 2181
   #     - host: host3
   #       port: 2181
-  # -- URL for zookeeper.
-  # servers:
-  # - host: posthog-posthog-zookeeper
-  #   port: 2181
-  
+
   image:
     # -- ClickHouse image repository.
     repository: clickhouse/clickhouse-server
@@ -850,13 +846,13 @@ clickhouse:
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9363"
-  
+
   client:
     image:
-    # -- Clickhouse client image repository.
-      repository: yandex/clickhouse-client
-      # -- ClickHouse backup image tag.
-      tag: "21.3.20.1"
+      # -- ClickHouse image repository.
+      repository: clickhouse/clickhouse-server
+      # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
+      tag: "22.3.6.5"
 
   backup:
     # https://posthog.com/docs/self-host/runbook/clickhouse/backup
@@ -872,9 +868,9 @@ clickhouse:
     backup_password: backup_password
     backup_schedule: "0 0 * * *" #backup every day at 0:00
     clickhouse_services: "chi-posthog-posthog-0-0" # use first replica in each shard, use `kubectl get svc | grep chi-posthog-posthog`
-    
+
     # All options: https://github.com/AlexAkulov/clickhouse-backup#default-config
-    env: 
+    env:
       - name: LOG_LEVEL
         value: "debug"
       - name: ALLOW_EMPTY_BACKUPS
