@@ -253,8 +253,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.settings | object | `{}` |  |
 | clickhouse.defaultSettings.format_schema_path | string | `"/etc/clickhouse-server/config.d/"` |  |
 | clickhouse.podAnnotations | string | `nil` |  |
-| clickhouse.client.image.repository | string | `"yandex/clickhouse-client"` | Clickhouse client image repository. |
-| clickhouse.client.image.tag | string | `"21.3.20.1"` | ClickHouse backup image tag. |
+| clickhouse.client.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
+| clickhouse.client.image.tag | string | `"22.3.6.5"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
 | clickhouse.backup.enabled | bool | `false` |  |
 | clickhouse.backup.image.repository | string | `"altinity/clickhouse-backup"` | Clickhouse backup image repository. |
 | clickhouse.backup.image.tag | string | `"1.4.0"` | ClickHouse backup image tag. |
