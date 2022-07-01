@@ -1,0 +1,75 @@
+should match the snapshot when backup is true:
+  1: |
+    apiVersion: batch/v1
+    kind: CronJob
+    metadata:
+      name: clickhouse-backup-cron
+    spec:
+      concurrencyPolicy: Forbid
+      jobTemplate:
+        spec:
+          backoffLimit: 1
+          completions: 1
+          parallelism: 1
+          template:
+            metadata:
+              labels:
+                job: clickhouse-backup
+            spec:
+              containers:
+              - command:
+                - /bin/sh
+                - -c
+                - /scripts/clickhouse_backup.sh
+                env:
+                - name: CLICKHOUSE_SERVICES
+                  value: chi-posthog-posthog-0-0
+                - name: CLICKHOUSE_PORT
+                  value: "9000"
+                - name: BACKUP_USER
+                  value: backup
+                - name: BACKUP_PASSWORD
+                  value: backup_password
+                image: clickhouse/clickhouse-server:22.3.6.5
+                imagePullPolicy: IfNotPresent
+                name: run-backup-cron
+                volumeMounts:
+                - mountPath: /scripts/clickhouse_backup.sh
+                  name: clickhouse-backup-script
+                  subPath: clickhouse_backup.sh
+              initContainers:
+              - command:
+                - /bin/sh
+                - -c
+                - |
+                  until (
+                      wget -qO- \
+                          "http://$CLICKHOUSE_USER:$CLICKHOUSE_PASSWORD@clickhouse-posthog.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local:8123" \
+                          --post-data "SELECT count() FROM clusterAllReplicas('posthog', system, one)"
+                  ); do
+                      echo "waiting for ClickHouse cluster to become available"; sleep 1;
+                  done
+                env:
+                - name: CLICKHOUSE_HOST
+                  value: clickhouse-RELEASE-NAME
+                - name: CLICKHOUSE_CLUSTER
+                  value: posthog
+                - name: CLICKHOUSE_DATABASE
+                  value: posthog
+                - name: CLICKHOUSE_USER
+                  value: admin
+                - name: CLICKHOUSE_PASSWORD
+                  value: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+                - name: CLICKHOUSE_SECURE
+                  value: "false"
+                - name: CLICKHOUSE_VERIFY
+                  value: "false"
+                image: busybox:1.34
+                name: wait-for-service-dependencies
+              restartPolicy: Never
+              volumes:
+              - configMap:
+                  defaultMode: 511
+                  name: clickhouse-backup-script
+                name: clickhouse-backup-script
+      schedule: 0 0 * * *

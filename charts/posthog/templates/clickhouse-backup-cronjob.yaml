@@ -1,0 +1,67 @@
+{{- if .Values.clickhouse.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: clickhouse-backup-cron
+spec:
+  schedule: {{ .Values.clickhouse.backup.backup_schedule | quote }}
+  concurrencyPolicy: "Forbid"
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+          labels:
+            job: clickhouse-backup
+        spec:
+          initContainers:
+            #
+            # Unfortunately we can't reuse the snippet _snippet-initContainers-wait-for-service-dependencies
+            # as it includes pgbouncer by default.
+            #
+            # TODO: once we'll have a better story for pgbouncer we will likely be able to remove
+            # this code duplication.
+            #
+            - name: wait-for-service-dependencies
+              image: {{ .Values.busybox.image }}
+              env: {{- include "snippet.clickhouse-env" . | nindent 16 }}
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  until (
+                      wget -qO- \
+                          "http://$CLICKHOUSE_USER:$CLICKHOUSE_PASSWORD@clickhouse-posthog.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local:8123" \
+                          --post-data "SELECT count() FROM clusterAllReplicas('posthog', system, one)"
+                  ); do
+                      echo "waiting for ClickHouse cluster to become available"; sleep 1;
+                  done
+          containers:
+            - name: run-backup-cron
+              image: {{ template "client.clickhouse.image" . }}
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: CLICKHOUSE_SERVICES
+                  value: {{ .Values.clickhouse.backup.clickhouse_services }}
+                - name: CLICKHOUSE_PORT
+                  value: "9000"
+                - name: BACKUP_USER
+                  value: {{ .Values.clickhouse.backup.backup_user }}
+                - name: BACKUP_PASSWORD
+                  value: {{ .Values.clickhouse.backup.backup_password }}
+              command: ["/bin/sh", "-c", "/scripts/clickhouse_backup.sh"]
+              volumeMounts:
+              - name: clickhouse-backup-script
+                mountPath: /scripts/clickhouse_backup.sh
+                subPath: clickhouse_backup.sh
+
+          volumes:
+          - name: clickhouse-backup-script
+            configMap:
+              name: clickhouse-backup-script
+              defaultMode: 0777
+
+          restartPolicy: Never
+{{- end }}
