@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v3
         name: Checkout
 
-      - run: echo "::set-output name=test-files::$(ls ./ci/kubetest/test_*.py | jq -R '[.]' |  jq -s -c 'add')\n"
+      - run: echo "::set-output name=test-files::$(cd ./ci/kubetest/ && ls test_*.py | jq -R '[.]' |  jq -s -c 'add')\n"
         id: test-files-generator
 
 
