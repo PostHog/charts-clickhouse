@@ -16,39 +16,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test-kubetest-prep:
+    runs-on: ubuntu-20.04
+
+    name: e2e - kubetest parallel prep
+
+    outputs:
+      test-files: ${{ steps.test-files-generator.output.test-files }}
+
+    steps:
+      - run: echo "::set-output name=test-files::$(ls ./ci/kubetest/test_*.py | jq -R '[.]' |  jq -s -c 'add')\n"
+        id: test-files-generator
+
+
   test-kubetest:
     runs-on: ubuntu-20.04
 
-    name: e2e - kubetest (${{matrix.group}}/${{ matrix.concurrency }})
+    name: e2e - kubetest (${{ fromJson(matrix.test-file) }})
+
+    needs: test-kubetest-prep
 
     strategy:
       fail-fast: false
       matrix:
-        # NOTE: Keep concurrency and group's in sync
-        concurrency: [20]
-        group:
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19,
-            20,
-          ]
+        test-file: ${{ needs.test-kubetest-prep.outputs.test-files }}
 
     steps:
       - uses: actions/checkout@v3
@@ -71,9 +62,7 @@ jobs:
           python -m pytest . \
             -s \
             --maxfail=1 \
-            --splits ${{ matrix.concurrency }} \
-            --group ${{ matrix.group }} \
-            --splitting-algorithm=least_duration
+            ${{ matrix.test-file }}
 
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
