@@ -128,8 +128,21 @@ def is_pod_ready(pod) -> bool:
     we already have the info we want after calling `kube.get_pods`. The
     additional calls occasionally result in API errors so we want to reduce the
     chance for failure and therefore test flakiness.
+
+    This is a copy of the kubetest `Pod.is_ready`
     """
-    for cond in pod.obj.status.conditions:
+    status = pod.obj.status
+    if status is None:
+        return False
+
+    # check the pod phase to make sure it is running. a pod in
+    # the 'failed' or 'success' state will no longer be running,
+    # so we only care if the pod is in the 'running' state.
+    phase = status.phase
+    if phase.lower() != "running":
+        return False
+
+    for cond in status.conditions:
         # we only care about the 'ready' condition
         if cond.type.lower() != "ready":
             continue
