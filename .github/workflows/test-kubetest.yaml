@@ -22,7 +22,7 @@ jobs:
     name: e2e - kubetest parallel prep
 
     outputs:
-      test-files: ${{ steps.test-files-generator.output.test-files }}
+      test-files: ${{ steps.test-files-generator.outputs.test-files }}
 
     steps:
       - uses: actions/checkout@v3
