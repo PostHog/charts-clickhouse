@@ -8,7 +8,6 @@ from helpers.utils import (
     wait_for_pods_to_be_ready,
 )
 
-
 VALUES_INTERNAL_POSTGRESQL_WITH_EXISTING_SECRET = """
 postgresql:
   existingSecret: postgresql-existing-secret

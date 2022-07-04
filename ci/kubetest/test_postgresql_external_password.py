@@ -8,7 +8,6 @@ from helpers.utils import (
     wait_for_pods_to_be_ready,
 )
 
-
 VALUES_EXTERNAL_POSTGRESQL_WITH_PASSWORD = """
 postgresql:
   enabled: false
