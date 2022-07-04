@@ -6,9 +6,9 @@ notificationEmail:
 
 image:
   # -- PostHog image repository to use.
-  repository: posthog/posthog
+  repository: ghcr.io/posthog/posthog/posthog
   # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
-  sha:
+  sha: sha256:d18691f335ec3b4a9c9c15d0c765ad1f7a43552971fdbc82e4b5b567e78e305d
   # -- PostHog image tag to use (example: `release-1.35.0`).
   tag:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
