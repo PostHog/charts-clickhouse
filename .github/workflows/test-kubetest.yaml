@@ -62,10 +62,9 @@ jobs:
         run: |
           cd ci/kubetest
           export PYTHONUNBUFFERED=1
-          python -m pytest . \
+          python -m pytest ${{ matrix.test-file }} \
             -s \
-            --maxfail=1 \
-            ${{ matrix.test-file }}
+            --maxfail=1
 
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
