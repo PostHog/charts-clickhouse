@@ -35,14 +35,14 @@ jobs:
   test-kubetest:
     runs-on: ubuntu-20.04
 
-    name: e2e - kubetest (${{ fromJson(matrix.test-file) }})
+    name: e2e - kubetest (${{ matrix.test-file }})
 
     needs: test-kubetest-prep
 
     strategy:
       fail-fast: false
       matrix:
-        test-file: ${{ needs.test-kubetest-prep.outputs.test-files }}
+        test-file: ${{ fromJson(needs.test-kubetest-prep.outputs.test-files) }}
 
     steps:
       - uses: actions/checkout@v3
