@@ -25,6 +25,9 @@ jobs:
       test-files: ${{ steps.test-files-generator.output.test-files }}
 
     steps:
+      - uses: actions/checkout@v3
+        name: Checkout
+
       - run: echo "::set-output name=test-files::$(ls ./ci/kubetest/test_*.py | jq -R '[.]' |  jq -s -c 'add')\n"
         id: test-files-generator
 
