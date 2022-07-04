@@ -1,25 +1,39 @@
-import json
+import time
 
 
 def get_clickhouse_statefulset_spec(kube):
-    statefulsets = kube.get_statefulsets(
-        namespace="posthog",
-        labels={"clickhouse.altinity.com/namespace": "posthog"},
-    )
-    statefulset = next(iter(statefulsets.values()))
-    return statefulset.obj.spec
+    start = time.time()
+    while time.time() - start < 120:
+        statefulsets = kube.get_statefulsets(
+            namespace="posthog",
+            labels={"clickhouse.altinity.com/namespace": "posthog"},
+        )
+
+        if len(statefulsets) > 0:
+            return list(statefulsets.values())[0].obj.spec
+
+        time.sleep(5)
+
+    raise Exception("Timed out waiting for resource")
 
 
 def get_clickhouse_cluster_service_spec(kube):
-    services = kube.get_services(
-        namespace="posthog",
-        labels={
-            "clickhouse.altinity.com/namespace": "posthog",
-            "clickhouse.altinity.com/Service": "cluster",
-        },
-    )
-    service = next(iter(services.values()))
-    return service.obj.spec
+    start = time.time()
+    while time.time() - start < 120:
+        services = kube.get_services(
+            namespace="posthog",
+            labels={
+                "clickhouse.altinity.com/namespace": "posthog",
+                "clickhouse.altinity.com/Service": "cluster",
+            },
+        )
+
+        if len(services) > 0:
+            return list(services.values())[0].obj.spec
+
+        time.sleep(5)
+
+    raise Exception("Timed out waiting for resource")
 
 
 def get_clickhouse_pods(kube):

@@ -100,7 +100,7 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace=
         for pod in pods.values():
             if pod.obj.metadata.labels.get("app") == "posthog":
                 # Only ever expect things we have control over to not restart
-                assert pod.get_restart_count() == 0, f"Detected restart in pod {pod.obj.metadata.name}"
+                assert get_pod_restart_count(pod) == 0, f"Detected restart in pod {pod.obj.metadata.name}"
 
         # Note we assume that if "job-name" is a label then it is a job pod.
         non_job_pods = [pod for pod in pods.values() if "job-name" not in pod.obj.metadata.labels]
@@ -109,7 +109,7 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace=
         for job_pod in job_pods:
             assert job_pod.status().phase != "Failed", f"Detected failed job {job_pod.obj.metadata.name}"
 
-        if len(pods) > 0 and all(pod.is_ready() for pod in non_job_pods):
+        if len(pods) > 0 and all(is_pod_ready(pod) for pod in non_job_pods):
             # If all non-job pods are ready, we should be ready to proceed.
             break
 
@@ -117,6 +117,60 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace=
     else:
         pytest.fail("❌ Timeout raised while waiting for pods to be ready")
     log.debug("✅ Done!")
+
+
+def is_pod_ready(pod) -> bool:
+    """
+    Check the referenced pod is ready, without refreshing the status from the
+    k8s API.
+
+    Using the kubetest `is_ready` we end up calling the API each time, where as
+    we already have the info we want after calling `kube.get_pods`. The
+    additional calls occasionally result in API errors so we want to reduce the
+    chance for failure and therefore test flakiness.
+
+    This is a copy of the kubetest `Pod.is_ready`
+    """
+    status = pod.obj.status
+    if status is None:
+        return False
+
+    # check the pod phase to make sure it is running. a pod in
+    # the 'failed' or 'success' state will no longer be running,
+    # so we only care if the pod is in the 'running' state.
+    phase = status.phase
+    if phase.lower() != "running":
+        return False
+
+    for cond in status.conditions:
+        # we only care about the 'ready' condition
+        if cond.type.lower() != "ready":
+            continue
+
+        # check that the readiness condition is true
+        return cond.status.lower() == "true"
+
+    # Catchall
+    return False
+
+
+def get_pod_restart_count(pod) -> int:
+    """
+    Get the total number of Container restarts for the Pod.
+
+    This is a copy of the kubetest `Pod.get_restart_count` but without the call
+    to `refresh()` such that we reduce the number of calls to the API, and
+    reduce the chance for flakiness in that call.
+    """
+    container_statuses = pod.obj.status.container_statuses
+    if container_statuses is None:
+        return 0
+
+    total = 0
+    for container_status in container_statuses:
+        total += container_status.restart_count
+
+    return total
 
 
 def is_posthog_healthy(kube):

@@ -8,7 +8,6 @@
 kubernetes==17.17.0
 
 kubetest==0.9.5
-git+https://github.com/macobo/pytest-split.git@group-tests-by-file
 
 # Lint
 black==21.12b0

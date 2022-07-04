@@ -8,11 +8,18 @@ from helpers.utils import (
     wait_for_pods_to_be_ready,
 )
 
+VALUES_INTERNAL_POSTGRESQL_OVERRIDES = """
+postgresql:
+  nameOverride: kubetest-pg
+  postgresqlDatabase: kubetest_db
+  postgresqlPassword: kubetest_password
+"""
+
 
 @pytest.mark.parametrize(
     "values,resources_to_install",
     [
-        pytest.param("", [], id="INTERNAL_POSTGRESQL_DEFAULTS"),
+        pytest.param(VALUES_INTERNAL_POSTGRESQL_OVERRIDES, [], id="INTERNAL_POSTGRESQL_OVERRIDES"),
     ],
 )
 def test_can_connect_from_web_pod(values, resources_to_install, kube):
