@@ -119,7 +119,7 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace=
     log.debug("✅ Done!")
 
 
-def is_pod_ready(pod):
+def is_pod_ready(pod) -> bool:
     """
     Check the referenced pod is ready, without refreshing the status from the
     k8s API.
@@ -141,7 +141,7 @@ def is_pod_ready(pod):
     return False
 
 
-def get_pod_restart_count(self) -> int:
+def get_pod_restart_count(pod) -> int:
     """
     Get the total number of Container restarts for the Pod.
 
@@ -149,7 +149,7 @@ def get_pod_restart_count(self) -> int:
     to `refresh()` such that we reduce the number of calls to the API, and
     reduce the chance for flakiness in that call.
     """
-    container_statuses = self.obj.status.container_statuses
+    container_statuses = pod.obj.status.container_statuses
     if container_statuses is None:
         return 0
 
