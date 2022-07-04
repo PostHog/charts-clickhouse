@@ -9,10 +9,26 @@ from helpers.utils import (
 )
 
 
+VALUES_EXTERNAL_POSTGRESQL_WITH_PASSWORD = """
+postgresql:
+  enabled: false
+
+externalPostgresql:
+  postgresqlHost: "postgresql-external.posthog.svc.cluster.local"
+  postgresqlDatabase: kubetest_db
+  postgresqlUsername: kubetest_user
+  postgresqlPassword: kubetest_password
+"""
+
+
 @pytest.mark.parametrize(
     "values,resources_to_install",
     [
-        pytest.param("", [], id="INTERNAL_POSTGRESQL_DEFAULTS"),
+        pytest.param(
+            VALUES_EXTERNAL_POSTGRESQL_WITH_PASSWORD,
+            ["./custom_k8s_resources/postgresql_external.yaml"],
+            id="EXTERNAL_POSTGRESQL_WITH_PASSWORD",
+        ),
     ],
 )
 def test_can_connect_from_web_pod(values, resources_to_install, kube):
