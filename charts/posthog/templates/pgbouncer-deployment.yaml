@@ -29,6 +29,11 @@ spec:
 {{ toYaml .Values.pgbouncer.podLabels | indent 8 }}
         {{- end }}
     spec:
+      # Time to wait before hard killing the container. Note: if the container
+      # shuts down and exits before the terminationGracePeriod is done, we
+      # moves to the next step immediately.
+      terminationGracePeriodSeconds: 70
+
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.pgbouncer.affinity }}
       affinity:
@@ -104,10 +109,6 @@ spec:
               # See https://www.pgbouncer.org/usage.html
               #
               command: ["/bin/sh", "-c", "killall -INT pgbouncer && sleep 60"]
-
-      terminationGracePeriodSeconds: 70 # Time to wait before hard killing
-      # the container. Note: if the container shuts down and exits before the
-      # terminationGracePeriod is done, k8s moves to the next step immediately.
 
       {{- if .Values.pgbouncer.extraVolumeMounts }}
         volumeMounts: {{- toYaml .Values.pgbouncer.extraVolumeMounts | nindent 8 }}
