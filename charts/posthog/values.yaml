@@ -144,15 +144,15 @@ web:
     timeoutSeconds: 5
 
   startupProbe:
-    # -- The readiness probe failure threshold
+    # -- The startup probe failure threshold
     failureThreshold: 6
-    # -- The readiness probe initial delay seconds
+    # -- The startup probe initial delay seconds
     initialDelaySeconds: 0
-    # -- The readiness probe period seconds
+    # -- The startup probe period seconds
     periodSeconds: 10
-    # -- The readiness probe success threshold
+    # -- The startup probe success threshold
     successThreshold: 1
-    # -- The readiness probe timeout seconds
+    # -- The startup probe timeout seconds
     timeoutSeconds: 5
 
   # -- Container security context for web stack deployment.
