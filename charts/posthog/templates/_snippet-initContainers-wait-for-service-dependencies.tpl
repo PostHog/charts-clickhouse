@@ -10,12 +10,14 @@
     - >
         {{ if .Values.clickhouse.enabled }}
         until (
-            wget -qO- \
+            NODES_COUNT=$(wget -qO- \
                 "http://$CLICKHOUSE_USER:$CLICKHOUSE_PASSWORD@{{ include "posthog.clickhouse.fullname" . }}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local:8123" \
                 --post-data "SELECT count() FROM clusterAllReplicas('{{ .Values.clickhouse.cluster }}', system, one)"
+            )
+            test ! -z $NODES_COUNT && test $NODES_COUNT -eq {{ mul .Values.clickhouse.layout.shardsCount .Values.clickhouse.layout.replicasCount }}
         );
         do
-            echo "waiting for ClickHouse cluster to become available"; sleep 1;
+            echo "waiting for all ClickHouse nodes to be available"; sleep 1;
         done
         {{ end }}
 
