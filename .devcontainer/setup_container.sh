@@ -6,7 +6,7 @@ set -e -o pipefail
 
 # Install kind so we can create a cluster as per
 # https://kind.sigs.k8s.io/docs/user/quick-start/#installing-from-release-binaries
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-linux-amd64
 chmod +x ./kind
 mkdir -p ~/.local/bin/
 mv ./kind ~/.local/bin/kind
@@ -38,7 +38,7 @@ nodes:
 EOF
 
 # Then provision the nginx controller, e.g.
-# https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx 
+# https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx
 # NOTE: I've pinned the version here
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/d8c9a6c238f714587da4d2ac2dcd0d3d39419ccf/deploy/static/provider/kind/deploy.yaml
 

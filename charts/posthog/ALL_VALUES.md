@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 24.0.1](https://img.shields.io/badge/Version-24.0.1-informational?style=flat-square) ![AppVersion: 1.37.0](https://img.shields.io/badge/AppVersion-1.37.0-informational?style=flat-square)
+![Version: 24.0.3](https://img.shields.io/badge/Version-24.0.3-informational?style=flat-square) ![AppVersion: 1.37.0](https://img.shields.io/badge/AppVersion-1.37.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -48,16 +48,21 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.tolerations | list | `[]` | Toleration labels for web stack deployment. |
 | web.affinity | object | `{}` | Affinity settings for web stack deployment. |
 | web.secureCookies | bool | `true` |  |
-| web.livenessProbe.failureThreshold | int | `5` | The liveness probe failure threshold |
-| web.livenessProbe.initialDelaySeconds | int | `50` | The liveness probe initial delay seconds |
-| web.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| web.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| web.livenessProbe.initialDelaySeconds | int | `0` | The liveness probe initial delay seconds |
+| web.livenessProbe.periodSeconds | int | `5` | The liveness probe period seconds |
 | web.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
 | web.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
-| web.readinessProbe.failureThreshold | int | `10` | The readiness probe failure threshold |
-| web.readinessProbe.initialDelaySeconds | int | `50` | The readiness probe initial delay seconds |
-| web.readinessProbe.periodSeconds | int | `10` | The readiness probe period seconds |
+| web.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| web.readinessProbe.initialDelaySeconds | int | `0` | The readiness probe initial delay seconds |
+| web.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
 | web.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
-| web.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
+| web.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| web.startupProbe.failureThreshold | int | `6` | The startup probe failure threshold |
+| web.startupProbe.initialDelaySeconds | int | `0` | The startup probe initial delay seconds |
+| web.startupProbe.periodSeconds | int | `10` | The startup probe period seconds |
+| web.startupProbe.successThreshold | int | `1` | The startup probe success threshold |
+| web.startupProbe.timeoutSeconds | int | `5` | The startup probe timeout seconds |
 | web.securityContext | object | `{"enabled":false}` | Container security context for web stack deployment. |
 | web.podSecurityContext | object | `{"enabled":false}` | Pod security context for web stack deployment. |
 | worker.enabled | bool | `true` | Whether to install the PostHog worker stack or not. |
