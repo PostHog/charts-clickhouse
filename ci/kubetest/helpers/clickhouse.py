@@ -3,7 +3,7 @@ import time
 
 def get_clickhouse_statefulset_spec(kube):
     start = time.time()
-    while time.time() - start < 120:
+    while time.time() - start < 300:
         statefulsets = kube.get_statefulsets(
             namespace="posthog",
             labels={"clickhouse.altinity.com/namespace": "posthog"},
@@ -19,7 +19,7 @@ def get_clickhouse_statefulset_spec(kube):
 
 def get_clickhouse_cluster_service_spec(kube):
     start = time.time()
-    while time.time() - start < 120:
+    while time.time() - start < 300:
         services = kube.get_services(
             namespace="posthog",
             labels={

@@ -56,6 +56,9 @@ tests:
           minpods: 2
           maxpods: 10
           cputhreshold: 70
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 3600
     asserts:
       - equal:
           path: spec
@@ -73,3 +76,6 @@ tests:
                 target:
                   type: Utilization
                   averageUtilization: 70
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 3600

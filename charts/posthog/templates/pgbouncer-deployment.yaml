@@ -3,8 +3,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "posthog.fullname" . }}-pgbouncer
-  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -18,6 +18,9 @@ spec:
     metadata:
       annotations:
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        {{- if .Values.pgbouncer.podAnnotations }}
+{{ toYaml .Values.pgbouncer.podAnnotations | indent 8 }}
+      {{- end }}
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
@@ -44,51 +47,55 @@ spec:
       {{- end }}
       {{- if .Values.pgbouncer.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.pgbouncer.podSecurityContext "enabled" | toYaml | nindent 8 }}
-      {{- end }}     
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}-pgbouncer
-      {{- if .Values.pgbouncer.image }}
-        image: "{{ default "edoburu/pgbouncer" .Values.pgbouncer.image.repository }}:{{ default "1.12.0" .Values.pgbouncer.image.tag }}"
-        imagePullPolicy: {{ default "IfNotPresent" .Values.pgbouncer.image.pullPolicy }}
-      {{- else }}
-        image: "edoburu/pgbouncer:1.12.0"
-        imagePullPolicy: "IfNotPresent"
-      {{- end }}
+        image: "{{ .Values.pgbouncer.image.repository }}:{{ .Values.pgbouncer.image.tag }}"
+        imagePullPolicy: {{ .Values.pgbouncer.image.pullPolicy }}
         ports:
         - containerPort: 6543
         env:
-        - name: DB_USER
+        - name: POSTGRESQL_USERNAME
           value: {{ include "posthog.postgresql.username" . }}
-        - name: DB_PASSWORD
+        - name: POSTGRESQL_PASSWORD
           valueFrom:
             secretKeyRef:
               name: {{ include "posthog.postgresql.secretName" . }}
               key: {{ include "posthog.postgresql.secretPasswordKey" . }}
-        - name: DB_HOST
+        - name: POSTGRESQL_HOST
           value: {{ include "posthog.postgresql.host" . }}
-        - name: DB_PORT
+        - name: POSTGRESQL_PORT
           value: {{ include "posthog.postgresql.port" . | quote }}
-        - name: DB_NAME
+        - name: POSTGRESQL_DATABASE
           value: {{ include "posthog.postgresql.database" . }}
-        - name: LISTEN_PORT
-          value: "6543"
-        - name: MAX_CLIENT_CONN
-          value: "1000"
-        - name: POOL_MODE
-          value: "transaction"
+        - name: PGBOUNCER_DATABASE
+          value: {{ include "posthog.postgresql.database" . }}
 {{- if .Values.pgbouncer.env }}
 {{ toYaml .Values.pgbouncer.env | indent 8 }}
 {{- end }}
         readinessProbe:
           tcpSocket:
             port: 6543
-          initialDelaySeconds: 5
-          periodSeconds: 10
+          failureThreshold: {{ .Values.pgbouncer.readinessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.pgbouncer.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.pgbouncer.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.pgbouncer.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.pgbouncer.readinessProbe.timeoutSeconds }}
+
         livenessProbe:
           tcpSocket:
             port: 6543
-          initialDelaySeconds: 15
-          periodSeconds: 20
+          failureThreshold: {{ .Values.pgbouncer.livenessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.pgbouncer.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.pgbouncer.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.pgbouncer.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.pgbouncer.livenessProbe.timeoutSeconds }}
+
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "killall -INT pgbouncer && sleep 60"]
+
       {{- if .Values.pgbouncer.extraVolumeMounts }}
         volumeMounts: {{- toYaml .Values.pgbouncer.extraVolumeMounts | nindent 8 }}
       {{- end }}
@@ -98,7 +105,7 @@ spec:
 {{- end }}
         {{- if .Values.pgbouncer.securityContext.enabled }}
         securityContext: {{- omit .Values.pgbouncer.securityContext "enabled" | toYaml | nindent 12 }}
-        {{- end }}     
+        {{- end }}
     {{- if .Values.pgbouncer.extraVolumes }}
       volumes: {{- toYaml .Values.pgbouncer.extraVolumes | nindent 6 }}
     {{- end }}

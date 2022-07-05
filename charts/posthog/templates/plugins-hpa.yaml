@@ -20,6 +20,6 @@ spec:
         type: Utilization
         averageUtilization: {{ . }}
   {{- end }}
-  behavior: 
+  behavior:
     {{ toYaml .Values.plugins.hpa.behavior | nindent 4 }}
 {{- end }}
