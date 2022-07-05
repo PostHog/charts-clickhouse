@@ -52,6 +52,7 @@ spec:
       - name: {{ .Chart.Name }}-pgbouncer
         image: "{{ .Values.pgbouncer.image.repository }}:{{ .Values.pgbouncer.image.tag }}"
         imagePullPolicy: {{ .Values.pgbouncer.image.pullPolicy }}
+
         ports:
         - containerPort: 6543
         env:
@@ -94,7 +95,19 @@ spec:
         lifecycle:
           preStop:
             exec:
+              #
+              # Before killing the container, let'send a SIGINT to the pgbouncer
+              # process for a safe shutdown. Let's then wait 60s that is the double
+              # of the max connection timeout we have in our app to make sure
+              # connections are drained before we terminate the container.
+              #
+              # See https://www.pgbouncer.org/usage.html
+              #
               command: ["/bin/sh", "-c", "killall -INT pgbouncer && sleep 60"]
+
+      terminationGracePeriodSeconds: 70 # Time to wait before hard killing
+      # the container. Note: if the container shuts down and exits before the
+      # terminationGracePeriod is done, k8s moves to the next step immediately.
 
       {{- if .Values.pgbouncer.extraVolumeMounts }}
         volumeMounts: {{- toYaml .Values.pgbouncer.extraVolumeMounts | nindent 8 }}
