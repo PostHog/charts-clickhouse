@@ -1056,7 +1056,9 @@ grafana:
 ###
 ###
 loki:
-  # -- Whether to install Loki or not.
+  # -- Whether to install Loki or not. See
+  # https://github.com/grafana/helm-charts/tree/main/charts/loki-simple-scalable
+  # for values options.
   enabled: false
 
 
