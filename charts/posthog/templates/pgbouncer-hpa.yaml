@@ -20,4 +20,6 @@ spec:
         type: Utilization
         averageUtilization: {{ . }}
   {{- end }}
+  behavior:
+    {{ toYaml .Values.pgbouncer.hpa.behavior | nindent 4 }}
 {{- end }}
