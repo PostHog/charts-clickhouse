@@ -124,7 +124,7 @@ spec:
             {{- if .Values.clickhouse.backup.enabled }}
             - name: clickhouse-backup
               image: {{ template "posthog_backup.clickhouse.image" . }}
-              imagePullPolicy: Always
+              imagePullPolicy: {{ .Values.clickhouse.backup.image.pullPolicy }}
               command:
                 - /bin/bash
                 - -c
