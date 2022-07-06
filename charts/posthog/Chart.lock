@@ -23,9 +23,9 @@ dependencies:
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 6.24.1
-- name: loki
+- name: loki-simple-scalable
   repository: https://grafana.github.io/helm-charts
-  version: 2.10.2
+  version: 1.4.3
 - name: promtail
   repository: https://grafana.github.io/helm-charts
   version: 4.2.0
@@ -44,5 +44,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:69c5f92687fdc5a7e37e359e346398abbcfd5342fbe40703bf8c5d9451c34875
-generated: "2022-06-14T14:46:39.948468+02:00"
+digest: sha256:2da45fb63f72f5393218535f60b44613750d8615711d86501e8968ca80bb89f7
+generated: "2022-07-01T16:04:44.302116368Z"

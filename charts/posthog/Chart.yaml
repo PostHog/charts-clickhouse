@@ -59,8 +59,8 @@ dependencies:
     repository: https://grafana.github.io/helm-charts
     condition: grafana.enabled
 
-  - name: loki
-    version: 2.10.2
+  - name: loki-simple-scalable
+    version: 1.4.3
     repository: https://grafana.github.io/helm-charts
     condition: loki.enabled
 
