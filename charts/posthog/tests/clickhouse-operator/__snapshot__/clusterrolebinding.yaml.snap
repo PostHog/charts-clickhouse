@@ -4,7 +4,7 @@ the manifest should match the snapshot when using default values:
     kind: ClusterRoleBinding
     metadata:
       labels:
-        clickhouse.altinity.com/chop: 0.18.4
+        clickhouse.altinity.com/chop: 0.18.5
       name: clickhouse-operator-NAMESPACE
       namespace: NAMESPACE
     roleRef:

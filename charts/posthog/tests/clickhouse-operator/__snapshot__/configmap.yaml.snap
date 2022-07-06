@@ -220,7 +220,7 @@ the manifest should match the snapshot when using default values:
     metadata:
       labels:
         app: clickhouse-operator
-        clickhouse.altinity.com/chop: 0.18.4
+        clickhouse.altinity.com/chop: 0.18.5
       name: etc-clickhouse-operator-files
       namespace: NAMESPACE
   2: |
@@ -230,7 +230,7 @@ the manifest should match the snapshot when using default values:
     metadata:
       labels:
         app: clickhouse-operator
-        clickhouse.altinity.com/chop: 0.18.4
+        clickhouse.altinity.com/chop: 0.18.5
       name: etc-clickhouse-operator-confd-files
       namespace: NAMESPACE
   3: |
@@ -279,7 +279,7 @@ the manifest should match the snapshot when using default values:
     metadata:
       labels:
         app: clickhouse-operator
-        clickhouse.altinity.com/chop: 0.18.4
+        clickhouse.altinity.com/chop: 0.18.5
       name: etc-clickhouse-operator-configd-files
       namespace: NAMESPACE
   4: |
@@ -371,7 +371,7 @@ the manifest should match the snapshot when using default values:
     metadata:
       labels:
         app: clickhouse-operator
-        clickhouse.altinity.com/chop: 0.18.4
+        clickhouse.altinity.com/chop: 0.18.5
       name: etc-clickhouse-operator-templatesd-files
       namespace: NAMESPACE
   5: |
@@ -423,6 +423,6 @@ the manifest should match the snapshot when using default values:
     metadata:
       labels:
         app: clickhouse-operator
-        clickhouse.altinity.com/chop: 0.18.4
+        clickhouse.altinity.com/chop: 0.18.5
       name: etc-clickhouse-operator-usersd-files
       namespace: NAMESPACE
