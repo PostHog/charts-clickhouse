@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 24.2.0](https://img.shields.io/badge/Version-24.2.0-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
+![Version: 24.3.0](https://img.shields.io/badge/Version-24.3.0-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -183,16 +183,35 @@ The following table lists the configurable parameters of the PostHog chart and t
 | externalPostgresql.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the PostgreSQL password |
 | externalPostgresql.existingSecretPasswordKey | string | `"postgresql-password"` | Name of the key pointing to the password in your Kubernetes secret |
 | pgbouncer.enabled | bool | `true` | Whether to deploy a PgBouncer service to satisfy the applications requirements. |
-| pgbouncer.hpa.enabled | bool | `false` | Adding pgbouncers can cause running out of connections for Postgres |
-| pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for pgbouncer |
-| pgbouncer.hpa.minpods | int | `1` | Min pods for pgbouncer |
-| pgbouncer.hpa.maxpods | int | `10` | Max pods for pgbouncer |
-| pgbouncer.replicacount | int | `1` | How many replicas of pgbouncer to run. Ignored if hpa is used |
-| pgbouncer.env | list | `[]` | Additional env vars to be added to the pgbouncer deployment |
-| pgbouncer.extraVolumeMounts | list | `[]` | Additional volumeMounts to be added to the pgbouncer deployment |
-| pgbouncer.extraVolumes | list | `[]` | Additional volumes to be added to the pgbouncer deployment |
-| pgbouncer.securityContext | object | `{"enabled":false}` | Container security context for the pgbouncer deployment |
-| pgbouncer.podSecurityContext | object | `{"enabled":false}` | Pod security context for the pgbouncer deployment |
+| pgbouncer.replicacount | int | `1` | Count of pgbouncer pods to run. This setting is ignored if `pgbouncer.hpa.enabled` is set to `true`. |
+| pgbouncer.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the pgbouncer stack. |
+| pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for the pgbouncer stack HorizontalPodAutoscaler. |
+| pgbouncer.hpa.minpods | int | `1` | Min pods for the pgbouncer stack HorizontalPodAutoscaler. |
+| pgbouncer.hpa.maxpods | int | `10` | Max pods for the pgbouncer stack HorizontalPodAutoscaler. |
+| pgbouncer.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pgbouncer.env | list | `[{"name":"PGBOUNCER_PORT","value":"6543"},{"name":"PGBOUNCER_MAX_CLIENT_CONN","value":"1000"},{"name":"PGBOUNCER_POOL_MODE","value":"transaction"}]` | Additional env variables to inject into the pgbouncer stack deployment. |
+| pgbouncer.resources | object | `{}` | Resource limits for the pgbouncer stack deployment. |
+| pgbouncer.nodeSelector | object | `{}` | Node labels for the pgbouncer stack deployment. |
+| pgbouncer.tolerations | list | `[]` | Toleration labels for the pgbouncer stack deployment. |
+| pgbouncer.affinity | object | `{}` | Affinity settings for the pgbouncer stack deployment. |
+| pgbouncer.securityContext | object | `{"enabled":false}` | Container security context for the pgbouncer stack deployment. |
+| pgbouncer.podSecurityContext | object | `{"enabled":false}` | Pod security context for the pgbouncer stack deployment. |
+| pgbouncer.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| pgbouncer.readinessProbe.initialDelaySeconds | int | `10` | The readiness probe initial delay seconds |
+| pgbouncer.readinessProbe.periodSeconds | int | `5` | The readiness probe period seconds |
+| pgbouncer.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| pgbouncer.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
+| pgbouncer.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| pgbouncer.livenessProbe.initialDelaySeconds | int | `60` | The liveness probe initial delay seconds |
+| pgbouncer.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| pgbouncer.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| pgbouncer.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| pgbouncer.image.repository | string | `"bitnami/pgbouncer"` |  |
+| pgbouncer.image.tag | string | `"1.17.0"` |  |
+| pgbouncer.image.pullPolicy | string | `"IfNotPresent"` |  |
+| pgbouncer.service.type | string | `"ClusterIP"` |  |
+| pgbouncer.service.annotations | object | `{}` |  |
+| pgbouncer.podAnnotations | object | `{}` |  |
 | redis.enabled | bool | `true` | Whether to deploy a Redis server to satisfy the applications requirements. To use an external redis instance set this to `false` and configure the `externalRedis` parameters. |
 | redis.nameOverride | string | `"posthog-redis"` |  |
 | redis.fullnameOverride | string | `""` |  |
