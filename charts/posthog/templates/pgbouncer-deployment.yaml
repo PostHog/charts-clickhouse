@@ -108,7 +108,7 @@ spec:
               #
               # See https://www.pgbouncer.org/usage.html
               #
-              command: ["/bin/sh", "-c", "killall -INT pgbouncer && sleep 60"]
+              command: ["/bin/sh", "-c", "pkill -INT pgbouncer && sleep 60"]
 
       {{- if .Values.pgbouncer.extraVolumeMounts }}
         volumeMounts: {{- toYaml .Values.pgbouncer.extraVolumeMounts | nindent 8 }}
