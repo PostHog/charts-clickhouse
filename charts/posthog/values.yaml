@@ -764,6 +764,8 @@ clickhouse:
     repository: clickhouse/clickhouse-server
     # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
     tag: "22.3.6.5"
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
 
   # -- Toleration labels for clickhouse pod assignment
   tolerations: []
@@ -866,6 +868,8 @@ clickhouse:
       repository: clickhouse/clickhouse-server
       # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
       tag: "22.3.6.5"
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
 
   backup:
     # https://posthog.com/docs/self-host/runbook/clickhouse/backup
@@ -876,6 +880,9 @@ clickhouse:
       repository: altinity/clickhouse-backup
       # -- ClickHouse backup image tag.
       tag: "1.4.0"
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+
     backup_user: backup
     # password in plain text because it's using in cronjob
     backup_password: backup_password
@@ -1262,3 +1269,5 @@ installCustomStorageClass: false
 busybox:
   # -- Specify the image to use for e.g. init containers
   image: busybox:1.34
+  # -- Image pull policy
+  pullPolicy: IfNotPresent

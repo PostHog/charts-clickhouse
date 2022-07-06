@@ -33,6 +33,7 @@ spec:
       containers:
       - name: migrate-job
         image: {{ template "posthog.image.fullPath" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:
           - /bin/sh
           - -c

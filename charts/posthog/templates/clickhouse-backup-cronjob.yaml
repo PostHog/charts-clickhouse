@@ -26,6 +26,7 @@ spec:
             #
             - name: wait-for-service-dependencies
               image: {{ .Values.busybox.image }}
+              imagePullPolicy: {{ .Values.busybox.pullPolicy }}
               env: {{- include "snippet.clickhouse-env" . | nindent 16 }}
               command:
                 - /bin/sh
@@ -41,7 +42,7 @@ spec:
           containers:
             - name: run-backup-cron
               image: {{ template "client.clickhouse.image" . }}
-              imagePullPolicy: IfNotPresent
+              imagePullPolicy: {{ .Values.clickhouse.client.image.pullPolicy }}
               env:
                 - name: CLICKHOUSE_SERVICES
                   value: {{ .Values.clickhouse.backup.clickhouse_services }}

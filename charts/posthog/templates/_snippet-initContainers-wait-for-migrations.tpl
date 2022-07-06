@@ -2,6 +2,7 @@
 {{- define "_snippet-initContainers-wait-for-migrations" }}
 - name: wait-for-migrations
   image: {{ include "posthog.image.fullPath" . }}
+  imagePullPolicy: {{ .Values.busybox.pullPolicy }}
   command:
     - /bin/sh
     - -c

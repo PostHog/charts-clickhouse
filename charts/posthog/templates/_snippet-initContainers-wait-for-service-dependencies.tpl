@@ -2,6 +2,7 @@
 {{- define "_snippet-initContainers-wait-for-service-dependencies" }}
 - name: wait-for-service-dependencies
   image: {{ .Values.busybox.image }}
+  imagePullPolicy: {{ .Values.busybox.pullPolicy }}
   env:
     {{- include "snippet.clickhouse-env" . | nindent 4 }}
   command:
