@@ -14,7 +14,7 @@ metadata:
   name: clickhouse-operator-{{ .Values.clickhouse.namespace | default .Release.Namespace }}
   namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
-    clickhouse.altinity.com/chop: 0.18.4
+    clickhouse.altinity.com/chop: 0.18.5
 rules:
 - apiGroups:
     - ""

@@ -17,7 +17,12 @@ CHART_PATH=$(cd "$CHART_PATH_RAW" 2> /dev/null && pwd -P)
 TMP_FOLDER="$(mktemp -d)"
 trap 'rm -rf -- "$TMP_FOLDER"' EXIT
 
-CLICKHOUSE_OPERATOR_TAG="0.18.4"
+CLICKHOUSE_OPERATOR_TAG="0.18.5"
+OPERATOR_IMAGE="${OPERATOR_IMAGE:-altinity/clickhouse-operator:$CLICKHOUSE_OPERATOR_TAG}"
+METRICS_EXPORTER_IMAGE="${METRICS_EXPORTER_IMAGE:-altinity/metrics-exporter:$CLICKHOUSE_OPERATOR_TAG}"
+
+OPERATOR_NAMESPACE="PLACEHOLDER"
+METRICS_EXPORTER_NAMESPACE="${OPERATOR_NAMESPACE}"
 URL="https://raw.githubusercontent.com/Altinity/clickhouse-operator/${CLICKHOUSE_OPERATOR_TAG}/deploy/operator/clickhouse-operator-install-template.yaml"
 
 #
@@ -25,16 +30,6 @@ URL="https://raw.githubusercontent.com/Altinity/clickhouse-operator/${CLICKHOUSE
 #
 # see: https://github.com/Altinity/clickhouse-operator/blob/master/docs/quick_start.md#in-case-you-can-not-run-scripts-from-internet-in-your-protected-environment
 #
-OPERATOR_NAMESPACE="PLACEHOLDER"
-METRICS_EXPORTER_NAMESPACE="${OPERATOR_NAMESPACE}"
-# NOTE: we pin to 0.19.0 here which is different to the 0.16.1 manifest version.
-# Prior to pinning we were specifying latest, so to ensure that the version
-# doesn't change on existing installs we pin to latest as of writing, thereby
-# mitigating the possibility that chart will unexpectedly update, while also
-# maintaining current functionality.
-OPERATOR_IMAGE="${OPERATOR_IMAGE:-altinity/clickhouse-operator:0.19.0}"
-METRICS_EXPORTER_IMAGE="${METRICS_EXPORTER_IMAGE:-altinity/metrics-exporter:latest}"
-
 curl -s "${URL}" | \
     OPERATOR_IMAGE="${OPERATOR_IMAGE}" \
     OPERATOR_NAMESPACE="${OPERATOR_NAMESPACE}" \

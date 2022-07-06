@@ -11,7 +11,7 @@ metadata:
   name: etc-clickhouse-operator-files
   namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
-    clickhouse.altinity.com/chop: 0.18.4
+    clickhouse.altinity.com/chop: 0.18.5
     app: clickhouse-operator
 data:
   config.yaml: |
@@ -243,7 +243,7 @@ metadata:
   name: etc-clickhouse-operator-confd-files
   namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
-    clickhouse.altinity.com/chop: 0.18.4
+    clickhouse.altinity.com/chop: 0.18.5
     app: clickhouse-operator
 data:
 
@@ -261,7 +261,7 @@ metadata:
   name: etc-clickhouse-operator-configd-files
   namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
-    clickhouse.altinity.com/chop: 0.18.4
+    clickhouse.altinity.com/chop: 0.18.5
     app: clickhouse-operator
 data:
   01-clickhouse-01-listen.xml: |
@@ -321,7 +321,7 @@ metadata:
   name: etc-clickhouse-operator-templatesd-files
   namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
-    clickhouse.altinity.com/chop: 0.18.4
+    clickhouse.altinity.com/chop: 0.18.5
     app: clickhouse-operator
 data:
   001-templates.json.example: |
@@ -423,7 +423,7 @@ metadata:
   name: etc-clickhouse-operator-usersd-files
   namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
-    clickhouse.altinity.com/chop: 0.18.4
+    clickhouse.altinity.com/chop: 0.18.5
     app: clickhouse-operator
 data:
   01-clickhouse-user.xml: |
