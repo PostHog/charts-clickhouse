@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 24.1.0](https://img.shields.io/badge/Version-24.1.0-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
+![Version: 24.2.0](https://img.shields.io/badge/Version-24.2.0-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -237,6 +237,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.verify | bool | `false` | Whether to verify TLS certificate on connection to ClickHouse |
 | clickhouse.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
 | clickhouse.image.tag | string | `"22.3.6.5"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
+| clickhouse.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
 | clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod |
 | clickhouse.resources | object | `{}` | Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
@@ -260,9 +261,11 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.podAnnotations | string | `nil` |  |
 | clickhouse.client.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
 | clickhouse.client.image.tag | string | `"22.3.6.5"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
+| clickhouse.client.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.backup.enabled | bool | `false` |  |
 | clickhouse.backup.image.repository | string | `"altinity/clickhouse-backup"` | Clickhouse backup image repository. |
 | clickhouse.backup.image.tag | string | `"1.4.0"` | ClickHouse backup image tag. |
+| clickhouse.backup.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.backup.backup_user | string | `"backup"` |  |
 | clickhouse.backup.backup_password | string | `"backup_password"` |  |
 | clickhouse.backup.backup_schedule | string | `"0 0 * * *"` |  |
@@ -342,6 +345,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | prometheus-redis-exporter.redisAddress | string | `"redis://posthog-posthog-redis-master:6379"` | Specify the target Redis instance to monitor. |
 | installCustomStorageClass | bool | `false` |  |
 | busybox.image | string | `"busybox:1.34"` | Specify the image to use for e.g. init containers |
+| busybox.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 
 Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
 
