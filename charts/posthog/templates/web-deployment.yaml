@@ -121,7 +121,7 @@ spec:
 {{- end }}
         livenessProbe:
           httpGet:
-            path: /_livez/
+            path: /_livez
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
@@ -133,7 +133,7 @@ spec:
           httpGet:
             # For readiness, we want to use the checks specific to the web
             # role, which may be a subset of all the apps dependencies
-            path: /_readyz/?role=web
+            path: /_readyz?role=web
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.readinessProbe.failureThreshold }}
@@ -146,7 +146,7 @@ spec:
             # For startup, we want to make sure that everything is in place,
             # including postgres. This does however mean we would not be able to
             # deploy new releases when we have a postgres outage
-            path: /_readyz/
+            path: /_readyz
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.startupProbe.failureThreshold }}
