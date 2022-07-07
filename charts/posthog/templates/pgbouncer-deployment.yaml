@@ -81,11 +81,6 @@ spec:
         - name: PGBOUNCER_DATABASE
           value: {{ include "posthog.postgresql.database" . }}
 
-        {{ if .Values.pgbouncer.exporter.enabled }}
-        - name: PGBOUNCER_STATS_USERS
-          value: exporter
-        {{ end }}
-
 {{- if .Values.pgbouncer.env }}
 {{ toYaml .Values.pgbouncer.env | indent 8 }}
 {{- end }}
@@ -143,7 +138,15 @@ spec:
         - --web.telemetry-path=/metrics
         - --log.level=info
         - --log.format=json
-        - --pgBouncer.connectionString=postgres://exporter:@127.0.0.1:6543/pgbouncer?sslmode=disable&connect_timeout=10
+        - --pgBouncer.connectionString=postgres://${POSTGRESQL_USERNAME}:${POSTGRESQL_PASSWORD}@127.0.0.1:6543/pgbouncer?sslmode=disable&connect_timeout=10
+        env:
+        - name: POSTGRESQL_USERNAME
+          value: {{ include "posthog.postgresql.username" . }}
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "posthog.postgresql.secretName" . }}
+              key: {{ include "posthog.postgresql.secretPasswordKey" . }}
         ports:
           - name: metrics
             containerPort: 9127
