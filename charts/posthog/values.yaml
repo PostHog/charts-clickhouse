@@ -557,6 +557,14 @@ pgbouncer:
   # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
   enabled: true
 
+  exporter:
+    # -- Whether to install a Prometheus export as a sidecar
+    enabled: false
+    image:
+      repository: prometheuscommunity/pgbouncer-exporter
+      tag: v0.4.1
+      pullPolicy: IfNotPresent
+
   # -- Count of pgbouncer pods to run. This setting is ignored if `pgbouncer.hpa.enabled` is set to `true`.
   replicacount: 1
 

@@ -21,6 +21,10 @@ spec:
         {{- if .Values.pgbouncer.podAnnotations }}
 {{ toYaml .Values.pgbouncer.podAnnotations | indent 8 }}
         {{- end }}
+
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9127"
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
@@ -76,6 +80,12 @@ spec:
           value: {{ include "posthog.postgresql.database" . }}
         - name: PGBOUNCER_DATABASE
           value: {{ include "posthog.postgresql.database" . }}
+
+        {{ if .Values.pgbouncer.exporter.enabled }}
+        - name: PGBOUNCER_STATS_USERS
+          value: exporter
+        {{ end }}
+
 {{- if .Values.pgbouncer.env }}
 {{ toYaml .Values.pgbouncer.env | indent 8 }}
 {{- end }}
@@ -123,4 +133,19 @@ spec:
     {{- if .Values.pgbouncer.extraVolumes }}
       volumes: {{- toYaml .Values.pgbouncer.extraVolumes | nindent 6 }}
     {{- end }}
+
+      {{ if .Values.pgbouncer.exporter.enabled }}
+      - name: metrics
+        image: "{{ .Values.pgbouncer.exporter.image.repository }}:{{ .Values.pgbouncer.exporter.image.tag }}"
+        imagePullPolicy: {{ .Values.pgbouncer.exporter.image.pullPolicy }}
+        args:
+        - --web.listen-address=:9127
+        - --web.telemetry-path=/metrics
+        - --log.level=info
+        - --log.format=json
+        - --pgBouncer.connectionString=postgres://exporter:@127.0.0.1:6543/pgbouncer?sslmode=disable&connect_timeout=10
+        ports:
+          - name: metrics
+            containerPort: 9127
+      {{- end -}}
 {{- end }}
