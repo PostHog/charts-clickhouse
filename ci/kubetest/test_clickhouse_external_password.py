@@ -34,6 +34,10 @@ VALUES_ACCESS_EXTERNAL_CLICKHOUSE_VIA_PASSWORD = merge_yaml(
       enabled: true
     pgbouncer:
       enabled: true
+    kafka:
+      enabled: true
+    zookeeper:
+      enabled: true
 
     clickhouse:
       enabled: false

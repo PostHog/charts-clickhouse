@@ -23,6 +23,8 @@ VALUES_ACCESS_CLICKHOUSE = merge_yaml(
       enabled: true
     pgbouncer:
       enabled: true
+    kafka:
+      enabled: true
     """,
 )
 
