@@ -32,7 +32,7 @@ spec:
       # Time to wait before hard killing the container. Note: if the container
       # shuts down and exits before the terminationGracePeriod is done, we
       # moves to the next step immediately.
-      terminationGracePeriodSeconds: 70
+      terminationGracePeriodSeconds: 60
 
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.pgbouncer.affinity }}
@@ -100,15 +100,26 @@ spec:
         lifecycle:
           preStop:
             exec:
-              #
-              # Before killing the container, let'send a SIGINT to the pgbouncer
-              # process for a safe shutdown. Let's then wait 60s that is the double
-              # of the max connection timeout we have in our app to make sure
-              # connections are drained before we terminate the container.
-              #
-              # See https://www.pgbouncer.org/usage.html
-              #
-              command: ["/bin/sh", "-c", "pkill -INT pgbouncer && sleep 60"]
+              command: [
+                "sh", "-c",
+                #
+                # Introduce a delay to the shutdown sequence to wait for the
+                # pod eviction event to propagate into the cluster.
+                #
+                # See: https://blog.gruntwork.io/delaying-shutdown-to-wait-for-pod-deletion-propagation-445f779a8304
+                #
+                #
+                # Then, gracefully shutdown pgbouncer by sending a SIGINT
+                # to the process (see https://www.pgbouncer.org/usage.html)
+                # and sleep again for max query timeout + 1s.
+                #
+                # Note: once the connections are all drained, the process will
+                # exit before the 'sleep 31' completes and the pod will be
+                # removed. Unfortunately we will also get an ugly 'FailedPreStopHook'
+                # warning in the k8s event logs but I'm not sure how we can avoid it.
+                #
+                "sleep 10 && kill -INT 1 && sleep 31"
+              ]
 
       {{- if .Values.pgbouncer.extraVolumeMounts }}
         volumeMounts: {{- toYaml .Values.pgbouncer.extraVolumeMounts | nindent 8 }}
