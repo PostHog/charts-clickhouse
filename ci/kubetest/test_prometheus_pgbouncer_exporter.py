@@ -6,9 +6,6 @@ from helpers.utils import install_chart, is_posthog_healthy, wait_for_pods_to_be
 VALUES_YAML = """
 cloud: local
 
-ingress:
-    enabled: false
-
 pgbouncer:
     exporter:
         enabled: true
