@@ -8,9 +8,9 @@ metadata:
 spec:
   selector:
     matchLabels:
-        app: {{ template "posthog.fullname" . }}
-        release: "{{ .Release.Name }}"
-        role: pgbouncer
+      app: {{ template "posthog.fullname" . }}
+      release: "{{ .Release.Name }}"
+      role: pgbouncer
   {{- if not .Values.pgbouncer.hpa.enabled }}
   replicas: {{ .Values.pgbouncer.replicacount }}
   {{- end }}
@@ -134,7 +134,7 @@ spec:
         {{- end }}
 
         {{- if .Values.pgbouncer.resources }}
-        resources: {{ toYaml .Values.pgbouncer.resources | indent 12 }}
+        resources: {{ toYaml .Values.pgbouncer.resources | nindent 10 }}
         {{- end }}
 
         {{- if .Values.pgbouncer.securityContext.enabled }}
@@ -163,7 +163,7 @@ spec:
           - >
               until (nc -vz 127.0.0.1 6543);
               do
-                  echo "waiting for PgBouncer"; sleep 1;
+                echo "waiting for PgBouncer"; sleep 1;
               done
 
               pgbouncer_exporter \
@@ -177,7 +177,7 @@ spec:
             containerPort: {{ .Values.pgbouncer.exporter.port }}
 
         {{- if .Values.pgbouncer.exporter.resources }}
-        resources: {{ toYaml .Values.pgbouncer.exporter.resources | nindent 12 }}
+        resources: {{ toYaml .Values.pgbouncer.exporter.resources | nindent 10 }}
         {{- end }}
 
         {{- if .Values.pgbouncer.exporter.securityContext.enabled }}
