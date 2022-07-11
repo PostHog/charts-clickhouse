@@ -13,15 +13,15 @@ tests:
       - hasDocuments:
           count: 0
 
-  - it: should have the correct apiVersion
+  - it: should match snapshot data
     template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
     asserts:
       - hasDocuments:
           count: 1
-      - isAPIVersion:
-          of: apps/v1
+      - matchSnapshot:
+          path: spec.template.spec
 
   - it: should be the correct kind
     template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
@@ -49,7 +49,7 @@ tests:
       - equal:
           path: spec.template.spec.securityContext.fsGroup
           value: 2000
-    
+
   - it: should have a container securityContext
     template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
@@ -65,8 +65,8 @@ tests:
           value: 1001
       - equal:
           path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
-          value: false            
-          
+          value: false
+
   - it: should not have a pod securityContext
     template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
@@ -78,7 +78,7 @@ tests:
       - isEmpty:
           path: spec.template.spec.securityContext
           value: 1001
-  
+
   - it: should not have a container securityContext
     template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
@@ -88,4 +88,54 @@ tests:
       - hasDocuments:
           count: 1
       - isEmpty:
-          path: spec.template.spec.containers[0].securityContext  
+          path: spec.template.spec.containers[0].securityContext
+
+  - it: pgbouncer should have the correct resources if set
+    template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncer.resources:
+        requests:
+          cpu: 100m
+          memory: 50M
+        limits:
+          cpu: 512m
+          memory: 100M
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            requests:
+              cpu: 100m
+              memory: 50M
+            limits:
+              cpu: 512m
+              memory: 100M
+
+  - it: pgbouncer metrics exporter should have the correct resources if set
+    template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncer.exporter:
+        enabled: true
+        resources:
+          requests:
+            cpu: 125m
+            memory: 100M
+          limits:
+            cpu: 250m
+            memory: 200M
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[1].resources
+          value:
+            requests:
+              cpu: 125m
+              memory: 100M
+            limits:
+              cpu: 250m
+              memory: 200M
