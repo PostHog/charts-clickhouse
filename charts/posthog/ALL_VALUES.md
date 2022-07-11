@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 25.0.2](https://img.shields.io/badge/Version-25.0.2-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
+![Version: 25.0.3](https://img.shields.io/badge/Version-25.0.3-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -183,13 +183,20 @@ The following table lists the configurable parameters of the PostHog chart and t
 | externalPostgresql.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the PostgreSQL password |
 | externalPostgresql.existingSecretPasswordKey | string | `"postgresql-password"` | Name of the key pointing to the password in your Kubernetes secret |
 | pgbouncer.enabled | bool | `true` | Whether to deploy a PgBouncer service to satisfy the applications requirements. |
+| pgbouncer.exporter.enabled | bool | `false` | Whether to install a Prometheus export as a sidecar |
+| pgbouncer.exporter.port | int | `9127` |  |
+| pgbouncer.exporter.image.repository | string | `"prometheuscommunity/pgbouncer-exporter"` |  |
+| pgbouncer.exporter.image.tag | string | `"v0.4.1"` |  |
+| pgbouncer.exporter.image.pullPolicy | string | `"IfNotPresent"` |  |
+| pgbouncer.exporter.resources | object | `{}` | Resource limits for pgbouncer-exporter. |
+| pgbouncer.exporter.securityContext | object | `{"enabled":false}` | Container security context for pgbouncer-exporter. |
 | pgbouncer.replicacount | int | `1` | Count of pgbouncer pods to run. This setting is ignored if `pgbouncer.hpa.enabled` is set to `true`. |
 | pgbouncer.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the pgbouncer stack. |
 | pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for the pgbouncer stack HorizontalPodAutoscaler. |
 | pgbouncer.hpa.minpods | int | `1` | Min pods for the pgbouncer stack HorizontalPodAutoscaler. |
 | pgbouncer.hpa.maxpods | int | `10` | Max pods for the pgbouncer stack HorizontalPodAutoscaler. |
 | pgbouncer.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
-| pgbouncer.env | list | `[{"name":"PGBOUNCER_PORT","value":"6543"},{"name":"PGBOUNCER_MAX_CLIENT_CONN","value":"1000"},{"name":"PGBOUNCER_POOL_MODE","value":"transaction"}]` | Additional env variables to inject into the pgbouncer stack deployment. |
+| pgbouncer.env | list | `[{"name":"PGBOUNCER_PORT","value":"6543"},{"name":"PGBOUNCER_MAX_CLIENT_CONN","value":"1000"},{"name":"PGBOUNCER_POOL_MODE","value":"transaction"},{"name":"PGBOUNCER_IGNORE_STARTUP_PARAMETERS","value":"extra_float_digits"}]` | Additional env variables to inject into the pgbouncer stack deployment. |
 | pgbouncer.resources | object | `{}` | Resource limits for the pgbouncer stack deployment. |
 | pgbouncer.nodeSelector | object | `{}` | Node labels for the pgbouncer stack deployment. |
 | pgbouncer.tolerations | list | `[]` | Toleration labels for the pgbouncer stack deployment. |
