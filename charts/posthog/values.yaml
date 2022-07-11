@@ -557,6 +557,22 @@ pgbouncer:
   # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
   enabled: true
 
+  exporter:
+    # -- Whether to install a Prometheus export as a sidecar
+    enabled: false
+    port: 9127
+    image:
+      repository: prometheuscommunity/pgbouncer-exporter
+      tag: v0.4.1
+      pullPolicy: IfNotPresent
+
+    # -- Resource limits for pgbouncer-exporter.
+    resources: {}
+
+    # -- Container security context for pgbouncer-exporter.
+    securityContext:
+      enabled: false
+
   # -- Count of pgbouncer pods to run. This setting is ignored if `pgbouncer.hpa.enabled` is set to `true`.
   replicacount: 1
 
@@ -581,7 +597,9 @@ pgbouncer:
     - name: PGBOUNCER_MAX_CLIENT_CONN
       value: "1000"
     - name: PGBOUNCER_POOL_MODE
-      value: "transaction"
+      value: transaction
+    - name: PGBOUNCER_IGNORE_STARTUP_PARAMETERS
+      value: extra_float_digits
 
   # -- Resource limits for the pgbouncer stack deployment.
   resources: {}

@@ -19,14 +19,21 @@ spec:
       annotations:
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
         {{- if .Values.pgbouncer.podAnnotations }}
-{{ toYaml .Values.pgbouncer.podAnnotations | indent 8 }}
+        {{ toYaml .Values.pgbouncer.podAnnotations | nindent 8 }}
         {{- end }}
+
+        {{ if .Values.pgbouncer.exporter.enabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.pgbouncer.exporter.port }}"
+        {{- end }}
+
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
         role: pgbouncer
         {{- if .Values.pgbouncer.podLabels }}
-{{ toYaml .Values.pgbouncer.podLabels | indent 8 }}
+        {{ toYaml .Values.pgbouncer.podLabels | nindent 8 }}
         {{- end }}
     spec:
       # Time to wait before hard killing the container. Note: if the container
@@ -36,16 +43,13 @@ spec:
 
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.pgbouncer.affinity }}
-      affinity:
-{{ toYaml .Values.pgbouncer.affinity | indent 8 }}
+      affinity: {{ toYaml .Values.pgbouncer.affinity | nindent 8 }}
       {{- end }}
       {{- if .Values.pgbouncer.nodeSelector }}
-      nodeSelector:
-{{ toYaml .Values.pgbouncer.nodeSelector | indent 8 }}
+      nodeSelector: {{ toYaml .Values.pgbouncer.nodeSelector | nindent 8 }}
       {{- end }}
       {{- if .Values.pgbouncer.tolerations }}
-      tolerations:
-{{ toYaml .Values.pgbouncer.tolerations | indent 8 }}
+      tolerations: {{ toYaml .Values.pgbouncer.tolerations | nindent 8 }}
       {{- end }}
       {{- if .Values.pgbouncer.schedulerName }}
       schedulerName: "{{ .Values.pgbouncer.schedulerName }}"
@@ -54,12 +58,13 @@ spec:
       securityContext: {{- omit .Values.pgbouncer.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
       containers:
+
       - name: {{ .Chart.Name }}-pgbouncer
         image: "{{ .Values.pgbouncer.image.repository }}:{{ .Values.pgbouncer.image.tag }}"
         imagePullPolicy: {{ .Values.pgbouncer.image.pullPolicy }}
-
         ports:
-        - containerPort: 6543
+        - name: pgbouncer
+          containerPort: 6543
         env:
         - name: POSTGRESQL_USERNAME
           value: {{ include "posthog.postgresql.username" . }}
@@ -68,17 +73,20 @@ spec:
             secretKeyRef:
               name: {{ include "posthog.postgresql.secretName" . }}
               key: {{ include "posthog.postgresql.secretPasswordKey" . }}
+        - name: POSTGRESQL_DATABASE
+          value: {{ include "posthog.postgresql.database" . }}
         - name: POSTGRESQL_HOST
           value: {{ include "posthog.postgresql.host" . }}
         - name: POSTGRESQL_PORT
           value: {{ include "posthog.postgresql.port" . | quote }}
-        - name: POSTGRESQL_DATABASE
-          value: {{ include "posthog.postgresql.database" . }}
+
         - name: PGBOUNCER_DATABASE
           value: {{ include "posthog.postgresql.database" . }}
-{{- if .Values.pgbouncer.env }}
-{{ toYaml .Values.pgbouncer.env | indent 8 }}
-{{- end }}
+
+        {{- if .Values.pgbouncer.env }}
+        {{ toYaml .Values.pgbouncer.env | nindent 8 }}
+        {{- end }}
+
         readinessProbe:
           tcpSocket:
             port: 6543
@@ -121,17 +129,59 @@ spec:
                 "sleep 10 && kill -INT 1 && sleep 31"
               ]
 
-      {{- if .Values.pgbouncer.extraVolumeMounts }}
+        {{- if .Values.pgbouncer.extraVolumeMounts }}
         volumeMounts: {{- toYaml .Values.pgbouncer.extraVolumeMounts | nindent 8 }}
-      {{- end }}
-{{- if .Values.pgbouncer.resources }}
-        resources:
-{{ toYaml .Values.pgbouncer.resources | indent 12 }}
-{{- end }}
+        {{- end }}
+
+        {{- if .Values.pgbouncer.resources }}
+        resources: {{ toYaml .Values.pgbouncer.resources | indent 12 }}
+        {{- end }}
+
         {{- if .Values.pgbouncer.securityContext.enabled }}
         securityContext: {{- omit .Values.pgbouncer.securityContext "enabled" | toYaml | nindent 12 }}
         {{- end }}
-    {{- if .Values.pgbouncer.extraVolumes }}
+
+      {{- if .Values.pgbouncer.extraVolumes }}
       volumes: {{- toYaml .Values.pgbouncer.extraVolumes | nindent 6 }}
-    {{- end }}
+      {{- end }}
+
+      {{ if .Values.pgbouncer.exporter.enabled }}
+      - name: metrics
+        image: "{{ .Values.pgbouncer.exporter.image.repository }}:{{ .Values.pgbouncer.exporter.image.tag }}"
+        imagePullPolicy: {{ .Values.pgbouncer.exporter.image.pullPolicy }}
+        env:
+        - name: POSTGRESQL_USERNAME
+          value: {{ include "posthog.postgresql.username" . }}
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "posthog.postgresql.secretName" . }}
+              key: {{ include "posthog.postgresql.secretPasswordKey" . }}
+        command:
+          - /bin/sh
+          - -c
+          - >
+              until (nc -vz 127.0.0.1 6543);
+              do
+                  echo "waiting for PgBouncer"; sleep 1;
+              done
+
+              pgbouncer_exporter \
+                --web.listen-address=":{{ .Values.pgbouncer.exporter.port }}" \
+                --web.telemetry-path="/metrics" \
+                --log.level="info" \
+                --log.format="json" \
+                --pgBouncer.connectionString="postgres://$POSTGRESQL_USERNAME:$POSTGRESQL_PASSWORD@127.0.0.1:6543/pgbouncer?sslmode=disable&connect_timeout=10"
+        ports:
+          - name: metrics
+            containerPort: {{ .Values.pgbouncer.exporter.port }}
+
+        {{- if .Values.pgbouncer.exporter.resources }}
+        resources: {{ toYaml .Values.pgbouncer.exporter.resources | nindent 12 }}
+        {{- end }}
+
+        {{- if .Values.pgbouncer.exporter.securityContext.enabled }}
+        securityContext: {{- omit .Values.pgbouncer.exporter.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
+      {{- end -}}
 {{- end }}
