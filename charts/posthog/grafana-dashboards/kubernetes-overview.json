@@ -23,8 +23,8 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 7249,
     "graphTooltip": 1,
-    "id": 8,
-    "iteration": 1654177846313,
+    "id": 13,
+    "iteration": 1657628317558,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -978,6 +978,7 @@
                         "mode": "thresholds"
                     },
                     "mappings": [],
+                    "min": 0,
                     "thresholds": {
                         "mode": "absolute",
                         "steps": [
@@ -1034,42 +1035,19 @@
             "type": "stat"
         },
         {
-            "datasource": {
-                "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
-            },
             "description": "",
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "thresholds"
                     },
-                    "mappings": [
-                        {
-                            "options": {
-                                "N/A": {
-                                    "color": "rgba(50, 172, 45, 0.97)",
-                                    "text": "0"
-                                }
-                            },
-                            "type": "value"
-                        },
-                        {
-                            "options": {
-                                "match": "null",
-                                "result": {
-                                    "color": "rgba(50, 172, 45, 0.97)",
-                                    "text": "0"
-                                }
-                            },
-                            "type": "special"
-                        }
-                    ],
+                    "mappings": [],
+                    "min": 0,
                     "thresholds": {
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "rgba(50, 172, 45, 0.97)",
+                                "color": "green",
                                 "value": null
                             },
                             {
@@ -1112,10 +1090,16 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "count(sum by (pod)(delta(kube_pod_container_status_restarts_total[15m]) > 0))",
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "exemplar": true,
+                    "expr": "sum(delta(kube_pod_container_status_restarts_total[$interval]))",
                     "format": "time_series",
+                    "interval": "",
                     "intervalFactor": 2,
-                    "legendFormat": "{{pod}}",
+                    "legendFormat": "",
                     "metric": "node_memory_MemTotal",
                     "refId": "A",
                     "step": 40
@@ -1431,92 +1415,99 @@
             "type": "timeseries"
         },
         {
-            "aliasColors": {},
-            "bars": false,
-            "dashLength": 10,
-            "dashes": false,
-            "datasource": {
-                "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "points",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 2,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
             },
-            "fill": 0,
-            "fillGradient": 0,
             "gridPos": {
                 "h": 4,
                 "w": 6,
                 "x": 0,
                 "y": 11
             },
-            "height": "",
-            "hiddenSeries": false,
             "id": 16,
-            "legend": {
-                "alignAsTable": true,
-                "avg": false,
-                "current": false,
-                "max": false,
-                "min": false,
-                "show": true,
-                "total": false,
-                "values": false
-            },
-            "lines": false,
-            "linewidth": 0,
             "links": [],
-            "nullPointMode": "null",
             "options": {
-                "alertThreshold": true
+                "legend": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "sortBy": "Last *",
+                    "sortDesc": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
+                }
             },
-            "percentage": false,
             "pluginVersion": "8.4.2",
-            "pointradius": 5,
-            "points": false,
-            "renderer": "flot",
-            "seriesOverrides": [],
-            "spaceLength": 10,
-            "stack": false,
-            "steppedLine": false,
             "targets": [
                 {
-                    "expr": "sum by (pod)(delta(kube_pod_container_status_restarts_total[15m]) > 0)",
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "exemplar": true,
+                    "expr": "sum by (pod)(kube_pod_container_status_restarts_total) > 0",
                     "format": "time_series",
+                    "instant": false,
+                    "interval": "",
                     "intervalFactor": 2,
                     "legendFormat": "{{pod}}",
                     "refId": "A",
                     "step": 10
                 }
             ],
-            "thresholds": [],
-            "timeRegions": [],
-            "title": "Pods Restarted",
-            "tooltip": {
-                "shared": false,
-                "sort": 0,
-                "value_type": "individual"
-            },
-            "type": "graph",
-            "xaxis": {
-                "mode": "time",
-                "show": false,
-                "values": [
-                    "total"
-                ]
-            },
-            "yaxes": [
-                {
-                    "format": "short",
-                    "logBase": 1,
-                    "show": false
-                },
-                {
-                    "format": "short",
-                    "logBase": 1,
-                    "show": false
-                }
-            ],
-            "yaxis": {
-                "align": false
-            }
+            "title": "Pods Restarts",
+            "type": "timeseries"
         },
         {
             "collapsed": false,
@@ -1839,7 +1830,7 @@
         ]
     },
     "time": {
-        "from": "now-30m",
+        "from": "now-3h",
         "to": "now"
     },
     "timepicker": {

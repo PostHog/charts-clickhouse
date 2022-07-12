@@ -23,8 +23,8 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 14314,
     "graphTooltip": 1,
-    "id": 8,
-    "iteration": 1653918777238,
+    "id": 14,
+    "iteration": 1657629644226,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -118,7 +118,7 @@
             "type": "stat"
         },
         {
-            "description": "This is the percentage of successful requests over the entire period in the top-right hand corner.\n\nNOTE: Ignoring 404s in this metric, since a 404 is a normal response for errant/invalid request.  This helps prevent this percentage from being affected by typical web scanners and security probes.",
+            "description": "This is the percentage of successful requests over the entire period in the top-right hand corner.\n\nNOTE: Ignoring 4xx in this metric, since a 4xx is a normal response for errant/invalid request.  This helps prevent this percentage from being affected by typical web scanners and security probes.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -137,6 +137,8 @@
                             "type": "special"
                         }
                     ],
+                    "max": 1,
+                    "min": 0,
                     "thresholds": {
                         "mode": "absolute",
                         "steps": [
@@ -180,7 +182,7 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"[4-5].*\",controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n   )   \n/ \n(\n  sum(\n    rate(\n      nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[${__range_s}s]\n        )\n     ) - \n  (\n  sum(\n    rate(\n      nginx_ingress_controller_requests{status=~\"404|499\",controller_pod=~\"$pod\"}[${__range_s}s]\n        )\n     ) \n  or vector(0)\n  )\n)",
+                    "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"5.*\",controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n   ) by (ingress)\n/ \n\nsum(\n  rate(\n    nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n    ) by (ingress)\n    \n",
                     "format": "time_series",
                     "interval": "",
                     "intervalFactor": 1,
@@ -338,7 +340,7 @@
             "type": "stat"
         },
         {
-            "description": "This is the percentage of successful requests over the last minute.\n\nNOTE: Ignoring 404s in this metric, since a  404 is a normal response for errant requests",
+            "description": "This is the percentage of successful requests over the last minute.\n\nNOTE: Ignoring 4xx in this metric, since a 4xx is a normal response for errant/invalid request.  This helps prevent this percentage from being affected by typical web scanners and security probes.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -355,6 +357,8 @@
                             "type": "special"
                         }
                     ],
+                    "max": 1,
+                    "min": 0,
                     "thresholds": {
                         "mode": "absolute",
                         "steps": [
@@ -402,7 +406,12 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
-                    "expr": "sum(rate(nginx_ingress_controller_requests{status!~\"[4-5].*\",controller_pod=~\"$pod\"}[$__interval])) / \n(sum(rate(nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[$__interval])) - \n(sum(rate(nginx_ingress_controller_requests{status=~\"404|499\",controller_pod=~\"$pod\"}[$__interval])) or vector(0)))",
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "exemplar": true,
+                    "expr": "sum(rate(nginx_ingress_controller_requests{status!~\"5.*\",controller_pod=~\"$pod\"}[$__interval])) / \nsum(rate(nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[$__interval]))",
                     "format": "time_series",
                     "interval": "2m",
                     "intervalFactor": 1,
@@ -1509,58 +1518,94 @@
             "type": "row"
         },
         {
-            "aliasColors": {},
-            "bars": false,
-            "dashLength": 10,
-            "dashes": false,
             "description": "",
             "fieldConfig": {
                 "defaults": {
-                    "links": []
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": true,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "decimals": 3,
+                    "links": [],
+                    "mappings": [],
+                    "max": 1,
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percentunit"
                 },
                 "overrides": []
             },
-            "fill": 1,
-            "fillGradient": 0,
             "gridPos": {
                 "h": 9,
                 "w": 24,
                 "x": 0,
                 "y": 31
             },
-            "hiddenSeries": false,
             "id": 25,
-            "legend": {
-                "alignAsTable": true,
-                "avg": true,
-                "current": false,
-                "max": true,
-                "min": true,
-                "rightSide": true,
-                "show": true,
-                "total": false,
-                "values": true
-            },
-            "lines": true,
-            "linewidth": 1,
             "links": [],
-            "nullPointMode": "null",
             "options": {
-                "alertThreshold": true
+                "legend": {
+                    "calcs": [
+                        "mean",
+                        "max",
+                        "min"
+                    ],
+                    "displayMode": "table",
+                    "placement": "right"
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
             },
-            "paceLength": 10,
-            "percentage": false,
             "pluginVersion": "8.4.2",
-            "pointradius": 2,
-            "points": false,
-            "renderer": "flot",
-            "seriesOverrides": [],
-            "spaceLength": 10,
-            "stack": false,
-            "steppedLine": false,
             "targets": [
                 {
-                    "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"[4-5].*\",controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n   ) by (ingress)\n/ \n(\n  sum(\n    rate(\n      nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[${__range_s}s]\n        )\n     ) by (ingress)\n     - \n  (\n  sum(\n    rate(\n      nginx_ingress_controller_requests{status=~\"404|499\",controller_pod=~\"$pod\"}[${__range_s}s]\n        )\n     ) by (ingress)\n  or vector(0)\n  )\n)",
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "exemplar": true,
+                    "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"5.*\",controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n   ) by (ingress)\n/ \n\nsum(\n  rate(\n    nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n    ) by (ingress)\n",
                     "format": "time_series",
                     "interval": "",
                     "intervalFactor": 1,
@@ -1568,39 +1613,8 @@
                     "refId": "A"
                 }
             ],
-            "thresholds": [],
-            "timeRegions": [],
-            "title": "Percentage of Success (non-2xx) - By Ingress",
-            "tooltip": {
-                "shared": true,
-                "sort": 0,
-                "value_type": "individual"
-            },
-            "type": "graph",
-            "xaxis": {
-                "mode": "time",
-                "show": true,
-                "values": []
-            },
-            "yaxes": [
-                {
-                    "$$hashKey": "object:108",
-                    "format": "percentunit",
-                    "logBase": 1,
-                    "max": "1",
-                    "min": "0",
-                    "show": true
-                },
-                {
-                    "$$hashKey": "object:109",
-                    "format": "short",
-                    "logBase": 1,
-                    "show": false
-                }
-            ],
-            "yaxis": {
-                "align": false
-            }
+            "title": "Percentage of Success (non-5xx) - By Ingress",
+            "type": "timeseries"
         },
         {
             "aliasColors": {},
