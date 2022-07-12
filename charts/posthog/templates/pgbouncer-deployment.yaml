@@ -39,7 +39,7 @@ spec:
       # Time to wait before hard killing the container. Note: if the container
       # shuts down and exits before the terminationGracePeriod is done, we
       # moves to the next step immediately.
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 65
 
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.pgbouncer.affinity }}
@@ -126,7 +126,7 @@ spec:
                 # removed. Unfortunately we will also get an ugly 'FailedPreStopHook'
                 # warning in the k8s event logs but I'm not sure how we can avoid it.
                 #
-                "sleep 10 && kill -INT 1 && sleep 31"
+                "sleep 30 && kill -INT 1 && sleep 31"
               ]
 
         {{- if .Values.pgbouncer.extraVolumeMounts }}
