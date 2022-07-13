@@ -1173,10 +1173,17 @@ prometheus:
     enabled: false
 
   serverFiles:
-    # -- Alerts configuration. See https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+    # -- Alerts configuration. For more information see: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+    #
+    # -- NOTE: alerting is an important part of any production system. With this Helm chart we aim to provide a good
+    # -- collection of default rules that can be used to successfully alert an operator if a PostHog installation is not
+    # -- working as expected. As those rules will likely evolve over time and as we don't want to cut a new major release
+    # -- every time it happens, please consider the `prometheus.serverFiles.alerting_rules.yml` defaults as UNSTABLE.
+    # -- Please consider to explicitly override this input in your `values.yaml` if you need to keep it stable.
+    #
     alerting_rules.yml:
       #
-      # A great collection of pre-defined alerting rules is available at https://github.com/samber/awesome-prometheus-alerts
+      # A great collection of alerting rules is available at https://github.com/samber/awesome-prometheus-alerts
       #
       groups:
         - name: Kubernetes # via kube-state-metrics
