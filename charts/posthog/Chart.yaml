@@ -55,7 +55,7 @@ dependencies:
 
   # Monitoring & observability
   - name: grafana
-    version: 6.24.1
+    version: 6.29.11
     repository: https://grafana.github.io/helm-charts
     condition: grafana.enabled
 
