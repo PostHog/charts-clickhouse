@@ -15,7 +15,7 @@ tests:
       grafana.enabled: true
     asserts:
       - hasDocuments:
-          count: 8
+          count: 9
 
   - it: should have the correct apiVersion
     set:
