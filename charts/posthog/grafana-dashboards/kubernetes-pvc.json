@@ -28,8 +28,8 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 13646,
     "graphTooltip": 0,
-    "id": 10,
-    "iteration": 1658318645366,
+    "id": 18,
+    "iteration": 1658327556999,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -531,6 +531,7 @@
                         "mode": "thresholds"
                     },
                     "custom": {
+                        "align": "auto",
                         "displayMode": "auto",
                         "filterable": false,
                         "inspect": false
@@ -891,6 +892,7 @@
             "fieldConfig": {
                 "defaults": {
                     "custom": {
+                        "align": "auto",
                         "displayMode": "auto",
                         "filterable": false,
                         "inspect": false
@@ -1055,8 +1057,7 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
-                                "value": null
+                                "color": "green"
                             },
                             {
                                 "color": "red",
@@ -1151,8 +1152,7 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
-                                "value": null
+                                "color": "green"
                             },
                             {
                                 "color": "red",
@@ -1246,8 +1246,7 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
-                                "value": null
+                                "color": "green"
                             },
                             {
                                 "color": "red",
@@ -1340,8 +1339,7 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
-                                "value": null
+                                "color": "green"
                             },
                             {
                                 "color": "red",
@@ -1396,7 +1394,10 @@
     "refresh": "1m",
     "schemaVersion": 36,
     "style": "dark",
-    "tags": [],
+    "tags": [
+        "PostHog",
+        "Kubernetes"
+    ],
     "templating": {
         "list": [
             {
