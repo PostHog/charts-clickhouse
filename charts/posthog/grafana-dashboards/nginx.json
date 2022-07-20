@@ -3,7 +3,10 @@
         "list": [
             {
                 "builtIn": 1,
-                "datasource": "-- Grafana --",
+                "datasource": {
+                    "type": "datasource",
+                    "uid": "grafana"
+                },
                 "enable": true,
                 "hide": true,
                 "iconColor": "rgba(0, 211, 255, 1)",
@@ -23,13 +26,17 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 14314,
     "graphTooltip": 1,
-    "id": 14,
-    "iteration": 1657629644226,
+    "id": 10,
+    "iteration": 1658321263759,
     "links": [],
     "liveNow": false,
     "panels": [
         {
             "collapsed": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "gridPos": {
                 "h": 1,
                 "w": 24,
@@ -38,6 +45,15 @@
             },
             "id": 31,
             "panels": [],
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "refId": "A"
+                }
+            ],
             "title": "Overview",
             "type": "row"
         },
@@ -104,9 +120,13 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[${__range_s}s]))",
                     "format": "time_series",
                     "intervalFactor": 1,
@@ -118,14 +138,18 @@
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "This is the percentage of successful requests over the entire period in the top-right hand corner.\n\nNOTE: Ignoring 4xx in this metric, since a 4xx is a normal response for errant/invalid request.  This helps prevent this percentage from being affected by typical web scanners and security probes.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "fixedColor": "rgb(31, 120, 193)",
-                        "mode": "fixed"
+                        "mode": "thresholds"
                     },
-                    "decimals": 1,
+                    "decimals": 3,
                     "mappings": [
                         {
                             "options": {
@@ -143,12 +167,16 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
+                                "color": "orange",
                                 "value": null
                             },
                             {
                                 "color": "red",
-                                "value": 80
+                                "value": 0.9
+                            },
+                            {
+                                "color": "green",
+                                "value": 0.99
                             }
                         ]
                     },
@@ -158,7 +186,7 @@
             },
             "gridPos": {
                 "h": 3,
-                "w": 2,
+                "w": 3,
                 "x": 3,
                 "y": 1
             },
@@ -166,7 +194,7 @@
             "links": [],
             "maxDataPoints": 100,
             "options": {
-                "colorMode": "none",
+                "colorMode": "background",
                 "graphMode": "area",
                 "justifyMode": "auto",
                 "orientation": "horizontal",
@@ -179,9 +207,13 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"5.*\",controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n   ) by (ingress)\n/ \n\nsum(\n  rate(\n    nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n    ) by (ingress)\n    \n",
                     "format": "time_series",
                     "interval": "",
@@ -194,79 +226,10 @@
             "type": "stat"
         },
         {
-            "description": "This is the number of new connections made to the controller in the last minute.  NOTE: This metric does not support the Ingress, Namespace variables, as this is at a lower-level than the actual application.  It does support the others though (Env, Controller Class, Pod)",
-            "fieldConfig": {
-                "defaults": {
-                    "color": {
-                        "mode": "thresholds"
-                    },
-                    "decimals": 0,
-                    "mappings": [
-                        {
-                            "options": {
-                                "match": "null",
-                                "result": {
-                                    "text": "N/A"
-                                }
-                            },
-                            "type": "special"
-                        }
-                    ],
-                    "thresholds": {
-                        "mode": "absolute",
-                        "steps": [
-                            {
-                                "color": "green",
-                                "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
-                            }
-                        ]
-                    },
-                    "unit": "none"
-                },
-                "overrides": []
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
             },
-            "gridPos": {
-                "h": 3,
-                "w": 2,
-                "x": 5,
-                "y": 1
-            },
-            "id": 6,
-            "links": [],
-            "maxDataPoints": 100,
-            "options": {
-                "colorMode": "none",
-                "graphMode": "none",
-                "justifyMode": "auto",
-                "orientation": "horizontal",
-                "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
-                    "fields": "",
-                    "values": false
-                },
-                "textMode": "auto"
-            },
-            "pluginVersion": "8.4.2",
-            "targets": [
-                {
-                    "expr": "sum(avg_over_time(nginx_ingress_controller_nginx_process_connections{state=~\"active\", state=~\"active\", controller_pod=~\"$pod\"}[$__interval]))",
-                    "format": "time_series",
-                    "interval": "2m",
-                    "intervalFactor": 1,
-                    "legendFormat": "{{ingress}}",
-                    "refId": "A"
-                }
-            ],
-            "title": "Conns (2m)",
-            "type": "stat"
-        },
-        {
             "description": "The number of HTTP requests made in the last 1 minute window",
             "fieldConfig": {
                 "defaults": {
@@ -304,8 +267,8 @@
             },
             "gridPos": {
                 "h": 3,
-                "w": 2,
-                "x": 7,
+                "w": 3,
+                "x": 6,
                 "y": 1
             },
             "id": 7,
@@ -325,9 +288,13 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[$__interval]))",
                     "format": "time_series",
                     "interval": "2m",
@@ -336,16 +303,21 @@
                     "refId": "A"
                 }
             ],
-            "title": "Reqs (2m)",
+            "title": "Requests (2m)",
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "This is the percentage of successful requests over the last minute.\n\nNOTE: Ignoring 4xx in this metric, since a 4xx is a normal response for errant/invalid request.  This helps prevent this percentage from being affected by typical web scanners and security probes.",
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "thresholds"
                     },
+                    "decimals": 3,
                     "mappings": [
                         {
                             "options": {
@@ -363,16 +335,16 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "#d44a3a",
+                                "color": "orange",
                                 "value": null
                             },
                             {
-                                "color": "rgba(237, 129, 40, 0.89)",
-                                "value": 0.8
+                                "color": "red",
+                                "value": 0.9
                             },
                             {
-                                "color": "#299c46",
-                                "value": 0.9
+                                "color": "green",
+                                "value": 0.99
                             }
                         ]
                     },
@@ -403,7 +375,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -451,10 +423,6 @@
                             {
                                 "color": "green",
                                 "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
                             }
                         ]
                     },
@@ -485,9 +453,13 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_requests{status=~\"(1|2).*\", controller_pod=~\"$pod\"}[$__interval])) or vector(0)",
                     "format": "time_series",
                     "interval": "2m",
@@ -529,10 +501,6 @@
                             {
                                 "color": "green",
                                 "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
                             }
                         ]
                     },
@@ -563,9 +531,13 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_requests{status=~\"3.*\", controller_pod=~\"$pod\"}[2m]))  or vector(0)",
                     "format": "time_series",
                     "interval": "$__interval",
@@ -607,10 +579,6 @@
                             {
                                 "color": "green",
                                 "value": null
-                            },
-                            {
-                                "color": "red",
-                                "value": 80
                             }
                         ]
                     },
@@ -641,9 +609,13 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_requests{status=~\"4.*\", controller_pod=~\"$pod\"}[$__interval]))  or vector(0)",
                     "format": "time_series",
                     "interval": "2m",
@@ -719,9 +691,13 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_requests{status=~\"5.*\",controller_pod=~\"$pod\"}[$__interval])) or vector(0)",
                     "format": "time_series",
                     "interval": "2m",
@@ -739,6 +715,10 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "This is a total number of requests broken down by the ingress.  This can help get a sense of scale in relation to each other.",
             "fieldConfig": {
                 "defaults": {
@@ -774,7 +754,7 @@
             },
             "paceLength": 10,
             "percentage": false,
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "pointradius": 2,
             "points": false,
             "renderer": "flot",
@@ -784,6 +764,10 @@
             "steppedLine": false,
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[$__interval])) by (ingress)",
                     "format": "time_series",
                     "interval": "2m",
@@ -831,6 +815,10 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "The breakdown of the various HTTP status codes of the requests handled within' this period that matches the variables chosen above.\n\nThis chart helps notice and dive into which service is having failures and of what kind.",
             "fieldConfig": {
                 "defaults": {
@@ -866,7 +854,7 @@
             },
             "paceLength": 10,
             "percentage": false,
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "pointradius": 2,
             "points": false,
             "renderer": "flot",
@@ -902,6 +890,10 @@
             "steppedLine": false,
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[$__interval])) by (status)",
                     "format": "time_series",
                     "interval": "2m",
@@ -947,6 +939,10 @@
             "bars": true,
             "dashLength": 10,
             "dashes": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "The total number of HTTP requests made within' each period",
             "fieldConfig": {
                 "defaults": {
@@ -982,7 +978,7 @@
             },
             "paceLength": 10,
             "percentage": false,
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "pointradius": 2,
             "points": false,
             "renderer": "flot",
@@ -992,6 +988,10 @@
             "steppedLine": false,
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[$__interval]))",
                     "format": "time_series",
                     "interval": "5m",
@@ -1032,6 +1032,10 @@
         },
         {
             "collapsed": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "gridPos": {
                 "h": 1,
                 "w": 24,
@@ -1040,6 +1044,15 @@
             },
             "id": 33,
             "panels": [],
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "refId": "A"
+                }
+            ],
             "title": "Latency",
             "type": "row"
         },
@@ -1048,6 +1061,10 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "decimals": 1,
             "description": "This graph can help assess and help us meet SLA requirements as far as the responsive time of our services.\n\nFor a more detailed latency graph broken out by ingress please open the closed tab at the bottom because it is very CPU intensive.",
             "fieldConfig": {
@@ -1087,7 +1104,7 @@
                 "alertThreshold": true
             },
             "percentage": false,
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "pointradius": 2,
             "points": false,
             "renderer": "flot",
@@ -1258,6 +1275,10 @@
                 "mode": "spectrum"
             },
             "dataFormat": "tsbuckets",
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "This graph can help assess and help us meet SLA requirements as far as the responsive time of our services.\n\nFor a more detailed latency graph broken out by ingress please open the closed tab at the bottom because it is very CPU intensive.",
             "gridPos": {
                 "h": 8,
@@ -1310,6 +1331,10 @@
         },
         {
             "collapsed": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "gridPos": {
                 "h": 1,
                 "w": 24,
@@ -1318,6 +1343,15 @@
             },
             "id": 35,
             "panels": [],
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "refId": "A"
+                }
+            ],
             "title": "Connections",
             "type": "row"
         },
@@ -1328,6 +1362,10 @@
             "bars": true,
             "dashLength": 10,
             "dashes": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "NOTE: This does not work per ingress/namespace\n\nThis is the number of new connections opened by the controller",
             "fieldConfig": {
                 "defaults": {
@@ -1363,7 +1401,7 @@
             },
             "paceLength": 10,
             "percentage": false,
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "pointradius": 2,
             "points": false,
             "renderer": "flot",
@@ -1373,6 +1411,10 @@
             "steppedLine": false,
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(increase(nginx_ingress_controller_nginx_process_connections{state=~\"active\", controller_pod=~\"$pod\"}[$__interval]))",
                     "format": "time_series",
                     "interval": "2m",
@@ -1420,6 +1462,10 @@
             "bars": true,
             "dashLength": 10,
             "dashes": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "NOTE: This does not work per ingress/namespace\n\nThe total number of connections opened to our ingresses.  If you have a CDN in front of our services, it is not unusual for this to be very low.  If/when we use something like websockets with a persistent connection this can/will be very high.",
             "fieldConfig": {
                 "defaults": {
@@ -1455,7 +1501,7 @@
             },
             "paceLength": 10,
             "percentage": false,
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "pointradius": 2,
             "points": false,
             "renderer": "flot",
@@ -1465,6 +1511,10 @@
             "steppedLine": false,
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum(avg_over_time(nginx_ingress_controller_nginx_process_connections{state=~\"active\", state=~\"active\", controller_pod=~\"$pod\"}[$__range]))",
                     "format": "time_series",
                     "intervalFactor": 1,
@@ -1506,6 +1556,10 @@
         },
         {
             "collapsed": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "gridPos": {
                 "h": 1,
                 "w": 24,
@@ -1514,10 +1568,23 @@
             },
             "id": 24,
             "panels": [],
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "refId": "A"
+                }
+            ],
             "title": "CPU Intensive / Optional Graphs",
             "type": "row"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "",
             "fieldConfig": {
                 "defaults": {
@@ -1621,6 +1688,10 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "links": []
@@ -1658,7 +1729,7 @@
                 "alertThreshold": true
             },
             "percentage": false,
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "pointradius": 2,
             "points": false,
             "renderer": "flot",
@@ -1668,6 +1739,10 @@
             "steppedLine": false,
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status!=\"404\",status!=\"500\",controller_pod=~\"$pod\"}[5m])) by (le, ingress))",
                     "format": "time_series",
                     "intervalFactor": 1,
@@ -1675,6 +1750,10 @@
                     "refId": "A"
                 },
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "histogram_quantile(0.95, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status!=\"404\",status!=\"500\",controller_pod=~\"$pod\"}[5m])) by (le, ingress))",
                     "format": "time_series",
                     "intervalFactor": 1,
@@ -1682,6 +1761,10 @@
                     "refId": "B"
                 },
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "histogram_quantile(0.90, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status!=\"404\",status!=\"500\",controller_pod=~\"$pod\"}[5m])) by (le, ingress))",
                     "format": "time_series",
                     "intervalFactor": 1,

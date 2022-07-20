@@ -3,7 +3,10 @@
         "list": [
             {
                 "builtIn": 1,
-                "datasource": "-- Grafana --",
+                "datasource": {
+                    "type": "datasource",
+                    "uid": "grafana"
+                },
                 "enable": true,
                 "hide": true,
                 "iconColor": "rgba(0, 211, 255, 1)",
@@ -23,12 +26,16 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 7249,
     "graphTooltip": 1,
-    "id": 13,
-    "iteration": 1657628317558,
+    "id": 16,
+    "iteration": 1658328126986,
     "links": [],
     "liveNow": false,
     "panels": [
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -77,7 +84,7 @@
                 "showThresholdLabels": false,
                 "showThresholdMarkers": true
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -95,6 +102,10 @@
             "type": "gauge"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -143,7 +154,7 @@
                 "showThresholdLabels": false,
                 "showThresholdMarkers": true
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -161,6 +172,10 @@
             "type": "gauge"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -209,7 +224,7 @@
                 "showThresholdLabels": false,
                 "showThresholdMarkers": true
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -227,6 +242,10 @@
             "type": "gauge"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -334,7 +353,7 @@
                         "axisPlacement": "auto",
                         "barAlignment": 0,
                         "drawStyle": "line",
-                        "fillOpacity": 10,
+                        "fillOpacity": 0,
                         "gradientMode": "none",
                         "hideFrom": {
                             "legend": false,
@@ -400,6 +419,10 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes",
                     "format": "time_series",
                     "intervalFactor": 2,
@@ -413,6 +436,10 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -458,7 +485,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -476,6 +503,10 @@
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -520,7 +551,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -538,6 +569,10 @@
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -583,7 +618,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -601,6 +636,10 @@
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -646,7 +685,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -664,6 +703,10 @@
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -709,7 +752,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -727,6 +770,10 @@
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -772,7 +819,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -804,7 +851,7 @@
                         "axisPlacement": "auto",
                         "barAlignment": 0,
                         "drawStyle": "line",
-                        "fillOpacity": 10,
+                        "fillOpacity": 0,
                         "gradientMode": "none",
                         "hideFrom": {
                             "legend": false,
@@ -867,6 +914,10 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "node_load1",
                     "format": "time_series",
                     "intervalFactor": 2,
@@ -880,6 +931,10 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -890,7 +945,7 @@
                         "axisPlacement": "auto",
                         "barAlignment": 0,
                         "drawStyle": "line",
-                        "fillOpacity": 10,
+                        "fillOpacity": 0,
                         "gradientMode": "none",
                         "hideFrom": {
                             "legend": false,
@@ -972,6 +1027,10 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1016,7 +1075,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -1035,6 +1094,10 @@
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "description": "",
             "fieldConfig": {
                 "defaults": {
@@ -1087,7 +1150,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -1191,6 +1254,10 @@
             "pluginVersion": "8.4.2",
             "targets": [
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "sum (kube_pod_status_phase{}) by (phase)",
                     "format": "time_series",
                     "hide": false,
@@ -1202,6 +1269,10 @@
                     "step": 10
                 },
                 {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
                     "expr": "kubelet_running_pod_count{kubernetes_io_role =~ \".*node.*\"}",
                     "format": "time_series",
                     "intervalFactor": 2,
@@ -1214,6 +1285,10 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1224,7 +1299,7 @@
                         "axisPlacement": "auto",
                         "barAlignment": 0,
                         "drawStyle": "line",
-                        "fillOpacity": 10,
+                        "fillOpacity": 0,
                         "gradientMode": "none",
                         "hideFrom": {
                             "legend": false,
@@ -1320,6 +1395,10 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1415,6 +1494,10 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1511,6 +1594,10 @@
         },
         {
             "collapsed": false,
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "gridPos": {
                 "h": 1,
                 "w": 24,
@@ -1519,10 +1606,23 @@
             },
             "id": 35,
             "panels": [],
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "refId": "A"
+                }
+            ],
             "title": "Containers",
             "type": "row"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1619,6 +1719,10 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1629,7 +1733,7 @@
                         "axisPlacement": "auto",
                         "barAlignment": 0,
                         "drawStyle": "line",
-                        "fillOpacity": 10,
+                        "fillOpacity": 0,
                         "gradientMode": "none",
                         "hideFrom": {
                             "legend": false,
@@ -1715,7 +1819,7 @@
         }
     ],
     "refresh": "30s",
-    "schemaVersion": 35,
+    "schemaVersion": 36,
     "style": "dark",
     "tags": [
         "PostHog",
@@ -1809,6 +1913,10 @@
                     "value": [
                         "$__all"
                     ]
+                },
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PBFA97CFB590B2093"
                 },
                 "definition": "label_values(kubernetes_io_hostname)",
                 "hide": 0,
