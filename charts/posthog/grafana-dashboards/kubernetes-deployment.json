@@ -1355,7 +1355,7 @@
         ]
     },
     "timezone": "browser",
-    "title": "Kubernetes - Deployment",
+    "title": "Kubernetes deployment",
     "uid": "kubernetes-deployment",
     "version": 9,
     "weekStart": ""
