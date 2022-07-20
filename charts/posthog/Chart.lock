@@ -22,7 +22,7 @@ dependencies:
   version: 7.0.5
 - name: grafana
   repository: https://grafana.github.io/helm-charts
-  version: 6.29.11
+  version: 6.32.2
 - name: loki
   repository: https://grafana.github.io/helm-charts
   version: 2.10.2
@@ -44,5 +44,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:1e82b46cf63275f98103bb4069abe9ec834d29ffd4fb4f613243bb3e72f354ab
-generated: "2022-07-13T17:50:49.223187+02:00"
+digest: sha256:d67eb91cd875ebd6b7b8b193e1e43d66e8d99f42654c4c514a5d2d04f9267a57
+generated: "2022-07-20T12:44:10.011713+02:00"
