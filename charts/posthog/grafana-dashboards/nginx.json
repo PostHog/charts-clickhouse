@@ -27,7 +27,7 @@
     "gnetId": 14314,
     "graphTooltip": 1,
     "id": 10,
-    "iteration": 1658321263759,
+    "iteration": 1658407275705,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -230,7 +230,7 @@
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
             },
-            "description": "The number of HTTP requests made in the last 1 minute window",
+            "description": "The number of HTTP requests made over the last minute",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1672,7 +1672,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"5.*\",controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n   ) by (ingress)\n/ \n\nsum(\n  rate(\n    nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[${__range_s}s]\n      )\n    ) by (ingress)\n",
+                    "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"5.*\",controller_pod=~\"$pod\"}[2m]\n      )\n   ) by (ingress)\n/ \n\nsum(\n  rate(\n    nginx_ingress_controller_requests{controller_pod=~\"$pod\"}[2m]\n      )\n    ) by (ingress)\n",
                     "format": "time_series",
                     "interval": "",
                     "intervalFactor": 1,
@@ -1804,7 +1804,7 @@
         }
     ],
     "refresh": "1m",
-    "schemaVersion": 35,
+    "schemaVersion": 36,
     "style": "dark",
     "tags": [
         "PostHog",
