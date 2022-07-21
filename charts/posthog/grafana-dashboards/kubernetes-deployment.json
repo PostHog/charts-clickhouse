@@ -26,8 +26,8 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 9679,
     "graphTooltip": 0,
-    "id": 20,
-    "iteration": 1658328613177,
+    "id": 22,
+    "iteration": 1658398692173,
     "links": [
         {
             "asDropdown": true,
@@ -214,7 +214,10 @@
             "type": "gauge"
         },
         {
-            "datasource": {},
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -262,7 +265,7 @@
                             }
                         ]
                     },
-                    "unit": "none"
+                    "unit": "s"
                 },
                 "overrides": []
             },
@@ -1031,6 +1034,7 @@
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
             },
+            "description": "Percentage of CPU periods where the container ran but was throttled (stopped from running the whole CPU period).",
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1069,6 +1073,7 @@
                         }
                     },
                     "mappings": [],
+                    "min": 0,
                     "thresholds": {
                         "mode": "absolute",
                         "steps": [
@@ -1078,7 +1083,7 @@
                             }
                         ]
                     },
-                    "unit": "none"
+                    "unit": "percent"
                 },
                 "overrides": []
             },
@@ -1295,9 +1300,9 @@
             {
                 "allValue": "",
                 "current": {
-                    "selected": true,
-                    "text": "posthog-pgbouncer",
-                    "value": "posthog-pgbouncer"
+                    "selected": false,
+                    "text": "posthog-plugins",
+                    "value": "posthog-plugins"
                 },
                 "datasource": {
                     "type": "prometheus",
@@ -1357,6 +1362,6 @@
     "timezone": "browser",
     "title": "Kubernetes deployment",
     "uid": "kubernetes-deployment",
-    "version": 9,
+    "version": 1,
     "weekStart": ""
 }
