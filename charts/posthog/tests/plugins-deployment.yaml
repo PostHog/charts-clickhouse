@@ -112,3 +112,28 @@ tests:
           content:
             name: PLUGIN_SERVER_MODE
             value: ingestion
+
+  - it: sets SENTRY_DSN env var
+    template: templates/plugins-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      sentryDSN: main.endpoint
+      plugins.sentryDSN: plugins.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: plugins.endpoint
+
+  - it: sets SENTRY_DSN env var with default
+    template: templates/plugins-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      sentryDSN: main.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: main.endpoint

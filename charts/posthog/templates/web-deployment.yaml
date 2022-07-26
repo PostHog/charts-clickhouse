@@ -86,6 +86,7 @@ spec:
       {{- end }}
         # PostHog app settings
         {{- include "snippet.posthog-env" . | indent 8 }}
+        {{- include "snippet.posthog-sentry-env" . | indent 8 }}
         - name: SAML_ENTITY_ID
           value: {{ default "" .Values.saml.entity_id | quote }}
         - name: SAML_ACS_URL

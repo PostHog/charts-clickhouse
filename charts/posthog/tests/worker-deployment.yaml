@@ -49,7 +49,7 @@ tests:
       - equal:
           path: spec.template.spec.securityContext.fsGroup
           value: 2000
-  
+
   - it: should have a container securityContext
     template: templates/worker-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
@@ -65,8 +65,8 @@ tests:
           value: 1001
       - equal:
           path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
-          value: false            
-          
+          value: false
+
   - it: should not have a pod securityContext
     template: templates/worker-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
@@ -78,7 +78,7 @@ tests:
       - isEmpty:
           path: spec.template.spec.securityContext
           value: 1001
-  
+
   - it: should not have a container securityContext
     template: templates/worker-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
@@ -89,6 +89,15 @@ tests:
           count: 1
       - isEmpty:
           path: spec.template.spec.containers[0].securityContext
-         
-  
-  
+
+  - it: sets SENTRY_DSN env var
+    template: templates/worker-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      sentryDSN: sentry.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: sentry.endpoint

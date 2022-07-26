@@ -32,3 +32,15 @@ tests:
           count: 1
       - isKind:
           of: Job
+
+  - it: sets SENTRY_DSN env var
+    template: templates/migrate.job.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      sentryDSN: sentry.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: sentry.endpoint

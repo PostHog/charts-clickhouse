@@ -107,3 +107,30 @@ tests:
           content:
             name: PLUGIN_SERVER_MODE
             value: async
+
+  - it: sets SENTRY_DSN env var
+    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsAsync.enabled: true
+      sentryDSN: main.endpoint
+      pluginsAsync.sentryDSN: pluginsAsync.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: pluginsAsync.endpoint
+
+  - it: sets SENTRY_DSN env var with default
+    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsAsync.enabled: true
+      sentryDSN: main.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: main.endpoint

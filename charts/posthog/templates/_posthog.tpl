@@ -16,12 +16,15 @@
       key: {{ .Values.posthogSecretKey.existingSecretKey }}
 - name: SITE_URL
   value: {{ template "posthog.site.url" . }}
-- name: SENTRY_DSN
-  value: {{ .Values.sentryDSN | quote }}
 - name: DEPLOYMENT
   value: {{ template "posthog.deploymentEnv" . }}
 - name: CAPTURE_INTERNAL_METRICS
-  value: {{ .Values.web.internalMetrics.capture| quote }}
+  value: {{ .Values.web.internalMetrics.capture | quote }}
 - name: HELM_INSTALL_INFO
   value: {{ template "posthog.helmInstallInfo" . }}
+{{- end }}
+
+{{- define "snippet.posthog-sentry-env" }}
+- name: SENTRY_DSN
+  value: {{ .Values.sentryDSN | quote }}
 {{- end }}

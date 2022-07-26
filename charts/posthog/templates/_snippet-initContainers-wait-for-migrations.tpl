@@ -30,5 +30,6 @@
 
   # PostHog app settings
   {{- include "snippet.posthog-env" . | nindent 2 }}
+  {{- include "snippet.posthog-sentry-env" . | nindent 2 }}
 
 {{- end }}
