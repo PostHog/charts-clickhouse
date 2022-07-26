@@ -32,4 +32,9 @@
   {{- include "snippet.posthog-env" . | nindent 2 }}
   {{- include "snippet.posthog-sentry-env" . | nindent 2 }}
 
+  # Global ENV variables
+  {{- if .Values.env }}
+  {{ toYaml .Values.env | nindent 2 }}
+  {{- end }}
+
 {{- end }}

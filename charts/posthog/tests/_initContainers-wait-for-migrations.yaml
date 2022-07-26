@@ -1,0 +1,29 @@
+suite: _initContainers-wait-for-migrations
+templates:
+  - templates/events-deployment.yaml
+  - templates/plugins-deployment.yaml
+  - templates/web-deployment.yaml
+  - templates/worker-deployment.yaml
+  # NOTE: we need to include this as it is required by the other templates
+  - templates/secrets.yaml
+
+tests:
+  - it: spec.template.spec.initContainers[1].env override via 'env' should work
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/events-deployment.yaml
+      - templates/plugins-deployment.yaml
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      env:
+        - name: this-is-a-custom-variable
+          value: this-is-a-custom-value
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.initContainers[1].env
+          content:
+            name: this-is-a-custom-variable
+            value: this-is-a-custom-value
