@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.0.6](https://img.shields.io/badge/Version-26.0.6-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
+![Version: 26.0.7](https://img.shields.io/badge/Version-26.0.7-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -103,6 +103,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | plugins.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
 | plugins.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | plugins.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| plugins.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
 | pluginsAsync.enabled | bool | `false` | Whether to install the PostHog plugin-server async stack or not. If disabled (default), plugins service handles both ingestion and running of async tasks. Allows for separate scaling of this service. |
 | pluginsAsync.replicacount | int | `1` | Count of plugin-server-async pods to run. This setting is ignored if `pluginsAsync.hpa.enabled` is set to `true`. |
 | pluginsAsync.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
@@ -127,6 +128,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsAsync.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
 | pluginsAsync.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | pluginsAsync.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| pluginsAsync.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
 | email.host | string | `nil` | SMTP service host. |
 | email.port | string | `nil` | SMTP service port. |
 | email.user | string | `nil` | SMTP service user. |
