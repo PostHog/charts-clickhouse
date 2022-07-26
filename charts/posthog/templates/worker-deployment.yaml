@@ -83,6 +83,7 @@ spec:
         - name: PRIMARY_DB
           value: clickhouse
         {{- include "snippet.posthog-env" . | indent 8 }}
+        {{- include "snippet.posthog-sentry-env" . | indent 8 }}
         {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
         {{- include "snippet.email-env" . | nindent 8 }}

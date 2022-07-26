@@ -74,6 +74,10 @@ spec:
         - name: PLUGIN_SERVER_MODE
           value: "ingestion"
         {{- end }}
+
+        - name: SENTRY_DSN
+          value: {{ .Values.plugins.sentryDSN | default .Values.sentryDSN }}
+
         # Kafka env variables
         {{- include "snippet.kafka-env" . | nindent 8 }}
 

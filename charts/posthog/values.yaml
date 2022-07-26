@@ -272,6 +272,9 @@ plugins:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
 
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
+
 
 pluginsAsync:
   # -- Whether to install the PostHog plugin-server async stack or not.
@@ -341,6 +344,8 @@ pluginsAsync:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
 
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
 
 
 email:

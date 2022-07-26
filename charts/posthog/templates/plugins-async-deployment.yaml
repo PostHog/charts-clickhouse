@@ -72,6 +72,10 @@ spec:
         env:
         - name: PLUGIN_SERVER_MODE
           value: "async"
+
+        - name: SENTRY_DSN
+          value: {{ .Values.pluginsAsync.sentryDSN | default .Values.sentryDSN }}
+
         # Kafka env variables
         {{- include "snippet.kafka-env" . | nindent 8 }}
 

@@ -63,6 +63,7 @@ spec:
 {{- end }}
         # PostHog app settings
         {{- include "snippet.posthog-env" . | indent 8 }}
+        {{- include "snippet.posthog-sentry-env" . | indent 8 }}
         - name: PRIMARY_DB
           value: clickhouse
         {{- include "snippet.postgresql-migrate-env" . | nindent 8 }}
