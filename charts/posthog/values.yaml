@@ -73,6 +73,12 @@ web:
   # -- Whether to install the PostHog web stack or not.
   enabled: true
 
+  podAnnotations:
+    # Uncomment these lines if you want Prometheus server to scrape metrics.
+    # prometheus.io/scrape: "true"
+    # prometheus.io/path: /metrics
+    # prometheus.io/port: "8001"
+
   # -- Count of web pods to run. This setting is ignored if `web.hpa.enabled` is set to `true`.
   replicacount: 1
 
