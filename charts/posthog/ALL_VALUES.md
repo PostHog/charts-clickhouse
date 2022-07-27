@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.0.8](https://img.shields.io/badge/Version-26.0.8-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
+![Version: 26.0.9](https://img.shields.io/badge/Version-26.0.9-informational?style=flat-square) ![AppVersion: 1.37.1](https://img.shields.io/badge/AppVersion-1.37.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -32,6 +32,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | events.securityContext | object | `{"enabled":false}` | Container security context for the events stack HorizontalPodAutoscaler. |
 | events.podSecurityContext | object | `{"enabled":false}` | Pod security context for the events stack HorizontalPodAutoscaler. |
 | web.enabled | bool | `true` | Whether to install the PostHog web stack or not. |
+| web.podAnnotations | string | `nil` |  |
 | web.replicacount | int | `1` | Count of web pods to run. This setting is ignored if `web.hpa.enabled` is set to `true`. |
 | web.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the web stack. |
 | web.hpa.cputhreshold | int | `60` | CPU threshold percent for the web stack HorizontalPodAutoscaler. |
