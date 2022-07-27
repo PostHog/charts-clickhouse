@@ -63,7 +63,7 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
-        # Expose the poort on which Prometheus /metrics endpoint resides
+        # Expose the port on which Prometheus /metrics endpoint resides
         - containerPort: 8001
         env:
         # Kafka env variables
