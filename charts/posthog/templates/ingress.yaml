@@ -53,6 +53,18 @@ spec:
         paths:
           {{- if (ne (include "ingress.type" .) "clb") }}
           - pathType: Prefix
+            path: "/_metrics"
+          {{- else }}
+          - pathType: ImplementationSpecific
+            path: "/_metrics"
+          {{- end }}
+            backend:
+              service:
+                name: nonexistent-service-name
+                port:
+                  number: {{ .Values.service.externalPort }}
+          {{- if (ne (include "ingress.type" .) "clb") }}
+          - pathType: Prefix
             path: "/"
           {{- else }}
           - pathType: ImplementationSpecific
