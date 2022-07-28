@@ -1,5 +1,5 @@
 import http from 'k6/http'
-import { check } from 'k6'
+import { check, sleep } from 'k6'
 import { Counter } from 'k6/metrics'
 import { URL } from './lib/url_1_0_0.js'
 import { describe } from './lib/expect_0_0_5.js';
@@ -55,7 +55,7 @@ export function generateEvents() {
   check(res, { 'status 200': (r) => r.status === 200 })
 }
 
-export async function checkEvents() {
+export function checkEvents() {
   var success;
 
   success = describe('Check the count of events ingested', (t) => {
@@ -76,7 +76,7 @@ export async function checkEvents() {
   failedTestCases.add(success === false);
 
   // Just in case the onEvent doesn't run straight away.
-  await Promise((resolve) => setTimeout(resolve, 60000))
+  sleep(60)
 
   success = describe('Check onEvent called enough times', (t) => {
 
