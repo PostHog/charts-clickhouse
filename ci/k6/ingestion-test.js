@@ -55,7 +55,7 @@ export function generateEvents() {
   check(res, { 'status 200': (r) => r.status === 200 })
 }
 
-export function checkEvents() {
+export async function checkEvents() {
   var success;
 
   success = describe('Check the count of events ingested', (t) => {
@@ -74,6 +74,9 @@ export function checkEvents() {
     t.expect(eventCount).as(`Count of ingested events (${eventCount})`).toBeGreaterThan(100)
   })
   failedTestCases.add(success === false);
+
+  // Just in case the onEvent doesn't run straight away.
+  await Promise((resolve) => setTimeout(resolve, 60000))
 
   success = describe('Check onEvent called enough times', (t) => {
 
