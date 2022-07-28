@@ -73,8 +73,8 @@ jobs:
           --region us-central1 \
           --cluster-version 1.22 \
           --labels="provisioned_by=github_action" \
-          --machine-type e2-standard-2 \
-          --num-nodes 3
+          --machine-type e2-small \
+          --num-nodes 2
 
         # note: num-nodes will be created in each zone, such that if you specify
         # --num-nodes=4 and choose two locations 8 nodes will be created.
