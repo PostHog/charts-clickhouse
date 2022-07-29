@@ -30,7 +30,7 @@ def reset_k8s() -> None:
     #
     log.debug("Deleting all the namespaced resources...")
     namespaces_raw = exec_subprocess(
-        'kubectl get namespaces --no-headers -o custom-columns=":metadata.name" | grep -v "kube-" | grep -v "default" | grep -v "kubetest-" | tr "\n" ","'
+        'kubectl get namespaces --no-headers -o custom-columns=":metadata.name" | grep -v "kube-" | grep -v "local-path-storage" | grep -v "ingress-nginx" | grep -v "default" | grep -v "kubetest-" | tr "\n" ","'
     )
     namespaces = namespaces_raw.decode().split(",")[:-1]
     for namespace in namespaces:

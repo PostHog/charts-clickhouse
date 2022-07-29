@@ -73,7 +73,7 @@ jobs:
           --name ${{ steps.vars.outputs.k8s_cluster_name }} \
           --region=us-east-1 \
           --zones="us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1f" \
-          --instance-types="t3a.medium" \
+          --instance-types="m6i.xlarge" \
           --tags="provisioned_by=github_action" \
           --version 1.22 \
           --nodes 3
