@@ -1,5 +1,5 @@
 import http from 'k6/http'
-import { check, sleep } from 'k6'
+import { check } from 'k6'
 import { Counter } from 'k6/metrics'
 import { URL } from './lib/url_1_0_0.js'
 import { describe } from './lib/expect_0_0_5.js';
@@ -30,7 +30,7 @@ export let options = {
       executor: 'per-vu-iterations',
       vus: 1,           // Number of VUs to run concurrently.
       iterations: 1,    // only run a single iteration after generateEvents() completes
-      startTime: '100s',  // duration + gracefulStop of the above + 1m
+      startTime: '220s',  // duration + gracefulStop of the above + 3m (to account for the ingestion buffer)
     },
   },
   thresholds: {
@@ -74,9 +74,6 @@ export function checkEvents() {
     t.expect(eventCount).as(`Count of ingested events (${eventCount})`).toBeGreaterThan(100)
   })
   failedTestCases.add(success === false);
-
-  // Just in case the onEvent doesn't run straight away.
-  sleep(60)
 
   success = describe('Check onEvent called enough times', (t) => {
 
