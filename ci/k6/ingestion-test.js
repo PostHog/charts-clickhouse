@@ -30,7 +30,7 @@ export let options = {
       executor: 'per-vu-iterations',
       vus: 1,           // Number of VUs to run concurrently.
       iterations: 1,    // only run a single iteration after generateEvents() completes
-      startTime: '100s',  // duration + gracefulStop of the above + 1m
+      startTime: '220s',  // duration + gracefulStop of the above + 3m (to account for the ingestion buffer)
     },
   },
   thresholds: {
