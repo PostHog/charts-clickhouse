@@ -4,7 +4,9 @@
 # NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
 # COMMENT=
 # OPERATOR_IMAGE=altinity/clickhouse-operator:0.19.0
-# METRICS_EXPORTER_IMAGE=altinity/metrics-exporter:latest
+# OPERATOR_IMAGE_PULL_POLICY=
+# METRICS_EXPORTER_IMAGE=altinity/metrics-exporter:0.19.0
+# METRICS_EXPORTER_IMAGE_PULL_POLICY=
 #
 # Setup Deployment for clickhouse-operator
 # Deployment would be created in kubectl-specified namespace
@@ -14,7 +16,7 @@ metadata:
   name: clickhouse-operator
   namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
-    clickhouse.altinity.com/chop: 0.18.4
+    clickhouse.altinity.com/chop: 0.19.0
     app: clickhouse-operator
 spec:
   replicas: 1
@@ -49,7 +51,7 @@ spec:
       containers:
         - name: clickhouse-operator
           image: altinity/clickhouse-operator:0.19.0
-          imagePullPolicy: Always
+          imagePullPolicy: 
           volumeMounts:
             - name: etc-clickhouse-operator-folder
               mountPath: /etc/clickhouse-operator
@@ -113,8 +115,8 @@ spec:
                   resource: limits.memory
 
         - name: metrics-exporter
-          image: altinity/metrics-exporter:latest
-          imagePullPolicy: Always
+          image: altinity/metrics-exporter:0.19.0
+          imagePullPolicy: 
           volumeMounts:
             - name: etc-clickhouse-operator-folder
               mountPath: /etc/clickhouse-operator
