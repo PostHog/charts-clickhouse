@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.1.0](https://img.shields.io/badge/Version-26.1.0-informational?style=flat-square) ![AppVersion: 1.38.0](https://img.shields.io/badge/AppVersion-1.38.0-informational?style=flat-square)
+![Version: 26.2.0](https://img.shields.io/badge/Version-26.2.0-informational?style=flat-square) ![AppVersion: 1.38.0](https://img.shields.io/badge/AppVersion-1.38.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -293,7 +293,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.client.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.backup.enabled | bool | `false` |  |
 | clickhouse.backup.image.repository | string | `"altinity/clickhouse-backup"` | Clickhouse backup image repository. |
-| clickhouse.backup.image.tag | string | `"1.4.0"` | ClickHouse backup image tag. |
+| clickhouse.backup.image.tag | string | `"1.5.0"` | ClickHouse backup image tag. |
 | clickhouse.backup.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.backup.backup_user | string | `"backup"` |  |
 | clickhouse.backup.backup_password | string | `"backup_password"` |  |
