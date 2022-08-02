@@ -966,14 +966,14 @@ clickhouse:
       # -- Clickhouse backup image repository.
       repository: altinity/clickhouse-backup
       # -- ClickHouse backup image tag.
-      tag: "1.4.0"
+      tag: "1.5.0"
       # -- Image pull policy
       pullPolicy: IfNotPresent
 
     backup_user: backup
     # password in plain text because it's using in cronjob
     backup_password: backup_password
-    backup_schedule: "0 0 * * *" #backup every day at 0:00
+    backup_schedule: "0 0 * * *" # backup every day at 0:00
     clickhouse_services: "chi-posthog-posthog-0-0" # use first replica in each shard, use `kubectl get svc | grep chi-posthog-posthog`
 
     # All options: https://github.com/AlexAkulov/clickhouse-backup#default-config
