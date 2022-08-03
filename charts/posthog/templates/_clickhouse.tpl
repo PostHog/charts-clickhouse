@@ -9,8 +9,16 @@
   value: {{ .Values.clickhouse.database | quote }}
 - name: CLICKHOUSE_USER
   value: {{ .Values.clickhouse.user | quote }}
+{{- if .Values.clickhouse.existingSecret }}
+- name: CLICKHOUSE_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.clickhouse.existingSecret.name }}
+      key: {{ .Values.clickhouse.existingSecret.key }}
+{{- else }}
 - name: CLICKHOUSE_PASSWORD
   value: {{ .Values.clickhouse.password | quote }}
+{{- end }}
 - name: CLICKHOUSE_SECURE
   value: {{ .Values.clickhouse.secure | quote }}
 - name: CLICKHOUSE_VERIFY
@@ -109,3 +117,25 @@ Return the ClickHouse client image
 {{- define "client.clickhouse.image" -}}
 "{{ .Values.clickhouse.client.image.repository }}:{{ .Values.clickhouse.client.image.tag }}"
 {{- end -}}
+
+{{/*
+Return ClickHouse password config value for clickhouse_instance
+*/}}
+{{- define "clickhouse.passwordValue" -}}
+{{- if .Values.clickhouse.existingSecret }}
+      {{ .Values.clickhouse.user }}/k8s_secret_password: {{ .Values.clickhouse.existingSecret.name }}/{{ .Values.clickhouse.existingSecret.key }}
+{{- else }}
+      {{ .Values.clickhouse.user }}/password: {{ .Values.clickhouse.password }}
+{{- end }}
+{{- end }}
+
+{{/*
+Return ClickHouse backup password config value for clickhouse_instance
+*/}}
+{{- define "clickhouse.backupPasswordValue" -}}
+{{- if .Values.clickhouse.backup.existingSecret }}
+      {{ .Values.clickhouse.backup.backup_user }}/k8s_secret_password: {{ .Values.clickhouse.backup.existingSecret.name }}/{{ .Values.clickhouse.backup.existingSecret.key }}
+{{- else -}}
+      {{ .Values.clickhouse.backup.backup_user }}/password: {{ .Values.clickhouse.backup.backup_password }}
+{{- end}}
+{{- end}}
