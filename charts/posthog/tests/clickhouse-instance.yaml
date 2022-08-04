@@ -292,6 +292,26 @@ tests:
             someuser/profile: default
             someuser/quota: default
 
+  - it: handles using existing secret as password
+    set:
+      clickhouse.user: someuser
+      clickhouse.password: somepass
+      clickhouse.existingSecret.name: clickhouse-creds
+      clickhouse.existingSecret.key: password
+    assert:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.users
+          value:
+            someuser/k8s_secret_password: clickhouse-creds/password
+            someuser/networks/ip:
+              - "10.0.0.0/8"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
+            someuser/profile: default
+            someuser/quota: default
+
   - it: sets default clickhouse-server image
     asserts:
       - hasDocuments:
