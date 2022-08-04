@@ -296,8 +296,8 @@ tests:
     set:
       clickhouse.user: someuser
       clickhouse.password: somepass
-      clickhouse.existingSecret.name: clickhouse-creds
-      clickhouse.existingSecret.key: password
+      clickhouse.existingSecret: clickhouse-creds
+      clickhouse.existingSecretPasswordKey: password
     assert:
       - hasDocuments:
           count: 1
@@ -305,6 +305,20 @@ tests:
           path: spec.configuration.users
           value:
             someuser/k8s_secret_password: clickhouse-creds/password
+
+  - it: backup handles using existing secret as password
+    set:
+      clickhouse.backup.backup_user: backupuser
+      clickhouse.backup_backup_password: somepass
+      clickhouse.backup.existingSecret: backup-creds
+      clickhouse.backup.existingSecretPasswordKey: password
+    assert:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.users
+          value:
+            backupuser/k8s_secret_password: backup-creds/password
 
   - it: sets default clickhouse-server image
     asserts:
