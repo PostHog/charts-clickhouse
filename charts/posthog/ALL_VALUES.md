@@ -262,8 +262,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.database | string | `"posthog"` | Clickhouse database |
 | clickhouse.user | string | `"admin"` | Clickhouse user |
 | clickhouse.password | string | `"a1f31e03-c88e-4ca6-a2df-ad49183d15d9"` | Clickhouse password |
-| clickhouse.existingSecret | object | `{}` | Clickhouse password value from an existing secret that needs to be in the namespace where posthog is deployed into. Will not use the above password value if set |
-| clickhouse.secure | bool | `false` |  |
+| clickhouse.existingSecret | object | `{}` | Clickhouse existing secret name that needs to be in the namespace where posthog is deployed into. Will not use the above password value if set |
+| clickhouse.existingSecretPasswordKey | object | `{}` | Key in the existingSecret containing the password value |
+| clickhouse.secure | bool | `false` | Whether to use TLS connection connecting to ClickHouse |
 | clickhouse.verify | bool | `false` | Whether to verify TLS certificate on connection to ClickHouse |
 | clickhouse.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
 | clickhouse.image.tag | string | `"22.3.6.5"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
@@ -295,7 +296,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.backup.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.backup.backup_user | string | `"backup"` |  |
 | clickhouse.backup.backup_password | string | `"backup_password"` |  |
-| clickhouse.backup.existingSecret | object | `{}` | Use an existing secret for the backup password |
+| clickhouse.backup.existingSecret | object | `{}` | Use an existing secret name in the deployed namespace for the backup password |
+| clickhouse.backup.existingSecretPasswordKey | object | `{}` | Key in the existingSecret containing the password value |
 | clickhouse.backup.backup_schedule | string | `"0 0 * * *"` |  |
 | clickhouse.backup.clickhouse_services | string | `"chi-posthog-posthog-0-0"` |  |
 | clickhouse.backup.env[0].name | string | `"LOG_LEVEL"` |  |

@@ -13,8 +13,8 @@
 - name: CLICKHOUSE_PASSWORD
   valueFrom:
     secretKeyRef:
-      name: {{ .Values.clickhouse.existingSecret.name }}
-      key: {{ .Values.clickhouse.existingSecret.key }}
+      name: {{ .Values.clickhouse.existingSecret }}
+      key: {{ required "The existingSecretPasswordKey needs to be set when using an existingSecret" .Values.clickhouse.existingSecretPasswordKey }}
 {{- else }}
 - name: CLICKHOUSE_PASSWORD
   value: {{ .Values.clickhouse.password | quote }}
@@ -123,7 +123,7 @@ Return ClickHouse password config value for clickhouse_instance
 */}}
 {{- define "clickhouse.passwordValue" -}}
 {{- if .Values.clickhouse.existingSecret }}
-      {{ .Values.clickhouse.user }}/k8s_secret_password: {{ .Values.clickhouse.existingSecret.name }}/{{ .Values.clickhouse.existingSecret.key }}
+      {{ .Values.clickhouse.user }}/k8s_secret_password: {{ .Values.clickhouse.existingSecret }}/{{ required "The existingSecretPasswordKey needs to be set when using an existingSecret" .Values.clickhouse.existingSecretPasswordKey }}
 {{- else }}
       {{ .Values.clickhouse.user }}/password: {{ .Values.clickhouse.password }}
 {{- end }}
@@ -134,7 +134,7 @@ Return ClickHouse backup password config value for clickhouse_instance
 */}}
 {{- define "clickhouse.backupPasswordValue" -}}
 {{- if .Values.clickhouse.backup.existingSecret }}
-      {{ .Values.clickhouse.backup.backup_user }}/k8s_secret_password: {{ .Values.clickhouse.backup.existingSecret.name }}/{{ .Values.clickhouse.backup.existingSecret.key }}
+      {{ .Values.clickhouse.backup.backup_user }}/k8s_secret_password: {{ .Values.clickhouse.backup.existingSecret }}/{{ required "The backup.existingSecretPasswordKey needs to be set when using backup.existingSecret" .Values.clickhouse.backup.existingSecretPasswordKey }}
 {{- else -}}
       {{ .Values.clickhouse.backup.backup_user }}/password: {{ .Values.clickhouse.backup.backup_password }}
 {{- end}}

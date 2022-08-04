@@ -54,8 +54,8 @@ spec:
                 {{- if .Values.clickhouse.backup.existingSecret }}
                   valueFrom:
                     secretKeyRef:
-                      name: {{ .Values.clickhouse.backup.existingSecret.name }}
-                      key: {{ .Values.clickhouse.backup.existingSecret.key }}
+                      name: {{ .Values.clickhouse.backup.existingSecret }}
+                      key: {{ required "backup.existingSecretPasswordKey is required when using backup.existingSecret" .Values.clickhouse.backup.existingSecretPasswordKey }}
                 {{- else }}
                   value: {{ .Values.clickhouse.backup.backup_password }}
                 {{- end }}
