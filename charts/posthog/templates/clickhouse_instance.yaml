@@ -6,7 +6,7 @@ metadata:
 spec:
   configuration:
     users:
-      {{ .Values.clickhouse.user }}/password: {{ .Values.clickhouse.password }}
+      {{- template "clickhouse.passwordValue" . }}
       {{ .Values.clickhouse.user }}/networks/ip:
         {{- range $.Values.clickhouse.allowedNetworkIps }}
         - {{ . | quote }}
@@ -15,7 +15,7 @@ spec:
       {{ .Values.clickhouse.user }}/quota: default
       {{- if .Values.clickhouse.backup.enabled }}
       {{ .Values.clickhouse.backup.backup_user }}/networks/ip: "0.0.0.0/0"
-      {{ .Values.clickhouse.backup.backup_user }}/password: {{ .Values.clickhouse.backup.backup_password }}
+      {{ template "clickhouse.backupPasswordValue" . }}
       {{- end}}
     profiles:
       {{- merge dict .Values.clickhouse.profiles .Values.clickhouse.defaultProfiles | toYaml | nindent 6 }}

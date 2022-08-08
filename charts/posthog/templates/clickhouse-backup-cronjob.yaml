@@ -51,7 +51,14 @@ spec:
                 - name: BACKUP_USER
                   value: {{ .Values.clickhouse.backup.backup_user }}
                 - name: BACKUP_PASSWORD
+                {{- if .Values.clickhouse.backup.existingSecret }}
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.clickhouse.backup.existingSecret }}
+                      key: {{ required "backup.existingSecretPasswordKey is required when using backup.existingSecret" .Values.clickhouse.backup.existingSecretPasswordKey }}
+                {{- else }}
                   value: {{ .Values.clickhouse.backup.backup_password }}
+                {{- end }}
               command: ["/bin/sh", "-c", "/scripts/clickhouse_backup.sh"]
               volumeMounts:
               - name: clickhouse-backup-script

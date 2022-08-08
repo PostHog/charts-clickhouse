@@ -832,6 +832,11 @@ clickhouse:
   user: admin
   # -- Clickhouse password
   password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+  # -- Clickhouse existing secret name that needs to be in the namespace where
+  # posthog is deployed into. Will not use the above password value if set
+  existingSecret: ""
+  # -- Key in the existingSecret containing the password value
+  existingSecretPasswordKey: ""
   # -- Whether to use TLS connection connecting to ClickHouse
   secure: false
   # -- Whether to verify TLS certificate on connection to ClickHouse
@@ -973,6 +978,11 @@ clickhouse:
     backup_user: backup
     # password in plain text because it's using in cronjob
     backup_password: backup_password
+    # -- Use an existing secret name in the deployed namespace for the backup
+    # password
+    existingSecret: ""
+    # -- Key in the existingSecret containing the password value
+    existingSecretPasswordKey: ""
     backup_schedule: "0 0 * * *" # backup every day at 0:00
     clickhouse_services: "chi-posthog-posthog-0-0" # use first replica in each shard, use `kubectl get svc | grep chi-posthog-posthog`
 

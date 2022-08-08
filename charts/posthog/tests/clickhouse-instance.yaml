@@ -292,6 +292,49 @@ tests:
             someuser/profile: default
             someuser/quota: default
 
+  - it: handles using existing secret as password
+    set:
+      clickhouse.user: someuser
+      clickhouse.password: somepass
+      clickhouse.existingSecret: clickhouse-creds
+      clickhouse.existingSecretPasswordKey: password
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.users
+          value:
+            someuser/k8s_secret_password: clickhouse-creds/password
+            someuser/networks/ip:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            someuser/profile: default
+            someuser/quota: default
+
+  - it: backup handles using existing secret as password
+    set:
+      clickhouse.backup.enabled: true
+      clickhouse.backup.backup_user: backupuser
+      clickhouse.backup_backup_password: somepass
+      clickhouse.backup.existingSecret: backup-creds
+      clickhouse.backup.existingSecretPasswordKey: password
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.configuration.users
+          value:
+            admin/networks/ip:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+            admin/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+            admin/profile: default
+            admin/quota: default
+            backupuser/k8s_secret_password: backup-creds/password
+            backupuser/networks/ip: 0.0.0.0/0
+
   - it: sets default clickhouse-server image
     asserts:
       - hasDocuments:
@@ -418,6 +461,7 @@ tests:
                 port: 2181
               - host: host3
                 port: 2181
+
   - it: tests creation of backup user
     set:
       clickhouse.backup.enabled: true
