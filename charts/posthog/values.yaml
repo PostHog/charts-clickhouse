@@ -1159,6 +1159,8 @@ grafana:
         url: http://posthog-prometheus-alertmanager
         access: proxy
         isDefault: false
+        jsonData:
+          implementation: prometheus
 
 ###
 ###
