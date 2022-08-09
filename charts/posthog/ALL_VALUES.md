@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.3.0](https://img.shields.io/badge/Version-26.3.0-informational?style=flat-square) ![AppVersion: 1.38.0](https://img.shields.io/badge/AppVersion-1.38.0-informational?style=flat-square)
+![Version: 26.3.1](https://img.shields.io/badge/Version-26.3.1-informational?style=flat-square) ![AppVersion: 1.38.0](https://img.shields.io/badge/AppVersion-1.38.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -349,7 +349,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | externalObjectStorage.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the `access_key_id` and `secret_access_key`. The secret has to contain the keys `root-user` and `root-password`). |
 | grafana.enabled | bool | `false` | Whether to install Grafana or not. |
 | grafana.sidecar | object | `{"dashboards":{"enabled":true,"folderAnnotation":"grafana_folder","label":"grafana_dashboard","provider":{"foldersFromFilesStructure":true}}}` | Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info. |
-| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki:3100"},{"access":"proxy","isDefault":false,"name":"Alertmanager","type":"alertmanager","url":"http://posthog-prometheus-alertmanager"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
+| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki:3100"},{"access":"proxy","isDefault":false,"jsonData":{"implementation":"prometheus"},"name":"Alertmanager","type":"alertmanager","url":"http://posthog-prometheus-alertmanager"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
 | loki.enabled | bool | `false` | Whether to install Loki or not. |
 | promtail.enabled | bool | `false` | Whether to install Promtail or not. |
 | promtail.config.lokiAddress | string | `"http://posthog-loki:3100/loki/api/v1/push"` |  |
