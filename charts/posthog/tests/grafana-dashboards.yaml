@@ -10,13 +10,6 @@ tests:
       - hasDocuments:
           count: 0
 
-  - it: the manifest should match the snapshot when using default values
-    set:
-      grafana.enabled: true
-    asserts:
-      - hasDocuments:
-          count: 10
-
   - it: should have the correct apiVersion
     set:
       grafana.enabled: true
