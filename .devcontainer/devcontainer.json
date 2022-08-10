@@ -9,11 +9,8 @@
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-kubernetes-tools.vscode-kubernetes-tools",
-		"tomaciazek.ansible"
+		"ms-kubernetes-tools.vscode-kubernetes-tools"
 	],
-
-	"forwardPorts": [8000, 4330],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "bash .devcontainer/setup_container.sh"

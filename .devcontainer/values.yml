@@ -1,0 +1,47 @@
+cloud: private
+
+# Expose
+ingress:
+  enabled: true
+
+grafana:
+  enabled: true
+
+  service:
+    enabled: true
+    type: NodePort
+    nodePort: 30000
+
+  grafana.ini:
+    # Disable auth for local testing
+    auth:
+      disable_login_form: true
+
+    auth.anonymous:
+      enabled: true
+      org_name: Main Org.
+      org_role: Admin
+
+prometheus:
+  enabled: true
+
+  server:
+    service:
+      type: NodePort
+      nodePort: 30001
+
+  alertmanager:
+    enabled: true
+
+    service:
+      type: NodePort
+      nodePort: 30002
+
+prometheus-postgres-exporter:
+  enabled: true
+
+prometheus-kafka-exporter:
+  enabled: true
+
+prometheus-redis-exporter:
+  enabled: true
