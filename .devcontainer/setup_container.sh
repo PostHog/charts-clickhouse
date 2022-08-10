@@ -29,13 +29,22 @@ nodes:
       kubeletExtraArgs:
         node-labels: "ingress-ready=true"
   extraPortMappings:
+  # nginx ingress
   - containerPort: 80
     hostPort: 8000
     protocol: TCP
-  - containerPort: 443
-    hostPort: 4430
-    protocol: TCP
 EOF
+
+# Port forward a range or ports above 30000 to the kind worker node so we can
+# easily expose services as node points and be able to interact with them
+# locally. It's possible to instruct kind to map these ports, but it seems you
+# need to recreate the cluster for these to take affect.
+# NOTE: I tried to use `docker-proxy` to avoid needing to install another dep.
+# but the process exits immediately with a non-zero status code.
+sudo apt-get update
+sudo apt-get install socat
+NODE_IP=$(kubectl get nodes kind-control-plane --template '{{(index .status.addresses 0).address}}')
+seq 30000 30010 | xargs -I{} bash -c "socat TCP4-LISTEN:{},fork TCP4:$NODE_IP:{} &"
 
 # Then provision the nginx controller, e.g.
 # https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx
@@ -54,4 +63,4 @@ echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.i
 sudo apt-get update
 sudo apt-get install k6
 
-echo "printf 'Hello 🦔! To install PostHog into k8s run this:\n\n "helm upgrade --install posthog charts/posthog --set cloud=private"\n'" >> ~/.zshrc
+echo "printf 'Hello 🦔! To install PostHog into k8s run this:\n\n "helm upgrade --install posthog charts/posthog -f .devcontainer/values.yml"\n'" >> ~/.zshrc
