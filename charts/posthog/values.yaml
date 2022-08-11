@@ -1634,7 +1634,7 @@ prometheus:
                 description: "Prometheus has restarted more than twice in the last 15 minutes. It might be crashlooping."
 
             - alert: PrometheusAlertmanagerJobMissing
-              expr: absent(up{job="alertmanager"})
+              expr: absent(up{job="kubernetes-pods", app="prometheus", component="alertmanager"})
               for: 0m
               labels:
                 severity: warning
