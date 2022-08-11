@@ -1248,7 +1248,7 @@ prometheus:
 
             - alert: KubernetesDiskPressure
               expr: kube_node_status_condition{condition="DiskPressure",status="true"} == 1
-              for: 2m
+              for: 10m
               labels:
                 severity: critical
               annotations:
@@ -1356,7 +1356,7 @@ prometheus:
 
             - alert: KubernetesHpaMetricAvailability
               expr: kube_horizontalpodautoscaler_status_condition{status="false", condition="ScalingActive"} == 1
-              for: 0m
+              for: 5m
               labels:
                 severity: warning
               annotations:
@@ -1599,7 +1599,7 @@ prometheus:
 
             - alert: PrometheusTargetMissing
               expr: up == 0
-              for: 0m
+              for: 5m
               labels:
                 severity: critical
               annotations:
