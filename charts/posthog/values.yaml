@@ -1367,7 +1367,7 @@ prometheus:
               expr: kube_horizontalpodautoscaler_status_desired_replicas >= kube_horizontalpodautoscaler_spec_max_replicas
               for: 2m
               labels:
-                severity: info
+                severity: critical
               annotations:
                 summary: Kubernetes HPA scale capability (instance {{ $labels.instance }})
                 description: "The maximum number of desired Pods has been hit"
@@ -1455,7 +1455,7 @@ prometheus:
 
             - alert: KubernetesDaemonsetMisscheduled
               expr: kube_daemonset_status_number_misscheduled > 0
-              for: 1m
+              for: 5m
               labels:
                 severity: critical
               annotations:
