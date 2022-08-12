@@ -26,7 +26,8 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 14314,
     "graphTooltip": 1,
-    "iteration": 1660301451969,
+    "id": 70,
+    "iteration": 1660308702521,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -718,7 +719,7 @@
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
             },
-            "description": "This is a total number of requests broken down by the ingress.  This can help get a sense of scale in relation to each other.",
+            "description": "This is the total number of requests processed.",
             "fieldConfig": {
                 "defaults": {
                     "links": []
@@ -729,7 +730,7 @@
             "fillGradient": 0,
             "gridPos": {
                 "h": 8,
-                "w": 8,
+                "w": 12,
                 "x": 0,
                 "y": 4
             },
@@ -767,17 +768,20 @@
                         "type": "prometheus",
                         "uid": "PBFA97CFB590B2093"
                     },
-                    "expr": "sum(increase(nginx_ingress_controller_requests{controller_pod=~\"$pod\", path=~\"$path\"}[$__interval])) by (ingress)",
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "sum(increase(nginx_ingress_controller_requests{controller_pod=~\"$pod\", path=~\"$path\"}[$__interval]))",
                     "format": "time_series",
                     "interval": "2m",
                     "intervalFactor": 1,
-                    "legendFormat": "{{ingress}}",
+                    "legendFormat": "Requests",
+                    "range": true,
                     "refId": "A"
                 }
             ],
             "thresholds": [],
             "timeRegions": [],
-            "title": "HTTP Requests / Ingress",
+            "title": "HTTP Requests",
             "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -808,12 +812,6 @@
             }
         },
         {
-            "aliasColors": {
-                "HTTP 101": "dark-green"
-            },
-            "bars": false,
-            "dashLength": 10,
-            "dashes": false,
             "datasource": {
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
@@ -821,72 +819,167 @@
             "description": "The breakdown of the various HTTP status codes of the requests handled within' this period that matches the variables chosen above.\n\nThis chart helps notice and dive into which service is having failures and of what kind.",
             "fieldConfig": {
                 "defaults": {
-                    "links": []
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "links": [],
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
                 },
-                "overrides": []
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "HTTP 101"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "dark-green",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byRegexp",
+                            "options": "/HTTP [1-2].*/i"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#37872D",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byRegexp",
+                            "options": "/HTTP 4.*/i"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#C4162A",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "HTTP 404"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FF9830",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "HTTP 499"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#FA6400",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byRegexp",
+                            "options": "/HTTP 5.*/i"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#C4162A",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    }
+                ]
             },
-            "fill": 1,
-            "fillGradient": 0,
             "gridPos": {
                 "h": 8,
-                "w": 8,
-                "x": 8,
+                "w": 12,
+                "x": 12,
                 "y": 4
             },
-            "hiddenSeries": false,
             "id": 3,
-            "legend": {
-                "avg": false,
-                "current": false,
-                "max": false,
-                "min": false,
-                "show": true,
-                "total": false,
-                "values": false
-            },
-            "lines": true,
-            "linewidth": 1,
             "links": [],
-            "nullPointMode": "null as zero",
             "options": {
-                "alertThreshold": true
-            },
-            "paceLength": 10,
-            "percentage": false,
-            "pluginVersion": "9.0.2",
-            "pointradius": 2,
-            "points": false,
-            "renderer": "flot",
-            "seriesOverrides": [
-                {
-                    "$$hashKey": "object:154",
-                    "alias": "/HTTP [1-2].*/i",
-                    "color": "#37872D"
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom"
                 },
-                {
-                    "$$hashKey": "object:155",
-                    "alias": "/HTTP 4.*/i",
-                    "color": "#C4162A"
-                },
-                {
-                    "$$hashKey": "object:156",
-                    "alias": "HTTP 404",
-                    "color": "#FF9830"
-                },
-                {
-                    "$$hashKey": "object:285",
-                    "alias": "HTTP 499",
-                    "color": "#FA6400"
-                },
-                {
-                    "$$hashKey": "object:293",
-                    "alias": "/HTTP 5.*/i",
-                    "color": "#C4162A"
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
                 }
-            ],
-            "spaceLength": 10,
-            "stack": false,
-            "steppedLine": false,
+            },
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -901,133 +994,8 @@
                     "refId": "A"
                 }
             ],
-            "thresholds": [],
-            "timeRegions": [],
             "title": "HTTP Status Codes",
-            "tooltip": {
-                "shared": true,
-                "sort": 0,
-                "value_type": "individual"
-            },
-            "type": "graph",
-            "xaxis": {
-                "mode": "time",
-                "show": true,
-                "values": []
-            },
-            "yaxes": [
-                {
-                    "$$hashKey": "object:182",
-                    "format": "short",
-                    "logBase": 1,
-                    "show": true
-                },
-                {
-                    "$$hashKey": "object:183",
-                    "format": "short",
-                    "logBase": 1,
-                    "show": true
-                }
-            ],
-            "yaxis": {
-                "align": false
-            }
-        },
-        {
-            "aliasColors": {},
-            "bars": true,
-            "dashLength": 10,
-            "dashes": false,
-            "datasource": {
-                "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
-            },
-            "description": "The total number of HTTP requests made within' each period",
-            "fieldConfig": {
-                "defaults": {
-                    "links": []
-                },
-                "overrides": []
-            },
-            "fill": 1,
-            "fillGradient": 0,
-            "gridPos": {
-                "h": 8,
-                "w": 8,
-                "x": 16,
-                "y": 4
-            },
-            "hiddenSeries": false,
-            "id": 4,
-            "legend": {
-                "avg": false,
-                "current": false,
-                "max": false,
-                "min": false,
-                "show": false,
-                "total": false,
-                "values": false
-            },
-            "lines": false,
-            "linewidth": 1,
-            "links": [],
-            "nullPointMode": "null",
-            "options": {
-                "alertThreshold": true
-            },
-            "paceLength": 10,
-            "percentage": false,
-            "pluginVersion": "9.0.2",
-            "pointradius": 2,
-            "points": false,
-            "renderer": "flot",
-            "seriesOverrides": [],
-            "spaceLength": 10,
-            "stack": false,
-            "steppedLine": false,
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
-                    },
-                    "expr": "sum(increase(nginx_ingress_controller_requests{controller_pod=~\"$pod\", path=~\"$path\"}[$__interval]))",
-                    "format": "time_series",
-                    "interval": "5m",
-                    "intervalFactor": 1,
-                    "legendFormat": "{{ingress}}",
-                    "refId": "A"
-                }
-            ],
-            "thresholds": [],
-            "timeRegions": [],
-            "title": "Total HTTP Requests",
-            "tooltip": {
-                "shared": true,
-                "sort": 0,
-                "value_type": "individual"
-            },
-            "type": "graph",
-            "xaxis": {
-                "mode": "time",
-                "show": false,
-                "values": []
-            },
-            "yaxes": [
-                {
-                    "format": "short",
-                    "logBase": 1,
-                    "show": true
-                },
-                {
-                    "format": "short",
-                    "logBase": 1,
-                    "show": false
-                }
-            ],
-            "yaxis": {
-                "align": false
-            }
+            "type": "timeseries"
         },
         {
             "collapsed": false,
@@ -1154,7 +1122,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "histogram_quantile(\n  0.99,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\"\n, path=~\"$path\"      }[$__interval]\n    )\n  )\n)",
+                    "expr": "histogram_quantile(\n  0.99,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\", \n        path=~\"$path\"}[$__interval]\n    )\n  )\n)",
                     "format": "time_series",
                     "interval": "5m",
                     "intervalFactor": 1,
@@ -1167,7 +1135,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "histogram_quantile(\n  0.95,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\"\n, path=~\"$path\"      }[$__interval]\n    )\n  )\n)",
+                    "expr": "histogram_quantile(\n  0.95,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\", \n        path=~\"$path\"}[$__interval]\n    )\n  )\n)",
                     "format": "time_series",
                     "hide": false,
                     "interval": "5m",
@@ -1181,7 +1149,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "histogram_quantile(\n  0.9,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\"\n, path=~\"$path\"      }[$__interval]\n    )\n  )\n)",
+                    "expr": "histogram_quantile(\n  0.9,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\", \n        path=~\"$path\"}[$__interval]\n    )\n  )\n)",
                     "format": "time_series",
                     "hide": false,
                     "interval": "5m",
@@ -1195,7 +1163,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "histogram_quantile(\n  0.5,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\"\n, path=~\"$path\"      }[$__interval]\n    )\n  )\n)",
+                    "expr": "histogram_quantile(\n  0.5,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\", \n        path=~\"$path\"}[$__interval]\n    )\n  )\n)",
                     "format": "time_series",
                     "hide": false,
                     "interval": "5m",
@@ -1209,7 +1177,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "histogram_quantile(\n  0.75,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\"\n, path=~\"$path\"      }[$__interval]\n    )\n  )\n)",
+                    "expr": "histogram_quantile(\n  0.75,\n  sum by (le)(\n    rate(\n      nginx_ingress_controller_request_duration_seconds_bucket{\n        status!=\"404|500|304|499\",\n        controller_pod=~\"$pod\", \n        path=~\"$path\"}[$__interval]\n    )\n  )\n)",
                     "format": "time_series",
                     "hide": false,
                     "interval": "5m",
@@ -1223,7 +1191,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "(\n\n(sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"0.01\"\n, path=~\"$path\"}[$__interval]))\n* 0.01)\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"0.1\"\n, path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"0.01\"\n, path=~\"$path\"}[$__interval])))\n* 0.1)\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"1\"\n, path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"0.1\"\n, path=~\"$path\"}[$__interval])))\n* 1)\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"10\"\n, path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"1\"\n, path=~\"$path\"}[$__interval])))\n* 10 )\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"30\"\n, path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"10\"\n, path=~\"$path\"}[$__interval])))\n* 30 )\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"60\"\n, path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"30\"\n, path=~\"$path\"}[$__interval])))\n* 60 )\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"+Inf\"\n, path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"60\"\n, path=~\"$path\"}[$__interval])))\n* 120 )\n\n) / \n\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"+Inf\"\n, path=~\"$path\"}[$__interval]))\n",
+                    "expr": "(\n\n(sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"0.01\", \n    path=~\"$path\"}[$__interval]))\n* 0.01)\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"0.1\", \n    path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"0.01\",\n    path=~\"$path\"}[$__interval])))\n* 0.1)\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"1\", \n    path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"0.1\", \n    path=~\"$path\"}[$__interval])))\n* 1)\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"10\", \n    path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"1\", \n    path=~\"$path\"}[$__interval])))\n* 10 )\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"30\", \n    path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"10\", \n    path=~\"$path\"}[$__interval])))\n* 30 )\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"60\", \n    path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"30\", \n    path=~\"$path\"}[$__interval])))\n* 60 )\n\n+\n\n((sum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"+Inf\", \n    path=~\"$path\"}[$__interval]))\n-\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"60\", \n    path=~\"$path\"}[$__interval])))\n* 120 )\n\n) / \n\nsum(increase(nginx_ingress_controller_request_duration_seconds_bucket{\n    status!=\"404|500|304\",\n    controller_pod=~\"$pod\",\n    le=\"+Inf\", \n    path=~\"$path\"}[$__interval]))\n",
                     "format": "time_series",
                     "hide": false,
                     "interval": "5m",
@@ -1302,7 +1270,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "sum by (le)(\n  increase(\n    nginx_ingress_controller_request_duration_seconds_bucket{\n      status!=\"404\",status!=\"500\",\n    path=~\"$path\"}[$__interval]\n  )\n)",
+                    "expr": "sum by (le)(\n  increase(\n    nginx_ingress_controller_request_duration_seconds_bucket{\n      status!=\"404\",status!=\"500\",path=~\"$path\"}[$__interval]\n  )\n)",
                     "format": "time_series",
                     "hide": false,
                     "interval": "5m",
@@ -1595,7 +1563,7 @@
                         "axisPlacement": "auto",
                         "barAlignment": 0,
                         "drawStyle": "line",
-                        "fillOpacity": 10,
+                        "fillOpacity": 0,
                         "gradientMode": "none",
                         "hideFrom": {
                             "legend": false,
@@ -1622,7 +1590,6 @@
                     "links": [],
                     "mappings": [],
                     "max": 1,
-                    "min": 0,
                     "thresholds": {
                         "mode": "absolute",
                         "steps": [
@@ -1651,7 +1618,6 @@
             "options": {
                 "legend": {
                     "calcs": [
-                        "mean",
                         "max",
                         "min"
                     ],
@@ -1670,16 +1636,18 @@
                         "type": "prometheus",
                         "uid": "PBFA97CFB590B2093"
                     },
-                    "exemplar": true,
-                    "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"5.*\",controller_pod=~\"$pod\", path=~\"$path\"}[2m]\n      )\n   ) by (ingress)\n/ \n\nsum(\n  rate(\n    nginx_ingress_controller_requests{controller_pod=~\"$pod\", path=~\"$path\"}[2m]\n      )\n    ) by (ingress)\n",
+                    "editorMode": "code",
+                    "exemplar": false,
+                    "expr": "sum(\n  rate(\n    nginx_ingress_controller_requests{status!~\"5.*\", controller_pod=~\"$pod\", path=~\"$path\"}[2m]\n      )\n   )\n/ \n\nsum(\n  rate(\n    nginx_ingress_controller_requests{controller_pod=~\"$pod\", path=~\"$path\"}[2m]\n      )\n    )\n",
                     "format": "time_series",
                     "interval": "",
                     "intervalFactor": 1,
-                    "legendFormat": "{{ingress}}",
+                    "legendFormat": "Rate",
+                    "range": true,
                     "refId": "A"
                 }
             ],
-            "title": "Percentage of Success (non-5xx) - By Ingress",
+            "title": "Success Rate (non-5xx)",
             "type": "timeseries"
         },
         {
@@ -1742,10 +1710,12 @@
                         "type": "prometheus",
                         "uid": "PBFA97CFB590B2093"
                     },
-                    "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status!=\"404\",status!=\"500\",controller_pod=~\"$pod\", path=~\"$path\"}[5m])) by (le, ingress))",
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status!=\"404\",status!=\"500\",controller_pod=~\"$pod\", path=~\"$path\"}[5m])) by (le))",
                     "format": "time_series",
                     "intervalFactor": 1,
-                    "legendFormat": "p99 {{ ingress }}",
+                    "legendFormat": "p99",
+                    "range": true,
                     "refId": "A"
                 },
                 {
@@ -1753,10 +1723,12 @@
                         "type": "prometheus",
                         "uid": "PBFA97CFB590B2093"
                     },
-                    "expr": "histogram_quantile(0.95, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status!=\"404\",status!=\"500\",controller_pod=~\"$pod\", path=~\"$path\"}[5m])) by (le, ingress))",
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.95, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status!=\"404\",status!=\"500\",controller_pod=~\"$pod\", path=~\"$path\"}[5m])) by (le))",
                     "format": "time_series",
                     "intervalFactor": 1,
-                    "legendFormat": "p95 {{ ingress }}",
+                    "legendFormat": "p95",
+                    "range": true,
                     "refId": "B"
                 },
                 {
@@ -1764,16 +1736,18 @@
                         "type": "prometheus",
                         "uid": "PBFA97CFB590B2093"
                     },
-                    "expr": "histogram_quantile(0.90, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status!=\"404\",status!=\"500\",controller_pod=~\"$pod\", path=~\"$path\"}[5m])) by (le, ingress))",
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.90, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{status!=\"404\",status!=\"500\",controller_pod=~\"$pod\", path=~\"$path\"}[5m])) by (le))",
                     "format": "time_series",
                     "intervalFactor": 1,
-                    "legendFormat": "p90 {{ ingress }}",
+                    "legendFormat": "p90",
+                    "range": true,
                     "refId": "C"
                 }
             ],
             "thresholds": [],
             "timeRegions": [],
-            "title": "Latency (per ingress)",
+            "title": "Latency",
             "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -1847,15 +1821,19 @@
                 "useTags": false
             },
             {
+                "allValue": ".*",
                 "current": {
                     "selected": true,
                     "text": "All",
                     "value": "$__all"
                 },
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "PBFA97CFB590B2093"
+                },
                 "definition": "label_values(nginx_ingress_controller_requests{}, path)",
                 "description": "The ingress path i.e. not the full URI but what is in the k8s ingress definition",
                 "hide": 0,
-                "allValue": ".*",
                 "includeAll": true,
                 "multi": false,
                 "name": "path",
