@@ -1268,7 +1268,7 @@ prometheus:
               expr: sum by (node) ((kube_pod_status_phase{phase="Running"} == 1) + on(uid) group_left(node) (0 * kube_pod_info{pod_template_hash=""})) / sum by (node) (kube_node_status_allocatable{resource="pods"}) * 100 > 90
               for: 2m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Kubernetes out of capacity (instance {{ $labels.instance }})
                 description: "{{ $labels.node }} is out of capacity"
@@ -1277,7 +1277,7 @@ prometheus:
               expr: (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[10m]) == 1
               for: 0m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Kubernetes container oom killer (instance {{ $labels.instance }})
                 description: "Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} has been OOMKilled {{ $value }} times in the last 10 minutes."
@@ -1313,7 +1313,7 @@ prometheus:
               expr: kubelet_volume_stats_available_bytes / kubelet_volume_stats_capacity_bytes * 100 < 10
               for: 2m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Kubernetes Volume out of disk space (instance {{ $labels.instance }})
                 description: "Volume is almost full (< 10% left)"
@@ -1349,7 +1349,7 @@ prometheus:
               expr: kube_horizontalpodautoscaler_status_condition{status="false", condition="AbleToScale"} == 1
               for: 2m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Kubernetes HPA scaling ability (instance {{ $labels.instance }})
                 description: "Pod is unable to scale"
@@ -1358,7 +1358,7 @@ prometheus:
               expr: kube_horizontalpodautoscaler_status_condition{status="false", condition="ScalingActive"} == 1
               for: 5m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Kubernetes HPA metric availability (instance {{ $labels.instance }})
                 description: "HPA is not able to collect metrics"
@@ -1376,7 +1376,7 @@ prometheus:
               expr: sum by (namespace, pod) (kube_pod_status_phase{phase=~"Pending|Unknown|Failed"}) > 0
               for: 15m
               labels:
-                severity: critical
+                severity: warning
               annotations:
                 summary: Kubernetes Pod not healthy (instance {{ $labels.instance }})
                 description: "Pod has been in a non-ready state for longer than 15 minutes."
@@ -1541,7 +1541,7 @@ prometheus:
               expr: 100 * sum(rate(loki_request_duration_seconds_count{status_code=~"5.."}[1m])) by (namespace, job, route) / sum(rate(loki_request_duration_seconds_count[1m])) by (namespace, job, route) > 10
               for: 15m
               labels:
-                severity: critical
+                severity: warning
               annotations:
                 summary: Loki request errors (instance {{ $labels.instance }})
                 description: "The {{ $labels.job }} and {{ $labels.route }} are experiencing errors"
@@ -1550,7 +1550,7 @@ prometheus:
               expr: sum(increase(loki_panic_total[10m])) by (namespace, job) > 0
               for: 5m
               labels:
-                severity: critical
+                severity: warning
               annotations:
                 summary: Loki request panic (instance {{ $labels.instance }})
                 description: "The {{ $labels.job }} is experiencing {{ printf \"%.2f\" $value }}% increase of panics"
@@ -1559,7 +1559,7 @@ prometheus:
               expr: (histogram_quantile(0.99, sum(rate(loki_request_duration_seconds_bucket{route!~"(?i).*tail.*"}[5m])) by (le)))  > 1
               for: 5m
               labels:
-                severity: critical
+                severity: warning
               annotations:
                 summary: Loki request latency (instance {{ $labels.instance }})
                 description: "The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf \"%.2f\" $value }}s 99th percentile latency"
@@ -1619,7 +1619,7 @@ prometheus:
               expr: prometheus_config_last_reload_successful != 1
               for: 0m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Prometheus configuration reload failure (instance {{ $labels.instance }})
                 description: "Prometheus configuration reload error"
@@ -1628,7 +1628,7 @@ prometheus:
               expr: changes(process_start_time_seconds{job=~"prometheus|pushgateway|alertmanager"}[15m]) > 2
               for: 0m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Prometheus too many restarts (instance {{ $labels.instance }})
                 description: "Prometheus has restarted more than twice in the last 15 minutes. It might be crashlooping."
@@ -1637,7 +1637,7 @@ prometheus:
               expr: absent(up{job="kubernetes-pods", app="prometheus", component="alertmanager"})
               for: 0m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Prometheus AlertManager job missing (instance {{ $labels.instance }})
                 description: "A Prometheus AlertManager job has disappeared"
@@ -1646,7 +1646,7 @@ prometheus:
               expr: alertmanager_config_last_reload_successful != 1
               for: 0m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Prometheus AlertManager configuration reload failure (instance {{ $labels.instance }})
                 description: "AlertManager configuration reload error"
@@ -1655,7 +1655,7 @@ prometheus:
               expr: count(count_values("config_hash", alertmanager_config_hash)) > 1
               for: 0m
               labels:
-                severity: warning
+                severity: critical
               annotations:
                 summary: Prometheus AlertManager config not synced (instance {{ $labels.instance }})
                 description: "Configurations of AlertManager cluster instances are out of sync"

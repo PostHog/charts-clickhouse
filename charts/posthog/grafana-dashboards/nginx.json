@@ -27,7 +27,7 @@
     "gnetId": 14314,
     "graphTooltip": 1,
     "id": 70,
-    "iteration": 1660308702521,
+    "iteration": 1660311741868,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -970,9 +970,15 @@
             "links": [],
             "options": {
                 "legend": {
-                    "calcs": [],
-                    "displayMode": "list",
-                    "placement": "bottom"
+                    "calcs": [
+                        "min",
+                        "mean",
+                        "max"
+                    ],
+                    "displayMode": "hidden",
+                    "placement": "bottom",
+                    "sortBy": "Max",
+                    "sortDesc": true
                 },
                 "tooltip": {
                     "mode": "multi",
@@ -1024,97 +1030,200 @@
             "type": "row"
         },
         {
-            "aliasColors": {},
-            "bars": false,
-            "dashLength": 10,
-            "dashes": false,
             "datasource": {
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
             },
-            "decimals": 1,
             "description": "This graph can help assess and help us meet SLA requirements as far as the responsive time of our services.\n\nFor a more detailed latency graph broken out by ingress please open the closed tab at the bottom because it is very CPU intensive.",
             "fieldConfig": {
                 "defaults": {
-                    "links": []
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "links": [],
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
                 },
-                "overrides": []
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Average"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#F2495C",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.fillOpacity",
+                                "value": 0
+                            },
+                            {
+                                "id": "custom.showPoints",
+                                "value": "always"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "0.95"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "rgb(44, 0, 182)",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "0.9"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#1F60C4",
+                                    "mode": "fixed"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "0.75"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#8AB8FF",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.fillOpacity",
+                                "value": 10
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "0.5"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "rgb(255, 255, 255)",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.fillOpacity",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "0.99"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "fixedColor": "#8F3BB8",
+                                    "mode": "fixed"
+                                }
+                            },
+                            {
+                                "id": "custom.fillOpacity",
+                                "value": 0
+                            }
+                        ]
+                    }
+                ]
             },
-            "fill": 1,
-            "fillGradient": 0,
             "gridPos": {
                 "h": 8,
                 "w": 12,
                 "x": 0,
                 "y": 13
             },
-            "hiddenSeries": false,
             "id": 29,
-            "legend": {
-                "alignAsTable": true,
-                "avg": true,
-                "current": false,
-                "hideEmpty": true,
-                "hideZero": true,
-                "max": true,
-                "min": true,
-                "rightSide": true,
-                "show": true,
-                "total": false,
-                "values": true
-            },
-            "lines": true,
-            "linewidth": 1,
             "links": [],
-            "nullPointMode": "null",
             "options": {
-                "alertThreshold": true
-            },
-            "percentage": false,
-            "pluginVersion": "9.0.2",
-            "pointradius": 2,
-            "points": false,
-            "renderer": "flot",
-            "seriesOverrides": [
-                {
-                    "$$hashKey": "object:294",
-                    "alias": "Average",
-                    "color": "#F2495C",
-                    "fill": 0,
-                    "points": true
+                "legend": {
+                    "calcs": [
+                        "min",
+                        "mean",
+                        "max"
+                    ],
+                    "displayMode": "hidden",
+                    "placement": "bottom",
+                    "sortBy": "Max",
+                    "sortDesc": true
                 },
-                {
-                    "$$hashKey": "object:316",
-                    "alias": "0.95",
-                    "color": "rgb(44, 0, 182)"
-                },
-                {
-                    "$$hashKey": "object:422",
-                    "alias": "0.9",
-                    "color": "#1F60C4"
-                },
-                {
-                    "$$hashKey": "object:430",
-                    "alias": "0.75",
-                    "color": "#8AB8FF",
-                    "fill": 1
-                },
-                {
-                    "$$hashKey": "object:440",
-                    "alias": "0.5",
-                    "color": "rgb(255, 255, 255)",
-                    "fill": 0
-                },
-                {
-                    "$$hashKey": "object:4144",
-                    "alias": "0.99",
-                    "color": "#8F3BB8",
-                    "fill": 0
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "desc"
                 }
-            ],
-            "spaceLength": 10,
-            "stack": false,
-            "steppedLine": false,
+            },
+            "pluginVersion": "9.0.2",
             "targets": [
                 {
                     "datasource": {
@@ -1200,37 +1309,8 @@
                     "refId": "F"
                 }
             ],
-            "thresholds": [],
-            "timeRegions": [],
             "title": "Latency (Average Percentiles)",
-            "tooltip": {
-                "shared": true,
-                "sort": 2,
-                "value_type": "individual"
-            },
-            "type": "graph",
-            "xaxis": {
-                "mode": "time",
-                "show": true,
-                "values": []
-            },
-            "yaxes": [
-                {
-                    "$$hashKey": "object:1035",
-                    "format": "s",
-                    "logBase": 1,
-                    "show": true
-                },
-                {
-                    "$$hashKey": "object:1036",
-                    "format": "short",
-                    "logBase": 1,
-                    "show": false
-                }
-            ],
-            "yaxis": {
-                "align": false
-            }
+            "type": "timeseries"
         },
         {
             "cards": {},
@@ -1618,11 +1698,14 @@
             "options": {
                 "legend": {
                     "calcs": [
-                        "max",
-                        "min"
+                        "min",
+                        "mean",
+                        "max"
                     ],
                     "displayMode": "table",
-                    "placement": "right"
+                    "placement": "bottom",
+                    "sortBy": "Max",
+                    "sortDesc": true
                 },
                 "tooltip": {
                     "mode": "multi",
@@ -1651,59 +1734,88 @@
             "type": "timeseries"
         },
         {
-            "aliasColors": {},
-            "bars": false,
-            "dashLength": 10,
-            "dashes": false,
             "datasource": {
                 "type": "prometheus",
                 "uid": "PBFA97CFB590B2093"
             },
             "fieldConfig": {
                 "defaults": {
-                    "links": []
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "links": [],
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
                 },
                 "overrides": []
             },
-            "fill": 1,
-            "fillGradient": 0,
             "gridPos": {
                 "h": 13,
                 "w": 24,
                 "x": 0,
                 "y": 40
             },
-            "hiddenSeries": false,
             "id": 16,
-            "legend": {
-                "alignAsTable": true,
-                "avg": true,
-                "current": false,
-                "max": true,
-                "min": true,
-                "rightSide": false,
-                "show": true,
-                "sort": "avg",
-                "sortDesc": false,
-                "total": false,
-                "values": true
-            },
-            "lines": true,
-            "linewidth": 1,
             "links": [],
-            "nullPointMode": "null",
             "options": {
-                "alertThreshold": true
+                "legend": {
+                    "calcs": [
+                        "min",
+                        "mean",
+                        "max"
+                    ],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "sortBy": "Max",
+                    "sortDesc": true
+                },
+                "tooltip": {
+                    "mode": "multi",
+                    "sort": "none"
+                }
             },
-            "percentage": false,
             "pluginVersion": "9.0.2",
-            "pointradius": 2,
-            "points": false,
-            "renderer": "flot",
-            "seriesOverrides": [],
-            "spaceLength": 10,
-            "stack": false,
-            "steppedLine": false,
             "targets": [
                 {
                     "datasource": {
@@ -1745,35 +1857,8 @@
                     "refId": "C"
                 }
             ],
-            "thresholds": [],
-            "timeRegions": [],
             "title": "Latency",
-            "tooltip": {
-                "shared": true,
-                "sort": 0,
-                "value_type": "individual"
-            },
-            "type": "graph",
-            "xaxis": {
-                "mode": "time",
-                "show": true,
-                "values": []
-            },
-            "yaxes": [
-                {
-                    "format": "s",
-                    "logBase": 1,
-                    "show": true
-                },
-                {
-                    "format": "short",
-                    "logBase": 1,
-                    "show": false
-                }
-            ],
-            "yaxis": {
-                "align": false
-            }
+            "type": "timeseries"
         }
     ],
     "refresh": "1m",
@@ -1788,7 +1873,7 @@
             {
                 "allValue": ".*",
                 "current": {
-                    "selected": true,
+                    "selected": false,
                     "text": [
                         "All"
                     ],
@@ -1823,9 +1908,9 @@
             {
                 "allValue": ".*",
                 "current": {
-                    "selected": true,
-                    "text": "All",
-                    "value": "$__all"
+                    "selected": false,
+                    "text": "/e",
+                    "value": "/e"
                 },
                 "datasource": {
                     "type": "prometheus",
@@ -1835,6 +1920,7 @@
                 "description": "The ingress path i.e. not the full URI but what is in the k8s ingress definition",
                 "hide": 0,
                 "includeAll": true,
+                "label": "Path",
                 "multi": false,
                 "name": "path",
                 "options": [],
