@@ -1,3 +1,4 @@
+#
 # This job gets installed only if Grafana, Loki and Promtail are enabled.
 #
 # It's an ephemeral container running at the start and end of each Helm
