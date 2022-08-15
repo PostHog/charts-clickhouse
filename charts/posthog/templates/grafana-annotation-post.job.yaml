@@ -1,0 +1,29 @@
+# This job gets installed only if Grafana, Loki and Promtail are enabled.
+#
+# It's an ephemeral container running at the start and end of each Helm
+# deploy and it's used to log at stdout the Helm revision we are
+# installing / we finished installing.
+#
+# This datapoint is useful and can be very helpful as annotation
+# in Grafana dashboard.
+#
+{{- if and .Values.grafana.enabled (and .Values.loki.enabled .Values.promtail.enabled) -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-grafana-annotation-job-post" .Release.Name }}
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade,post-rollback"
+spec:
+  template:
+    spec:
+      containers:
+      - name: grafana-annotation-job-post
+        image: {{ .Values.busybox.image }}
+        imagePullPolicy: {{ .Values.busybox.pullPolicy }}
+        command:
+          - /bin/sh
+          - -c
+          - |
+            echo '{"operation_stage": "end", "helm_revision": "{{ .Release.Revision }}"}'
+{{- end }}
