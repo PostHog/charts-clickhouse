@@ -1248,6 +1248,18 @@ promtail:
               - timestamp:
                   source: timestamp
                   format: RFC3339
+        - match:
+            selector: '{app="posthog", container=~"posthog-web|posthog-worker|posthog-events"}'
+            stages:
+              - json:
+                  expressions:
+                    timestamp: time
+                    level:
+              - labels:
+                  level:
+              - timestamp:
+                  source: timestamp
+                  format: RFC3339Nano
 
   ## -- Pod annotations.
   podAnnotations: {}

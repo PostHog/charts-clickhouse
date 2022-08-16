@@ -22,6 +22,8 @@
   value: {{ .Values.web.internalMetrics.capture | quote }}
 - name: HELM_INSTALL_INFO
   value: {{ template "posthog.helmInstallInfo" . }}
+- name: LOGGING_FORMATTER_NAME
+  value: json
 {{- end }}
 
 {{- define "snippet.posthog-sentry-env" }}
