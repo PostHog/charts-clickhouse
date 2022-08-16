@@ -1243,14 +1243,8 @@ promtail:
                     correlation_id: correlation_id
                     forwarded_for: http_x_forwarded_for
               - labels:
-                  timestamp:
-                  host:
                   method:
-                  uri:
                   status:
-                  user_agent:
-                  correlation_id:
-                  forwarded_for:
               - timestamp:
                   source: timestamp
                   format: RFC3339
