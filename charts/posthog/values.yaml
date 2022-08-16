@@ -1182,8 +1182,6 @@ promtail:
   enabled: false
   config:
     lokiAddress: http://posthog-loki:3100/loki/api/v1/push
-<<<<<<< Updated upstream
-=======
 
     snippets:
       pipelineStages:
@@ -1208,7 +1206,6 @@ promtail:
                   source: timestamp
                   format: RFC3339
 
->>>>>>> Stashed changes
   ## -- Pod annotations.
   podAnnotations: {}
     # Uncomment those lines if you want Prometheus server to scrape metrics.
