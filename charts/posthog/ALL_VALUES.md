@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.3.12](https://img.shields.io/badge/Version-26.3.12-informational?style=flat-square) ![AppVersion: 1.38.0](https://img.shields.io/badge/AppVersion-1.38.0-informational?style=flat-square)
+![Version: 26.3.14](https://img.shields.io/badge/Version-26.3.14-informational?style=flat-square) ![AppVersion: 1.38.0](https://img.shields.io/badge/AppVersion-1.38.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -172,6 +172,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | ingress.annotations | object | `{}` | Extra annotations |
 | ingress.secretName | string | `nil` | TLS secret to be used by the ingress. |
 | ingress-nginx.controller.config.use-forwarded-headers | string | `"true"` | [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers) |
+| ingress-nginx.controller.config.log-format-escape-json | string | `"true"` |  |
+| ingress-nginx.controller.config.log-format-upstream | string | `"{ \"time\": \"$time_iso8601\", \"remote_addr\": \"$proxy_protocol_addr\", \"request_id\": \"$request_id\", \"correlation_id\": \"$request_id\", \"remote_user\": \"$remote_user\", \"bytes_sent\": $bytes_sent, \"request_time\": $request_time, \"status\": $status, \"host\": \"$host\", \"request_proto\": \"$server_protocol\", \"uri\": \"$uri\", \"request_query\": \"$args\", \"request_length\": $request_length, \"duration\": $request_time, \"method\": \"$request_method\", \"http_referrer\": \"$http_referer\", \"http_user_agent\": \"$http_user_agent\", \"http_x_forwarded_for\": \"$http_x_forwarded_for\" }"` |  |
+| ingress-nginx.controller.proxySetHeaders.X-Correlation-ID | string | `"$request_id"` |  |
 | postgresql.enabled | bool | `true` | Whether to deploy a PostgreSQL server to satisfy the applications requirements. To use an external PostgreSQL instance set this to `false` and configure the `externalPostgresql` parameters. |
 | postgresql.nameOverride | string | `"posthog-postgresql"` | Name override for PostgreSQL app. |
 | postgresql.postgresqlDatabase | string | `"posthog"` | PostgreSQL database name. |
@@ -353,6 +356,26 @@ The following table lists the configurable parameters of the PostHog chart and t
 | loki.enabled | bool | `false` | Whether to install Loki or not. |
 | promtail.enabled | bool | `false` | Whether to install Promtail or not. |
 | promtail.config.lokiAddress | string | `"http://posthog-loki:3100/loki/api/v1/push"` |  |
+| promtail.config.snippets.pipelineStages[0].cri | object | `{}` |  |
+| promtail.config.snippets.pipelineStages[1].match.selector | string | `"{app=\"ingress-nginx\"}"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.timestamp | string | `"time"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.host | string | `"host"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.method | string | `"method"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.uri | string | `"uri"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.status | string | `"status"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.user_agent | string | `"http_user_agent"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.correlation_id | string | `"correlation_id"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.forwarded_for | string | `"http_x_forwarded_for"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.timestamp | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.host | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.method | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.uri | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.status | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.user_agent | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.correlation_id | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.forwarded_for | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[2].timestamp.source | string | `"timestamp"` |  |
+| promtail.config.snippets.pipelineStages[1].match.stages[2].timestamp.format | string | `"RFC3339"` |  |
 | promtail.podAnnotations | object | `{}` |  |
 | prometheus.enabled | bool | `false` | Whether to install Prometheus or not. |
 | prometheus.alertmanager.enabled | bool | `false` | Whether to install Prometheus AlertManager or not. |

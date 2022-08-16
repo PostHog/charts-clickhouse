@@ -513,6 +513,49 @@ ingress-nginx:
       # -- [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers)
       use-forwarded-headers: "true"
 
+      # Use JSON format for logs, such that we can easily parse them in e.g. Promtail
+      #
+      # We also add in:
+      #
+      #  1. the X-Forwarded-For header so we can correlate if requests are from
+      #     the same ip.
+      #  2. a correlation_id that for the purposes of having functional defaults
+      #     is the NGINX generated $request_id. If you are using e.g. an AWS ALB
+      #     in front of ingress then consider instead changing this to
+      #     `$http_x_amzn_trace_id`.
+      #
+      log-format-escape-json: "true"
+      log-format-upstream: '{
+          "time": "$time_iso8601",
+          "remote_addr": "$proxy_protocol_addr",
+          "request_id": "$request_id",
+          "correlation_id": "$request_id",
+          "remote_user": "$remote_user",
+          "bytes_sent": $bytes_sent,
+          "request_time": $request_time,
+          "status": $status,
+          "host": "$host",
+          "request_proto": "$server_protocol",
+          "uri": "$uri",
+          "request_query": "$args",
+          "request_length": $request_length,
+          "duration": $request_time,
+          "method": "$request_method",
+          "http_referrer": "$http_referer",
+          "http_user_agent": "$http_user_agent",
+          "http_x_forwarded_for": "$http_x_forwarded_for"
+        }'
+
+    # Pass NGINX generated $request_id as X-Correlation-ID such that downstreams can use it
+    # for logging. See
+    # https://django-structlog.readthedocs.io/en/latest/events.html#request-bound-metadata
+    # for how django_structlog uses it.
+    #
+    # If using behind an AWS ALB you can set this to $http_x_amzn_trace_id such
+    # that you can correlate with ALB level requests as well.
+    proxySetHeaders:
+      X-Correlation-ID: $request_id
+
     # Uncomment those lines if you want Prometheus server to scrape NGINX Ingress controller pods metrics.
     # metrics:
     #   enabled: true
