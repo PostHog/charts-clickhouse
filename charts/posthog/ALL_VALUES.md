@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.3.16](https://img.shields.io/badge/Version-26.3.16-informational?style=flat-square) ![AppVersion: 1.38.1](https://img.shields.io/badge/AppVersion-1.38.1-informational?style=flat-square)
+![Version: 26.4.0](https://img.shields.io/badge/Version-26.4.0-informational?style=flat-square) ![AppVersion: 1.38.1](https://img.shields.io/badge/AppVersion-1.38.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -370,6 +370,12 @@ The following table lists the configurable parameters of the PostHog chart and t
 | promtail.config.snippets.pipelineStages[1].match.stages[1].labels.status | string | `nil` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[2].timestamp.source | string | `"timestamp"` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[2].timestamp.format | string | `"RFC3339"` |  |
+| promtail.config.snippets.pipelineStages[2].match.selector | string | `"{app=\"posthog\", container=~\"posthog-web|posthog-worker|posthog-events\"}"` |  |
+| promtail.config.snippets.pipelineStages[2].match.stages[0].json.expressions.timestamp | string | `"time"` |  |
+| promtail.config.snippets.pipelineStages[2].match.stages[0].json.expressions.level | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[2].match.stages[1].labels.level | string | `nil` |  |
+| promtail.config.snippets.pipelineStages[2].match.stages[2].timestamp.source | string | `"timestamp"` |  |
+| promtail.config.snippets.pipelineStages[2].match.stages[2].timestamp.format | string | `"RFC3339Nano"` |  |
 | promtail.podAnnotations | object | `{}` |  |
 | prometheus.enabled | bool | `false` | Whether to install Prometheus or not. |
 | prometheus.alertmanager.enabled | bool | `false` | Whether to install Prometheus AlertManager or not. |
