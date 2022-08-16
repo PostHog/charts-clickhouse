@@ -1182,6 +1182,33 @@ promtail:
   enabled: false
   config:
     lokiAddress: http://posthog-loki:3100/loki/api/v1/push
+<<<<<<< Updated upstream
+=======
+
+    snippets:
+      pipelineStages:
+        - cri: {}
+        - match:
+            selector: '{app="ingress-nginx"}'
+            stages:
+              - json:
+                  expressions:
+                    timestamp: time
+                    host: host
+                    method: method
+                    uri: uri
+                    status: status
+                    user_agent: http_user_agent
+                    correlation_id: correlation_id
+                    forwarded_for: http_x_forwarded_for
+              - labels:
+                  method:
+                  status:
+              - timestamp:
+                  source: timestamp
+                  format: RFC3339
+
+>>>>>>> Stashed changes
   ## -- Pod annotations.
   podAnnotations: {}
     # Uncomment those lines if you want Prometheus server to scrape metrics.
