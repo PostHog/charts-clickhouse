@@ -38,8 +38,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 44,
-  "iteration": 1660641102555,
+  "id": 84,
+  "iteration": 1660649047854,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -95,7 +95,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "short"
         },
         "overrides": []
       },
@@ -186,7 +187,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "short"
         },
         "overrides": []
       },
@@ -305,14 +307,14 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(increase(django_http_exceptions_total_by_view_total{view=\"$view\"}[$__interval]))",
+          "expr": "sum(rate(django_http_exceptions_total_by_view_total{view=\"$view\"}[$__interval]))",
           "interval": "5m",
-          "legendFormat": "Error count",
+          "legendFormat": "Exeption count",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "View exceptions",
+      "title": "Exceptions",
       "type": "timeseries"
     },
     {
@@ -427,7 +429,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "s"
         },
         "overrides": []
       },
@@ -458,7 +461,7 @@
           "editorMode": "code",
           "expr": "histogram_quantile(0.99, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=\"$view\"}[$__rate_interval])) by (le))",
           "interval": "5m",
-          "legendFormat": "99th",
+          "legendFormat": "p99",
           "range": true,
           "refId": "A"
         },
@@ -471,7 +474,7 @@
           "expr": "histogram_quantile(0.95, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=\"$view\"}[$__rate_interval])) by (le))",
           "hide": false,
           "interval": "5m",
-          "legendFormat": "95th",
+          "legendFormat": "p95",
           "range": true,
           "refId": "B"
         },
@@ -484,7 +487,7 @@
           "expr": "histogram_quantile(0.90, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=\"$view\"}[$__rate_interval])) by (le))",
           "hide": false,
           "interval": "5m",
-          "legendFormat": "90th",
+          "legendFormat": "p90",
           "range": true,
           "refId": "C"
         }
@@ -496,15 +499,14 @@
   "schemaVersion": 36,
   "style": "dark",
   "tags": [
-    "PostHog",
-    "Django"
+    "PostHog"
   ],
   "templating": {
     "list": [
       {
         "allValue": "*",
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "posthog.api.capture.get_event",
           "value": "posthog.api.capture.get_event"
         },
@@ -515,6 +517,7 @@
         "definition": "label_values(django_http_requests_latency_seconds_by_view_method_bucket{}, view)",
         "hide": 0,
         "includeAll": false,
+        "label": "View",
         "multi": false,
         "name": "view",
         "options": [],
@@ -522,10 +525,10 @@
           "query": "label_values(django_http_requests_latency_seconds_by_view_method_bucket{}, view)",
           "refId": "StandardVariableQuery"
         },
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "type": "query"
       }
     ]
@@ -534,10 +537,34 @@
     "from": "now-3h",
     "to": "now"
   },
-  "timepicker": {},
-  "timezone": "browser",
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "utc",
   "title": "HTTP by application endpoint",
-  "uid": "_lEeT7kVk",
-  "version": 18,
-  "weekStart": ""
+  "uid": "http-by-application-endpoint",
+  "version": 1,
+  "weekStart": "monday"
 }
