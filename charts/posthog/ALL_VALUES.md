@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.3.14](https://img.shields.io/badge/Version-26.3.14-informational?style=flat-square) ![AppVersion: 1.38.0](https://img.shields.io/badge/AppVersion-1.38.0-informational?style=flat-square)
+![Version: 26.3.15](https://img.shields.io/badge/Version-26.3.15-informational?style=flat-square) ![AppVersion: 1.38.0](https://img.shields.io/badge/AppVersion-1.38.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -366,14 +366,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.user_agent | string | `"http_user_agent"` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.correlation_id | string | `"correlation_id"` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.forwarded_for | string | `"http_x_forwarded_for"` |  |
-| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.timestamp | string | `nil` |  |
-| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.host | string | `nil` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[1].labels.method | string | `nil` |  |
-| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.uri | string | `nil` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[1].labels.status | string | `nil` |  |
-| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.user_agent | string | `nil` |  |
-| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.correlation_id | string | `nil` |  |
-| promtail.config.snippets.pipelineStages[1].match.stages[1].labels.forwarded_for | string | `nil` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[2].timestamp.source | string | `"timestamp"` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[2].timestamp.format | string | `"RFC3339"` |  |
 | promtail.podAnnotations | object | `{}` |  |
