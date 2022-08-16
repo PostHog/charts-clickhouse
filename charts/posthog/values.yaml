@@ -1253,7 +1253,7 @@ promtail:
             stages:
               - json:
                   expressions:
-                    timestamp: time
+                    timestamp:
                     level:
               - labels:
                   level:
