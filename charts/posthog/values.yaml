@@ -1183,7 +1183,7 @@ promtail:
   config:
     lokiAddress: http://posthog-loki:3100/loki/api/v1/push
   ## -- Pod annotations.
-  podAnnotations:
+  podAnnotations: {}
     # Uncomment those lines if you want Prometheus server to scrape metrics.
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
@@ -1201,7 +1201,7 @@ prometheus:
   alertmanager:
     # -- Whether to install Prometheus AlertManager or not.
     enabled: false
-    podAnnotations:
+    podAnnotations: {}
       # Uncomment those lines if you want Prometheus server to scrape metrics.
       # prometheus.io/scrape: "true"
       # prometheus.io/path: /metrics
