@@ -457,7 +457,7 @@
           "expr": "histogram_quantile(0.95, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=\"$view\"}[$__rate_interval])) by (le))",
           "hide": false,
           "interval": "5m",
-          "legendFormat": "__auto",
+          "legendFormat": "95th",
           "range": true,
           "refId": "B"
         },
