@@ -18,6 +18,20 @@
                     "type": "dashboard"
                 },
                 "type": "dashboard"
+            },
+            {
+                "datasource": {
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
+                },
+                "enable": true,
+                "expr": "{namespace=\"posthog\", container=~\"grafana-annotation-job-.*\"}",
+                "hide": false,
+                "iconColor": "dark-blue",
+                "name": "Deploy / Rollback",
+                "tagKeys": "container",
+                "target": {},
+                "titleFormat": ""
             }
         ]
     },
@@ -26,8 +40,8 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 7249,
     "graphTooltip": 1,
-    "id": 16,
-    "iteration": 1658328126986,
+    "id": 82,
+    "iteration": 1660647316429,
     "links": [],
     "liveNow": false,
     "panels": [
