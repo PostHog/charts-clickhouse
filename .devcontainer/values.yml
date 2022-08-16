@@ -3,6 +3,15 @@ cloud: private
 # Expose
 ingress:
   enabled: true
+  nginx:
+    enabled: true
+    redirectToTLS: false
+
+ingress-nginx:
+  controller:
+    service:
+      nodePorts:
+        http: 30003
 
 grafana:
   enabled: true
@@ -36,6 +45,12 @@ prometheus:
     service:
       type: NodePort
       nodePort: 30002
+
+loki:
+  enabled: true
+
+promtail:
+  enabled: true
 
 prometheus-postgres-exporter:
   enabled: true
