@@ -371,7 +371,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | promtail.config.snippets.pipelineStages[1].match.stages[2].timestamp.source | string | `"timestamp"` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[2].timestamp.format | string | `"RFC3339"` |  |
 | promtail.config.snippets.pipelineStages[2].match.selector | string | `"{app=\"posthog\", container=~\"posthog-web|posthog-worker|posthog-events\"}"` |  |
-| promtail.config.snippets.pipelineStages[2].match.stages[0].json.expressions.timestamp | string | `"time"` |  |
+| promtail.config.snippets.pipelineStages[2].match.stages[0].json.expressions.timestamp | string | `nil` |  |
 | promtail.config.snippets.pipelineStages[2].match.stages[0].json.expressions.level | string | `nil` |  |
 | promtail.config.snippets.pipelineStages[2].match.stages[1].labels.level | string | `nil` |  |
 | promtail.config.snippets.pipelineStages[2].match.stages[2].timestamp.source | string | `"timestamp"` |  |
