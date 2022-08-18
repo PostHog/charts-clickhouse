@@ -27,7 +27,7 @@ tests:
             - name: STATSD_HOST
               value: RELEASE-NAME-posthog-prometheus-statsd-exporter
             - name: STATSD_PORT
-              value: "9125"
+              value: 9125
 
   - it: should render env variables pointing to prometheus-statsd-exporter when it is enabled and custom values are used
     set:
@@ -43,7 +43,7 @@ tests:
             - name: STATSD_HOST
               value: RELEASE-NAME-posthog-prometheus-statsd-exporter
             - name: STATSD_PORT
-              value: "1234"
+              value: 1234
 
   - it: should render env variables pointing to externalStatsd when is enabled
     set:
@@ -60,7 +60,7 @@ tests:
             - name: STATSD_HOST
               value: statsd.example.com
             - name: STATSD_PORT
-              value: "5678"
+              value: 5678
 
   - it: should render env variables pointing to prometheus-statsd-exporter when both internal and external statsd are enabled
     set:
@@ -79,4 +79,4 @@ tests:
             - name: STATSD_HOST
               value: RELEASE-NAME-posthog-prometheus-statsd-exporter
             - name: STATSD_PORT
-              value: "1234"
+              value: 1234
