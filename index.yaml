@@ -3,6 +3,97 @@ entries:
   posthog:
   - apiVersion: v2
     appVersion: 1.38.1
+    created: "2022-08-18T13:35:31.462791806Z"
+    dependencies:
+    - condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.6.1
+    - condition: ingress.nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.0.13
+    - condition: kafka.enabled
+      name: kafka
+      repository: https://charts.bitnami.com/bitnami
+      version: 14.9.3
+    - condition: minio.enabled
+      name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.3.5
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
+      version: 8.6.1
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.8.9
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
+      version: 7.0.5
+    - condition: grafana.enabled
+      name: grafana
+      repository: https://grafana.github.io/helm-charts
+      version: 6.32.2
+    - condition: loki.enabled
+      name: loki
+      repository: https://grafana.github.io/helm-charts
+      version: 2.10.2
+    - condition: promtail.enabled
+      name: promtail
+      repository: https://grafana.github.io/helm-charts
+      version: 4.2.0
+    - condition: prometheus.enabled
+      name: prometheus
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 15.10.4
+    - condition: prometheus-kafka-exporter.enabled
+      name: prometheus-kafka-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 1.6.0
+    - condition: prometheus-postgres-exporter.enabled
+      name: prometheus-postgres-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.5.0
+    - condition: prometheus-redis-exporter.enabled
+      name: prometheus-redis-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.6.0
+    - condition: prometheus-statsd-exporter.enabled
+      name: prometheus-statsd-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 0.3.1
+    description: "\U0001F994 PostHog is developer-friendly, open-source product analytics."
+    digest: 0dec4d02d53b0e5fe0f9c77ba2492a3d533b49168f2031cfe76277ddd4300091
+    home: https://posthog.com
+    icon: https://camo.githubusercontent.com/11f72f57f33d7d34807bafc1314844f7a91bcdea/68747470733a2f2f706f7374686f672d7374617469632d66696c65732e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f576562736974652d4173736574732f6769746875622d636f7665722e706e67
+    kubeVersion: '>= 1.22-0 <= 1.24-0'
+    maintainers:
+    - email: marius@posthog.com
+      name: mariusandra
+    - email: tim@posthog.com
+      name: timgl
+    - email: james.g@posthog.com
+      name: jams
+    - email: karl@posthog.com
+      name: macobo
+    - email: tiina@posthog.com
+      name: tiina
+    - email: guido@posthog.com
+      name: guido
+    - email: yakko@posthog.com
+      name: yakko
+    name: posthog
+    sources:
+    - https://github.com/PostHog/charts-clickhouse
+    type: application
+    urls:
+    - https://github.com/PostHog/charts-clickhouse/releases/download/posthog-26.4.4/posthog-26.4.4.tgz
+    version: 26.4.4
+  - apiVersion: v2
+    appVersion: 1.38.1
     created: "2022-08-18T09:08:27.412800432Z"
     dependencies:
     - condition: cert-manager.enabled
@@ -13142,4 +13233,4 @@ entries:
     urls:
     - https://github.com/PostHog/charts-clickhouse/releases/download/posthog-1.4.26/posthog-1.4.26.tgz
     version: 1.4.26
-generated: "2022-08-18T09:08:27.414518936Z"
+generated: "2022-08-18T13:35:31.464953745Z"
