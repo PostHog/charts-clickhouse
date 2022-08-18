@@ -24,6 +24,6 @@
 - name: STATSD_HOST
   value: "{{ include "posthog.statsd.host" . }}"
 - name: STATSD_PORT
-  value: "{{ include "posthog.statsd.port" . }}"
+  value: "{{ include "posthog.statsd.port" . | quote }}"
 {{- end }}
 {{- end }}
