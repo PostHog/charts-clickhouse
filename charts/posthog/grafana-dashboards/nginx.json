@@ -41,7 +41,7 @@
     "gnetId": 14314,
     "graphTooltip": 1,
     "id": 70,
-    "iteration": 1660311741868,
+    "iteration": 1660813293217,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -1887,7 +1887,7 @@
             {
                 "allValue": ".*",
                 "current": {
-                    "selected": false,
+                    "selected": true,
                     "text": [
                         "All"
                     ],
@@ -1922,9 +1922,9 @@
             {
                 "allValue": ".*",
                 "current": {
-                    "selected": false,
-                    "text": "/e",
-                    "value": "/e"
+                    "selected": true,
+                    "text": "All",
+                    "value": "$__all"
                 },
                 "datasource": {
                     "type": "prometheus",
