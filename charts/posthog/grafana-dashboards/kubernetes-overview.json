@@ -1983,6 +1983,6 @@
     "timezone": "utc",
     "title": "Kubernetes (cluster overview)",
     "uid": "kubernetes-cluster-overview",
-    "version": 2,
+    "version": 1,
     "weekStart": "monday"
 }
