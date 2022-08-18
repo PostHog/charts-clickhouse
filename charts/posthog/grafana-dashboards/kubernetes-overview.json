@@ -40,8 +40,8 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 7249,
     "graphTooltip": 1,
-    "id": 82,
-    "iteration": 1660647316429,
+    "id": 73,
+    "iteration": 1660827674163,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -1443,7 +1443,7 @@
                             "mode": "none"
                         },
                         "thresholdsStyle": {
-                            "mode": "off"
+                            "mode": "area"
                         }
                     },
                     "mappings": [],
@@ -1453,12 +1453,12 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
+                                "color": "red",
                                 "value": null
                             },
                             {
-                                "color": "red",
-                                "value": 80
+                                "color": "green",
+                                "value": 0.05
                             }
                         ]
                     },
@@ -1504,7 +1504,7 @@
                     "step": 10
                 }
             ],
-            "title": "Storage used",
+            "title": "Storage free",
             "type": "timeseries"
         },
         {
