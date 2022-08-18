@@ -1635,8 +1635,8 @@ prometheus:
                 description: "The {{ $labels.job }} is experiencing {{ printf \"%.2f\" $value }}% increase of panics"
 
             - alert: LokiRequestLatency
-              expr: (histogram_quantile(0.99, sum(rate(loki_request_duration_seconds_bucket{route!~"(?i).*tail.*"}[5m])) by (le)))  > 1
-              for: 5m
+              expr: (histogram_quantile(0.99, sum(rate(loki_request_duration_seconds_bucket{route!~"(?i).*tail.*"}[5m])) by (le))) > 3
+              for: 10m
               labels:
                 severity: warning
               annotations:
