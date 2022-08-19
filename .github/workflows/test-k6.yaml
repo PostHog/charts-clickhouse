@@ -55,14 +55,16 @@ jobs:
       - name: Setup k3s
         run: |
           curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${{ matrix.k3s-channel }} sh -
-          mkdir ~/.kube
-          kubectl config view > ~/.kube/config
+
           until (kubectl version)
           do
             echo "Waiting for k3s to be ready"
-            ((c++)) && ((c==10)) && exit 1
+            ((c++)) && ((c==60)) && exit 1
             sleep 1
           done
+
+          mkdir ~/.kube
+          kubectl config view > ~/.kube/config
 
       - uses: actions/checkout@v3
         if: matrix.test == 'upgrade'
