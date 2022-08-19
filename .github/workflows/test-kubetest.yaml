@@ -48,11 +48,11 @@ jobs:
       - uses: actions/checkout@v3
         name: Checkout
 
-      - uses: jupyterhub/action-k3s-helm@v3
-        with:
-          k3s-channel: v1.22
-          metrics-enabled: false
-          traefik-enabled: false
+      - name: Setup k3s
+        run: |
+          curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=v1.22 INSTALL_K3S_EXEC="--disable=traefik --disable=metrics-server" sh -
+          mkdir ~/.kube
+          sudo k3s kubectl config view --raw > ~/.kube/config
 
       - name: Install Python dependencies
         run: |

@@ -52,11 +52,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: jupyterhub/action-k3s-helm@v3
-        with:
-          k3s-channel: ${{ matrix.k3s-channel }}
-          metrics-enabled: false
-          traefik-enabled: false
+      - name: Setup k3s
+        run: |
+          curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${{ matrix.k3s-channel }} INSTALL_K3S_EXEC="--disable=traefik --disable=metrics-server" sh -
+          mkdir ~/.kube
+          sudo k3s kubectl config view --raw > ~/.kube/config
 
       - uses: actions/checkout@v3
         if: matrix.test == 'upgrade'
