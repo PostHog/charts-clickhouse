@@ -59,7 +59,7 @@ jobs:
           until (kubectl version)
           do
             echo "Waiting for k3s to be ready"
-            ((c++)) && ((c==60)) && exit 1
+            ((c++)) && ((c==120)) && exit 1
             sleep 1
           done
 
