@@ -56,7 +56,7 @@ jobs:
         run: |
           curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${{ matrix.k3s-channel }} INSTALL_K3S_EXEC="--disable=traefik --disable=metrics-server" sh -
           mkdir ~/.kube
-          sudo k3s kubectl config view > ~/.kube/config
+          sudo k3s kubectl config view --raw > ~/.kube/config
 
           until (kubectl version)
           do
