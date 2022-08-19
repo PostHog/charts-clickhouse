@@ -40,12 +40,12 @@ jobs:
           #
           # It can be very useful to see the "Helm diff" step's output from the
           # latest dev version.
-          - k3s-channel: v1.22
+          - kind-node-image: kindest/node:v1.22.9
             test: upgrade
             values: ci/values/k3s.yaml
 
           # We run one install test with split plugin-server ingestion
-          - k3s-channel: v1.22
+          - kind-node-image: kindest/node:v1.22.9
             test: install
             values: ci/values/k3s-plugin-server-split.yaml
 
@@ -55,7 +55,7 @@ jobs:
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.3.0
         with:
-          node_image: ${{ matrix. }}
+          node_image: ${{ matrix.kind-node-image }}
 
       - uses: azure/setup-helm@v3
 
