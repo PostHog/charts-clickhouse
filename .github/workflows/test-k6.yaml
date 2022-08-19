@@ -58,13 +58,6 @@ jobs:
           mkdir ~/.kube
           sudo k3s kubectl config view --raw > ~/.kube/config
 
-          until (kubectl version)
-          do
-            echo "Waiting for k3s to be ready"
-            ((c++)) && ((c==120)) && exit 1
-            sleep 1
-          done
-
       - uses: actions/checkout@v3
         if: matrix.test == 'upgrade'
         with:
