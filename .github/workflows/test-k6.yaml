@@ -58,6 +58,8 @@ jobs:
           node_image: ${{ matrix.kind-node-image }}
 
       - uses: azure/setup-helm@v3
+        with:
+          version: v3.9.0
 
       - uses: actions/checkout@v3
         if: matrix.test == 'upgrade'
