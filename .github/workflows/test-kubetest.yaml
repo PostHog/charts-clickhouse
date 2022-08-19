@@ -51,10 +51,7 @@ jobs:
       - name: Setup k3s
         run: |
           curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${{ matrix.k3s-channel }} sh -
-          export HUBECONFIG=/etc/rancher/k3s/k3s.yaml
-
-      - name: Install Helm
-        run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
       - name: Install Python dependencies
         run: |
