@@ -54,6 +54,8 @@ jobs:
           node_image: kindest/node:v1.22.9
 
       - uses: azure/setup-helm@v3
+        with:
+          version: v3.9.0
 
       - name: Install Python dependencies
         run: |
