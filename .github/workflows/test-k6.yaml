@@ -24,13 +24,13 @@ jobs:
         # specified below, these parameters have no meaning on their own and
         # gain meaning on how job steps use them.
         include:
-          - k3s-channel: v1.24
+          - kind-node-image: kindest/node:v1.24.3
             test: install
             values: ci/values/k3s.yaml
-          - k3s-channel: v1.23
+          - kind-node-image: kindest/node:v1.23.6
             test: install
             values: ci/values/k3s.yaml
-          - k3s-channel: v1.22
+          - kind-node-image: kindest/node:v1.22.9
             test: install
             values: ci/values/k3s.yaml
 
@@ -52,11 +52,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: jupyterhub/action-k3s-helm@v3
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.3.0
         with:
-          k3s-channel: ${{ matrix.k3s-channel }}
-          metrics-enabled: false
-          traefik-enabled: false
+          node_image: ${{ matrix. }}
+
+      - uses: azure/setup-helm@v3
 
       - uses: actions/checkout@v3
         if: matrix.test == 'upgrade'
