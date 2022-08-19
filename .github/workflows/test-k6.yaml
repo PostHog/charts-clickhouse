@@ -52,11 +52,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: jupyterhub/action-k3s-helm@v3
-        with:
-          k3s-channel: ${{ matrix.k3s-channel }}
-          metrics-enabled: false
-          traefik-enabled: false
+      - name: Setup k3s
+        run: |
+          curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${{ matrix.k3s-channel }} sh -
+          export HUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+      - name: Install Helm
+        run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       - uses: actions/checkout@v3
         if: matrix.test == 'upgrade'
