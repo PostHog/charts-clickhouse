@@ -1,0 +1,81 @@
+#
+# If enabled, we add a Deployment for
+# https://github.com/vmware-archive/eventrouter as per
+# https://grafana.com/blog/2020/07/21/loki-tutorial-how-to-send-logs-from-eks-with-promtail-to-get-full-visibility-in-grafana/
+#
+# It looks like a dead project which is unfortunate but appears to work. There
+# is a Grafana Agent integration to pull Kubernetes events but this appears to
+# be experimental at the time of writing:
+# https://grafana.com/docs/agent/latest/configuration/integrations/integrations-next/eventhandler-config/
+#
+{{- if .Values.eventrouter.enabled -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name }}-eventrouter
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-eventrouter
+rules:
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-eventrouter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Release.Name }}-eventrouter
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Release.Name }}-eventrouter
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+data:
+  config.json: |-
+    {
+      "sink": "stdout"
+    }
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-eventrouter-cm
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-eventrouter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: eventrouter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eventrouter
+  template:
+    metadata:
+      labels:
+        app: eventrouter
+        tier: control-plane-addons
+    spec:
+      containers:
+        - name: kube-eventrouter
+          image: {{ .Values.eventrouter.image.repository }}:{{ .Values.eventrouter.image.tag }}
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/eventrouter
+      serviceAccount: {{ .Release.Name }}-eventrouter
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}-eventrouter-cm
+{{- end }}

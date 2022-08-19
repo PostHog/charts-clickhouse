@@ -1214,6 +1214,18 @@ loki:
   # -- Whether to install Loki or not.
   enabled: false
 
+###
+###
+### ---- EventRouter: https://github.com/vmware-archive/eventrouter
+###
+###
+eventrouter:
+  # -- Whether to install eventrouter.
+  enabled: false
+  image:
+    repository: gcr.io/heptio-images/eventrouter
+    tag: v0.3
+    pullPolicy: IfNotPresent
 
 ###
 ###
