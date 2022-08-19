@@ -55,7 +55,7 @@ jobs:
       - name: Setup k3s
         run: |
           curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${{ matrix.k3s-channel }} sh -
-          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          kubectl config view > ~/.kube/config
           until (kubectl version)
           do
             echo "Waiting for k3s to be ready"
