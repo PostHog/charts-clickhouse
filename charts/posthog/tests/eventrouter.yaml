@@ -16,6 +16,8 @@ tests:
       - hasDocuments:
           count: 0
         not: true
+      - isNotNull:
+          path: apiVersion
 
   - it: should allow setting different images/tag ad pull policy
     set:

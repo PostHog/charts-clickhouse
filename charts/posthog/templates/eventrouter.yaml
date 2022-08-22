@@ -8,7 +8,7 @@
 # be experimental at the time of writing:
 # https://grafana.com/docs/agent/latest/configuration/integrations/integrations-next/eventhandler-config/
 #
-{{- if .Values.eventrouter.enabled -}}
+{{- if .Values.eventrouter.enabled }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
