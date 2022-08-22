@@ -49,6 +49,9 @@ prometheus:
 loki:
   enabled: true
 
+eventrouter:
+  enabled: true
+
 promtail:
   enabled: true
 
