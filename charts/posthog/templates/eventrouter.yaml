@@ -8,7 +8,7 @@
 # be experimental at the time of writing:
 # https://grafana.com/docs/agent/latest/configuration/integrations/integrations-next/eventhandler-config/
 #
-{{- if .Values.eventrouter.enabled -}}
+{{- if .Values.eventrouter.enabled }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -70,6 +70,8 @@ spec:
         - name: kube-eventrouter
           image: {{ .Values.eventrouter.image.repository }}:{{ .Values.eventrouter.image.tag }}
           imagePullPolicy: {{ .Values.eventrouter.image.pullPolicy }}
+          resources:
+{{ toYaml .Values.eventrouter.resources | indent 12 }}
           volumeMounts:
             - name: config-volume
               mountPath: /etc/eventrouter

@@ -1233,6 +1233,9 @@ eventrouter:
     tag: v0.3
     pullPolicy: IfNotPresent
 
+  # -- Resource limits for eventrouter.
+  resources: {}
+
 ###
 ###
 ### ---- Promtail ----
