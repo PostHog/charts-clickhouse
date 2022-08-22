@@ -69,7 +69,7 @@ spec:
       containers:
         - name: kube-eventrouter
           image: {{ .Values.eventrouter.image.repository }}:{{ .Values.eventrouter.image.tag }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.eventrouter.image.pullPolicy }}
           volumeMounts:
             - name: config-volume
               mountPath: /etc/eventrouter
