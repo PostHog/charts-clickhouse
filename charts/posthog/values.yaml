@@ -513,6 +513,12 @@ ingress-nginx:
       # -- [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers)
       use-forwarded-headers: "true"
 
+      # Ensure that we use the service rather than maintaining a list of
+      # upstreams. Without this NGINX will maintain a list which can cause
+      # issues when pods are terminated. See
+      # https://github.com/kubernetes/ingress-nginx/issues/257 for details
+      service-upstream: "true"
+
       # Use JSON format for logs, such that we can easily parse them in e.g. Promtail
       #
       # We also add in:
