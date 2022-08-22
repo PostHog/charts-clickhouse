@@ -354,6 +354,10 @@ The following table lists the configurable parameters of the PostHog chart and t
 | grafana.sidecar | object | `{"dashboards":{"enabled":true,"folderAnnotation":"grafana_folder","label":"grafana_dashboard","provider":{"foldersFromFilesStructure":true}}}` | Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info. |
 | grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki:3100"},{"access":"proxy","isDefault":false,"jsonData":{"implementation":"prometheus"},"name":"Alertmanager","type":"alertmanager","url":"http://posthog-prometheus-alertmanager"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
 | loki.enabled | bool | `false` | Whether to install Loki or not. |
+| eventrouter.enabled | bool | `false` | Whether to install eventrouter. |
+| eventrouter.image.repository | string | `"gcr.io/heptio-images/eventrouter"` |  |
+| eventrouter.image.tag | string | `"v0.3"` |  |
+| eventrouter.image.pullPolicy | string | `"IfNotPresent"` |  |
 | promtail.enabled | bool | `false` | Whether to install Promtail or not. |
 | promtail.config.lokiAddress | string | `"http://posthog-loki:3100/loki/api/v1/push"` |  |
 | promtail.config.snippets.pipelineStages[0].cri | object | `{}` |  |
