@@ -11,6 +11,9 @@ web:
   internalMetrics:
     capture: false
 
+eventrouter:
+  enabled: true
+
 # Use small PVC in CI
 clickhouse:
   persistence:

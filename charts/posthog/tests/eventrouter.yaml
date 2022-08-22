@@ -33,3 +33,26 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].imagePullPolicy
           value: pullPolicy
+
+  - it: should allow setting resource limits for the main container
+    set:
+      eventrouter:
+        enabled: true
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 16Gi
+          requests:
+            cpu: 4000m
+            memory: 16Gi
+    documentIndex: 4
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 1000m
+              memory: 16Gi
+            requests:
+              cpu: 4000m
+              memory: 16Gi
