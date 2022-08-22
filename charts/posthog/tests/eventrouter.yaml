@@ -1,0 +1,35 @@
+suite: Event router
+templates:
+  - templates/eventrouter.yaml
+
+tests:
+  - it: should be disabled by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be able to enable
+    set:
+      eventrouter:
+        enabled: true
+    asserts:
+      - hasDocuments:
+          count: 0
+        not: true
+
+  - it: should allow setting different images/tag ad pull policy
+    set:
+      eventrouter:
+        enabled: true
+        image:
+          repository: repository
+          tag: tag
+          pullPolicy: pullPolicy
+    documentIndex: 4
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: repository:tag
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: pullPolicy
