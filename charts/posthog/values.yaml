@@ -1488,7 +1488,9 @@ prometheus:
                 severity: warning
               annotations:
                 summary: Kubernetes ReplicasSet mismatch (instance {{ $labels.instance }})
-                description: "Deployment Replicas mismatch"
+                description: >
+                  The number of ready pods in the Deployment's replicaset does
+                  not match the desired number.
 
             - alert: KubernetesDeploymentReplicasMismatch
               expr: kube_deployment_spec_replicas != kube_deployment_status_replicas_available
@@ -1497,7 +1499,9 @@ prometheus:
                 severity: warning
               annotations:
                 summary: Kubernetes Deployment replicas mismatch (instance {{ $labels.instance }})
-                description: "Deployment Replicas mismatch"
+                description: >
+                  The number of ready pods in the Deployment does not match the
+                  desired number.
 
             - alert: KubernetesStatefulsetReplicasMismatch
               expr: kube_statefulset_status_replicas_ready != kube_statefulset_status_replicas
@@ -1506,7 +1510,9 @@ prometheus:
                 severity: warning
               annotations:
                 summary: Kubernetes StatefulSet replicas mismatch (instance {{ $labels.instance }})
-                description: "A StatefulSet does not match the expected number of replicas."
+                description: >
+                  The number of ready pods in the StatefulSet does not match the
+                  desired number.
 
             - alert: KubernetesDeploymentGenerationMismatch
               expr: kube_deployment_status_observed_generation != kube_deployment_metadata_generation
