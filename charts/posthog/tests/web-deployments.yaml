@@ -1,0 +1,19 @@
+suite: PostHog web and events deployment definitions
+templates:
+  - templates/web-deployment.yaml
+  - templates/events-deployment.yaml
+  - templates/secrets.yaml
+
+tests:
+  - it: has grace period and lifecycle set, to ensure zero downtime deployments
+    templates:
+      - templates/web-deployment.yaml
+      - templates/events-deployment.yaml
+    set:
+      cloud: local
+    asserts:
+      - equal:
+          path: spec.template.spec.terminationGracePeriodSeconds
+          value: 45
+      - isNotNull:
+          path: spec.template.spec.containers[0].lifecycle
