@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/ubuntu
 {
 	"name": "Ubuntu with kind",
-	"image": "mcr.microsoft.com/vscode/devcontainers/universal:1-linux",
+	"image": "mcr.microsoft.com/vscode/devcontainers/universal:latest",
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {},
