@@ -2,54 +2,20 @@
 
 set -e -o pipefail
 
-# Setup a cluster with kind + nginx ingress
-
-# Install kind so we can create a cluster as per
-# https://kind.sigs.k8s.io/docs/user/quick-start/#installing-from-release-binaries
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.14.0/kind-linux-amd64
-chmod +x ./kind
-mkdir -p ~/.local/bin/
-mv ./kind ~/.local/bin/kind
-
-# We use a cluster config that adds ingress-ready=true to each node as per
-# https://kind.sigs.k8s.io/docs/user/ingress/#create-cluster
-# 
-# This should mean you can go to port http://localhost:8000 or
-# https://localhost:4430 to view the running posthog app once deployed to the
-# cluster, and once VSCode has forwarded the ports
-cat <<EOF | kind create cluster --config=-
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-- role: control-plane
-  kubeadmConfigPatches:
-  - |
-    kind: InitConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        node-labels: "ingress-ready=true"
-  extraPortMappings:
-  # nginx ingress
-  - containerPort: 80
-    hostPort: 8000
-    protocol: TCP
-EOF
-
-# Port forward a range or ports above 30000 to the kind worker node so we can
-# easily expose services as node points and be able to interact with them
-# locally. It's possible to instruct kind to map these ports, but it seems you
-# need to recreate the cluster for these to take affect.
-# NOTE: I tried to use `docker-proxy` to avoid needing to install another dep.
-# but the process exits immediately with a non-zero status code.
+# Install k3s
+curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=v1.22 INSTALL_K3S_EXEC="--disable=traefik --disable=metrics-server" sh -
 sudo apt-get update
-sudo apt-get install socat
-NODE_IP=$(kubectl get nodes kind-control-plane --template '{{(index .status.addresses 0).address}}')
-seq 30000 30010 | xargs -I{} bash -c "socat TCP4-LISTEN:{},fork TCP4:$NODE_IP:{} &"
+sudo apt-get install supervisor
+sudo supervisord -c .devcontainer/supervisord.conf
+mkdir ~/.kube
 
-# Then provision the nginx controller, e.g.
-# https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx
-# NOTE: I've pinned the version here
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/d8c9a6c238f714587da4d2ac2dcd0d3d39419ccf/deploy/static/provider/kind/deploy.yaml
+until (sudo k3s kubectl version); do
+    echo "Waiting for k3s to start..."
+    ((c++)) && ((c==10)) && break
+    sleep 1
+done
+
+sudo k3s kubectl config view --raw > ~/.kube/config
 
 # Install k9s for easy debugging https://k9scli.io/
 curl -sS https://webinstall.dev/k9s | bash
@@ -63,4 +29,4 @@ echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.i
 sudo apt-get update
 sudo apt-get install k6
 
-echo "printf 'Hello 🦔! To install PostHog into k8s run this:\n\n "helm upgrade --install posthog charts/posthog -f .devcontainer/values.yml --namespace posthog"\n'" >> ~/.zshrc
+echo "printf 'Hello 🦔! To install PostHog into k8s run this:\n\n "helm upgrade --install posthog charts/posthog -f .devcontainer/values.yml --namespace posthog --create-namespace"\n'" >> ~/.zshrc
