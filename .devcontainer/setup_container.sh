@@ -6,7 +6,11 @@ set -e -o pipefail
 curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=v1.22 INSTALL_K3S_EXEC="--disable=traefik --disable=metrics-server" sh -
 sudo apt-get update
 sudo apt-get install supervisor
-sudo supervisord -c .devcontainer/supervisord.conf
+
+cd .devcontainer
+sudo supervisord -c supervisord.conf
+cd ..
+
 mkdir ~/.kube
 
 until (sudo k3s kubectl version); do
@@ -28,5 +32,8 @@ sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.g
 echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
 sudo apt-get update
 sudo apt-get install k6
+
+# Add helm unittest plugin
+helm plugin install https://github.com/quintush/helm-unittest.git --version 0.2.8
 
 echo "printf 'Hello 🦔! To install PostHog into k8s run this:\n\n "helm upgrade --install posthog charts/posthog -f .devcontainer/values.yml --namespace posthog --create-namespace"\n'" >> ~/.zshrc
