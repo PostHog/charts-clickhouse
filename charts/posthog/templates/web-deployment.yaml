@@ -32,6 +32,7 @@ spec:
 {{ toYaml .Values.web.podLabels | indent 8 }}
         {{- end }}
     spec:
+      terminationGracePeriodSeconds: {{ include "snippet.web-deployments.terminationGracePeriodSeconds" . }}
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- if .Values.web.affinity }}
       affinity:
@@ -122,6 +123,9 @@ spec:
 {{- if .Values.web.env }}
 {{ toYaml .Values.web.env | indent 8 }}
 {{- end }}
+
+        {{- include "snippet.web-deployments.lifecycle" . | nindent 8 }}
+
         livenessProbe:
           httpGet:
             path: /_livez
