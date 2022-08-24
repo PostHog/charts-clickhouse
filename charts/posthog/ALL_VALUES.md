@@ -172,7 +172,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | ingress.annotations | object | `{}` | Extra annotations |
 | ingress.secretName | string | `nil` | TLS secret to be used by the ingress. |
 | ingress-nginx.controller.config.use-forwarded-headers | string | `"true"` | [ingress-nginx documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#use-forwarded-headers) |
-| ingress-nginx.controller.config.service-upstream | string | `"true"` |  |
 | ingress-nginx.controller.config.log-format-escape-json | string | `"true"` |  |
 | ingress-nginx.controller.config.log-format-upstream | string | `"{ \"time\": \"$time_iso8601\", \"remote_addr\": \"$proxy_protocol_addr\", \"request_id\": \"$request_id\", \"correlation_id\": \"$request_id\", \"remote_user\": \"$remote_user\", \"bytes_sent\": $bytes_sent, \"request_time\": $request_time, \"status\": $status, \"host\": \"$host\", \"request_proto\": \"$server_protocol\", \"uri\": \"$uri\", \"request_query\": \"$args\", \"request_length\": $request_length, \"duration\": $request_time, \"method\": \"$request_method\", \"http_referrer\": \"$http_referer\", \"http_user_agent\": \"$http_user_agent\", \"http_x_forwarded_for\": \"$http_x_forwarded_for\" }"` |  |
 | ingress-nginx.controller.proxySetHeaders.X-Correlation-ID | string | `"$request_id"` |  |
