@@ -22,7 +22,7 @@ lifecycle:
         exec:
             command: [
                 "sh", "-c",
-                "sleep 10"
+                "(echo '{\"event\": \"preStop_started\"}'; sleep 10; echo '{\"event\": \"preStop_ended\"}') > /proc/1/fd/1"
             ]
 {{- end -}}
 
