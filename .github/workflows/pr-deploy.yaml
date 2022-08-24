@@ -37,15 +37,22 @@ jobs:
         run: |
           GIT_SHORT="$(git rev-parse --short HEAD)"
           echo "::set-output name=git_short::${GIT_SHORT}"
-          echo "::set-output name=fqdn_record::${GIT_SHORT}.posthog.cc"
+          echo "::set-output name=fqdn_record::${GIT_SHORT}.pr.posthog.cc"
         if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
+
+      - name: Install doctl to access k8s config
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Install PostHog using the Helm chart
         id: helm_install
         run: |
+          doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID 
+
           helm upgrade --install \
             -f ci/values/pr/values.yaml \
-            --set ingress.hostname=${{ steps.vars.outputs.fqdn_record }}
+            --set ingress.hostname=${{ steps.vars.outputs.fqdn_record }} \
             --timeout 30m \
             --create-namespace \
             --namespace pr-${{ steps.vars.outputs.git_short }} \
@@ -53,3 +60,6 @@ jobs:
             --wait \
             --wait-for-jobs 
         if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
+        env:
+          PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
+
