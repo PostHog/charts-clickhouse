@@ -1,0 +1,35 @@
+# This workflow handles deploying a branch to the pull request cluster, for
+# testing purposes. It is locked down so that it can only be used by people who
+# are a member of the PostHog Github org
+
+name: PR - Preview Deploy
+
+on:
+  issue_comment: # github has PRs as a special type of issue
+    types: [created]
+
+jobs:
+  commented:
+    name: PR comment
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check user permission
+        id: check
+        uses: scherermichael-oss/action-has-permission@17f29510f1bf987b916c8cbb451566a56eed23f1
+        with:
+          required-permission: write
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: |
+          echo A user with write permission has commented on PR $NUMBER
+        env:
+          NUMBER: ${{ github.event.issue.number }}
+        if: steps.check.outputs.has-permission
+
+      - run: |
+          echo User does not have write permission to repo, on PR $NUMBER
+        env:
+          NUMBER: ${{ github.event.issue.number }}
+        if: "! steps.check.outputs.has-permission"
