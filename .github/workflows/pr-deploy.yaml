@@ -22,14 +22,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: |
-          echo A user with write permission has commented on PR $NUMBER
-        env:
-          NUMBER: ${{ github.event.issue.number }}
-        if: steps.check.outputs.has-permission
+      - name: Checkout
+        uses: actions/checkout@v2 # no way of getting the correct ref from the issue event, hence the below
+        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '@deploy'}} # looks like this needs to go on every step. meh.
 
-      - run: |
-          echo User does not have write permission to repo, on PR $NUMBER
+      - name: Checkout Pull Request
+        run: hub pr checkout ${{ github.event.issue.number }} # github cli is pre installed
         env:
-          NUMBER: ${{ github.event.issue.number }}
-        if: "! steps.check.outputs.has-permission"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '@deploy'}}
+
+      - name: Declare variables that we can share across steps
+        id: vars
+        run: |
+          GIT_SHORT="$(git rev-parse --short HEAD)"
+          echo "::set-output name=git_short::${GIT_SHORT}"
+          echo "::set-output name=fqdn_record::${GIT_SHORT}.posthog.cc"
+        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '@deploy'}}
+
+      - name: Install PostHog using the Helm chart
+        id: helm_install
+        run: |
+          helm upgrade --install \
+            -f ci/values/pr/values.yaml \
+            --set ingress.hostname=${{ steps.vars.outputs.fqdn_record }}
+            --timeout 30m \
+            --create-namespace \
+            --namespace pr-${{ steps.vars.outputs.git_short }} \
+            posthog ./charts/posthog \
+            --wait \
+            --wait-for-jobs 
+        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '@deploy'}}
