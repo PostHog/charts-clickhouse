@@ -9,6 +9,10 @@ ingress:
 web:
   secureCookies: false
 
+env:
+  - name: BUFFER_CONVERSION_SECONDS
+    value: "1"
+
 # Use small PVC in CI
 clickhouse:
   persistence:
