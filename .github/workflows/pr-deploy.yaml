@@ -24,13 +24,13 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2 # no way of getting the correct ref from the issue event, hence the below
-        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '@deploy'}} # looks like this needs to go on every step. meh.
+        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '!deploy'}} # looks like this needs to go on every step. meh.
 
       - name: Checkout Pull Request
         run: hub pr checkout ${{ github.event.issue.number }} # github cli is pre installed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '@deploy'}}
+        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '!deploy'}}
 
       - name: Declare variables that we can share across steps
         id: vars
@@ -38,7 +38,7 @@ jobs:
           GIT_SHORT="$(git rev-parse --short HEAD)"
           echo "::set-output name=git_short::${GIT_SHORT}"
           echo "::set-output name=fqdn_record::${GIT_SHORT}.posthog.cc"
-        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '@deploy'}}
+        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '!deploy'}}
 
       - name: Install PostHog using the Helm chart
         id: helm_install
@@ -52,4 +52,4 @@ jobs:
             posthog ./charts/posthog \
             --wait \
             --wait-for-jobs 
-        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '@deploy'}}
+        if: steps.check.outputs.has-permission && ${{ github.event.comment.body == '!deploy'}}
