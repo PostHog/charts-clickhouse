@@ -1,0 +1,32 @@
+cloud: "do"
+
+ingress:
+  enabled: true
+  type: nginx
+  secretName: posthog-prod-private-key
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  nginx:
+    enabled: false
+
+clickhouse:
+  persistence:
+    size: 1Gi
+
+kafka:
+  persistence:
+    size: 1Gi
+
+postgresql:
+  persistence:
+    size: 1Gi
+
+redis:
+  master:
+    persistence:
+      size: 1Gi
+
+zookeeper:
+  persistence:
+    size: 1Gi
+
