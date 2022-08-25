@@ -53,7 +53,7 @@ jobs:
           
           # delete all instances of all resources, in the specified namespace
           # just in case someone has made a change to the chart that stops uninstall cleaning up correctly
-          kubectl delete all --all --namespace pr-${{ steps.vars.outputs.pr_number }} \
+          kubectl delete all --all --namespace pr-${{ steps.vars.outputs.pr_number }}
           kubectl delete namespace pr-${{ steps.vars.outputs.pr_number }}
 
         if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
