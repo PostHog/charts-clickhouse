@@ -22,6 +22,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Add deploy reaction
+        uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          reactions: rocket
+        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
+
       - name: Checkout
         uses: actions/checkout@v2 # no way of getting the correct ref from the issue event, hence the below
         if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} # looks like this needs to go on every step. meh.
@@ -60,6 +67,34 @@ jobs:
             --wait \
             --wait-for-jobs 
         if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
+        env:
+          PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
+
+      - name: Add deploy comment
+        uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Change deployed and available at https://${{ steps.vars.outputs.fqdn_record }}
+
+            Comment with `!deploy-cleanup` to delete your deployment!
+        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
+
+      # Only ran if the correct comment is used! We should have automatic cleanup on merge, but this allows us to manually
+      # cleanup. For instance, you may restore a branch, deploy it, and keep it around for demo purposes.
+      - name: Delete preview namespace
+        id: delete_preview
+        run: |
+          doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID 
+
+          kubectl patch chi posthog -n pr-${{ steps.vars.outputs.git_short }} -p '{"metadata":{"finalizers":null}}' --type=merge
+          helm uninstall -n pr-${{ steps.vars.outputs.git_short }} posthog
+          
+          # delete all instances of all resources, in the specified namespace
+          # just in case someone has made a change to the chart that stops uninstall cleaning up correctly
+          kubectl delete all --all --namespace pr-${{ steps.vars.outputs.git_short }}
+          kubectl delete namespace pr-${{ steps.vars.outputs.git_short }}
+        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy-cleanup'}}  # note that this says deploy-cleanup, not just deploy
         env:
           PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
 
