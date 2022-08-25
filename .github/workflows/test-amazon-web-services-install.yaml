@@ -166,8 +166,8 @@ jobs:
 
     - name: Set PostHog endpoints to use for the ingestion test
       run: |
-        echo "POSTHOG_API_ENDPOINT=https://${{ steps.vars.outputs.fqdn_record }}" | tee -a "$GITHUB_ENV"
-        echo "POSTHOG_EVENT_ENDPOINT=https://${{ steps.vars.outputs.fqdn_record }}" | tee -a "$GITHUB_ENV"
+        echo "POSTHOG_API_ENDPOINT=http://${{ steps.vars.outputs.fqdn_record }}" | tee -a "$GITHUB_ENV"
+        echo "POSTHOG_EVENT_ENDPOINT=http://${{ steps.vars.outputs.fqdn_record }}" | tee -a "$GITHUB_ENV"
 
     - name: Run ingestion test using k6
       uses: k6io/action@v0.2.0
