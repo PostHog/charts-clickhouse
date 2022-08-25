@@ -1,0 +1,28 @@
+on:
+  pull_request:
+    types: [closed]
+jobs:
+  cleanup:
+    name: Cleanup merged deploy
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      # Only ran if the correct comment is used! We should have automatic cleanup on merge, but this allows us to manually
+      # cleanup. For instance, you may restore a branch, deploy it, and keep it around for demo purposes.
+      - name: Delete preview namespace
+        id: delete_preview
+        run: |
+          doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID 
+
+          kubectl patch chi posthog -n pr-${{ steps.vars.outputs.git_short }} -p '{"metadata":{"finalizers":null}}' --type=merge
+          helm uninstall -n pr-${{ steps.vars.outputs.git_short }} posthog
+          
+          # delete all instances of all resources, in the specified namespace
+          # just in case someone has made a change to the chart that stops uninstall cleaning up correctly
+          kubectl delete all --all --namespace pr-${{ steps.vars.outputs.git_short }}
+          kubectl delete namespace pr-${{ steps.vars.outputs.git_short }}
+
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'deploy') }}
+        env:
+          PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
+

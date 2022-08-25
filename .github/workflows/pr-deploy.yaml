@@ -5,13 +5,12 @@
 name: PR - Preview Deploy
 
 on:
-  issue_comment: # github has PRs as a special type of issue
-    types: [created]
+  pull_request:
+    types: [labeled]
 
 jobs:
-  commented:
-    name: PR comment
-    if: ${{ github.event.issue.pull_request }}
+  deploy:
+    name: Deploy Preview
     runs-on: ubuntu-latest
     steps:
       - name: Check user permission
@@ -22,22 +21,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add deploy reaction
-        uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
-        with:
-          comment-id: ${{ github.event.comment.id }}
-          reactions: rocket
-        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
-
       - name: Checkout
         uses: actions/checkout@v2 # no way of getting the correct ref from the issue event, hence the below
-        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} # looks like this needs to go on every step. meh.
+        if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
       - name: Checkout Pull Request
-        run: hub pr checkout ${{ github.event.issue.number }} # github cli is pre installed
+        run: hub pr checkout ${{ github.event.number }} # github cli is pre installed
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
+        if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
       - name: Declare variables that we can share across steps
         id: vars
@@ -45,7 +37,14 @@ jobs:
           GIT_SHORT="$(git rev-parse --short HEAD)"
           echo "::set-output name=git_short::${GIT_SHORT}"
           echo "::set-output name=fqdn_record::${GIT_SHORT}.pr.posthog.cc"
-        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
+        if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
+
+      - name: Add deploy comment
+        uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
+        with:
+          issue-number: ${{ github.event.number }}
+          body: Deploying PR to https://${{steps.vars.outputs.fqdn_record}}
+        if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
       - name: Install doctl to access k8s config
         uses: digitalocean/action-doctl@v2
@@ -66,35 +65,14 @@ jobs:
             posthog ./charts/posthog \
             --wait \
             --wait-for-jobs 
-        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
+        if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
         env:
           PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
 
       - name: Add deploy comment
         uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            Change deployed and available at https://${{ steps.vars.outputs.fqdn_record }}
-
-            Comment with `!deploy-cleanup` to delete your deployment!
-        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy'}} 
-
-      # Only ran if the correct comment is used! We should have automatic cleanup on merge, but this allows us to manually
-      # cleanup. For instance, you may restore a branch, deploy it, and keep it around for demo purposes.
-      - name: Delete preview namespace
-        id: delete_preview
-        run: |
-          doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID 
-
-          kubectl patch chi posthog -n pr-${{ steps.vars.outputs.git_short }} -p '{"metadata":{"finalizers":null}}' --type=merge
-          helm uninstall -n pr-${{ steps.vars.outputs.git_short }} posthog
-          
-          # delete all instances of all resources, in the specified namespace
-          # just in case someone has made a change to the chart that stops uninstall cleaning up correctly
-          kubectl delete all --all --namespace pr-${{ steps.vars.outputs.git_short }}
-          kubectl delete namespace pr-${{ steps.vars.outputs.git_short }}
-        if: ${{ steps.check.outputs.has-permission && github.event.comment.body == '!deploy-cleanup'}}  # note that this says deploy-cleanup, not just deploy
-        env:
-          PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
+          issue-number: ${{ github.event.number }}
+          body: PR deployed to https://${{steps.vars.outputs.fqdn_record}} successfully!
+        if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
