@@ -27,12 +27,6 @@ jobs:
         uses: actions/checkout@v2 # no way of getting the correct ref from the issue event, hence the below
         if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
 
-      - name: Checkout Pull Request
-        run: hub pr checkout ${{ github.event.number }} # github cli is pre installed
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
-
       - name: Declare variables that we can share across steps
         id: vars
         run: |
