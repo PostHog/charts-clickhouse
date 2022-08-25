@@ -33,7 +33,7 @@ jobs:
           echo "::set-output name=git_short::${GIT_SHORT}"
           echo "::set-output name=fqdn_record::${PR_NUM}.pr.posthog.cc"
           echo "::set-output name=pr_number::${PR_NUM}"
-          echo "::set-output name=branch_name::$(echo ${GIT_SHORT#refs/heads/} | tr / -)"
+          echo "##[set-output name=branch_name;]$(echo ${GITHUB_REF#refs/heads/})"
         if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
 
       # Only ran if the correct comment is used! We should have automatic cleanup on merge, but this allows us to manually

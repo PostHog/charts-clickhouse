@@ -40,7 +40,7 @@ jobs:
           echo "::set-output name=git_short::${GIT_SHORT}"
           echo "::set-output name=fqdn_record::${PR_NUM}.pr.posthog.cc"
           echo "::set-output name=pr_number::${PR_NUM}"
-          echo "::set-output name=branch_name::$(echo ${GIT_SHORT#refs/heads/} | tr / -)"
+          echo "##[set-output name=branch_name;]$(echo ${GITHUB_REF#refs/heads/})"
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
       - name: start deployment
@@ -86,12 +86,5 @@ jobs:
           ref: ${{ github.head_ref }}
           env_url: https://${{ steps.vars.outputs.fqdn_record }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-        if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
-
-      - name: Add deploy comment
-        uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
-        with:
-          issue-number: ${{ github.event.number }}
-          body: PR deployed to https://${{steps.vars.outputs.fqdn_record}} successfully!
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
