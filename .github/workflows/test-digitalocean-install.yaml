@@ -120,17 +120,6 @@ jobs:
           --record-name "${{ steps.vars.outputs.dns_record }}" \
           --record-data "${load_balancer_external_ip}"
 
-    - name: Wait for the Let's Encrypt certificate to be issued and deployed
-      id: tls_certificate_creation
-      timeout-minutes: 60
-      run: |
-        echo "Wait for the Let's Encrypt certificate to be issued and deployed..."
-        while ! kubectl wait --for=condition=Ready --timeout=60s certificaterequest --all -n posthog > /dev/null 2>&1
-        do
-          echo "  certificate hasn't been yet issued and deployed"
-        done
-        echo "The certificate has been issued and it has been deployed!"
-
     - name: Setup PostHog for the ingestion test
       run: ./ci/setup_ingestion_test.sh
 

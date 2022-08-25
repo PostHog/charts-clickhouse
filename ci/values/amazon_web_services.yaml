@@ -1,10 +1,13 @@
 cloud: "aws"
 ingress:
-  hostname: <your-hostname>
   nginx:
     enabled: true
-cert-manager:
-  enabled: true
+    redirectToTLS: false
+
+# Disable `SESSION_COOKIE_SECURE` as we don't use TLS
+# https://docs.djangoproject.com/en/4.1/ref/settings/#session-cookie-secure
+web:
+  secureCookies: false
 
 # Use small PVC in CI
 clickhouse:
