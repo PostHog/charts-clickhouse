@@ -48,7 +48,7 @@ jobs:
         run: |
           doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID 
 
-          kubectl patch chi posthog -n pr-${{ steps.vars.outputs.pr_number }} -p '{"metadata":{"finalizers":null}}' --type=merge
+          kubectl patch chi posthog -n pr-${{ steps.vars.outputs.pr_number }} -p '{"metadata":{"finalizers":null}}' --type=merge || true # if the resource cannot be found, we still want to clean up
           helm uninstall -n pr-${{ steps.vars.outputs.pr_number }} posthog
           
           # delete all instances of all resources, in the specified namespace
