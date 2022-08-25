@@ -40,7 +40,6 @@ jobs:
           echo "::set-output name=git_short::${GIT_SHORT}"
           echo "::set-output name=fqdn_record::${PR_NUM}.pr.posthog.cc"
           echo "::set-output name=pr_number::${PR_NUM}"
-          echo "##[set-output name=branch_name;]$(echo ${GITHUB_REF#refs/heads/})"
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
       - name: start deployment
@@ -49,7 +48,7 @@ jobs:
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: ${{ steps.vars.outputs.branch_name }}
+          env: ${{ github.ref_name }}
           ref: ${{ github.head_ref }}
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
