@@ -5,8 +5,37 @@ jobs:
   cleanup:
     name: Cleanup merged deploy
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
+      - name: Check user permission
+        id: check
+        uses: scherermichael-oss/action-has-permission@17f29510f1bf987b916c8cbb451566a56eed23f1
+        with:
+          required-permission: write
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout
+        uses: actions/checkout@v2 # no way of getting the correct ref from the issue event, hence the below
+        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+
+      - name: Checkout Pull Request
+        run: hub pr checkout ${{ github.event.number }} # github cli is pre installed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
+
+      - name: Declare variables that we can share across steps
+        id: vars
+        run: |
+          GIT_SHORT="$(git rev-parse --short HEAD)"
+          PR_NUM=${{ github.event.number }}
+
+          echo "::set-output name=git_short::${GIT_SHORT}"
+          echo "::set-output name=fqdn_record::${PR_NUM}.pr.posthog.cc"
+          echo "::set-output name=pr_number::${PR_NUM}"
+          echo "::set-output name=branch_name::$(echo ${GIT_SHORT#refs/heads/} | tr / -)"
+        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+
       # Only ran if the correct comment is used! We should have automatic cleanup on merge, but this allows us to manually
       # cleanup. For instance, you may restore a branch, deploy it, and keep it around for demo purposes.
       - name: Delete preview namespace
@@ -22,7 +51,14 @@ jobs:
           kubectl delete all --all --namespace pr-${{ steps.vars.outputs.git_short }}
           kubectl delete namespace pr-${{ steps.vars.outputs.git_short }}
 
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'deploy') }}
+        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
         env:
           PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
 
+      - name: mark environment as deactivated
+        uses: bobheadxi/deployments@v1
+        with:
+          step: deactivate-env
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ steps.vars.outputs.branch }}
+          desc: Environment was pruned

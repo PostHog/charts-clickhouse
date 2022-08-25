@@ -40,6 +40,7 @@ jobs:
           echo "::set-output name=git_short::${GIT_SHORT}"
           echo "::set-output name=fqdn_record::${PR_NUM}.pr.posthog.cc"
           echo "::set-output name=pr_number::${PR_NUM}"
+          echo "::set-output name=branch_name::$(echo ${GIT_SHORT#refs/heads/} | tr / -)"
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
       - name: start deployment
@@ -48,7 +49,8 @@ jobs:
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: ${{ steps.vars.outputs.pr_number }}
+          env: ${{ steps.vars.outputs.branch_name }}
+          ref: ${{ github.head_ref }}
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
       - name: Install doctl to access k8s config
@@ -81,6 +83,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
           env: ${{ steps.deployment.outputs.env }}
+          ref: ${{ github.head_ref }}
           env_url: https://${{ steps.vars.outputs.fqdn_record }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
