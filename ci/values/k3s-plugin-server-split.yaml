@@ -1,18 +1,13 @@
 cloud: k3s
-
-pluginsAsync:
-  enabled: true
-
 ingress:
   nginx:
     enabled: true
     redirectToTLS: false
-  letsencrypt: false
 
+# Disable `SESSION_COOKIE_SECURE` as we don't use TLS
+# https://docs.djangoproject.com/en/4.1/ref/settings/#session-cookie-secure
 web:
   secureCookies: false
-  internalMetrics:
-    capture: false
 
 # Use small PVC in CI
 clickhouse:
@@ -31,3 +26,7 @@ redis:
 zookeeper:
   persistence:
     size: 1Gi
+
+# Enable pluginsAsync for this test
+pluginsAsync:
+  enabled: true

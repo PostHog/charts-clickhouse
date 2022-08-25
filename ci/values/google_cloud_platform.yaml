@@ -1,6 +1,7 @@
 cloud: "gcp"
-ingress:
-  hostname: <your-hostname>
+
+# We configure GCP ingress pretty differently than anything else
+# and TLS is currently hardcoded/built-in.
 
 # Use small PVC in CI
 clickhouse:

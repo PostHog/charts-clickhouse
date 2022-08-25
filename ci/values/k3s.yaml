@@ -1,15 +1,13 @@
 cloud: k3s
-
 ingress:
   nginx:
     enabled: true
     redirectToTLS: false
-  letsencrypt: false
 
+# Disable `SESSION_COOKIE_SECURE` as we don't use TLS
+# https://docs.djangoproject.com/en/4.1/ref/settings/#session-cookie-secure
 web:
   secureCookies: false
-  internalMetrics:
-    capture: false
 
 # Use small PVC in CI
 clickhouse:
