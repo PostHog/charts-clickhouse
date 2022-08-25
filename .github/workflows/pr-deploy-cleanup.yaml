@@ -36,6 +36,11 @@ jobs:
           echo "##[set-output name=branch_name;]$(echo ${GITHUB_REF#refs/heads/})"
         if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
 
+      - name: Install doctl to access k8s config
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
       # Only ran if the correct comment is used! We should have automatic cleanup on merge, but this allows us to manually
       # cleanup. For instance, you may restore a branch, deploy it, and keep it around for demo purposes.
       - name: Delete preview namespace
