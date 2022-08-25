@@ -20,3 +20,9 @@ redis:
 zookeeper:
   persistence:
     size: 1Gi
+
+# Reduce ingestion buffer conversion window in CI
+plugins:
+  env:
+    - name: BUFFER_CONVERSION_SECONDS
+      value: "1"
