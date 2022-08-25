@@ -15,17 +15,32 @@ jobs:
     name: Deploy Preview
     runs-on: ubuntu-latest
     steps:
-      - name: Check user permission
-        id: check
-        uses: scherermichael-oss/action-has-permission@17f29510f1bf987b916c8cbb451566a56eed23f1
+      - uses: actions/github-script@v6
+        id: permissions
         with:
-          required-permission: write
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let member;
+            try {
+              const resp = await github.rest.repos.getCollaboratorPermissionLevel({
+                username: context.actor,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+
+              if (!resp || !resp.data || !resp.data.permission) {
+                member = false;
+              } else {
+                const permission = resp.data.permission;
+                member = permission == "admin" || permission == "write";
+              }
+            } catch(error) {
+              member = false
+            }
+            return member
 
       - name: Checkout
         uses: actions/checkout@v2 # no way of getting the correct ref from the issue event, hence the below
-        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
 
       - name: Declare variables that we can share across steps
         id: vars
@@ -36,7 +51,7 @@ jobs:
           echo "::set-output name=git_short::${GIT_SHORT}"
           echo "::set-output name=fqdn_record::${PR_NUM}.pr.posthog.cc"
           echo "::set-output name=pr_number::${PR_NUM}"
-        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
 
       - name: start deployment
         uses: bobheadxi/deployments@v1
@@ -46,13 +61,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           env: ${{ github.head_ref }}
           ref: ${{ github.head_ref }}
-        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
 
       - name: Install doctl to access k8s config
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
 
       - name: Install PostHog using the Helm chart
         id: helm_install
@@ -68,7 +83,7 @@ jobs:
             posthog ./charts/posthog \
             --wait \
             --wait-for-jobs 
-        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
         env:
           PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
 
@@ -82,5 +97,5 @@ jobs:
           ref: ${{ github.head_ref }}
           env_url: https://${{ steps.vars.outputs.fqdn_record }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-        if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
 
