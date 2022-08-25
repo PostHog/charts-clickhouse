@@ -87,6 +87,7 @@ jobs:
         run: |
           doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID 
 
+          kubectl patch chi posthog -n pr-${{ steps.vars.outputs.git_short }} -p '{"metadata":{"finalizers":null}}' --type=merge
           helm uninstall -n pr-${{ steps.vars.outputs.git_short }} posthog
           
           # delete all instances of all resources, in the specified namespace
