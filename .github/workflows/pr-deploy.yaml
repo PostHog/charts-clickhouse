@@ -48,7 +48,7 @@ jobs:
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: ${{ github.ref_name }}
+          env: ${{ github.head_ref }}
           ref: ${{ github.head_ref }}
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
