@@ -48,13 +48,13 @@ jobs:
         run: |
           doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID 
 
-          kubectl patch chi posthog -n pr-${{ steps.vars.outputs.git_short }} -p '{"metadata":{"finalizers":null}}' --type=merge
-          helm uninstall -n pr-${{ steps.vars.outputs.git_short }} posthog
+          kubectl patch chi posthog -n pr-${{ steps.vars.outputs.pr_number }} -p '{"metadata":{"finalizers":null}}' --type=merge
+          helm uninstall -n pr-${{ steps.vars.outputs.pr_number }} posthog
           
           # delete all instances of all resources, in the specified namespace
           # just in case someone has made a change to the chart that stops uninstall cleaning up correctly
-          kubectl delete all --all --namespace pr-${{ steps.vars.outputs.git_short }}
-          kubectl delete namespace pr-${{ steps.vars.outputs.git_short }}
+          kubectl delete all --all --namespace pr-${{ steps.vars.outputs.pr_number }} \
+          kubectl delete namespace pr-${{ steps.vars.outputs.pr_number }}
 
         if: ${{ steps.check.outputs.has-permission && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
         env:
