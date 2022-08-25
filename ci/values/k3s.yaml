@@ -1,15 +1,8 @@
 cloud: k3s
-
 ingress:
   nginx:
     enabled: true
     redirectToTLS: false
-  letsencrypt: false
-
-web:
-  secureCookies: false
-  internalMetrics:
-    capture: false
 
 # Use small PVC in CI
 clickhouse:

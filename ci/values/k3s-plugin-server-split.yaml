@@ -1,18 +1,8 @@
 cloud: k3s
-
-pluginsAsync:
-  enabled: true
-
 ingress:
   nginx:
     enabled: true
     redirectToTLS: false
-  letsencrypt: false
-
-web:
-  secureCookies: false
-  internalMetrics:
-    capture: false
 
 # Use small PVC in CI
 clickhouse:
@@ -31,3 +21,7 @@ redis:
 zookeeper:
   persistence:
     size: 1Gi
+
+# Enable pluginsAsync for this test
+pluginsAsync:
+  enabled: true
