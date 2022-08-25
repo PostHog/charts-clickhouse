@@ -35,15 +35,20 @@ jobs:
         id: vars
         run: |
           GIT_SHORT="$(git rev-parse --short HEAD)"
+          PR_NUM=${{ github.event.number }}
+
           echo "::set-output name=git_short::${GIT_SHORT}"
-          echo "::set-output name=fqdn_record::${GIT_SHORT}.pr.posthog.cc"
+          echo "::set-output name=fqdn_record::${PR_NUM}.pr.posthog.cc"
+          echo "::set-output name=pr_number::${PR_NUM}"
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
-      - name: Add deploy comment
-        uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
+      - name: start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
         with:
-          issue-number: ${{ github.event.number }}
-          body: Deploying PR to https://${{steps.vars.outputs.fqdn_record}}
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ steps.vars.outputs.pr_number }}
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
       - name: Install doctl to access k8s config
@@ -61,13 +66,24 @@ jobs:
             --set ingress.hostname=${{ steps.vars.outputs.fqdn_record }} \
             --timeout 30m \
             --create-namespace \
-            --namespace pr-${{ steps.vars.outputs.git_short }} \
+            --namespace pr-${{ steps.vars.outputs.pr_number }} \
             posthog ./charts/posthog \
             --wait \
             --wait-for-jobs 
         if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
         env:
           PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
+
+      - name: update deployment status
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          env: ${{ steps.deployment.outputs.env }}
+          env_url: https://${{ steps.vars.outputs.fqdn_record }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+        if: ${{ steps.check.outputs.has-permission && github.event.label.name == 'deploy' }} 
 
       - name: Add deploy comment
         uses: peter-evans/create-or-update-comment@c9fcb64660bc90ec1cc535646af190c992007c32
