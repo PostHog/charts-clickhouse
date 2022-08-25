@@ -1,13 +1,7 @@
 cloud: "gcp"
-ingress:
-  nginx:
-    enabled: true
-    redirectToTLS: false
 
-# Disable `SESSION_COOKIE_SECURE` as we don't use TLS
-# https://docs.djangoproject.com/en/4.1/ref/settings/#session-cookie-secure
-web:
-  secureCookies: false
+# We configure GCP ingress pretty differently than anything else
+# and TLS is currently hardcoded/built-in.
 
 # Use small PVC in CI
 clickhouse:
