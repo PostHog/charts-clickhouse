@@ -30,3 +30,6 @@ zookeeper:
   persistence:
     size: 1Gi
 
+web:
+  vpa_recommender:
+    enabled: true

@@ -1,0 +1,20 @@
+# This is NOT used for scaling, and is only used to ensure that we are
+# sizing our resources correctly.
+# Use the VPA recommender WITHOUT using the VPA updater
+# Do not enable the updater while the HPA is enabled. This causes undefined behaviour
+# as both will try to scale at the same time.
+
+{{- if and .Values.web.enabled .Values.web.vpa.enabled -}}
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{ template "posthog.fullname" . }}-web-vpa
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+spec:
+  targetRef:
+    kind: Deployment
+    apiVersion: apps/v1
+    name: {{ template "posthog.fullname" . }}-web
+  updatePolicy:
+    updateMode: "Off"
+{{- end }}

@@ -96,6 +96,10 @@ web:
     # for configuration options
     behavior:
 
+  vpa:
+    # -- Whether to create a VerticalPodAutoscaler for the web stack. Note that this will be ran with updateMode off
+    enabled: false
+
   # -- Resource limits for web service.
   resources:
     {}
