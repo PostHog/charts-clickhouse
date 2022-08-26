@@ -50,6 +50,15 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+      - name: mark environment as deactivated
+        uses: bobheadxi/deployments@v1
+        with:
+          step: deactivate-env
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: ${{ steps.vars.outputs.branch_name }}
+          desc: Environment was pruned
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+
       # Only ran if the correct comment is used! We should have automatic cleanup on merge, but this allows us to manually
       # cleanup. For instance, you may restore a branch, deploy it, and keep it around for demo purposes.
       - name: Delete preview namespace
@@ -58,6 +67,7 @@ jobs:
           doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID 
 
           kubectl patch chi posthog -n pr-${{ steps.vars.outputs.pr_number }} -p '{"metadata":{"finalizers":null}}' --type=merge || true # if the resource cannot be found, we still want to clean up
+          kubectl delete chi posthog -n pr-${{ steps.vars.outputs.pr_number }} --ignore-not-found
           helm uninstall -n pr-${{ steps.vars.outputs.pr_number }} posthog
           
           # delete all instances of all resources, in the specified namespace
@@ -68,11 +78,3 @@ jobs:
         if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
         env:
           PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
-
-      - name: mark environment as deactivated
-        uses: bobheadxi/deployments@v1
-        with:
-          step: deactivate-env
-          token: ${{ secrets.GITHUB_TOKEN }}
-          env: ${{ steps.vars.outputs.branch_name }}
-          desc: Environment was pruned
