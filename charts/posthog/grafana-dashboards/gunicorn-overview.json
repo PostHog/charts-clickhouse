@@ -18,14 +18,24 @@
                     "type": "dashboard"
                 },
                 "type": "dashboard"
+            },
+            {
+                "datasource": {
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
+                },
+                "enable": true,
+                "expr": "{namespace=\"posthog\", container=~\"grafana-annotation-job-.*\"}",
+                "iconColor": "dark-blue",
+                "name": "Deploy / Rollback",
+                "target": {}
             }
         ]
     },
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 102,
-    "iteration": 1661501436520,
+    "iteration": 1661510524085,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -470,6 +480,6 @@
     "timezone": "utc",
     "title": "Gunicorn overview",
     "uid": "gunicorn",
-    "version": 21,
+    "version": 1,
     "weekStart": ""
 }
