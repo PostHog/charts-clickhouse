@@ -43,3 +43,9 @@ ingress-nginx:
     service:
       annotations:
         service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+
+# Reduce ingestion buffer conversion window in CI
+plugins:
+  env:
+    - name: BUFFER_CONVERSION_SECONDS
+      value: "1"

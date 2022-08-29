@@ -52,3 +52,9 @@ ingress-nginx:
       annotations:
         service.beta.kubernetes.io/do-loadbalancer-hostname: <your-hostname>
         service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
+
+# Reduce ingestion buffer conversion window in CI
+plugins:
+  env:
+    - name: BUFFER_CONVERSION_SECONDS
+      value: "1"
