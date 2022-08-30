@@ -29,12 +29,23 @@
                 "iconColor": "dark-blue",
                 "name": "Deploy / Rollback",
                 "target": {}
+            },
+            {
+                "datasource": {
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
+                },
+                "enable": true,
+                "expr": "{container=\"posthog-web\"} |= `CRITICAL`",
+                "iconColor": "red",
+                "name": "Worker killed",
+                "target": {}
             }
         ]
     },
     "editable": true,
     "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
+    "graphTooltip": 1,
     "iteration": 1661510524085,
     "links": [],
     "liveNow": false,
@@ -95,12 +106,12 @@
                 "overrides": []
             },
             "gridPos": {
-                "h": 8,
+                "h": 6,
                 "w": 12,
                 "x": 0,
                 "y": 0
             },
-            "id": 4,
+            "id": 10,
             "options": {
                 "legend": {
                     "calcs": [],
@@ -119,37 +130,13 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "code",
-                    "expr": "max(gunicorn_pending_connections{namespace=\"$namespace\", pod=~\"$pod\"})",
-                    "legendFormat": "max(pending_connections)",
+                    "expr": "sum(rate(nginx_ingress_controller_requests{status=~\"50[24]\"}[2m])) by (status)",
+                    "legendFormat": "{{status}}",
                     "range": true,
                     "refId": "A"
-                },
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
-                    },
-                    "editorMode": "code",
-                    "expr": "min(gunicorn_max_worker_connections{namespace=\"$namespace\", pod=~\"$pod\"})",
-                    "hide": false,
-                    "legendFormat": "max connections per worker",
-                    "range": true,
-                    "refId": "B"
-                },
-                {
-                    "datasource": {
-                        "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
-                    },
-                    "editorMode": "code",
-                    "expr": "max(gunicorn_active_worker_connections{namespace=\"$namespace\", pod=~\"$pod\"})",
-                    "hide": false,
-                    "legendFormat": "max(active_connections)",
-                    "range": true,
-                    "refId": "C"
                 }
             ],
-            "title": "Connections",
+            "title": "NGINX HTTP 502/504",
             "type": "timeseries"
         },
         {
@@ -208,7 +195,7 @@
                 "overrides": []
             },
             "gridPos": {
-                "h": 8,
+                "h": 6,
                 "w": 12,
                 "x": 12,
                 "y": 0
@@ -235,12 +222,24 @@
                     "exemplar": true,
                     "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$pod\"}[1m]))",
                     "interval": "",
-                    "legendFormat": "sum",
+                    "legendFormat": "Usage",
                     "range": true,
                     "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "code",
+                    "expr": "100\n* sum by(pod) (increase(container_cpu_cfs_throttled_periods_total{namespace=\"$namespace\", pod=~\"$pod\",container!~\"POD|\"}[1m]))\n/ sum by(pod) (increase(container_cpu_cfs_periods_total{namespace=\"$namespace\", pod=~\"$pod\",container!~\"POD|\"}[1m]))",
+                    "hide": false,
+                    "legendFormat": "Throttled",
+                    "range": true,
+                    "refId": "B"
                 }
             ],
-            "title": "CPU usage",
+            "title": "CPU",
             "type": "timeseries"
         },
         {
@@ -299,10 +298,159 @@
                 "overrides": []
             },
             "gridPos": {
-                "h": 8,
+                "h": 6,
                 "w": 12,
                 "x": 0,
-                "y": 8
+                "y": 6
+            },
+            "id": 4,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom"
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "code",
+                    "expr": "max(gunicorn_pending_connections{namespace=\"$namespace\", pod=~\"$pod\"})",
+                    "legendFormat": "max(pending_connections)",
+                    "range": true,
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "code",
+                    "expr": "min(gunicorn_max_worker_connections{namespace=\"$namespace\", pod=~\"$pod\"})",
+                    "hide": false,
+                    "legendFormat": "max connections per worker",
+                    "range": true,
+                    "refId": "B"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "PBFA97CFB590B2093"
+                    },
+                    "editorMode": "code",
+                    "expr": "max(gunicorn_active_worker_connections{namespace=\"$namespace\", pod=~\"$pod\"})",
+                    "hide": false,
+                    "legendFormat": "max(active_connections)",
+                    "range": true,
+                    "refId": "C"
+                }
+            ],
+            "title": "Connections",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "loki",
+                "uid": "P8E80F9AEF21F6940"
+            },
+            "gridPos": {
+                "h": 12,
+                "w": 12,
+                "x": 12,
+                "y": 6
+            },
+            "id": 8,
+            "options": {
+                "dedupStrategy": "none",
+                "enableLogDetails": true,
+                "prettifyLogMessage": false,
+                "showCommonLabels": false,
+                "showLabels": false,
+                "showTime": false,
+                "sortOrder": "Descending",
+                "wrapLogMessage": false
+            },
+            "pluginVersion": "9.0.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "loki",
+                        "uid": "P8E80F9AEF21F6940"
+                    },
+                    "expr": "{namespace=\"$namespace\", pod=~\"$pod\"}",
+                    "queryType": "range",
+                    "refId": "A"
+                }
+            ],
+            "title": "Pod logs",
+            "type": "logs"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 12,
+                "x": 0,
+                "y": 12
             },
             "id": 2,
             "options": {
@@ -344,45 +492,9 @@
             ],
             "title": "Pending requests by worker",
             "type": "timeseries"
-        },
-        {
-            "datasource": {
-                "type": "loki",
-                "uid": "P8E80F9AEF21F6940"
-            },
-            "gridPos": {
-                "h": 8,
-                "w": 12,
-                "x": 12,
-                "y": 8
-            },
-            "id": 8,
-            "options": {
-                "dedupStrategy": "none",
-                "enableLogDetails": true,
-                "prettifyLogMessage": false,
-                "showCommonLabels": false,
-                "showLabels": false,
-                "showTime": false,
-                "sortOrder": "Descending",
-                "wrapLogMessage": false
-            },
-            "pluginVersion": "9.0.2",
-            "targets": [
-                {
-                    "datasource": {
-                        "type": "loki",
-                        "uid": "P8E80F9AEF21F6940"
-                    },
-                    "expr": "{namespace=\"$namespace\", pod=~\"$pod\"}",
-                    "queryType": "range",
-                    "refId": "A"
-                }
-            ],
-            "title": "Pod logs",
-            "type": "logs"
         }
     ],
+    "refresh": false,
     "schemaVersion": 36,
     "style": "dark",
     "tags": [
@@ -419,8 +531,8 @@
             {
                 "current": {
                     "selected": false,
-                    "text": "posthog-events",
-                    "value": "posthog-events"
+                    "text": "posthog-web",
+                    "value": "posthog-web"
                 },
                 "datasource": {
                     "type": "prometheus",
