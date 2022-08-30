@@ -1085,7 +1085,11 @@ cloudwatch:
 
 # Provide affinity for hooks if needed
 hooks:
-  # -- Affinity settings for hooks
+  # -- Node labels for hooks.
+  nodeSelector: {}
+  # -- Toleration labels for hooks.
+  tolerations: []
+  # -- Affinity settings for hooks.
   affinity: {}
   migrate:
     # -- Env variables for migate hooks

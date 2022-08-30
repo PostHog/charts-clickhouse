@@ -329,6 +329,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | cloudwatch.region | string | `nil` | AWS region |
 | cloudwatch.clusterName | string | `nil` | AWS EKS cluster name |
 | cloudwatch.fluentBit | object | `{"port":2020,"readHead":"On","readTail":"Off","server":"On"}` | fluentBit configuration |
+| hooks.nodeSelector | object | `{}` | Node labels for hooks |
+| hooks.tolerations | list | `[]` | Toleration labels for hooks |
 | hooks.affinity | object | `{}` | Affinity settings for hooks |
 | hooks.migrate.env | list | `[]` | Env variables for migate hooks |
 | hooks.migrate.resources | object | `{}` | Hook job resource limits/requests |
