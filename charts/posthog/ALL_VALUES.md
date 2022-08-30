@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.6.0](https://img.shields.io/badge/Version-26.6.0-informational?style=flat-square) ![AppVersion: 1.39.0](https://img.shields.io/badge/AppVersion-1.39.0-informational?style=flat-square)
+![Version: 26.6.1](https://img.shields.io/badge/Version-26.6.1-informational?style=flat-square) ![AppVersion: 1.39.0](https://img.shields.io/badge/AppVersion-1.39.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -329,9 +329,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | cloudwatch.region | string | `nil` | AWS region |
 | cloudwatch.clusterName | string | `nil` | AWS EKS cluster name |
 | cloudwatch.fluentBit | object | `{"port":2020,"readHead":"On","readTail":"Off","server":"On"}` | fluentBit configuration |
-| hooks.nodeSelector | object | `{}` | Node labels for hooks |
-| hooks.tolerations | list | `[]` | Toleration labels for hooks |
-| hooks.affinity | object | `{}` | Affinity settings for hooks |
+| hooks.nodeSelector | object | `{}` | Node labels for hooks. |
+| hooks.tolerations | list | `[]` | Toleration labels for hooks. |
+| hooks.affinity | object | `{}` | Affinity settings for hooks. |
 | hooks.migrate.env | list | `[]` | Env variables for migate hooks |
 | hooks.migrate.resources | object | `{}` | Hook job resource limits/requests |
 | serviceAccount.create | bool | `true` | Configures if a ServiceAccount with this name should be created |
