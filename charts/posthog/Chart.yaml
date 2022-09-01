@@ -15,7 +15,7 @@ version: 26.6.2
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: 1.39.0
+appVersion: 1.39.1
 
 dependencies:
   - name: cert-manager
