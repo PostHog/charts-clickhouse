@@ -151,14 +151,20 @@ Return whether Redis uses password authentication or not
 {{- end -}}
 
 {{/*
-Set site url
+Set site url. Either use siteUrl if set, or if ingress is enabled, use the
+ingress hostname.
+
+To enable ingress to the app with any Host header being set, e.g. as when a
+reverse proxy is in front of the app listening on a different DNS name.
 */}}
 {{- define "posthog.site.url" -}}
-{{- if .Values.ingress.hostname -}}
-    "https://{{ .Values.ingress.hostname }}"
-{{- else -}}
-    "http://127.0.0.1:8000"
-{{- end -}}
+    {{- if .Values.siteUrl -}}
+        {{- .Values.siteUrl -}}
+    {{- else if (and .Values.ingress.hostname .Values.ingress.enabled) -}}
+        "https://{{ .Values.ingress.hostname }}"
+    {{- else -}}
+        "http://127.0.0.1:8000"
+    {{- end -}}
 {{- end -}}
 
 {{/*
