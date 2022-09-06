@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.6.2](https://img.shields.io/badge/Version-26.6.2-informational?style=flat-square) ![AppVersion: 1.39.1](https://img.shields.io/badge/AppVersion-1.39.1-informational?style=flat-square)
+![Version: 26.7.0](https://img.shields.io/badge/Version-26.7.0-informational?style=flat-square) ![AppVersion: 1.39.1](https://img.shields.io/badge/AppVersion-1.39.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -12,6 +12,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 |-----|------|---------|-------------|
 | cloud | string | `nil` | Cloud service being deployed on (example: `aws`, `azure`, `do`, `gcp`, `other`). |
 | notificationEmail | string | `nil` | Notification email for notifications to be sent to from the PostHog stack |
+| siteUrl | string | `nil` |  |
 | image.repository | string | `"posthog/posthog"` | PostHog image repository to use. |
 | image.sha | string | `nil` | PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`). |
 | image.tag | string | `nil` | PostHog image tag to use (example: `release-1.35.0`). |
