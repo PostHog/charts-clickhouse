@@ -162,3 +162,12 @@ tests:
             meta.helm.sh/release-namespace: NAMESPACE
             key1: value1
             key2: value2
+
+  - it: can set hostname to empty to capture all traffic
+    set:
+      ingress:
+        enabled: true
+        hostname: ''
+    asserts:
+      - isNull:
+          path: spec.rules[0].host

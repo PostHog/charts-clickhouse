@@ -4,6 +4,10 @@ cloud:
 # -- Notification email for notifications to be sent to from the PostHog stack
 notificationEmail:
 
+# -- Site url specifies the canonical URL root the site can be accessed using.
+# This is used to e.g. generate sharable links to Dashboards.
+siteUrl:
+
 image:
   # -- PostHog image repository to use.
   repository: posthog/posthog
