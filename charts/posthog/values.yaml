@@ -5,7 +5,7 @@ cloud:
 notificationEmail:
 
 # -- Site url specifies the canonical URL root the site can be accessed using.
-# This is used to e.g. generate sharable links to Dashboards.
+# This is used to e.g. generate shareable links to Dashboards.
 siteUrl:
 
 image:
