@@ -59,28 +59,6 @@ tests:
             name: SITE_URL
             value: "https://somehost"
 
-  # NOTE: I couldn't figure a way to assert here, but I'll leave the test
-  # commented for context
-  #
-  # - it: if ingress enabled but no hostname or siteUrl given, raise error
-  #   templates:
-  #     - templates/web-deployment.yaml
-  #     - templates/worker-deployment.yaml
-  #     - templates/events-deployment.yaml
-  #     - templates/plugins-deployment.yaml
-  #     - templates/plugins-async-deployment.yaml
-  #     - templates/migrate.job.yaml
-  #   set:
-  #     cloud: local
-  #     siteUrl:
-  #     pluginsAsync:
-  #       enabled: true
-  #     ingress:
-  #       enabled: true
-  #       hostname:
-
-  #   asserts:
-
   - it: SITE_URL defaults to http://127.0.0.1:8000 if ingress disabled and no siteUrl
     templates:
       - templates/web-deployment.yaml

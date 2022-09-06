@@ -160,10 +160,7 @@ reverse proxy is in front of the app listening on a different DNS name.
 {{- define "posthog.site.url" -}}
     {{- if .Values.siteUrl -}}
         {{- .Values.siteUrl -}}
-    {{- else if .Values.ingress.enabled -}}
-        {{- if not .Values.ingress.hostname -}}
-            {{- required "When ingress is enabled you must either set ingress.hostname or siteUrl" .Values.ingress.hostname -}}
-        {{- end -}}
+    {{- else if (and .Values.ingress.hostname .Values.ingress.enabled) -}}
         "https://{{ .Values.ingress.hostname }}"
     {{- else -}}
         "http://127.0.0.1:8000"
