@@ -24,6 +24,10 @@ jobs:
         # specified below, these parameters have no meaning on their own and
         # gain meaning on how job steps use them.
         include:
+          - k3s-channel: testing # as there isn't yet an officiak k3s channel for
+                                 # v1.25 (see https://update.k3s.io/v1-release/channels)
+            test: install
+            values: ci/values/k3s.yaml
           - k3s-channel: v1.24
             test: install
             values: ci/values/k3s.yaml
