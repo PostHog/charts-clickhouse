@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 26.8.0](https://img.shields.io/badge/Version-26.8.0-informational?style=flat-square) ![AppVersion: 1.39.1](https://img.shields.io/badge/AppVersion-1.39.1-informational?style=flat-square)
+![Version: 26.9.0](https://img.shields.io/badge/Version-26.9.0-informational?style=flat-square) ![AppVersion: 1.39.1](https://img.shields.io/badge/AppVersion-1.39.1-informational?style=flat-square)
 
 ## Configuration
 
@@ -357,8 +357,6 @@ The following table lists the configurable parameters of the PostHog chart and t
 | grafana.sidecar | object | `{"dashboards":{"enabled":true,"folderAnnotation":"grafana_folder","label":"grafana_dashboard","provider":{"foldersFromFilesStructure":true}}}` | Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info. |
 | grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki:3100"},{"access":"proxy","isDefault":false,"jsonData":{"implementation":"prometheus"},"name":"Alertmanager","type":"alertmanager","url":"http://posthog-prometheus-alertmanager"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
 | loki.enabled | bool | `false` | Whether to install Loki or not. |
-| loki.commonConfig.replication_factor | int | `1` |  |
-| loki.storage.type | string | `"filesystem"` |  |
 | eventrouter.enabled | bool | `false` | Whether to install eventrouter. |
 | eventrouter.image.repository | string | `"gcr.io/heptio-images/eventrouter"` |  |
 | eventrouter.image.tag | string | `"v0.3"` |  |
