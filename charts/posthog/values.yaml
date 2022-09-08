@@ -1221,6 +1221,12 @@ grafana:
 loki:
   # -- Whether to install Loki or not.
   enabled: false
+  # Below is the config recommended for the 3.x chart if migrating from the old
+  # grafana/loki chart. See https://github.com/grafana/loki/tree/main/production/helm/loki
+  commonConfig:
+    replication_factor: 1
+  storage:
+    type: 'filesystem'
 
 ###
 ###
