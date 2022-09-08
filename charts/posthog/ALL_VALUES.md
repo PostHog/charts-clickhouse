@@ -261,6 +261,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | zookeeper.metrics.service.annotations."prometheus.io/scrape" | string | `"false"` |  |
 | zookeeper.podAnnotations | string | `nil` |  |
 | clickhouse.enabled | bool | `true` | Whether to install clickhouse. If false, `clickhouse.host` must be set |
+| clickhouse.installCRDs | bool | `true` | Whether to install `clickhouse` CRDs. |
 | clickhouse.namespace | string | `nil` | Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to) |
 | clickhouse.cluster | string | `"posthog"` | Clickhouse cluster |
 | clickhouse.database | string | `"posthog"` | Clickhouse database |
