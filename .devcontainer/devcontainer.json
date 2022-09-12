@@ -1,17 +1,29 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/ubuntu
 {
-	"name": "Ubuntu with kind",
-	"image": "mcr.microsoft.com/vscode/devcontainers/universal:latest",
+	"name": "Ubuntu with k3s",
+	"runArgs": ["--init", "--privileged"],
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "ubuntu-22.04"
+		}
+	},
+	"features": {
+		"docker-in-docker": "latest",
+		"python": "os-provided"
+	},
+	"remoteUser": "vscode",
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-kubernetes-tools.vscode-kubernetes-tools"
+		"ms-kubernetes-tools.vscode-kubernetes-tools",
+		"ms-azuretools.vscode-docker"
 	],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "bash .devcontainer/setup_container.sh"
+	"postCreateCommand": "bash .devcontainer/setup_container.sh",
 }
