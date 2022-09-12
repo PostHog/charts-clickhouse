@@ -1228,7 +1228,13 @@ loki:
   storage:
     type: 'filesystem'
   monitoring:
+    alerts:
+      enabled: false
+    rules:
+      enabled: false
     selfMonitoring:
+      enabled: false
+    serviceMonitor:
       enabled: false
 
 ###
