@@ -473,7 +473,7 @@ spec:
                       type: object
                       description: |
                         allows configure <yandex><zookeeper>..</zookeeper></yandex> section in each `Pod` during generate `ConfigMap` which will mounted in `/etc/clickhouse-server/config.d/`
-                        `clickhouse-operator` itself doesn't manage Zookeeper, please install Zookeeper separatelly look examples on https://github.com/Altinity/clickhouse-operator/tree/master/deploy/zookeeper/
+                        `clickhouse-operator` itself doesn't manage Zookeeper, please install Zookeeper separately look examples on https://github.com/Altinity/clickhouse-operator/tree/master/deploy/zookeeper/
                         currently, zookeeper (or clickhouse-keeper replacement) used for *ReplicatedMergeTree table engines and for `distributed_ddl`
                         More details: https://clickhouse.tech/docs/en/operations/server-configuration-parameters/settings/#server-settings_zookeeper
                       # nullable: true
@@ -663,7 +663,7 @@ spec:
                             type: object
                             description: |
                               describe current cluster layout, how much shards in cluster, how much replica in shard
-                              allows override settings on each shard and replica separatelly
+                              allows override settings on each shard and replica separately
                             # nullable: true
                             properties:
                               type:
@@ -1110,7 +1110,7 @@ spec:
                                 x-kubernetes-preserve-unknown-fields: true
                               templates:
                                 type: object
-                                description: "be carefull, this part of CRD allows override template inside template, don't use it if you don't understand what you do"
+                                description: "be careful, this part of CRD allows override template inside template, don't use it if you don't understand what you do"
                                 # nullable: true
                                 properties:
                                   hostTemplate:
@@ -1171,7 +1171,7 @@ spec:
                               - "OnePerHost"
                           podDistribution:
                             type: array
-                            description: "define ClickHouse Pod distibution policy between Kubernetes Nodes inside Shard, Replica, Namespace, CHI, another ClickHouse cluster"
+                            description: "define ClickHouse Pod distribution policy between Kubernetes Nodes inside Shard, Replica, Namespace, CHI, another ClickHouse cluster"
                             # nullable: true
                             items:
                               type: object
@@ -1299,7 +1299,7 @@ spec:
                             type: object
                             description: |
                               allows pass standard object's metadata from template to Service
-                              Could be use for define specificly for Cloud Provider metadata which impact to behavior of service
+                              Could be use for define specifically for Cloud Provider metadata which impact to behavior of service
                               More info: https://kubernetes.io/docs/concepts/services-networking/service/
                             # nullable: true
                             x-kubernetes-preserve-unknown-fields: true
