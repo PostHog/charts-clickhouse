@@ -1,4 +1,4 @@
-name: Bump chart version & release
+name: Bump chart version
 
 on:
   pull_request:
@@ -73,19 +73,3 @@ jobs:
         with:
             branch: ${{ github.event.pull_request.base.ref }}
             message: 'Bump version to ${{ steps.new-version.outputs.new-version }}'
-
-      - name: Add helm repositories
-        run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo add bitnami-pre-2022 https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
-          helm repo add kubernetes https://kubernetes.github.io/ingress-nginx
-          helm repo add jetstack https://charts.jetstack.io
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm repo add grafana https://grafana.github.io/helm-charts
-
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.4.0
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        with:
-          charts_repo_url: 'https://posthog.github.io/charts-clickhouse/'
