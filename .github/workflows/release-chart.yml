@@ -20,7 +20,9 @@ jobs:
       - name: Add -<sha> to version in charts/posthog/Chart.yaml and update Chart.lock
         if: github.ref != 'refs/heads/main'
         run: |
-          sed -i 's/^version: \(.*\)$/version: \1-${{ github.sha }}/g' charts/posthog/Chart.yaml
+          sed -i 's/^version: \(.*\)$/version: \1-${{ github.sha }}/g'
+          charts/posthog/Chart.yaml
+          cat charts/posthog/Chart.yaml
           helm dependency update charts/posthog/
 
       - name: Add helm repositories
