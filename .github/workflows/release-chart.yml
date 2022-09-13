@@ -1,0 +1,51 @@
+name: Release Chart
+
+on:
+  pull_request:
+  push:
+    branches: 
+      - master
+
+jobs:
+  release:
+    name: Release chart to repo
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.8.1
+
+      - name: Add -<sha> to version in charts/posthog/Chart.yaml and update Chart.lock
+        if: github.ref != 'refs/heads/main'
+        run: |
+          sed -i 's/^version: \(.*\)$/version: \1-${{ github.sha }}/g' charts/posthog/Chart.yaml
+          helm dependency update charts/posthog/
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Add helm repositories
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add bitnami-pre-2022 https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
+          helm repo add kubernetes https://kubernetes.github.io/ingress-nginx
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.4.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_SKIP_EXISTING: 'true'
+        with:
+          charts_repo_url: 'https://posthog.github.io/charts-clickhouse/'
