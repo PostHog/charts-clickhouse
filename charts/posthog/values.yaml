@@ -1242,7 +1242,7 @@ loki:
     rules:
       enabled: false
     selfMonitoring:
-      enabled: false
+      enabled: false # requires additional CRDs
       grafanaAgent:
         installOperator: false
     serviceMonitor:
