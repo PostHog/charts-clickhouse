@@ -1226,7 +1226,14 @@ loki:
   commonConfig:
     replication_factor: 1
   storage:
-    type: 'filesystem'
+    type: filesystem
+
+  # Whether to enabled monitoring of Loki. We avoid enabling this by default as
+  # it requires installing e.g. the grafana-operator. CRDs are not installed on
+  # upgrade, so to smooth the transition to Helm Chart version 3.x we disable
+  # this, although using the operator might offer a good option to allow
+  # decoupling of e.g. service and rule definitions from the Grafana and co
+  # workloads.
   monitoring:
     alerts:
       enabled: false
@@ -1234,6 +1241,8 @@ loki:
       enabled: false
     selfMonitoring:
       enabled: false
+      grafanaAgent:
+        installOperator: false
     serviceMonitor:
       enabled: false
 
