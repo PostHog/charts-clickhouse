@@ -1230,6 +1230,16 @@ loki:
     storage:
       type: filesystem
 
+    # For backwards compatibility with Loki Chart 2.x we disable auth.
+    auth_enabled: false
+
+  # We add this override as otherwise the resource naming doesn't include
+  # "posthog-" prepended. The upgrade from Loki Chart 2.x to 3.x resulted in the
+  # naming of e.g. services to change. By adding we maintain backwards compat.
+  # for anything that may be referencing e.g. services.
+  fullnameOverride: posthog-loki
+  nameOverride: posthog-loki
+
   # Whether to enabled monitoring of Loki. We avoid enabling this by default as
   # it requires installing e.g. the grafana-operator. CRDs are not installed on
   # upgrade, so to smooth the transition to Helm Chart version 3.x we disable
