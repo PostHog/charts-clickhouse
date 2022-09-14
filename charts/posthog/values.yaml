@@ -1230,7 +1230,10 @@ loki:
     storage:
       type: filesystem
 
-    # For backwards compatibility with Loki Chart 2.x we disable auth.
+    # For backwards compatibility with Loki Chart 2.x we disable multi-tenancy.
+    # See
+    # https://github.com/grafana/loki/blob/167c95c3207c115284dd646179e53d66f7a84a66/docs/sources/operations/multi-tenancy.md
+    # for details.
     auth_enabled: false
 
   # We add this override as otherwise the resource naming doesn't include
