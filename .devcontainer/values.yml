@@ -49,6 +49,25 @@ prometheus:
 loki:
   enabled: true
 
+  minio:
+    enabled: true
+    rootUser: 'abc'
+    rootPassword: '12345678'
+    replicas: 1
+    drivesPerNode: 2
+    persistence:
+      size: 1Gi
+
+    consoleService:
+      type: NodePort
+      nodePort: 30005
+
+  read:
+    replicas: 1
+
+  write:
+    replicas: 1
+
 eventrouter:
   enabled: true
 
