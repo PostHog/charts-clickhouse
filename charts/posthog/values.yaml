@@ -1200,7 +1200,7 @@ grafana:
       # Comment the snippet below if you are running with `loki.enabled: false`
       - name: Loki
         type: loki
-        url: http://posthog-loki:3100
+        url: http://posthog-loki-read:3100
         access: proxy
         isDefault: false
 
@@ -1221,20 +1221,21 @@ grafana:
 loki:
   # -- Whether to install Loki or not.
   enabled: false
-  # Below is the config recommended for the 3.x chart if migrating from the old
-  # grafana/loki chart. See
-  # https://github.com/grafana/loki/tree/main/production/helm/loki
   loki:
-    commonConfig:
-      replication_factor: 1
-    storage:
-      type: filesystem
-
     # For backwards compatibility with Loki Chart 2.x we disable multi-tenancy.
     # See
     # https://github.com/grafana/loki/blob/167c95c3207c115284dd646179e53d66f7a84a66/docs/sources/operations/multi-tenancy.md
     # for details.
     auth_enabled: false
+
+  gateway:
+    enabled: false
+
+  minio:
+    # -- Whether to enable minio as backing storage for Loki. To use S3 or GCS
+    # instead, set this to false and specify the appropriate `loki.storage`
+    # configuration.
+    enabled: true
 
   # We add this override as otherwise the resource naming doesn't include
   # "posthog-" prepended. The upgrade from Loki Chart 2.x to 3.x resulted in the
@@ -1288,7 +1289,7 @@ promtail:
   # -- Whether to install Promtail or not.
   enabled: false
   config:
-    lokiAddress: http://posthog-loki:3100/loki/api/v1/push
+    lokiAddress: http://posthog-loki-write:3100/loki/api/v1/push
 
     snippets:
       pipelineStages:

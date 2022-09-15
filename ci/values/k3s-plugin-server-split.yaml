@@ -36,17 +36,3 @@ plugins:
 # Enable pluginsAsync for this test
 pluginsAsync:
   enabled: true
-
-# Enable monitoring deployments. We are using these in our own deployments so
-# it's worth having these tested before they hit our clusters.
-loki:
-  enabled: true
-
-promtail:
-  enabled: true
-
-grafana:
-  enabled: true
-
-eventrouter:
-  enabled: true
