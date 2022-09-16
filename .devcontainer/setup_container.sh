@@ -4,22 +4,6 @@ set -e -o pipefail
 
 # Install k3s
 curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=v1.22 INSTALL_K3S_SKIP_ENABLE=true INSTALL_K3S_SKIP_ENABLE=true sh -
-sudo apt-get update
-sudo apt-get install -y supervisor
-
-cd .devcontainer
-sudo supervisord -c supervisord.conf
-cd ..
-
-mkdir ~/.kube
-
-until (sudo k3s kubectl version); do
-    echo "Waiting for k3s to start..."
-    ((c++)) && ((c==10)) && break
-    sleep 1
-done
-
-sudo k3s kubectl config view --raw > ~/.kube/config
 
 # Install k9s for easy debugging https://k9scli.io/
 curl -sS https://webinstall.dev/k9s | bash
