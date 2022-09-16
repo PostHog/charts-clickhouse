@@ -355,15 +355,31 @@ The following table lists the configurable parameters of the PostHog chart and t
 | externalObjectStorage.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the `access_key_id` and `secret_access_key`. The secret has to contain the keys `root-user` and `root-password`). |
 | grafana.enabled | bool | `false` | Whether to install Grafana or not. |
 | grafana.sidecar | object | `{"dashboards":{"enabled":true,"folderAnnotation":"grafana_folder","label":"grafana_dashboard","provider":{"foldersFromFilesStructure":true}}}` | Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info. |
-| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki:3100"},{"access":"proxy","isDefault":false,"jsonData":{"implementation":"prometheus"},"name":"Alertmanager","type":"alertmanager","url":"http://posthog-prometheus-alertmanager"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
-| loki.enabled | bool | `false` | Whether to install Loki or not. |
+| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki-read:3100"},{"access":"proxy","isDefault":false,"jsonData":{"implementation":"prometheus"},"name":"Alertmanager","type":"alertmanager","url":"http://posthog-prometheus-alertmanager"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
+| loki.enabled | bool | `false` | Whether to install Loki or not. With the default configuration you will get no replication, so as to easily support small deploys that e.g. do not have multiple nodes in the cluster. For production setups that are distributed across e.g. multiple AWS AZs it's recommended that you increase the replica counts for `read:` and `write:`. These stateful sets by default have an anti-affinity so you'll need at least as many nodes as replicas in a set. |
+| loki.loki.auth_enabled | bool | `false` |  |
+| loki.loki.commonConfig.replication_factor | int | `1` |  |
+| loki.read.replicas | int | `1` |  |
+| loki.write.replicas | int | `1` |  |
+| loki.gateway.enabled | bool | `false` |  |
+| loki.minio.enabled | bool | `true` | Whether to enable minio as backing storage for Loki. To use S3 or GCS instead, set this to false and specify the appropriate `loki.storage` configuration. Note if you do use minio in production, the default setup is minimal and will only run with 1 replica. In production setups it's recommended change minio settings to your needs. |
+| loki.minio.replicas | int | `1` |  |
+| loki.minio.drivesPerNode | int | `2` |  |
+| loki.fullnameOverride | string | `"posthog-loki"` |  |
+| loki.nameOverride | string | `"posthog-loki"` |  |
+| loki.monitoring.alerts.enabled | bool | `false` |  |
+| loki.monitoring.dashboards.enabled | bool | `false` |  |
+| loki.monitoring.rules.enabled | bool | `false` |  |
+| loki.monitoring.selfMonitoring.enabled | bool | `false` |  |
+| loki.monitoring.selfMonitoring.grafanaAgent.installOperator | bool | `false` |  |
+| loki.monitoring.serviceMonitor.enabled | bool | `false` |  |
 | eventrouter.enabled | bool | `false` | Whether to install eventrouter. |
 | eventrouter.image.repository | string | `"gcr.io/heptio-images/eventrouter"` |  |
 | eventrouter.image.tag | string | `"v0.3"` |  |
 | eventrouter.image.pullPolicy | string | `"IfNotPresent"` |  |
 | eventrouter.resources | object | `{}` | Resource limits for eventrouter. |
 | promtail.enabled | bool | `false` | Whether to install Promtail or not. |
-| promtail.config.lokiAddress | string | `"http://posthog-loki:3100/loki/api/v1/push"` |  |
+| promtail.config.lokiAddress | string | `"http://posthog-loki-write:3100/loki/api/v1/push"` |  |
 | promtail.config.snippets.pipelineStages[0].cri | object | `{}` |  |
 | promtail.config.snippets.pipelineStages[1].match.selector | string | `"{app=\"ingress-nginx\"}"` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.timestamp | string | `"time"` |  |
