@@ -26,4 +26,14 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "bash .devcontainer/setup_container.sh",
+	"postStartCommand": "bash .devcontainer/start_container.sh",
+	
+	"forwardPorts": [
+		"30000:30000",
+		"30001:30001",
+		"30002:30002",
+		"30003:30003",
+		"30004:30004",
+		"30005:30005"
+	]
 }
