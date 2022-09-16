@@ -49,6 +49,16 @@ prometheus:
 loki:
   enabled: true
 
+  minio:
+    enabled: true
+
+    persistence:
+      size: 1Gi
+
+    consoleService:
+      type: NodePort
+      nodePort: 30005
+
 eventrouter:
   enabled: true
 

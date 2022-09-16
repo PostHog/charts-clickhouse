@@ -60,7 +60,7 @@ dependencies:
     condition: grafana.enabled
 
   - name: loki
-    version: 2.10.2
+    version: 3.0.6
     repository: https://grafana.github.io/helm-charts
     condition: loki.enabled
 

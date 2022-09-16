@@ -1200,7 +1200,7 @@ grafana:
       # Comment the snippet below if you are running with `loki.enabled: false`
       - name: Loki
         type: loki
-        url: http://posthog-loki:3100
+        url: http://posthog-loki-read:3100
         access: proxy
         isDefault: false
 
@@ -1219,8 +1219,71 @@ grafana:
 ###
 ###
 loki:
-  # -- Whether to install Loki or not.
+  # -- Whether to install Loki or not. With the default configuration you will
+  # get no replication, so as to easily support small deploys that e.g. do not
+  # have multiple nodes in the cluster. For production setups that are
+  # distributed across e.g. multiple AWS AZs it's recommended that you increase
+  # the replica counts for `read:` and `write:`. These stateful sets by default
+  # have an anti-affinity so you'll need at least as many nodes as replicas in a
+  # set.
   enabled: false
+  loki:
+    # For backwards compatibility with Loki Chart 2.x we disable multi-tenancy.
+    # See
+    # https://github.com/grafana/loki/blob/167c95c3207c115284dd646179e53d66f7a84a66/docs/sources/operations/multi-tenancy.md
+    # for details.
+    auth_enabled: false
+
+    commonConfig:
+      replication_factor: 1
+
+  read:
+    replicas: 1
+
+  write:
+    replicas: 1
+
+  gateway:
+    enabled: false
+
+  minio:
+    # -- Whether to enable minio as backing storage for Loki. To use S3 or GCS
+    # instead, set this to false and specify the appropriate `loki.storage`
+    # configuration.
+    #
+    # Note if you do use minio in production, the default setup is minimal and
+    # will only run with 1 replica. In production setups it's recommended change
+    # minio settings to your needs.
+    enabled: true
+    replicas: 1
+    drivesPerNode: 2
+
+  # We add this override as otherwise the resource naming doesn't include
+  # "posthog-" prepended. The upgrade from Loki Chart 2.x to 3.x resulted in the
+  # naming of e.g. services to change. By adding we maintain backwards compat.
+  # for anything that may be referencing e.g. services.
+  fullnameOverride: posthog-loki
+  nameOverride: posthog-loki
+
+  # Whether to enabled monitoring of Loki. We avoid enabling this by default as
+  # it requires installing e.g. the grafana-operator. CRDs are not installed on
+  # upgrade, so to smooth the transition to Helm Chart version 3.x we disable
+  # this, although using the operator might offer a good option to allow
+  # decoupling of e.g. service and rule definitions from the Grafana and co
+  # workloads.
+  monitoring:
+    alerts:
+      enabled: false
+    dashboards:
+      enabled: false
+    rules:
+      enabled: false
+    selfMonitoring:
+      enabled: false # requires additional CRDs
+      grafanaAgent:
+        installOperator: false
+    serviceMonitor:
+      enabled: false
 
 ###
 ###
@@ -1247,7 +1310,7 @@ promtail:
   # -- Whether to install Promtail or not.
   enabled: false
   config:
-    lokiAddress: http://posthog-loki:3100/loki/api/v1/push
+    lokiAddress: http://posthog-loki-write:3100/loki/api/v1/push
 
     snippets:
       pipelineStages:
