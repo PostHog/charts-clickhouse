@@ -64,6 +64,9 @@ spec:
         metadata:
           annotations: {{ toYaml .Values.clickhouse.podAnnotations | nindent 12 }}
           {{- end }}
+        {{- if .Values.clickhouse.podDistribution }}
+        podDistribution: {{ toYaml .Values.clickhouse.podDistribution | nindent 12 }}
+        {{- end}}
         spec:
           {{- if .Values.clickhouse.affinity }}
           affinity: {{ toYaml .Values.clickhouse.affinity | nindent 12 }}

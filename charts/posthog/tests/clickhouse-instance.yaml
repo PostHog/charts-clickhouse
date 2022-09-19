@@ -420,6 +420,22 @@ tests:
             key1: value1
             key2: value2
 
+  - it: podDistribution setting should work
+    set:
+      clickhouse.podDistribution:
+        - scope: Shard
+          type: ShardAntiAffinity
+          topologyKey: zone
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].podDistribution
+          value:
+            - scope: Shard
+              type: ShardAntiAffinity
+              topologyKey: zone
+
   - it: by default only allows access from in-cluster and with the namespace
     asserts:
       - equal:
