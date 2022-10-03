@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 27.1.0](https://img.shields.io/badge/Version-27.1.0-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
+![Version: 27.1.1](https://img.shields.io/badge/Version-27.1.1-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -424,4 +424,3 @@ The following table lists the configurable parameters of the PostHog chart and t
 | busybox.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 
 Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
-
