@@ -424,3 +424,4 @@ The following table lists the configurable parameters of the PostHog chart and t
 | busybox.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 
 Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
+
