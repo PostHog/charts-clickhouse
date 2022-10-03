@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 27.1.1](https://img.shields.io/badge/Version-27.1.1-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
+![Version: 27.1.2](https://img.shields.io/badge/Version-27.1.2-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -294,7 +294,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.settings | object | `{}` |  |
 | clickhouse.defaultSettings.format_schema_path | string | `"/etc/clickhouse-server/config.d/"` |  |
 | clickhouse.podAnnotations | string | `nil` |  |
-| clickhouse.podDistribution | object | `nil` | Pod distribution specification  |
+| clickhouse.podDistribution | string | `nil` |  |
 | clickhouse.client.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
 | clickhouse.client.image.tag | string | `"22.3.6.5"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
 | clickhouse.client.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
