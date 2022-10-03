@@ -1001,6 +1001,13 @@ clickhouse:
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9363"
 
+  ## -- Clickhouse pod distribution.
+  podDistribution:
+    # Uncomment to have replicas of each shard reside in different availability zones.
+    # - scope: Shard
+    #   type: ShardAntiAffinity
+    #   topologyKey: "topology.kubernetes.io/zone"
+
   client:
     image:
       # -- ClickHouse image repository.
