@@ -1203,6 +1203,9 @@ grafana:
         url: http://posthog-prometheus-server
         access: proxy
         isDefault: true
+        jsonData:
+          timeInterval: 60s # pass this explicitly so it can be used by '$__rate_interval'
+                            # https://grafana.com/blog/2020/09/28/new-in-grafana-7.2-__rate_interval-for-prometheus-rate-queries-that-just-work/
 
       # Comment the snippet below if you are running with `loki.enabled: false`
       - name: Loki
