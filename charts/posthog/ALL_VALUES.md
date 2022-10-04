@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 27.1.2](https://img.shields.io/badge/Version-27.1.2-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
+![Version: 27.1.3](https://img.shields.io/badge/Version-27.1.3-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -356,7 +356,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | externalObjectStorage.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the `access_key_id` and `secret_access_key`. The secret has to contain the keys `root-user` and `root-password`). |
 | grafana.enabled | bool | `false` | Whether to install Grafana or not. |
 | grafana.sidecar | object | `{"dashboards":{"enabled":true,"folderAnnotation":"grafana_folder","label":"grafana_dashboard","provider":{"foldersFromFilesStructure":true}}}` | Sidecar configuration to automagically pull the dashboards from the `charts/posthog/grafana-dashboard` folder. See [official docs](https://github.com/grafana/helm-charts/blob/main/charts/grafana/README.md) for more info. |
-| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki-read:3100"},{"access":"proxy","isDefault":false,"jsonData":{"implementation":"prometheus"},"name":"Alertmanager","type":"alertmanager","url":"http://posthog-prometheus-alertmanager"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
+| grafana.datasources | object | `{"datasources.yaml":{"apiVersion":1,"datasources":[{"access":"proxy","isDefault":true,"jsonData":{"timeInterval":"60s"},"name":"Prometheus","type":"prometheus","url":"http://posthog-prometheus-server"},{"access":"proxy","isDefault":false,"name":"Loki","type":"loki","url":"http://posthog-loki-read:3100"},{"access":"proxy","isDefault":false,"jsonData":{"implementation":"prometheus"},"name":"Alertmanager","type":"alertmanager","url":"http://posthog-prometheus-alertmanager"}]}}` | Configure Grafana datasources. See [docs](http://docs.grafana.org/administration/provisioning/#datasources) for more info. |
 | loki.enabled | bool | `false` | Whether to install Loki or not. With the default configuration you will get no replication, so as to easily support small deploys that e.g. do not have multiple nodes in the cluster. For production setups that are distributed across e.g. multiple AWS AZs it's recommended that you increase the replica counts for `read:` and `write:`. These stateful sets by default have an anti-affinity so you'll need at least as many nodes as replicas in a set. |
 | loki.loki.auth_enabled | bool | `false` |  |
 | loki.loki.commonConfig.replication_factor | int | `1` |  |
