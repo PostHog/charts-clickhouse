@@ -20,7 +20,7 @@ This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [
 
 
 ## Prerequisites
-- Kubernetes >=1.22 <= 1.25
+- Kubernetes >=1.23 <= 1.25
 - Helm >= 3.7.0
 
 ## Installation
@@ -90,12 +90,12 @@ To release a new chart, bump the `version` in `charts/posthog/Chart.yaml`. We us
     MAJOR version when you make incompatible API changes
     MINOR version when you add functionality in a backwards compatible manner
     PATCH version when you make backwards compatible bug fixes
-    
-Read API here as the chart values interface. When increasing the MAJOR version, ensure to add 
+
+Read API here as the chart values interface. When increasing the MAJOR version, ensure to add
 appropriate documentation to the [Upgrade notes](https://posthog.com/docs/runbook/upgrade-notes).
 
-Charts are [published on push](https://github.com/PostHog/charts-clickhouse/blob/main/.github/workflows/release-chart.yml) 
+Charts are [published on push](https://github.com/PostHog/charts-clickhouse/blob/main/.github/workflows/release-chart.yml)
 to the `main` branch.
 
-Note that development charts are also released on PRs such that changes can be tested as required 
+Note that development charts are also released on PRs such that changes can be tested as required
 before merge, e.g. changing staging/dev to use the chart for more end to end validation.
