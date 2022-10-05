@@ -24,13 +24,13 @@ jobs:
         # specified below, these parameters have no meaning on their own and
         # gain meaning on how job steps use them.
         include:
+          - k3s-channel: v1.25
+            test: install
+            values: ci/values/k3s.yaml
           - k3s-channel: v1.24
             test: install
             values: ci/values/k3s.yaml
           - k3s-channel: v1.23
-            test: install
-            values: ci/values/k3s.yaml
-          - k3s-channel: v1.22
             test: install
             values: ci/values/k3s.yaml
 
@@ -40,12 +40,12 @@ jobs:
           #
           # It can be very useful to see the "Helm diff" step's output from the
           # latest dev version.
-          - k3s-channel: v1.22
+          - k3s-channel: v1.23
             test: upgrade
             values: ci/values/k3s.yaml
 
           # We run one install test with split plugin-server ingestion
-          - k3s-channel: v1.22
+          - k3s-channel: v1.23
             test: install
             values: ci/values/k3s-plugin-server-split.yaml
 
