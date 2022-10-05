@@ -33,9 +33,6 @@ jobs:
           - k3s-channel: v1.23
             test: install
             values: ci/values/k3s.yaml
-          - k3s-channel: v1.22
-            test: install
-            values: ci/values/k3s.yaml
 
           # We run an upgrade test where we first install an already released
           # Helm chart version and then upgrade to the version we are now
