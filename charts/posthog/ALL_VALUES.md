@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 27.1.4](https://img.shields.io/badge/Version-27.1.4-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
+![Version: 27.1.5](https://img.shields.io/badge/Version-27.1.5-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -380,7 +380,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | eventrouter.image.pullPolicy | string | `"IfNotPresent"` |  |
 | eventrouter.resources | object | `{}` | Resource limits for eventrouter. |
 | promtail.enabled | bool | `false` | Whether to install Promtail or not. |
-| promtail.config.lokiAddress | string | `"http://posthog-loki-write:3100/loki/api/v1/push"` |  |
+| promtail.config.clients[0].url | string | `"http://posthog-loki-write:3100/loki/api/v1/push"` |  |
 | promtail.config.snippets.pipelineStages[0].cri | object | `{}` |  |
 | promtail.config.snippets.pipelineStages[1].match.selector | string | `"{app=\"ingress-nginx\"}"` |  |
 | promtail.config.snippets.pipelineStages[1].match.stages[0].json.expressions.timestamp | string | `"time"` |  |
