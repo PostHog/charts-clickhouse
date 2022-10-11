@@ -1320,7 +1320,8 @@ promtail:
   # -- Whether to install Promtail or not.
   enabled: false
   config:
-    lokiAddress: http://posthog-loki-write:3100/loki/api/v1/push
+    clients:
+      - url: http://posthog-loki-write:3100/loki/api/v1/push
 
     snippets:
       pipelineStages:
