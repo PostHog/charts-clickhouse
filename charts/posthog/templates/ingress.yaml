@@ -63,6 +63,20 @@ spec:
                 name: {{ template "posthog.fullname" . }}-web
                 port:
                   number: {{ .Values.service.externalPort }}
+          {{- if .Values.ingress.separateStatic -}}  
+          {{- if (ne (include "ingress.type" .) "clb") }}
+          - pathType: Prefix
+            path: "/static"
+          {{- else }}
+          - pathType: ImplementationSpecific
+            path: "/static/*"
+          {{- end }}
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-web-static
+                port:
+                  number: {{ .Values.service.externalPort }}
+          {{- end -}}
           {{- if (ne (include "ingress.type" .) "clb") }}
           - pathType: Prefix
             path: "/batch"

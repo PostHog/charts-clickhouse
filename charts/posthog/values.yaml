@@ -497,6 +497,8 @@ ingress:
     secretName: ""
   # -- Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and cert-manager are enabled otherwise false.
   letsencrypt:
+  # -- Enable separated backend service for static files. Useful in case of enabling GCP IAP only over web interface  
+  separateStatic: false
   nginx:
     # -- Whether nginx is enabled
     enabled: false
