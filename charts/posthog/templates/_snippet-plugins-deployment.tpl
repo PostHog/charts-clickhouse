@@ -1,5 +1,8 @@
+# An abstract deployment / hpa pair for defining the plugin-server deployments.
+# This may be an abstraction too far so if you end up putting loads of if
+# statements in here then it's worth considering restructuring.
+
 {{ define "plugins-deployment" }}
-# Keep this in sync with `plugins-deployment.yaml`
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -11,7 +14,7 @@ spec:
     matchLabels:
         app: {{ template "posthog.fullname" .root }}
         release: "{{ .root.Release.Name }}"
-        role: plugins-async
+        role: {{ .name }}
   {{- if not .params.hpa.enabled }}
   replicas: {{ .params.replicacount }}
   {{- end }}
@@ -25,7 +28,7 @@ spec:
       labels:
         app: {{ template "posthog.fullname" .root }}
         release: "{{ .root.Release.Name }}"
-        role: plugins-async
+        role: {{ .name }}
         {{- if (eq (default .root.Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
@@ -126,4 +129,33 @@ spec:
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" .root | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" .root | indent 8 }}
+
+---
+
+{{ if .params.hpa.enabled }}
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "posthog.fullname" .root }}-{{ .name }}
+  labels: {{- include "_snippet-metadata-labels-common" .root | nindent 4 }}
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    apiVersion: apps/v1
+    name: {{ template "posthog.fullname" .root }}-{{ .name }}
+  minReplicas: {{ .params.hpa.minpods }}
+  maxReplicas: {{ .params.hpa.maxpods }}
+  metrics:
+  {{- with .params.hpa.cputhreshold }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ . }}
+  {{- end }}
+  behavior: 
+    {{ toYaml .params.hpa.behavior | nindent 4 }}
+{{- end }}
+
 {{ end }}
