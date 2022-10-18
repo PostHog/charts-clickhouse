@@ -286,7 +286,226 @@ plugins:
   sentryDSN:
 
 
+# -- A deconstructed plugin-server that handles the various workloads of the
+# pipeline separately. For most workloads this will not be needed, rather you
+# can disable the below plugins* and instead just use `plugins.enabled=true`
+
+pluginsIngestion:
+  # -- Whether to install the PostHog plugin-server stack or not.
+  # This service handles data ingestion into ClickHouse, running apps and async jobs.
+  # See `pluginsAsync` to scale this separately.
+  enabled: true
+
+  # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  # -- Additional env variables to inject into the plugin-server stack deployment.
+  env: []
+
+  # -- Resource limits for the plugin-server stack deployment.
+  resources:
+    {}
+
+  # -- Node labels for the plugin-server stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations: []
+  # -- Affinity settings for the plugin-server stack deployment.
+  affinity: {}
+
+  # -- Container security context for the plugin-server stack deployment.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the plugin-server stack deployment.
+  podSecurityContext:
+    enabled: false
+
+  livenessProbe:
+    # -- The liveness probe failure threshold
+    failureThreshold: 3
+    # -- The liveness probe initial delay seconds
+    initialDelaySeconds: 10
+    # -- The liveness probe period seconds
+    periodSeconds: 10
+    # -- The liveness probe success threshold
+    successThreshold: 1
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 2
+
+  readinessProbe:
+    # -- The readiness probe failure threshold
+    failureThreshold: 3
+    # -- The readiness probe initial delay seconds
+    initialDelaySeconds: 50
+    # -- The readiness probe period seconds
+    periodSeconds: 30
+    # -- The readiness probe success threshold
+    successThreshold: 1
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
+
+
 pluginsAsync:
+  # -- Whether to install the PostHog plugin-server async stack or not.
+  # If disabled (default), plugins service handles both ingestion and running of async tasks.
+  # Allows for separate scaling of this service.
+  enabled: false
+
+  # -- Count of plugin-server-async pods to run. This setting is ignored if `pluginsAsync.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  # -- Additional env variables to inject into the plugin-server stack deployment.
+  env: []
+
+  # -- Resource limits for the plugin-server stack deployment.
+  resources:
+    {}
+
+  # -- Node labels for the plugin-server stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations: []
+  # -- Affinity settings for the plugin-server stack deployment.
+  affinity: {}
+
+  # -- Container security context for the plugin-server stack deployment.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the plugin-server stack deployment.
+  podSecurityContext:
+    enabled: false
+
+  livenessProbe:
+    # -- The liveness probe failure threshold
+    failureThreshold: 3
+    # -- The liveness probe initial delay seconds
+    initialDelaySeconds: 10
+    # -- The liveness probe period seconds
+    periodSeconds: 10
+    # -- The liveness probe success threshold
+    successThreshold: 1
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 2
+
+  readinessProbe:
+    # -- The readiness probe failure threshold
+    failureThreshold: 3
+    # -- The readiness probe initial delay seconds
+    initialDelaySeconds: 50
+    # -- The readiness probe period seconds
+    periodSeconds: 30
+    # -- The readiness probe success threshold
+    successThreshold: 1
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
+
+
+pluginsJobs:
+  # -- Whether to install the PostHog plugin-server async stack or not.
+  # If disabled (default), plugins service handles both ingestion and running of async tasks.
+  # Allows for separate scaling of this service.
+  enabled: false
+
+  # -- Count of plugin-server-async pods to run. This setting is ignored if `pluginsAsync.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  # -- Additional env variables to inject into the plugin-server stack deployment.
+  env: []
+
+  # -- Resource limits for the plugin-server stack deployment.
+  resources:
+    {}
+
+  # -- Node labels for the plugin-server stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations: []
+  # -- Affinity settings for the plugin-server stack deployment.
+  affinity: {}
+
+  # -- Container security context for the plugin-server stack deployment.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the plugin-server stack deployment.
+  podSecurityContext:
+    enabled: false
+
+  livenessProbe:
+    # -- The liveness probe failure threshold
+    failureThreshold: 3
+    # -- The liveness probe initial delay seconds
+    initialDelaySeconds: 10
+    # -- The liveness probe period seconds
+    periodSeconds: 10
+    # -- The liveness probe success threshold
+    successThreshold: 1
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 2
+
+  readinessProbe:
+    # -- The readiness probe failure threshold
+    failureThreshold: 3
+    # -- The readiness probe initial delay seconds
+    initialDelaySeconds: 50
+    # -- The readiness probe period seconds
+    periodSeconds: 30
+    # -- The readiness probe success threshold
+    successThreshold: 1
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
+
+pluginsScheduler:
   # -- Whether to install the PostHog plugin-server async stack or not.
   # If disabled (default), plugins service handles both ingestion and running of async tasks.
   # Allows for separate scaling of this service.
