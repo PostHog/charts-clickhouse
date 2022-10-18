@@ -29,12 +29,22 @@ zookeeper:
 
 # Reduce ingestion buffer conversion window in CI
 plugins:
+  enabled: false
+
+# Enable individual plugins server components for this test
+pluginsIngestion:
+  enabled: true
   env:
     - name: BUFFER_CONVERSION_SECONDS
       value: "1"
 
-# Enable pluginsAsync for this test
 pluginsAsync:
+  enabled: true
+
+pluginsJobs:
+  enabled: true
+
+pluginsScheduler:
   enabled: true
 
 # Enable monitoring deployments. We are using these in our own deployments so

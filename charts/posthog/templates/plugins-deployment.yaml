@@ -1,7 +1,3 @@
 {{ if .Values.plugins.enabled }}
-    {{ $mode := "" }}
-    {{ if .Values.pluginsAsync.enabled }}
-        {{ $mode = "ingestion" }}
-    {{ end }}
-    {{ include "plugins-deployment" ( dict "root" . "params" .Values.plugins "name" "plugins" "mode" $mode ) }}
+    {{ include "plugins-deployment" ( dict "root" . "params" .Values.plugins "name" "plugins" "mode" "" ) }}
 {{ end }}

@@ -1,0 +1,103 @@
+suite: PostHog plugins ingestion HPA definition
+templates:
+  - templates/plugins-ingestion-deployment.yaml
+  - templates/secrets.yaml
+
+tests:
+  - it: should be empty if pluginsIngestion.enabled and pluginsIngestion.hpa.enabled are set to false
+    templates:
+      - templates/plugins-ingestion-deployment.yaml
+    set:
+      cloud: private
+      pluginsIngestion.enabled: false
+      pluginsIngestion.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if pluginsIngestion.enabled is true and pluginsIngestion.hpa.enabled is set to false
+    templates:
+      - templates/plugins-ingestion-deployment.yaml
+    set:
+      cloud: private
+      pluginsIngestion.enabled: true
+      pluginsIngestion.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should be not empty if pluginsIngestion.enabled and pluginsIngestion.hpa.enabled are set to true
+    templates:
+      - templates/plugins-ingestion-deployment.yaml
+    set:
+      cloud: private
+      pluginsIngestion.enabled: true
+      pluginsIngestion.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: should have the correct apiVersion
+    templates:
+      - templates/plugins-ingestion-deployment.yaml
+    set:
+      cloud: private
+      pluginsIngestion.enabled: true
+      pluginsIngestion.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isAPIVersion:
+          of: autoscaling/v2beta2
+        documentIndex: 1
+
+  - it: should be the correct kind
+    templates:
+      - templates/plugins-ingestion-deployment.yaml
+    set:
+      cloud: private
+      pluginsIngestion.enabled: true
+      pluginsIngestion.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: HorizontalPodAutoscaler
+        documentIndex: 1
+
+  - it: sets hpa spec
+    templates:
+      - templates/plugins-ingestion-deployment.yaml
+    set:
+      cloud: private
+      pluginsIngestion.enabled: true
+      pluginsIngestion:
+        hpa:
+          enabled: true
+          minpods: 2
+          maxpods: 10
+          cputhreshold: 70
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 3600
+    asserts:
+      - equal:
+          path: spec
+          value:
+            scaleTargetRef:
+              apiVersion: apps/v1
+              kind: Deployment
+              name: RELEASE-NAME-posthog-plugins-ingestion
+            minReplicas: 2
+            maxReplicas: 10
+            metrics:
+            - type: Resource
+              resource:
+                name: cpu
+                target:
+                  type: Utilization
+                  averageUtilization: 70
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 3600
+        documentIndex: 1
