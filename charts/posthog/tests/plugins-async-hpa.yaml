@@ -1,10 +1,14 @@
 suite: PostHog plugins async HPA definition
 templates:
-  - templates/plugins-async-hpa.yaml
+  - templates/plugins-async-deployment.yaml
+  - templates/secrets.yaml
 
 tests:
   - it: should be empty if pluginsAsync.enabled and pluginsAsync.hpa.enabled are set to false
+    templates:
+      - templates/plugins-async-deployment.yaml
     set:
+      cloud: private
       pluginsAsync.enabled: false
       pluginsAsync.hpa.enabled: false
     asserts:
@@ -12,43 +16,60 @@ tests:
           count: 0
 
   - it: should be empty if pluginsAsync.enabled is true and pluginsAsync.hpa.enabled is set to false
+    templates:
+      - templates/plugins-async-deployment.yaml
     set:
+      cloud: private
       pluginsAsync.enabled: true
       pluginsAsync.hpa.enabled: false
     asserts:
       - hasDocuments:
-          count: 0
+          count: 1
 
   - it: should be not empty if pluginsAsync.enabled and pluginsAsync.hpa.enabled are set to true
+    templates:
+      - templates/plugins-async-deployment.yaml
     set:
+      cloud: private
       pluginsAsync.enabled: true
       pluginsAsync.hpa.enabled: true
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
 
   - it: should have the correct apiVersion
+    templates:
+      - templates/plugins-async-deployment.yaml
     set:
+      cloud: private
       pluginsAsync.enabled: true
       pluginsAsync.hpa.enabled: true
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - isAPIVersion:
           of: autoscaling/v2beta2
+        documentIndex: 1
 
   - it: should be the correct kind
+    templates:
+      - templates/plugins-async-deployment.yaml
     set:
+      cloud: private
       pluginsAsync.enabled: true
       pluginsAsync.hpa.enabled: true
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - isKind:
           of: HorizontalPodAutoscaler
+        documentIndex: 1
 
   - it: sets hpa spec
+    templates:
+      - templates/plugins-async-deployment.yaml
     set:
+      cloud: private
       pluginsAsync.enabled: true
       pluginsAsync:
         hpa:
@@ -79,3 +100,4 @@ tests:
             behavior:
               scaleDown:
                 stabilizationWindowSeconds: 3600
+        documentIndex: 1
