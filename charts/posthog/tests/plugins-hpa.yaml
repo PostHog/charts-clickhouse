@@ -1,10 +1,14 @@
 suite: PostHog plugins HPA definition
 templates:
-  - templates/plugins-hpa.yaml
+  - templates/plugins-deployment.yaml
+  - templates/secrets.yaml
 
 tests:
   - it: should be empty if plugins.enabled and plugins.hpa.enabled are set to false
+    templates:
+      - templates/plugins-deployment.yaml
     set:
+      cloud: private
       plugins.enabled: false
       plugins.hpa.enabled: false
     asserts:
@@ -12,43 +16,60 @@ tests:
           count: 0
 
   - it: should be empty if plugins.enabled is true and plugins.hpa.enabled is set to false
+    templates:
+      - templates/plugins-deployment.yaml
     set:
+      cloud: private
       plugins.enabled: true
       plugins.hpa.enabled: false
     asserts:
       - hasDocuments:
-          count: 0
+          count: 1
 
   - it: should be not empty if plugins.enabled and plugins.hpa.enabled are set to true
+    templates:
+      - templates/plugins-deployment.yaml
     set:
+      cloud: private
       plugins.enabled: true
       plugins.hpa.enabled: true
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
 
   - it: should have the correct apiVersion
+    templates:
+      - templates/plugins-deployment.yaml
     set:
+      cloud: private
       plugins.enabled: true
       plugins.hpa.enabled: true
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - isAPIVersion:
           of: autoscaling/v2beta2
+        documentIndex: 1
 
   - it: should be the correct kind
+    templates:
+      - templates/plugins-deployment.yaml
     set:
+      cloud: private
       plugins.enabled: true
       plugins.hpa.enabled: true
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - isKind:
           of: HorizontalPodAutoscaler
+        documentIndex: 1
 
   - it: sets hpa spec
+    templates:
+      - templates/plugins-deployment.yaml
     set:
+      cloud: private
       plugins.enabled: true
       plugins:
         hpa:
@@ -79,3 +100,4 @@ tests:
             behavior:
               scaleDown:
                 stabilizationWindowSeconds: 3600
+        documentIndex: 1
