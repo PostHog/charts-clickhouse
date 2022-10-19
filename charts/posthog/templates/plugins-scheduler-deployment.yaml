@@ -1,0 +1,3 @@
+{{ if .Values.pluginsScheduler.enabled }}
+{{ include "plugins-deployment" ( dict "root" . "params" .Values.pluginsScheduler "name" "plugins-scheduler" "mode" "scheduler" ) }}
+{{ end }}
