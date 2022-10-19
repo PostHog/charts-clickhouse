@@ -27,18 +27,21 @@ zookeeper:
   persistence:
     size: 1Gi
 
-# Reduce ingestion buffer conversion window in CI
 plugins:
+  enabled: false
+
+pluginsAsync:
   enabled: false
 
 # Enable individual plugins server components for this test
 pluginsIngestion:
   enabled: true
   env:
+    # Reduce ingestion buffer conversion window in CI
     - name: BUFFER_CONVERSION_SECONDS
       value: "1"
 
-pluginsAsync:
+pluginsAsyncHandlers:
   enabled: true
 
 pluginsJobs:
