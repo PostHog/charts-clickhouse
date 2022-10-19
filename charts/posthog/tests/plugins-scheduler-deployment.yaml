@@ -1,23 +1,23 @@
-suite: PostHog plugins async deployment definition
+suite: PostHog plugins scheduler deployment definition
 templates:
-  - templates/plugins-async-deployment.yaml
+  - templates/plugins-scheduler-deployment.yaml
   - templates/secrets.yaml
 
 tests:
-  - it: should be empty if pluginsAsync.enabled is set to false
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+  - it: should be empty if pluginsScheduler.enabled is set to false
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: false
+      pluginsScheduler.enabled: false
     asserts:
       - hasDocuments:
           count: 0
 
   - it: should have the correct apiVersion
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: true
+      pluginsScheduler.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -25,10 +25,10 @@ tests:
           of: apps/v1
 
   - it: should be the correct kind
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: true
+      pluginsScheduler.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -36,13 +36,13 @@ tests:
           of: Deployment
 
   - it: should have a pod securityContext
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: true
-      pluginsAsync.podSecurityContext.enabled: true
-      pluginsAsync.podSecurityContext.runAsUser: 1001
-      pluginsAsync.podSecurityContext.fsGroup: 2000
+      pluginsScheduler.enabled: true
+      pluginsScheduler.podSecurityContext.enabled: true
+      pluginsScheduler.podSecurityContext.runAsUser: 1001
+      pluginsScheduler.podSecurityContext.fsGroup: 2000
     asserts:
       - hasDocuments:
           count: 1
@@ -54,13 +54,13 @@ tests:
           value: 2000
 
   - it: should have a container securityContext
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: true
-      pluginsAsync.securityContext.enabled: true
-      pluginsAsync.securityContext.runAsUser: 1001
-      pluginsAsync.securityContext.allowPrivilegeEscalation: false
+      pluginsScheduler.enabled: true
+      pluginsScheduler.securityContext.enabled: true
+      pluginsScheduler.securityContext.runAsUser: 1001
+      pluginsScheduler.securityContext.allowPrivilegeEscalation: false
     asserts:
       - hasDocuments:
           count: 1
@@ -72,11 +72,11 @@ tests:
           value: false
 
   - it: should not have a pod securityContext
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: true
-      pluginsAsync.podSecurityContext.enabled: false
+      pluginsScheduler.enabled: true
+      pluginsScheduler.podSecurityContext.enabled: false
     asserts:
       - hasDocuments:
           count: 1
@@ -85,11 +85,11 @@ tests:
           value: 1001
 
   - it: should not have a container securityContext
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: true
-      pluginsAsync.securityContext.enabled: false
+      pluginsScheduler.enabled: true
+      pluginsScheduler.securityContext.enabled: false
     asserts:
       - hasDocuments:
           count: 1
@@ -97,36 +97,36 @@ tests:
           path: spec.template.spec.containers[0].securityContext
 
   - it: sets PLUGIN_SERVER_MODE
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: true
+      pluginsScheduler.enabled: true
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: PLUGIN_SERVER_MODE
-            value: async-handlers
+            value: scheduler
 
   - it: sets SENTRY_DSN env var
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: true
+      pluginsScheduler.enabled: true
       sentryDSN: main.endpoint
-      pluginsAsync.sentryDSN: pluginsAsync.endpoint
+      pluginsScheduler.sentryDSN: pluginsScheduler.endpoint
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: SENTRY_DSN
-            value: pluginsAsync.endpoint
+            value: pluginsScheduler.endpoint
 
   - it: sets SENTRY_DSN env var with default
-    template: templates/plugins-async-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-scheduler-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsAsync.enabled: true
+      pluginsScheduler.enabled: true
       sentryDSN: main.endpoint
     asserts:
       - contains:
