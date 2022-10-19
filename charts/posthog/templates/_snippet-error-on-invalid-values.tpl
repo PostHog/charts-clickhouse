@@ -87,14 +87,6 @@
         "please use the clickhouse.nodeSelector variable instead"
       ) nil -}}
     {{- end -}}
-
-    {{- if and (or .Values.pluginsIngestion.enabled .Values.pluginsAsync.enabled
-                .Values.pluginsJobs.enabled) .Values.pluginsScheduler.enabled)
-    (.Values.plugins.enabled) }}
-      {{- required (printf (include "snippet.error-on-invalid-values-template" .)
-        "plugins*.enabled cannot be set if plugins.enabled is true" ""
-      ) nil -}}
-    {{- end -}}
   {{- end -}}
 {{- end -}}
 
