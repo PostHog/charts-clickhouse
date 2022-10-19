@@ -93,6 +93,14 @@
         "pluginsAsync.enabled cannot be set if plugins.enabled is false" ""
       ) nil -}}
     {{- end -}}
+
+    {{- if and (or .Values.pluginsAsync.enabled .Values.plugins.enabled) (or
+    .Values.pluginsIngestion.enabled .Values.pluginsAsyncHandlers.enabled
+    .Values.pluginsJobs.enabled .Values.pluginsScheduler.enabled) }}
+      {{- required (printf (include "snippet.error-on-invalid-values-template" .)
+        "plugins*.enabled cannot be set if plugins.enabled or pluginsAsync.enabled is true" ""
+      ) nil -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 
