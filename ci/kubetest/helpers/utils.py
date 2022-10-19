@@ -99,7 +99,7 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace=
 
         for pod in pods.values():
             name = pod.obj.metadata.name
-            if pod.obj.metadata.labels.get("app") == "posthog" and not name.startswith('posthog-pgbouncer'):
+            if pod.obj.metadata.labels.get("app") == "posthog" and not name.startswith("posthog-pgbouncer"):
                 # Only ever expect things we have control over to not restart.
                 # NOTE: we do have control over pgbouncer but we tolerate
                 # restarts here. It may be worth however setting up an init
