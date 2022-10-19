@@ -73,8 +73,10 @@ spec:
         # Expose the port on which the healtchheck endpoint listens
         - containerPort: 6738
         env:
+        {{ if .mode }}
         - name: PLUGIN_SERVER_MODE
           value: {{ .mode }}
+        {{ end }}
 
         - name: SENTRY_DSN
           value: {{ .params.sentryDSN | default .root.Values.sentryDSN }}

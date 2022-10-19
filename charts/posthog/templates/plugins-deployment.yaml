@@ -4,6 +4,11 @@
         "plugins*.enabled cannot be set if plugins.enabled is true" ""
       ) nil -}}
     {{- end -}}
+
+    {{ $mode := "" }}
+    {{ if .Values.pluginsAsync.enabled }}
+        {{ $mode = "ingestion" }}
+    {{ end }}
     
-    {{ include "plugins-deployment" ( dict "root" . "params" .Values.plugins "name" "plugins" "mode" "" ) }}
+    {{ include "plugins-deployment" ( dict "root" . "params" .Values.plugins "name" "plugins" "mode" $mode ) }}
 {{ end }}
