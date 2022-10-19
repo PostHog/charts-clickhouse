@@ -6,6 +6,9 @@ templates:
   - templates/worker-deployment.yaml
   - templates/events-deployment.yaml
   - templates/plugins-deployment.yaml
+  - templates/plugins-ingestion-deployment.yaml
+  - templates/plugins-jobs-deployment.yaml
+  - templates/plugins-scheduler-deployment.yaml
   - templates/plugins-async-deployment.yaml
   - templates/migrate.job.yaml
   # NOTE: we need to include this as it is required by the other templates
@@ -18,12 +21,23 @@ tests:
       - templates/worker-deployment.yaml
       - templates/events-deployment.yaml
       - templates/plugins-deployment.yaml
+      - templates/plugins-ingestion-deployment.yaml
+      - templates/plugins-jobs-deployment.yaml
+      - templates/plugins-scheduler-deployment.yaml
       - templates/plugins-async-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
       siteUrl: https://my.site.com
+      plugins:
+        enabled: true
       pluginsAsync:
+        enabled: true
+      pluginsIngestion:
+        enabled: true
+      pluginsScheduler:
+        enabled: true
+      pluginsJobs:
         enabled: true
       ingress:
         enabled: true
@@ -41,12 +55,23 @@ tests:
       - templates/worker-deployment.yaml
       - templates/events-deployment.yaml
       - templates/plugins-deployment.yaml
+      - templates/plugins-ingestion-deployment.yaml
+      - templates/plugins-jobs-deployment.yaml
+      - templates/plugins-scheduler-deployment.yaml
       - templates/plugins-async-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
       siteUrl:
+      plugins:
+        enabled: true
       pluginsAsync:
+        enabled: true
+      pluginsIngestion:
+        enabled: true
+      pluginsScheduler:
+        enabled: true
+      pluginsJobs:
         enabled: true
       ingress:
         enabled: true
@@ -65,12 +90,23 @@ tests:
       - templates/worker-deployment.yaml
       - templates/events-deployment.yaml
       - templates/plugins-deployment.yaml
+      - templates/plugins-ingestion-deployment.yaml
+      - templates/plugins-jobs-deployment.yaml
+      - templates/plugins-scheduler-deployment.yaml
       - templates/plugins-async-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
       siteUrl:
+      plugins:
+        enabled: true
       pluginsAsync:
+        enabled: true
+      pluginsIngestion:
+        enabled: true
+      pluginsScheduler:
+        enabled: true
+      pluginsJobs:
         enabled: true
       ingress:
         enabled: false
