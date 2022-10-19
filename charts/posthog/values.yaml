@@ -216,8 +216,10 @@ worker:
 
 plugins:
   # -- Whether to install the PostHog plugin-server stack or not.
-  # This service handles data ingestion into ClickHouse, running apps and async jobs.
-  # See `pluginsAsync` to scale this separately.
+  # This service handles data ingestion into ClickHouse, running apps and async
+  # jobs. To scale these components separately, instead use the individual
+  # component deployments, pluginsIngestion, pluginsAsync, pluginsJobs, and
+  # pluginsScheduler.
   enabled: true
 
   # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.
