@@ -98,8 +98,13 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace=
             continue
 
         for pod in pods.values():
-            if pod.obj.metadata.labels.get("app") == "posthog":
-                # Only ever expect things we have control over to not restart
+            name = pod.obj.metadata.name
+            if pod.obj.metadata.labels.get("app") == "posthog" and not name.startswith("posthog-pgbouncer"):
+                # Only ever expect things we have control over to not restart.
+                # NOTE: we do have control over pgbouncer but we tolerate
+                # restarts here. It may be worth however setting up an init
+                # container to ensure that any dependencies are satisfied before
+                # starting.
                 assert get_pod_restart_count(pod) == 0, f"Detected restart in pod {pod.obj.metadata.name}"
 
         # Note we assume that if "job-name" is a label then it is a job pod.

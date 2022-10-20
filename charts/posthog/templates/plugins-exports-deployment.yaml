@@ -1,0 +1,3 @@
+{{ if .Values.pluginsExports.enabled }}
+    {{ include "plugins-deployment" ( dict "root" . "params" .Values.pluginsExports "name" "plugins-exports" "mode" "exports" ) }}
+{{ end }}
