@@ -40,12 +40,12 @@ jobs:
           #
           # It can be very useful to see the "Helm diff" step's output from the
           # latest dev version.
-          - k3s-channel: v1.22
+          - k3s-channel: v1.23
             test: upgrade
             values: ci/values/k3s.yaml
 
           # We run one install test with split plugin-server ingestion
-          - k3s-channel: v1.22
+          - k3s-channel: v1.23
             test: install
             values: ci/values/k3s-plugin-server-split.yaml
 
