@@ -43,6 +43,13 @@ the "spec" path should match the snapshot when using default values:
               name: RELEASE-NAME-posthog-events
               port:
                 number: 8000
+          path: /engage
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
           path: /track
           pathType: Prefix
         - backend:

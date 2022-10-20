@@ -86,6 +86,9 @@ spec:
             path: "/e"
             backend: *INGESTION
           - pathType: Prefix
+            path: "/engage"
+            backend: *INGESTION
+          - pathType: Prefix
             path: "/track"
             backend: *INGESTION
           - pathType: Prefix
@@ -100,6 +103,9 @@ spec:
             backend: *INGESTION
           - pathType: ImplementationSpecific
             path: "/e/*"
+            backend: *INGESTION
+          - pathType: ImplementationSpecific
+            path: "/engage/*"
             backend: *INGESTION
           - pathType: ImplementationSpecific
             path: "/track/*"
