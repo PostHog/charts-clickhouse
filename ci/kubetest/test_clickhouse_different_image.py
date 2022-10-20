@@ -25,5 +25,5 @@ def test_clickhouse_pod_image(kube):
     is_posthog_healthy(kube)
     pod_spec = get_clickhouse_pod_spec(kube)
     assert (
-        pod_spec.containers[0].image == "clickhouse/clickhouse-server:22.3.6.5-alpine"
+        pod_spec.containers[0].image == "clickhouse/clickhouse-server:22.3.13.80-alpine"
     )
