@@ -1,3 +1,0 @@
-{{ if .Values.pluginsAsyncHandlers.enabled }}
-    {{ include "plugins-deployment" ( dict "root" . "params" .Values.pluginsAsyncHandlers "name" "plugins-async" "mode" "async-handlers" ) }}
-{{ end }}

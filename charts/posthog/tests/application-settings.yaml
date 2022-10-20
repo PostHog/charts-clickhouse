@@ -10,7 +10,7 @@ templates:
   - templates/plugins-jobs-deployment.yaml
   - templates/plugins-scheduler-deployment.yaml
   - templates/plugins-async-deployment.yaml
-  - templates/plugins-async-handlers-deployment.yaml
+  - templates/plugins-exports-deployment.yaml
   - templates/migrate.job.yaml
   # NOTE: we need to include this as it is required by the other templates
   - templates/secrets.yaml
@@ -24,14 +24,14 @@ tests:
       - templates/plugins-ingestion-deployment.yaml
       - templates/plugins-jobs-deployment.yaml
       - templates/plugins-scheduler-deployment.yaml
-      - templates/plugins-async-handlers-deployment.yaml
+      - templates/plugins-exports-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
       siteUrl: https://my.site.com
       plugins:
         enabled: false
-      pluginsAsyncHandlers:
+      pluginsExports:
         enabled: true
       pluginsIngestion:
         enabled: true
@@ -57,14 +57,14 @@ tests:
       - templates/plugins-ingestion-deployment.yaml
       - templates/plugins-jobs-deployment.yaml
       - templates/plugins-scheduler-deployment.yaml
-      - templates/plugins-async-handlers-deployment.yaml
+      - templates/plugins-exports-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
       siteUrl:
       plugins:
         enabled: false
-      pluginsAsyncHandlers:
+      pluginsExports:
         enabled: true
       pluginsIngestion:
         enabled: true
@@ -91,14 +91,14 @@ tests:
       - templates/plugins-ingestion-deployment.yaml
       - templates/plugins-jobs-deployment.yaml
       - templates/plugins-scheduler-deployment.yaml
-      - templates/plugins-async-handlers-deployment.yaml
+      - templates/plugins-exports-deployment.yaml
       - templates/migrate.job.yaml
     set:
       cloud: local
       siteUrl:
       plugins:
         enabled: false
-      pluginsAsyncHandlers:
+      pluginsExports:
         enabled: true
       pluginsIngestion:
         enabled: true

@@ -1,5 +1,5 @@
 {{ if .Values.plugins.enabled }}
-    {{- if or .Values.pluginsIngestion.enabled .Values.pluginsAsyncHandlers.enabled .Values.pluginsJobs.enabled .Values.pluginsScheduler.enabled }} 
+    {{- if or .Values.pluginsIngestion.enabled .Values.pluginsExports.enabled .Values.pluginsJobs.enabled .Values.pluginsScheduler.enabled }} 
       {{- required (printf (include "snippet.error-on-invalid-values-template" .)
         "plugins*.enabled cannot be set if plugins.enabled is true" ""
       ) nil -}}
