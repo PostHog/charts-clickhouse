@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 27.1.6](https://img.shields.io/badge/Version-27.1.6-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
+![Version: 27.2.0](https://img.shields.io/badge/Version-27.2.0-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -81,7 +81,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.affinity | object | `{}` | Affinity settings for the worker stack deployment. |
 | worker.securityContext | object | `{"enabled":false}` | Container security context for the worker stack deployment. |
 | worker.podSecurityContext | object | `{"enabled":false}` | Pod security context for the worker stack deployment. |
-| plugins.enabled | bool | `true` | Whether to install the PostHog plugin-server stack or not. This service handles data ingestion into ClickHouse, running apps and async jobs. See `pluginsAsync` to scale this separately. |
+| plugins.enabled | bool | `true` | Whether to install the PostHog plugin-server stack or not. This service handles data ingestion into ClickHouse, running apps and async jobs. To scale these components separately, instead use the individual component deployments, pluginsIngestion, pluginsAsync, pluginsJobs, and pluginsScheduler. |
 | plugins.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`. |
 | plugins.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
 | plugins.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
@@ -131,6 +131,107 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsAsync.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | pluginsAsync.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | pluginsAsync.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
+| pluginsIngestion | object | `{"affinity":{},"enabled":false,"env":[],"hpa":{"behavior":null,"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"livenessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":2},"nodeSelector":{},"podSecurityContext":{"enabled":false},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":50,"periodSeconds":30,"successThreshold":1,"timeoutSeconds":5},"replicacount":1,"resources":{},"securityContext":{"enabled":false},"sentryDSN":null,"tolerations":[]}` | A deconstructed plugin-server that handles the various workloads of the pipeline separately. For most workloads this will not be needed, rather you can disable the below plugins* and instead just use `plugins.enabled=true`. Note that the behaviour of pluginsAsync is unchanged to maintain backwards compatibility. |
+| pluginsIngestion.enabled | bool | `false` | Whether to install the PostHog plugin-server ingestion capability as an individual workload. |
+| pluginsIngestion.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `pluginsIngestion.hpa.enabled` is set to `true`. |
+| pluginsIngestion.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
+| pluginsIngestion.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsIngestion.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsIngestion.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsIngestion.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsIngestion.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
+| pluginsIngestion.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
+| pluginsIngestion.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
+| pluginsIngestion.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
+| pluginsIngestion.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
+| pluginsIngestion.securityContext | object | `{"enabled":false}` | Container security context for the plugin-server stack deployment. |
+| pluginsIngestion.podSecurityContext | object | `{"enabled":false}` | Pod security context for the plugin-server stack deployment. |
+| pluginsIngestion.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| pluginsIngestion.livenessProbe.initialDelaySeconds | int | `10` | The liveness probe initial delay seconds |
+| pluginsIngestion.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| pluginsIngestion.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| pluginsIngestion.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| pluginsIngestion.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| pluginsIngestion.readinessProbe.initialDelaySeconds | int | `50` | The readiness probe initial delay seconds |
+| pluginsIngestion.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
+| pluginsIngestion.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| pluginsIngestion.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| pluginsIngestion.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
+| pluginsExports.enabled | bool | `false` | Whether to install the PostHog plugin-server exports capability as an individual workload. |
+| pluginsExports.replicacount | int | `1` | Count of plugin-server-async pods to run. This setting is ignored if `pluginsExports.hpa.enabled` is set to `true`. |
+| pluginsExports.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
+| pluginsExports.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsExports.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsExports.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsExports.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsExports.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
+| pluginsExports.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
+| pluginsExports.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
+| pluginsExports.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
+| pluginsExports.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
+| pluginsExports.securityContext | object | `{"enabled":false}` | Container security context for the plugin-server stack deployment. |
+| pluginsExports.podSecurityContext | object | `{"enabled":false}` | Pod security context for the plugin-server stack deployment. |
+| pluginsExports.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| pluginsExports.livenessProbe.initialDelaySeconds | int | `10` | The liveness probe initial delay seconds |
+| pluginsExports.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| pluginsExports.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| pluginsExports.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| pluginsExports.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| pluginsExports.readinessProbe.initialDelaySeconds | int | `50` | The readiness probe initial delay seconds |
+| pluginsExports.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
+| pluginsExports.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| pluginsExports.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| pluginsExports.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
+| pluginsJobs.enabled | bool | `false` | Whether to install the PostHog plugin-server jobs capability as an individual workload. |
+| pluginsJobs.replicacount | int | `1` | Count of plugin-server-async pods to run. This setting is ignored if `pluginsJobs.hpa.enabled` is set to `true`. |
+| pluginsJobs.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
+| pluginsJobs.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsJobs.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsJobs.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsJobs.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsJobs.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
+| pluginsJobs.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
+| pluginsJobs.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
+| pluginsJobs.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
+| pluginsJobs.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
+| pluginsJobs.securityContext | object | `{"enabled":false}` | Container security context for the plugin-server stack deployment. |
+| pluginsJobs.podSecurityContext | object | `{"enabled":false}` | Pod security context for the plugin-server stack deployment. |
+| pluginsJobs.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| pluginsJobs.livenessProbe.initialDelaySeconds | int | `10` | The liveness probe initial delay seconds |
+| pluginsJobs.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| pluginsJobs.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| pluginsJobs.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| pluginsJobs.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| pluginsJobs.readinessProbe.initialDelaySeconds | int | `50` | The readiness probe initial delay seconds |
+| pluginsJobs.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
+| pluginsJobs.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| pluginsJobs.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| pluginsJobs.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
+| pluginsScheduler.enabled | bool | `false` | Whether to install the PostHog plugin-server scheduler capability as an individual workload. |
+| pluginsScheduler.replicacount | int | `1` | Count of plugin-server-async pods to run. This setting is ignored if `pluginsScheduler.hpa.enabled` is set to `true`. |
+| pluginsScheduler.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
+| pluginsScheduler.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsScheduler.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsScheduler.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsScheduler.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsScheduler.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
+| pluginsScheduler.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
+| pluginsScheduler.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
+| pluginsScheduler.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
+| pluginsScheduler.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
+| pluginsScheduler.securityContext | object | `{"enabled":false}` | Container security context for the plugin-server stack deployment. |
+| pluginsScheduler.podSecurityContext | object | `{"enabled":false}` | Pod security context for the plugin-server stack deployment. |
+| pluginsScheduler.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| pluginsScheduler.livenessProbe.initialDelaySeconds | int | `10` | The liveness probe initial delay seconds |
+| pluginsScheduler.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| pluginsScheduler.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| pluginsScheduler.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| pluginsScheduler.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| pluginsScheduler.readinessProbe.initialDelaySeconds | int | `50` | The readiness probe initial delay seconds |
+| pluginsScheduler.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
+| pluginsScheduler.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| pluginsScheduler.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| pluginsScheduler.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
 | email.host | string | `nil` | SMTP service host. |
 | email.port | string | `nil` | SMTP service port. |
 | email.user | string | `nil` | SMTP service user. |
