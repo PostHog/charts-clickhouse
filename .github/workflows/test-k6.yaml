@@ -44,7 +44,12 @@ jobs:
             test: upgrade
             values: ci/values/k3s.yaml
 
-          # We run one install test with split plugin-server ingestion
+          # We run one install test with split plugin-server ingestion/async
+          - k3s-channel: v1.23
+            test: install
+            values: ci/values/k3s-plugin-server-ingestion-async-split.yaml
+
+          # We run one install test with split plugin-server ingestion/exports/jobs/scheduler
           - k3s-channel: v1.23
             test: install
             values: ci/values/k3s-plugin-server-split.yaml
