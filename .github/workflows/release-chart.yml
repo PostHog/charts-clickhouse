@@ -2,8 +2,11 @@ name: Release Chart
 
 on:
   pull_request:
+    paths:
+      - charts/**
+      - .github/workflows/release-chart.yaml
   push:
-    branches: 
+    branches:
       - main
 
 jobs:
