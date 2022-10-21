@@ -59,10 +59,10 @@ jobs:
     - name: Declare variables that we can share across steps
       id: vars
       run: |
-        TEST_NAME="helm-test-e2e-gcp-install-$(git rev-parse --short HEAD)"
-        echo "::set-output name=k8s_cluster_name::${TEST_NAME}"
-        echo "::set-output name=dns_record::${TEST_NAME}"
-        echo "::set-output name=fqdn_record::${TEST_NAME}.posthog.cc"
+        TEST_NAME="helm-test-e2e-gcp-$(date '+%F')-$(git rev-parse --short HEAD)"
+        echo "k8s_cluster_name=${TEST_NAME}" >> $GITHUB_OUTPUT
+        echo "dns_record=${TEST_NAME}" >> $GITHUB_OUTPUT
+        echo "fqdn_record=${TEST_NAME}.posthog.cc" >> $GITHUB_OUTPUT
 
     - name: Deploy a new k8s cluster
       id: k8s_cluster_creation
