@@ -1,4 +1,5 @@
 cloud: k3s
+
 ingress:
   nginx:
     enabled: true
