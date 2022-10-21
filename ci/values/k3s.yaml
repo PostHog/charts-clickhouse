@@ -1,7 +1,6 @@
 cloud: k3s
 
 ingress:
-  enabled: false
   nginx:
     enabled: true
     redirectToTLS: false
