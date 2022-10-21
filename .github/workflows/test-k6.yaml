@@ -125,11 +125,9 @@ jobs:
 
       - name: Set PostHog endpoints to use for the ingestion test
         run: |
-          POSTHOG_API_ADDRESS=$(kubectl get svc -n posthog posthog-web -o jsonpath="{.spec.clusterIP}")
-          POSTHOG_EVENTS_ADDRESS=$(kubectl get svc -n posthog posthog-events -o jsonpath="{.spec.clusterIP}")
 
-          echo "POSTHOG_API_ENDPOINT=http://${POSTHOG_API_ADDRESS}:8000" | tee -a "$GITHUB_ENV"
-          echo "POSTHOG_EVENT_ENDPOINT=http://${POSTHOG_EVENTS_ADDRESS}:8000" | tee -a "$GITHUB_ENV"
+          echo "POSTHOG_API_ENDPOINT=http://posthog-ingress-nginx-controller.posthog.svc:80" | tee -a "$GITHUB_ENV"
+          echo "POSTHOG_EVENT_ENDPOINT=http://posthog-ingress-nginx-controller.posthog.svc:80" | tee -a "$GITHUB_ENV"
 
           # Skip the source ip address check in ingestion-test.js
           echo "SKIP_SOURCE_IP_ADDRESS_CHECK=true" | tee -a "$GITHUB_ENV"
