@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 27.2.1](https://img.shields.io/badge/Version-27.2.1-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
+![Version: 27.2.2](https://img.shields.io/badge/Version-27.2.2-informational?style=flat-square) ![AppVersion: 1.40.0](https://img.shields.io/badge/AppVersion-1.40.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -393,6 +393,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.layout.shardsCount | int | `1` |  |
 | clickhouse.layout.replicasCount | int | `1` |  |
 | clickhouse.settings | object | `{}` |  |
+| clickhouse.defaultSettings.default_database | string | `"posthog"` |  |
 | clickhouse.defaultSettings.format_schema_path | string | `"/etc/clickhouse-server/config.d/"` |  |
 | clickhouse.podAnnotations | string | `nil` |  |
 | clickhouse.podDistribution | string | `nil` |  |
