@@ -2,6 +2,6 @@
   "name": "charts-clickhouse",
   "repository": "git@github.com:PostHog/charts-clickhouse.git",
   "dependencies": {
-    "eslint": "^8.2.0"
+    "eslint": "v8.26.0"
   }
 }
