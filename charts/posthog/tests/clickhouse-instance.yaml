@@ -247,6 +247,7 @@ tests:
       - equal:
           path: spec.configuration.settings
           value:
+            default_database: "posthog"
             format_schema_path: /etc/clickhouse-server/config.d/
 
   - it: handles custom configuration settings
@@ -259,6 +260,7 @@ tests:
       - equal:
           path: spec.configuration.settings
           value:
+            default_database: "posthog"
             format_schema_path: /etc/clickhouse-server/config.d/
             prometheus/endpoint: /metrics
 
@@ -272,6 +274,7 @@ tests:
       - equal:
           path: spec.configuration.settings
           value:
+            default_database: "posthog"
             format_schema_path: /custom_path
 
   - it: handles custom users and passwords

@@ -52,6 +52,7 @@ the manifest should match the snapshot when using default values:
           default/allow_experimental_window_functions: "1"
           default/allow_nondeterministic_mutations: "1"
         settings:
+          default_database: posthog
           format_schema_path: /etc/clickhouse-server/config.d/
         users:
           admin/networks/ip:
