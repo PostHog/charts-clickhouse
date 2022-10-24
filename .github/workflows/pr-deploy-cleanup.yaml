@@ -31,19 +31,20 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v2 # no way of getting the correct ref from the issue event, hence the below
-        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }}
 
       - name: Declare variables that we can share across steps
         id: vars
         run: |
           GIT_SHORT="$(git rev-parse --short HEAD)"
           PR_NUM=${{ github.event.number }}
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
 
-          echo "::set-output name=git_short::${GIT_SHORT}"
-          echo "::set-output name=fqdn_record::${PR_NUM}.pr.posthog.cc"
-          echo "::set-output name=pr_number::${PR_NUM}"
-          echo "##[set-output name=branch_name;]$(echo ${GITHUB_REF#refs/heads/})"
-        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+          echo "git_short=${GIT_SHORT}" >> $GITHUB_OUTPUT
+          echo "fqdn_record=${PR_NUM}.pr.posthog.cc" >> $GITHUB_OUTPUT
+          echo "pr_number=${PR_NUM}" >> $GITHUB_OUTPUT
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }}
 
       - name: Install doctl to access k8s config
         uses: digitalocean/action-doctl@v2
@@ -57,24 +58,24 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           env: ${{ steps.vars.outputs.branch_name }}
           desc: Environment was pruned
-        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }}
 
       # Only ran if the correct comment is used! We should have automatic cleanup on merge, but this allows us to manually
       # cleanup. For instance, you may restore a branch, deploy it, and keep it around for demo purposes.
       - name: Delete preview namespace
         id: delete_preview
         run: |
-          doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID 
+          doctl kubernetes cluster kubeconfig save $PR_CLUSTER_ID
 
           kubectl patch chi posthog -n pr-${{ steps.vars.outputs.pr_number }} -p '{"metadata":{"finalizers":null}}' --type=merge || true # if the resource cannot be found, we still want to clean up
           kubectl delete chi posthog -n pr-${{ steps.vars.outputs.pr_number }} --ignore-not-found
           helm uninstall -n pr-${{ steps.vars.outputs.pr_number }} posthog
-          
+
           # delete all instances of all resources, in the specified namespace
           # just in case someone has made a change to the chart that stops uninstall cleaning up correctly
           kubectl delete all --all --namespace pr-${{ steps.vars.outputs.pr_number }}
           kubectl delete namespace pr-${{ steps.vars.outputs.pr_number }}
 
-        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }} 
+        if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }}
         env:
           PR_CLUSTER_ID: ${{ secrets.PR_CLUSTER_ID }} # probably not _SECRET_, but best kept out of the YAML
