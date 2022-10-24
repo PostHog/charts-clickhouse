@@ -1283,6 +1283,7 @@ clickhouse:
 
   ## -- Default settings configuration for ClickHouse. !!! Please DO NOT override this !!!
   defaultSettings:
+    default_database: "posthog"
     format_schema_path: /etc/clickhouse-server/config.d/
 
   ## -- ClickHouse pod(s) annotation.
