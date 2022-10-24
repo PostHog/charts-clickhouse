@@ -1,13 +1,16 @@
 {
-    "root": true,
-    "parserOptions": {
-      "ecmaVersion": 6,
-      "sourceType": "module"
-    },
-    "rules": {
-      "curly": "warn",
-      "eqeqeq": "warn",
-      "no-throw-literal": "warn",
-      "semi": "off"
-    }
+  "root": true,
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "ignorePatterns": [
+    "ci/k6/lib/*.js"
+  ],
+  "rules": {
+    "curly": "warn",
+    "eqeqeq": "warn",
+    "no-throw-literal": "warn",
+    "semi": "off"
   }
+}

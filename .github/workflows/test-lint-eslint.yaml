@@ -8,6 +8,7 @@ on:
       - '**.jsx'
       - '**.ts'
       - '**.tsx'
+      - package.json'
       - .github/workflows/test-lint-eslint.yaml
   push:
     branches:
