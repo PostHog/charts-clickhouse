@@ -1,8 +1,5 @@
 cloud: k3s
 
-image:
-  tag: latest # TODO: remove this override once 1.41.0 is the default
-
 ingress:
   nginx:
     enabled: true
