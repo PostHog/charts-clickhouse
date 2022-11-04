@@ -16,7 +16,7 @@ image:
   # -- PostHog image tag to use (example: `release-1.35.0`).
   tag:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
-  default: ":release-1.41.1"
+  default: ":release-1.41.2"
   # -- PostHog image pull policy.
   pullPolicy: IfNotPresent
 
