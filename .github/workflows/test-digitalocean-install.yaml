@@ -47,8 +47,8 @@ jobs:
           ${{ steps.vars.outputs.k8s_cluster_name }} \
           --version "$DO_K8S_VERSION" \
           --tag="provisioned_by:github_action" \
-          --size s-2vcpu-4gb \
-          --count 2 \
+          --size s-4vcpu-8gb \
+          --count 3 \
           --wait
 
     - name: Install PostHog using the Helm chart

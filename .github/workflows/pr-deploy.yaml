@@ -39,7 +39,7 @@ jobs:
             return member
 
       - name: Checkout
-        uses: actions/checkout@v2 # no way of getting the correct ref from the issue event, hence the below
+        uses: actions/checkout@v3 # no way of getting the correct ref from the issue event, hence the below
         if: ${{ steps.permissions.outputs.result == 'true' && contains(github.event.pull_request.labels.*.name, 'deploy') }}
 
       - name: Declare variables that we can share across steps
