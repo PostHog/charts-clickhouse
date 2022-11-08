@@ -38,8 +38,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 84,
-  "iteration": 1660649047854,
+  "id": 161,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -54,6 +53,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMin": 0,
@@ -111,11 +112,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -125,9 +127,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(increase(django_http_requests_total_by_view_transport_method_total{view=\"$view\"}[$__interval]))",
+          "expr": "sum(increase(django_http_requests_total_by_view_transport_method_total{view=~\"$view\"}[$__interval])) by (view)",
           "interval": "5m",
-          "legendFormat": "Http requests",
+          "legendFormat": "{{view}}",
           "range": true,
           "refId": "A"
         }
@@ -146,6 +148,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMin": 0,
@@ -203,7 +207,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -217,7 +222,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(status) (increase(django_http_responses_total_by_status_view_method_total{view=\"$view\"}[$__interval]))",
+          "expr": "sum by(status) (increase(django_http_responses_total_by_status_view_method_total{view=~\"$view\"}[$__interval]))",
           "interval": "5m",
           "legendFormat": "__auto",
           "range": true,
@@ -238,6 +243,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -293,11 +300,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "targets": [
@@ -307,9 +315,9 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(django_http_exceptions_total_by_view_total{view=\"$view\"}[$__interval]))",
+          "expr": "sum(rate(django_http_exceptions_total_by_view_total{view=~\"$view\"}[$__interval])) by (view)",
           "interval": "5m",
-          "legendFormat": "Exeption count",
+          "legendFormat": "{{view}}",
           "range": true,
           "refId": "A"
         }
@@ -332,6 +340,21 @@
         "uid": "PBFA97CFB590B2093"
       },
       "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -345,6 +368,45 @@
       "legend": {
         "show": true
       },
+      "options": {
+        "calculate": false,
+        "calculation": {},
+        "cellGap": 2,
+        "cellValues": {},
+        "color": {
+          "exponent": 0.5,
+          "fill": "#b4ff00",
+          "mode": "scheme",
+          "reverse": false,
+          "scale": "exponential",
+          "scheme": "Turbo",
+          "steps": 128
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 1e-9
+        },
+        "legend": {
+          "show": true
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "showValue": "never",
+        "tooltip": {
+          "show": true,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "decimals": 0,
+          "reverse": false,
+          "unit": "s"
+        }
+      },
+      "pluginVersion": "9.1.6",
       "reverseYBuckets": false,
       "targets": [
         {
@@ -354,7 +416,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by (le)(\n  increase(\n    django_http_requests_latency_seconds_by_view_method_bucket{view=\"$view\"}[5m]\n  )\n)",
+          "expr": "sum by (le)(\n  increase(\n    django_http_requests_latency_seconds_by_view_method_bucket{view=~\"$view\"}[5m]\n  )\n)",
           "interval": "5m",
           "legendFormat": "{{le}}",
           "range": true,
@@ -389,6 +451,8 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -445,7 +509,8 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -459,7 +524,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=\"$view\"}[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=~\"$view\"}[$__rate_interval])) by (le))",
           "interval": "5m",
           "legendFormat": "p99",
           "range": true,
@@ -471,7 +536,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=\"$view\"}[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=~\"$view\"}[$__rate_interval])) by (le))",
           "hide": false,
           "interval": "5m",
           "legendFormat": "p95",
@@ -484,7 +549,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.90, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=\"$view\"}[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.90, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{view=~\"$view\"}[$__rate_interval])) by (le))",
           "hide": false,
           "interval": "5m",
           "legendFormat": "p90",
@@ -496,7 +561,7 @@
       "type": "timeseries"
     }
   ],
-  "schemaVersion": 36,
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [
     "PostHog"
@@ -506,9 +571,13 @@
       {
         "allValue": "*",
         "current": {
-          "selected": false,
-          "text": "posthog.api.capture.get_event",
-          "value": "posthog.api.capture.get_event"
+          "selected": true,
+          "text": [
+            "posthog.api.capture.get_event"
+          ],
+          "value": [
+            "posthog.api.capture.get_event"
+          ]
         },
         "datasource": {
           "type": "prometheus",
@@ -518,7 +587,7 @@
         "hide": 0,
         "includeAll": false,
         "label": "View",
-        "multi": false,
+        "multi": true,
         "name": "view",
         "options": [],
         "query": {
