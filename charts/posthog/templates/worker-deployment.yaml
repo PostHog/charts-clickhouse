@@ -40,22 +40,9 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
-
-      {{- if .Values.worker.affinity }}
-      affinity:
-{{ toYaml .Values.worker.affinity | indent 8 }}
-      {{- end }}
-
-      {{- if .Values.worker.nodeSelector }}
-      nodeSelector:
-{{ toYaml .Values.worker.nodeSelector | indent 8 }}
-      {{- end }}
-
-      {{- if .Values.worker.tolerations }}
-      tolerations:
-{{ toYaml .Values.worker.tolerations | indent 8 }}
-      {{- end }}
-
+      affinity: {{ toYaml (merge .Values.worker.affinity .Values.affinity) | nindent 8 }}
+      nodeSelector: {{ toYaml (merge .Values.worker.nodeSelector .Values.nodeSelector) | nindent 8 }}
+      tolerations: {{ toYaml (coalesce .Values.worker.tolerations .Values.tolerations) | nindent 8 }}
       {{- if .Values.worker.schedulerName }}
       schedulerName: "{{ .Values.worker.schedulerName }}"
       {{- end }}

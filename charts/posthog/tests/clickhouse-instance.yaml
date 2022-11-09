@@ -146,11 +146,84 @@ tests:
             - mountPath: /var/lib/clickhouse
               name: existing-volumeclaim
 
-  - it: nodeSelector override via 'clickhouse.nodeSelector' works
+  - it: nodeSelector, affinity and tolerations via '.Values.<key>' works
     set:
+      nodeSelector:
+        diskType: hdd
+        nodeType: slow
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-group
+                    operator: In
+                    values:
+                      - test
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: test
+          effect: NoExecute
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.nodeSelector
+          value:
+            diskType: hdd
+            nodeType: slow
+      - equal:
+          path: spec.templates.podTemplates[0].spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0]
+          value:
+            key: node-group
+            operator: In
+            values:
+              - test
+      - equal:
+          path: spec.templates.podTemplates[0].spec.tolerations[0]
+          value:
+            key: dedicated
+            operator: Equal
+            value: test
+            effect: NoExecute
+
+  - it: nodeSelector, affinity and tolerations override via '.Values.clickhouse.<key>' works
+    set:
+      nodeSelector:
+        diskType: hdd
+        nodeType: slow
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-group
+                    operator: In
+                    values:
+                      - test
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: test
+          effect: NoExecute
       clickhouse.nodeSelector:
         diskType: ssd
         nodeType: fast
+      clickhouse.affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-group
+                    operator: In
+                    values:
+                      - test-override
+      clickhouse.tolerations:
+        - key: dedicated
+          operator: Equal
+          value: test-override
+          effect: NoExecute
     asserts:
       - hasDocuments:
           count: 1
@@ -159,6 +232,20 @@ tests:
           value:
             diskType: ssd
             nodeType: fast
+      - equal:
+          path: spec.templates.podTemplates[0].spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0]
+          value:
+            key: node-group
+            operator: In
+            values:
+              - test-override
+      - equal:
+          path: spec.templates.podTemplates[0].spec.tolerations[0]
+          value:
+            key: dedicated
+            operator: Equal
+            value: test-override
+            effect: NoExecute
 
   - it: volumeClaimTemplates shouldn't exit if clickhouse.persistence.enabled is false
     set:

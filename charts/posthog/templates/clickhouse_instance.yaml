@@ -71,16 +71,9 @@ spec:
         podDistribution: {{ toYaml .Values.clickhouse.podDistribution | nindent 12 }}
         {{- end}}
         spec:
-          {{- if .Values.clickhouse.affinity }}
-          affinity: {{ toYaml .Values.clickhouse.affinity | nindent 12 }}
-          {{- end }}
-          {{- if .Values.clickhouse.tolerations }}
-          tolerations: {{ toYaml .Values.clickhouse.tolerations | nindent 12 }}
-          {{- end }}
-          {{- if .Values.clickhouse.nodeSelector }}
-          nodeSelector: {{ toYaml .Values.clickhouse.nodeSelector | nindent 12 }}
-          {{- end }}
-
+          affinity: {{ toYaml (merge .Values.clickhouse.affinity .Values.affinity) | nindent 12 }}
+          nodeSelector: {{ toYaml (merge .Values.clickhouse.nodeSelector .Values.nodeSelector) | nindent 12 }}
+          tolerations: {{ toYaml (coalesce .Values.clickhouse.tolerations .Values.tolerations) | nindent 12 }}
           {{- if .Values.clickhouse.persistence.enabled }}
           volumes:
           {{- if .Values.clickhouse.persistence.existingClaim }}

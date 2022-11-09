@@ -41,22 +41,9 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ include "snippet.web-deployments.terminationGracePeriodSeconds" . }}
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
-
-      {{- if .Values.web.affinity }}
-      affinity:
-{{ toYaml .Values.web.affinity | indent 8 }}
-      {{- end }}
-
-      {{- if .Values.web.nodeSelector }}
-      nodeSelector:
-{{ toYaml .Values.web.nodeSelector | indent 8 }}
-      {{- end }}
-
-      {{- if .Values.web.tolerations }}
-      tolerations:
-{{ toYaml .Values.web.tolerations | indent 8 }}
-      {{- end }}
-
+      affinity: {{ toYaml (merge .Values.web.affinity .Values.affinity) | nindent 8 }}
+      nodeSelector: {{ toYaml (merge .Values.web.nodeSelector .Values.nodeSelector) | nindent 8 }}
+      tolerations: {{ toYaml (coalesce .Values.web.tolerations .Values.tolerations) | nindent 8 }}
       {{- if .Values.web.schedulerName }}
       schedulerName: "{{ .Values.web.schedulerName }}"
       {{- end }}

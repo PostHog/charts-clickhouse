@@ -23,6 +23,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | posthogSecretKey.existingSecret | string | `nil` | Specify that the key should be pulled from an existing secret key. By default the chart will generate a secret and create a Kubernetes Secret containing it. |
 | posthogSecretKey.existingSecretKey | string | `"posthog-secret"` | Specify the key within the secret from which SECRET_KEY should be taken. |
 | env | list | `[]` | Environment variables to inject into every PostHog deployment. |
+| nodeSelector | object | `{}` | Global Node labels for all deployment. |
+| tolerations | list | `[]` | Global Toleration labels for all deployment. |
+| affinity | object | `{}` | Global Affinity settings for all deployment. |
 | migrate.enabled | bool | `true` | Whether to install the PostHog migrate job or not. |
 | events.enabled | bool | `true` | Whether to install the PostHog events stack or not. |
 | events.replicacount | int | `1` | Count of events pods to run. This setting is ignored if `events.hpa.enabled` is set to `true`. |
