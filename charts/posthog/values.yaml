@@ -1231,11 +1231,6 @@ clickhouse:
   ## - https://clickhouse.com/docs/en/operations/settings/settings/
   profiles: {}
 
-  ## -- ClickHouse user configs defaults used for defining users
-  ## Use this to set defaults for things like `access_management`
-  ## https://clickhouse.com/docs/en/operations/settings/settings-users#access_management-user-setting
-  defaultUsers: {}
-
   ## -- Default user profile configuration for Clickhouse. !!! Please DO NOT override this !!!
   defaultProfiles:
     default/allow_experimental_window_functions: "1"
