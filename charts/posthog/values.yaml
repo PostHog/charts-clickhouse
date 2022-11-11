@@ -16,7 +16,7 @@ image:
   # -- PostHog image tag to use (example: `release-1.35.0`).
   tag:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
-  default: ":release-1.40.1"
+  default: ":release-1.41.3"
   # -- PostHog image pull policy.
   pullPolicy: IfNotPresent
 
@@ -1193,7 +1193,7 @@ clickhouse:
     # -- ClickHouse image repository.
     repository: clickhouse/clickhouse-server
     # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-    tag: "22.3.6.5"
+    tag: "22.3.13.80"
     # -- Image pull policy
     pullPolicy: IfNotPresent
 
