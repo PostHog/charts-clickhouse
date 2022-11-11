@@ -74,7 +74,6 @@ tests:
             clusterServiceTemplate: service-template
             dataVolumeClaimTemplate: data-volumeclaim-template
 
-
   - it: pod-template spec.volumes should not exist if persistence is disabled
     set:
       clickhouse.persistence.enabled: false
@@ -309,9 +308,9 @@ tests:
           value:
             someuser/k8s_secret_password: clickhouse-creds/password
             someuser/networks/ip:
-            - 10.0.0.0/8
-            - 172.16.0.0/12
-            - 192.168.0.0/16
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
             someuser/profile: default
             someuser/quota: default
 
@@ -329,9 +328,9 @@ tests:
           path: spec.configuration.users
           value:
             admin/networks/ip:
-            - 10.0.0.0/8
-            - 172.16.0.0/12
-            - 192.168.0.0/16
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
             admin/password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
             admin/profile: default
             admin/quota: default
@@ -491,3 +490,11 @@ tests:
           of: ClickHouseInstallation
       - isNotNull:
           path: spec.configuration.users.[backup/networks/ip]
+
+  - it: tests set users admin access_management
+    set:
+      clickhouse.users.admin/access_management: "1"
+    asserts:
+      - equal:
+          path: spec.configuration.users.admin/access_management
+          value: "1"
