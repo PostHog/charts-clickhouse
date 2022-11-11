@@ -493,7 +493,7 @@ tests:
 
   - it: tests set users admin access_management
     set:
-      clickhouse.users.admin/access_management: "1"
+      clickhouse.additionalUsersConfig.admin/access_management: "1"
     asserts:
       - equal:
           path: spec.configuration.users.admin/access_management
