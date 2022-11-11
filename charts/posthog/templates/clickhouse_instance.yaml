@@ -17,6 +17,7 @@ spec:
       {{ .Values.clickhouse.backup.backup_user }}/networks/ip: "0.0.0.0/0"
       {{ template "clickhouse.backupPasswordValue" . }}
       {{- end}}
+      {{- merge dict .Values.clickhouse.users .Values.clickhouse.defaultUsers | toYaml | nindent 6 }}
     profiles:
       {{- merge dict .Values.clickhouse.profiles .Values.clickhouse.defaultProfiles | toYaml | nindent 6 }}
 
