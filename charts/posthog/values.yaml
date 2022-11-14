@@ -1286,6 +1286,11 @@ clickhouse:
     default_database: "posthog"
     format_schema_path: /etc/clickhouse-server/config.d/
 
+  ## -- specify additional user configs for ClickHouse. This will be added to
+  ## the users.xml configuration. See
+  ## https://github.com/Altinity/clickhouse-operator for details.
+  additionalUsersConfig:
+
   ## -- ClickHouse pod(s) annotation.
   podAnnotations:
     # Uncomment those lines if you want Prometheus server to scrape ClickHouse pods metrics.
