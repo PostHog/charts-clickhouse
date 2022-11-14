@@ -395,6 +395,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.settings | object | `{}` |  |
 | clickhouse.defaultSettings.default_database | string | `"posthog"` |  |
 | clickhouse.defaultSettings.format_schema_path | string | `"/etc/clickhouse-server/config.d/"` |  |
+| clickhouse.additionalUsersConfig | string | `nil` |  |
 | clickhouse.podAnnotations | string | `nil` |  |
 | clickhouse.podDistribution | string | `nil` |  |
 | clickhouse.client.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
