@@ -1569,7 +1569,7 @@ loki:
   nameOverride: posthog-loki
 
   # Whether to enabled monitoring of Loki. We avoid enabling this by default as
-  # it requires installing additionals CRDs (e.g. the grafana-operator)
+  # it requires installing additional CRDs (e.g. the grafana-operator)
   monitoring:
     alerts:
       enabled: false
@@ -1585,6 +1585,9 @@ loki:
         enabled: false
     serviceMonitor:
       enabled: false
+
+  test:
+    enabled: false
 
 ###
 ###
