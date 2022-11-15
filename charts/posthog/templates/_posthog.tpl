@@ -8,6 +8,14 @@
   {{- end -}}
 {{- end }}
 
+{{- define "posthog.clusterName" }}
+  {{- if .Values.clusterName -}}
+    {{- .Values.clusterName -}}
+  {{- else -}}
+    cluster
+  {{- end -}}
+{{- end }}
+
 {{- define "snippet.posthog-env" }}
 - name: SECRET_KEY
   valueFrom:

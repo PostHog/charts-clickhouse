@@ -8,6 +8,9 @@ notificationEmail:
 # This is used to e.g. generate shareable links to Dashboards.
 siteUrl:
 
+# -- Cluster name used for internal DNS resolution (svc.{{clusterName}}.local)
+clusterName: cluster
+
 image:
   # -- PostHog image repository to use.
   repository: posthog/posthog
