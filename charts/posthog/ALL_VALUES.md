@@ -463,6 +463,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | loki.enabled | bool | `false` | Whether to install Loki or not. With the default configuration you will get no replication, so as to easily support small deploys that e.g. do not have multiple nodes in the cluster. For production setups that are distributed across e.g. multiple AWS AZs it's recommended that you increase the replica counts for `read:` and `write:`. These stateful sets by default have an anti-affinity so you'll need at least as many nodes as replicas in a set. |
 | loki.loki.auth_enabled | bool | `false` |  |
 | loki.loki.commonConfig.replication_factor | int | `1` |  |
+| loki.loki.podAnnotations | object | `{}` |  |
 | loki.read.replicas | int | `1` |  |
 | loki.write.replicas | int | `1` |  |
 | loki.gateway.enabled | bool | `false` |  |
