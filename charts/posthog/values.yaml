@@ -1534,13 +1534,9 @@ loki:
   # have an anti-affinity so you'll need at least as many nodes as replicas in a
   # set.
   enabled: false
-  loki:
-    # For backwards compatibility with Loki Chart 2.x we disable multi-tenancy.
-    # See
-    # https://github.com/grafana/loki/blob/167c95c3207c115284dd646179e53d66f7a84a66/docs/sources/operations/multi-tenancy.md
-    # for details.
-    auth_enabled: false
 
+  loki:
+    auth_enabled: false
     commonConfig:
       replication_factor: 1
 
@@ -1573,11 +1569,7 @@ loki:
   nameOverride: posthog-loki
 
   # Whether to enabled monitoring of Loki. We avoid enabling this by default as
-  # it requires installing e.g. the grafana-operator. CRDs are not installed on
-  # upgrade, so to smooth the transition to Helm Chart version 3.x we disable
-  # this, although using the operator might offer a good option to allow
-  # decoupling of e.g. service and rule definitions from the Grafana and co
-  # workloads.
+  # it requires installing additional CRDs (e.g. the grafana-operator)
   monitoring:
     alerts:
       enabled: false
@@ -1586,11 +1578,16 @@ loki:
     rules:
       enabled: false
     selfMonitoring:
-      enabled: false # requires additional CRDs
+      enabled: false
       grafanaAgent:
         installOperator: false
+      lokiCanary:
+        enabled: false
     serviceMonitor:
       enabled: false
+
+  test:
+    enabled: false
 
 ###
 ###
