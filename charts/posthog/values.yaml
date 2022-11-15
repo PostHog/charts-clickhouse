@@ -1540,6 +1540,13 @@ loki:
     commonConfig:
       replication_factor: 1
 
+    ## -- Pod annotations.
+    podAnnotations: {}
+      # Uncomment those lines if you want Prometheus server to scrape metrics.
+      # prometheus.io/scrape: "true"
+      # prometheus.io/path: /metrics
+      # prometheus.io/port: "3100"
+
   read:
     replicas: 1
 
@@ -1613,6 +1620,7 @@ eventrouter:
 promtail:
   # -- Whether to install Promtail or not.
   enabled: false
+
   config:
     clients:
       - url: http://posthog-loki-write:3100/loki/api/v1/push
