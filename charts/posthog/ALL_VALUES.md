@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 29.0.4](https://img.shields.io/badge/Version-29.0.4-informational?style=flat-square) ![AppVersion: 1.41.3](https://img.shields.io/badge/AppVersion-1.41.3-informational?style=flat-square)
+![Version: 29.0.5](https://img.shields.io/badge/Version-29.0.5-informational?style=flat-square) ![AppVersion: 1.41.3](https://img.shields.io/badge/AppVersion-1.41.3-informational?style=flat-square)
 
 ## Configuration
 
@@ -476,7 +476,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | loki.monitoring.rules.enabled | bool | `false` |  |
 | loki.monitoring.selfMonitoring.enabled | bool | `false` |  |
 | loki.monitoring.selfMonitoring.grafanaAgent.installOperator | bool | `false` |  |
+| loki.monitoring.selfMonitoring.lokiCanary.enabled | bool | `false` |  |
 | loki.monitoring.serviceMonitor.enabled | bool | `false` |  |
+| loki.test.enabled | bool | `false` |  |
 | eventrouter.enabled | bool | `false` | Whether to install eventrouter. |
 | eventrouter.image.repository | string | `"gcr.io/heptio-images/eventrouter"` |  |
 | eventrouter.image.tag | string | `"v0.3"` |  |
