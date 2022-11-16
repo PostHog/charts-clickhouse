@@ -1569,8 +1569,8 @@
     "schemaVersion": 37,
     "style": "dark",
     "tags": [
-        "loki",
-        "PostHog"
+        "PostHog",
+        "Loki"
     ],
     "templating": {
         "list": []
