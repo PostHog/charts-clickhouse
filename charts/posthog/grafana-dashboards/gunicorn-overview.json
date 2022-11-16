@@ -498,7 +498,8 @@
     "schemaVersion": 36,
     "style": "dark",
     "tags": [
-        "gunicorn"
+        "PostHog",
+        "Gunicorn"
     ],
     "templating": {
         "list": [

@@ -1837,8 +1837,7 @@
     "style": "dark",
     "tags": [
         "PostHog",
-        "k8s",
-        "kubernetes"
+        "Kubernetes"
     ],
     "templating": {
         "list": [
