@@ -971,7 +971,7 @@
     "style": "dark",
     "tags": [
         "PostHog",
-        "pgbouncer"
+        "PgBouncer"
     ],
     "templating": {
         "list": []

@@ -40,7 +40,7 @@
     "fiscalYearStartMonth": 0,
     "gnetId": 14314,
     "graphTooltip": 1,
-    "id": 197,
+    "id": 58,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -1770,8 +1770,7 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
-                                "value": null
+                                "color": "green"
                             },
                             {
                                 "color": "red",
@@ -1876,8 +1875,7 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green",
-                                "value": null
+                                "color": "green"
                             },
                             {
                                 "color": "red",
@@ -1964,7 +1962,10 @@
     "refresh": "1m",
     "schemaVersion": 37,
     "style": "dark",
-    "tags": [],
+    "tags": [
+        "PostHog",
+        "NGINX"
+    ],
     "templating": {
         "list": [
             {
