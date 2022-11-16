@@ -27,6 +27,12 @@ spec:
       - name: grafana-annotation-job-post
         image: {{ .Values.busybox.image }}
         imagePullPolicy: {{ .Values.busybox.pullPolicy }}
+        {{- if .Values.busybox.pullSecrets }}
+        imagePullSecrets:
+          {{- range .Values.busybox.pullSecrets }}
+          - name: {{ . }}
+          {{- end }}
+        {{- end }}
         command:
           - /bin/sh
           - -c
