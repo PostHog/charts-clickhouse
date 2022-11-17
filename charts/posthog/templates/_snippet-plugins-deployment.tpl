@@ -67,9 +67,9 @@ spec:
       {{- end }}
 
       # I do not know for sure if the old one has been used anywhere, so do both :(
-      {{- if .Values.image.pullSecrets }}
+      {{- if .root.Values.image.pullSecrets }}
       imagePullSecrets:
-        {{- range .Values.image.pullSecrets }}
+        {{- range .root.Values.image.pullSecrets }}
         - name: {{ . }}
         {{- end }}
       {{- end }}
