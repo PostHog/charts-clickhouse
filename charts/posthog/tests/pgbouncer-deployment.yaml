@@ -139,3 +139,52 @@ tests:
             limits:
               cpu: 250m
               memory: 200M
+
+  - it: allows setting pgbouncer exporter pullSecrets only
+    template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncer:
+        exporter:
+          enabled: true
+          image:
+            pullSecrets: [foo]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: foo]
+
+  - it: allows setting pgbouncer pullSecrets only
+    template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncer:
+        image:
+          pullSecrets: [foo]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: foo]
+
+  - it: allows setting pgbouncer and exporter secrets
+    template: templates/pgbouncer-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncer:
+        image:
+          pullSecrets: [main]
+        exporter:
+          image:
+            pullSecrets: [exporter]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: 
+          - name: main
+          - name: exporter

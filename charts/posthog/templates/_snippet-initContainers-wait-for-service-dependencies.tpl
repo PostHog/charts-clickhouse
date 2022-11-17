@@ -3,12 +3,6 @@
 - name: wait-for-service-dependencies
   image: {{ .Values.busybox.image }}
   imagePullPolicy: {{ .Values.busybox.pullPolicy }}
-  {{- if .Values.busybox.pullSecrets }}
-  imagePullSecrets:
-      {{- range .Values.busybox.pullSecrets }}
-      - name: {{ . }}
-      {{- end }}
-  {{- end }}
   env:
     {{- include "snippet.clickhouse-env" . | nindent 4 }}
   command:

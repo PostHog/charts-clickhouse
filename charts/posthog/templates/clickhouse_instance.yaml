@@ -97,15 +97,17 @@ spec:
           {{- if .Values.clickhouse.securityContext.enabled }}
           securityContext: {{- omit .Values.clickhouse.securityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
+
+          {{- if .Values.clickhouse.image.pullSecrets }}
+          imagePullSecrets:
+            {{- range .Values.clickhouse.image.pullSecrets }}
+            - name: {{ . }}
+            {{- end }}
+          {{- end }}
+
           containers:
             - name: clickhouse
               image: {{ template "posthog.clickhouse.image" . }}
-              {{- if .Values.clickhouse.image.pullSecrets }}
-              imagePullSecrets:
-                {{- range .Values.clickhouse.image.pullSecrets }}
-                - name: {{ . }}
-                {{- end }}
-              {{- end }}
               command:
                 - /bin/bash
                 - -c
@@ -135,12 +137,6 @@ spec:
             - name: clickhouse-backup
               image: {{ template "posthog_backup.clickhouse.image" . }}
               imagePullPolicy: {{ .Values.clickhouse.backup.image.pullPolicy }}
-              {{- if .Values.clickhouse.backup.image.pullSecrets }}
-              imagePullSecrets:
-                {{- range .Values.clickhouse.backup.image.pullSecrets }}
-                - name: {{ . }}
-                {{- end }}
-              {{- end }}
               command:
                 - /bin/bash
                 - -c
