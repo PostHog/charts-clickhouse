@@ -58,3 +58,14 @@ tests:
             requests:
               cpu: 4000m
               memory: 16Gi
+
+  - it: should allow setting imagePullSecrets
+    set:
+      eventrouter.enabled: true
+      eventrouter.image.pullSecrets: [foo]
+    documentIndex: 4
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: foo]
+

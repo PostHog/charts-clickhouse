@@ -66,6 +66,14 @@ spec:
         app: eventrouter
         tier: control-plane-addons
     spec:
+
+      {{- if .Values.eventrouter.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.eventrouter.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+
       containers:
         - name: kube-eventrouter
           image: {{ .Values.eventrouter.image.repository }}:{{ .Values.eventrouter.image.tag }}
