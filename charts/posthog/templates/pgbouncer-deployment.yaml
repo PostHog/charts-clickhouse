@@ -42,21 +42,41 @@ spec:
       terminationGracePeriodSeconds: 65
 
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+
       {{- if .Values.pgbouncer.affinity }}
       affinity: {{ toYaml .Values.pgbouncer.affinity | nindent 8 }}
       {{- end }}
+
       {{- if .Values.pgbouncer.nodeSelector }}
       nodeSelector: {{ toYaml .Values.pgbouncer.nodeSelector | nindent 8 }}
       {{- end }}
+
       {{- if .Values.pgbouncer.tolerations }}
       tolerations: {{ toYaml .Values.pgbouncer.tolerations | nindent 8 }}
       {{- end }}
+
       {{- if .Values.pgbouncer.schedulerName }}
       schedulerName: "{{ .Values.pgbouncer.schedulerName }}"
       {{- end }}
+
       {{- if .Values.pgbouncer.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.pgbouncer.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
+
+      {{- if or .Values.pgbouncer.image.pullSecrets .Values.pgbouncer.exporter.image.pullSecrets }}
+      imagePullSecrets:
+        {{- if .Values.pgbouncer.image.pullSecrets }}
+        {{- range .Values.pgbouncer.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.pgbouncer.exporter.image.pullSecrets }}
+        {{- range .Values.pgbouncer.exporter.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+
       containers:
 
       - name: {{ .Chart.Name }}-pgbouncer
