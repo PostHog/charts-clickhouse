@@ -57,6 +57,12 @@ spec:
       priorityClassName: "{{ .Values.worker.priorityClassName }}"
       {{- end }}
 
+      {{- if .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+      {{- end }}
+
+      # I do not know for sure if the old one has been used anywhere, so do both :(
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
         {{- range .Values.image.pullSecrets }}
@@ -67,7 +73,6 @@ spec:
       {{- if .Values.worker.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.worker.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
-
       containers:
       - name: {{ .Chart.Name }}-workers
         image: {{ template "posthog.image.fullPath" . }}
@@ -112,5 +117,3 @@ spec:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
 {{- end }}
-
-
