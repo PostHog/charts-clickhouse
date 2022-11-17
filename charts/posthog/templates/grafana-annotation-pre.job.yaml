@@ -23,16 +23,18 @@ spec:
       name: {{ printf "%s-grafana-annotation-job-pre-%s" .Release.Name (now | date "2006-01-02-15-04-05") }}
     spec:
       restartPolicy: Never
+
+      {{- if .Values.busybox.pullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.busybox.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+
       containers:
       - name: grafana-annotation-job-pre
         image: {{ .Values.busybox.image }}
         imagePullPolicy: {{ .Values.busybox.pullPolicy }}
-        {{- if .Values.busybox.pullSecrets }}
-        imagePullSecrets:
-          {{- range .Values.busybox.pullSecrets }}
-          - name: {{ . }}
-          {{- end }}
-        {{- end }}
         command:
           - /bin/sh
           - -c
