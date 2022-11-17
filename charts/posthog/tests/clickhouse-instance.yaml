@@ -498,3 +498,14 @@ tests:
       - equal:
           path: spec.configuration.users.admin/access_management
           value: "1"
+
+  - it: allows setting imagePullSecrets
+    set:
+      clickhouse.image.pullSecrets: [secret]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.templates.podTemplates[0].spec.imagePullSecrets
+          value: [name: secret]
+

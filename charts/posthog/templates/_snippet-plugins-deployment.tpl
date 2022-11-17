@@ -37,31 +37,47 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ template "posthog.serviceAccountName" .root }}
+
       {{- if .params.affinity }}
       affinity:
         {{- toYaml .params.affinity | nindent 8 }}
       {{- end }}
+
       {{- if .params.nodeSelector }}
       nodeSelector:
         {{- toYaml .params.nodeSelector | nindent 8 }}
       {{- end }}
+
       {{- if .params.tolerations }}
       tolerations:
         {{- toYaml .params.tolerations | nindent 8 }}
       {{- end }}
+
       {{- if .params.schedulerName }}
       schedulerName: "{{ .params.schedulerName }}"
       {{- end }}
+
       {{- if .params.priorityClassName }}
       priorityClassName: "{{ .params.priorityClassName }}"
       {{- end }}
+
       {{- if .root.Values.image.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml .root.Values.image.imagePullSecrets | nindent 8 }}
       {{- end }}
+
+      # I do not know for sure if the old one has been used anywhere, so do both :(
+      {{- if .root.Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range .root.Values.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+
       {{- if .params.podSecurityContext.enabled }}
       securityContext: {{- omit .params.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
+
       containers:
       - name: {{ .root.Chart.Name }}-{{ .name }}
         image: {{ template "posthog.image.fullPath" .root }}
