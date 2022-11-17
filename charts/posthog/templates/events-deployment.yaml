@@ -34,28 +34,43 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ include "snippet.web-deployments.terminationGracePeriodSeconds" . }}
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+
       {{- if .Values.web.affinity }}
       affinity:
 {{ toYaml .Values.web.affinity | indent 8 }}
       {{- end }}
+
       {{- if .Values.web.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.web.nodeSelector | indent 8 }}
       {{- end }}
+
       {{- if .Values.web.tolerations }}
       tolerations:
 {{ toYaml .Values.web.tolerations | indent 8 }}
       {{- end }}
+
       {{- if .Values.web.schedulerName }}
       schedulerName: "{{ .Values.web.schedulerName }}"
       {{- end }}
+
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
-     {{- if .Values.events.podSecurityContext.enabled }}
+
+      # I do not know for sure if the old one has been used anywhere, so do both :(
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+
+      {{- if .Values.events.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.events.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
+
       containers:
       - name: {{ .Chart.Name }}-events
         image: {{ template "posthog.image.fullPath" . }}

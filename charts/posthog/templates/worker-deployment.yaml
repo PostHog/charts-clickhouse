@@ -33,28 +33,43 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+
       {{- if .Values.worker.affinity }}
       affinity:
 {{ toYaml .Values.worker.affinity | indent 8 }}
       {{- end }}
+
       {{- if .Values.worker.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.worker.nodeSelector | indent 8 }}
       {{- end }}
+
       {{- if .Values.worker.tolerations }}
       tolerations:
 {{ toYaml .Values.worker.tolerations | indent 8 }}
       {{- end }}
+
       {{- if .Values.worker.schedulerName }}
       schedulerName: "{{ .Values.worker.schedulerName }}"
       {{- end }}
+
       {{- if .Values.worker.priorityClassName }}
       priorityClassName: "{{ .Values.worker.priorityClassName }}"
       {{- end }}
+
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
+
+      # I do not know for sure if the old one has been used anywhere, so do both :(
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+
       {{- if .Values.worker.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.worker.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}

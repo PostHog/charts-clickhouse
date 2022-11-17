@@ -24,7 +24,7 @@
                     "type": "loki",
                     "uid": "P8E80F9AEF21F6940"
                 },
-                "enable": true,
+                "enable": false,
                 "expr": "{namespace=\"posthog\", container=~\"grafana-annotation-job-.*\"}",
                 "hide": false,
                 "iconColor": "dark-blue",
@@ -39,22 +39,15 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
-    "id": 12,
+    "id": 168,
     "links": [],
     "liveNow": false,
     "panels": [
         {
-            "gridPos": {
-                "h": 1,
-                "w": 24,
-                "x": 0,
-                "y": 0
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
             },
-            "id": 12,
-            "title": "Overall",
-            "type": "row"
-        },
-        {
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -79,7 +72,7 @@
                 "h": 5,
                 "w": 4,
                 "x": 0,
-                "y": 1
+                "y": 0
             },
             "id": 7,
             "options": {
@@ -96,7 +89,7 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.1.6",
             "targets": [
                 {
                     "datasource": {
@@ -104,7 +97,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "sum(rate(pgbouncer_stats_queries_pooled_total{}[5m]))",
+                    "expr": "sum(rate(pgbouncer_stats_queries_pooled_total{}[$__rate_interval]))",
                     "interval": "",
                     "legendFormat": "QPS",
                     "refId": "A"
@@ -114,6 +107,10 @@
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -142,7 +139,7 @@
                 "h": 5,
                 "w": 4,
                 "x": 4,
-                "y": 1
+                "y": 0
             },
             "id": 19,
             "options": {
@@ -159,17 +156,19 @@
                 },
                 "textMode": "auto"
             },
-            "pluginVersion": "8.4.2",
+            "pluginVersion": "9.1.6",
             "targets": [
                 {
                     "datasource": {
                         "type": "prometheus",
                         "uid": "PBFA97CFB590B2093"
                     },
+                    "editorMode": "code",
                     "exemplar": true,
-                    "expr": "sum(rate(pgbouncer_stats_queries_duration_seconds_total{}[5m])) /\nsum(rate(pgbouncer_stats_queries_pooled_total{}[5m]))",
+                    "expr": "sum(rate(pgbouncer_stats_queries_duration_seconds_total{}[$__rate_interval])) /\nsum(rate(pgbouncer_stats_queries_pooled_total{}[$__rate_interval]))",
                     "interval": "",
                     "legendFormat": "Count",
+                    "range": true,
                     "refId": "A"
                 }
             ],
@@ -177,12 +176,18 @@
             "type": "stat"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "palette-classic"
                     },
                     "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
@@ -238,14 +243,15 @@
                 "h": 5,
                 "w": 8,
                 "x": 8,
-                "y": 1
+                "y": 0
             },
             "id": 9,
             "options": {
                 "legend": {
                     "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "bottom"
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": false
                 },
                 "tooltip": {
                     "mode": "single",
@@ -258,10 +264,12 @@
                         "type": "prometheus",
                         "uid": "PBFA97CFB590B2093"
                     },
+                    "editorMode": "code",
                     "exemplar": true,
-                    "expr": "100 * sum(pgbouncer_used_clients) / (sum(pgbouncer_used_clients) + sum(pgbouncer_free_clients)) ",
+                    "expr": "100 * \n\n(\n    sum by (pod) (pgbouncer_used_clients) +\n    sum by (pod) (pgbouncer_login_clients) \n)\n\n/ \n\n(\n    sum by (pod)(pgbouncer_used_clients) + \n    sum by (pod)(pgbouncer_free_clients) + \n    sum by (pod)(pgbouncer_login_clients)\n) ",
                     "interval": "",
-                    "legendFormat": "Used",
+                    "legendFormat": "{{pod}}",
+                    "range": true,
                     "refId": "A"
                 }
             ],
@@ -269,12 +277,18 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "palette-classic"
                     },
                     "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
@@ -330,14 +344,15 @@
                 "h": 5,
                 "w": 8,
                 "x": 16,
-                "y": 1
+                "y": 0
             },
             "id": 10,
             "options": {
                 "legend": {
                     "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "bottom"
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": false
                 },
                 "tooltip": {
                     "mode": "single",
@@ -350,10 +365,12 @@
                         "type": "prometheus",
                         "uid": "PBFA97CFB590B2093"
                     },
+                    "editorMode": "code",
                     "exemplar": true,
-                    "expr": "100 * sum(pgbouncer_used_servers) / (sum(pgbouncer_used_servers) + sum(pgbouncer_free_servers)) ",
+                    "expr": "100 * sum by (pod)(pgbouncer_used_servers) \n\n/ \n(\n    sum by (pod)(pgbouncer_used_servers) + \n    sum by (pod)(pgbouncer_free_servers)\n) ",
                     "interval": "",
-                    "legendFormat": "Used",
+                    "legendFormat": "{{pod}}",
+                    "range": true,
                     "refId": "A"
                 }
             ],
@@ -361,12 +378,18 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "palette-classic"
                     },
                     "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
@@ -416,14 +439,15 @@
                 "h": 5,
                 "w": 8,
                 "x": 0,
-                "y": 6
+                "y": 5
             },
             "id": 5,
             "options": {
                 "legend": {
                     "calcs": [],
                     "displayMode": "list",
-                    "placement": "bottom"
+                    "placement": "bottom",
+                    "showLegend": true
                 },
                 "tooltip": {
                     "mode": "single",
@@ -448,12 +472,18 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "palette-classic"
                     },
                     "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
@@ -502,14 +532,15 @@
                 "h": 5,
                 "w": 8,
                 "x": 8,
-                "y": 6
+                "y": 5
             },
             "id": 16,
             "options": {
                 "legend": {
                     "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "bottom"
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": false
                 },
                 "tooltip": {
                     "mode": "multi",
@@ -545,12 +576,18 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "palette-classic"
                     },
                     "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
@@ -599,14 +636,15 @@
                 "h": 5,
                 "w": 8,
                 "x": 16,
-                "y": 6
+                "y": 5
             },
             "id": 17,
             "options": {
                 "legend": {
                     "calcs": [],
-                    "displayMode": "hidden",
-                    "placement": "bottom"
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": false
                 },
                 "tooltip": {
                     "mode": "multi",
@@ -654,25 +692,18 @@
             "type": "timeseries"
         },
         {
-            "collapsed": false,
-            "gridPos": {
-                "h": 1,
-                "w": 24,
-                "x": 0,
-                "y": 11
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
             },
-            "id": 14,
-            "panels": [],
-            "title": "by pod(s)",
-            "type": "row"
-        },
-        {
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "palette-classic"
                     },
                     "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
@@ -719,7 +750,7 @@
                 "h": 12,
                 "w": 8,
                 "x": 0,
-                "y": 12
+                "y": 10
             },
             "id": 18,
             "options": {
@@ -729,6 +760,7 @@
                     ],
                     "displayMode": "table",
                     "placement": "bottom",
+                    "showLegend": true,
                     "sortBy": "Last *",
                     "sortDesc": true
                 },
@@ -745,7 +777,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "exemplar": true,
-                    "expr": "sum by(pod)(rate(pgbouncer_stats_sql_transactions_pooled_total{}[5m]))",
+                    "expr": "sum by(pod)(rate(pgbouncer_stats_sql_transactions_pooled_total{}[$__rate_interval]))",
                     "interval": "",
                     "legendFormat": "{{pod}}",
                     "refId": "A"
@@ -755,12 +787,18 @@
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "palette-classic"
                     },
                     "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
@@ -825,7 +863,7 @@
                 "h": 12,
                 "w": 8,
                 "x": 8,
-                "y": 12
+                "y": 10
             },
             "id": 2,
             "options": {
@@ -835,6 +873,7 @@
                     ],
                     "displayMode": "table",
                     "placement": "bottom",
+                    "showLegend": true,
                     "sortBy": "Last *",
                     "sortDesc": true
                 },
@@ -849,24 +888,32 @@
                         "type": "prometheus",
                         "uid": "PBFA97CFB590B2093"
                     },
+                    "editorMode": "code",
                     "exemplar": true,
-                    "expr": "pgbouncer_used_clients",
+                    "expr": "pgbouncer_free_clients",
                     "hide": false,
                     "interval": "",
                     "legendFormat": "{{pod}}",
+                    "range": true,
                     "refId": "A"
                 }
             ],
-            "title": "Client connections used",
+            "title": "Client connections free",
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "PBFA97CFB590B2093"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
                         "mode": "palette-classic"
                     },
                     "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
                         "axisLabel": "",
                         "axisPlacement": "auto",
                         "barAlignment": 0,
@@ -931,7 +978,7 @@
                 "h": 12,
                 "w": 8,
                 "x": 16,
-                "y": 12
+                "y": 10
             },
             "id": 3,
             "options": {
@@ -941,6 +988,7 @@
                     ],
                     "displayMode": "table",
                     "placement": "bottom",
+                    "showLegend": true,
                     "sortBy": "Last *",
                     "sortDesc": true
                 },
@@ -967,7 +1015,7 @@
         }
     ],
     "refresh": false,
-    "schemaVersion": 35,
+    "schemaVersion": 37,
     "style": "dark",
     "tags": [
         "PostHog",
@@ -977,7 +1025,7 @@
         "list": []
     },
     "time": {
-        "from": "now-3h",
+        "from": "now-30m",
         "to": "now"
     },
     "timepicker": {
@@ -996,7 +1044,7 @@
     },
     "timezone": "utc",
     "title": "PgBouncer",
-    "uid": "pgbouncer",
-    "version": 1,
+    "uid": "guido-pgbouncer",
+    "version": 5,
     "weekStart": "monday"
 }
