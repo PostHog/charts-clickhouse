@@ -134,3 +134,16 @@ tests:
           content:
             name: SENTRY_DSN
             value: main.endpoint
+
+  - it: allows setting imagePullSecrets
+    template: templates/plugins-exports-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      pluginsExports.enabled: true
+      image.pullSecrets: [secret]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: secret]
