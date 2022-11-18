@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 29.0.7](https://img.shields.io/badge/Version-29.0.7-informational?style=flat-square) ![AppVersion: 1.41.4](https://img.shields.io/badge/AppVersion-1.41.4-informational?style=flat-square)
+![Version: 29.0.8](https://img.shields.io/badge/Version-29.0.8-informational?style=flat-square) ![AppVersion: 1.41.4](https://img.shields.io/badge/AppVersion-1.41.4-informational?style=flat-square)
 
 ## Configuration
 
@@ -18,6 +18,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.tag | string | `nil` | PostHog image tag to use (example: `release-1.35.0`). |
 | image.default | string | `":release-1.41.4"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
 | image.pullPolicy | string | `"IfNotPresent"` | PostHog image pull policy. |
+| image.pullSecrets | list | `[]` |  |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to. |
 | posthogSecretKey.existingSecret | string | `nil` | Specify that the key should be pulled from an existing secret key. By default the chart will generate a secret and create a Kubernetes Secret containing it. |
 | posthogSecretKey.existingSecretKey | string | `"posthog-secret"` | Specify the key within the secret from which SECRET_KEY should be taken. |
@@ -296,6 +297,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pgbouncer.exporter.image.repository | string | `"prometheuscommunity/pgbouncer-exporter"` |  |
 | pgbouncer.exporter.image.tag | string | `"v0.4.1"` |  |
 | pgbouncer.exporter.image.pullPolicy | string | `"IfNotPresent"` |  |
+| pgbouncer.exporter.image.pullSecrets | list | `[]` |  |
 | pgbouncer.exporter.resources | object | `{}` | Resource limits for pgbouncer-exporter. |
 | pgbouncer.exporter.securityContext | object | `{"enabled":false}` | Container security context for pgbouncer-exporter. |
 | pgbouncer.replicacount | int | `1` | Count of pgbouncer pods to run. This setting is ignored if `pgbouncer.hpa.enabled` is set to `true`. |
@@ -324,6 +326,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pgbouncer.image.repository | string | `"bitnami/pgbouncer"` |  |
 | pgbouncer.image.tag | string | `"1.17.0"` |  |
 | pgbouncer.image.pullPolicy | string | `"IfNotPresent"` |  |
+| pgbouncer.image.pullSecrets | list | `[]` |  |
 | pgbouncer.service.type | string | `"ClusterIP"` |  |
 | pgbouncer.service.annotations | object | `{}` |  |
 | pgbouncer.podAnnotations | object | `{}` |  |
@@ -374,6 +377,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
 | clickhouse.image.tag | string | `"22.3.13.80"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
 | clickhouse.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| clickhouse.image.pullSecrets | list | `[]` |  |
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
 | clickhouse.affinity | object | `{}` | Affinity settings for clickhouse pod |
 | clickhouse.resources | object | `{}` | Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/ |
@@ -401,10 +405,12 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.client.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
 | clickhouse.client.image.tag | string | `"22.3.13.80"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
 | clickhouse.client.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| clickhouse.client.image.pullSecrets | list | `[]` |  |
 | clickhouse.backup.enabled | bool | `false` |  |
 | clickhouse.backup.image.repository | string | `"altinity/clickhouse-backup"` | Clickhouse backup image repository. |
 | clickhouse.backup.image.tag | string | `"1.5.0"` | ClickHouse backup image tag. |
 | clickhouse.backup.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| clickhouse.backup.image.pullSecrets | list | `[]` |  |
 | clickhouse.backup.backup_user | string | `"backup"` |  |
 | clickhouse.backup.backup_password | string | `"backup_password"` |  |
 | clickhouse.backup.existingSecret | string | `""` | Use an existing secret name in the deployed namespace for the backup password |
@@ -484,6 +490,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | eventrouter.image.repository | string | `"gcr.io/heptio-images/eventrouter"` |  |
 | eventrouter.image.tag | string | `"v0.3"` |  |
 | eventrouter.image.pullPolicy | string | `"IfNotPresent"` |  |
+| eventrouter.image.pullSecrets | list | `[]` |  |
 | eventrouter.resources | object | `{}` | Resource limits for eventrouter. |
 | promtail.enabled | bool | `false` | Whether to install Promtail or not. |
 | promtail.config.clients[0].url | string | `"http://posthog-loki-write:3100/loki/api/v1/push"` |  |
@@ -529,6 +536,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | installCustomStorageClass | bool | `false` |  |
 | busybox.image | string | `"busybox:1.34"` | Specify the image to use for e.g. init containers |
 | busybox.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| busybox.pullSecrets | list | `[]` |  |
 
 Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
 
