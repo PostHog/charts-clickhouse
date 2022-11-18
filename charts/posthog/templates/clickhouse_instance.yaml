@@ -17,7 +17,7 @@ spec:
       {{ .Values.clickhouse.backup.backup_user }}/networks/ip: "0.0.0.0/0"
       {{ template "clickhouse.backupPasswordValue" . }}
       {{- end}}
-      {{- if .Values.clickhouse.additionalUsersConfig }} 
+      {{- if .Values.clickhouse.additionalUsersConfig }}
       {{- .Values.clickhouse.additionalUsersConfig | toYaml | nindent 6 }}
       {{- end}}
     profiles:
@@ -97,10 +97,16 @@ spec:
           {{- if .Values.clickhouse.securityContext.enabled }}
           securityContext: {{- omit .Values.clickhouse.securityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
+
+          {{- if .Values.clickhouse.image.pullSecrets }}
+          imagePullSecrets:
+            {{- range .Values.clickhouse.image.pullSecrets }}
+            - name: {{ . }}
+            {{- end }}
+          {{- end }}
+
           containers:
             - name: clickhouse
-              # KEEP CLICKHOUSE-SERVER VERSION IN SYNC WITH
-              # https://github.com/PostHog/posthog/tree/master/ee/docker-compose.ch.yml#L17
               image: {{ template "posthog.clickhouse.image" . }}
               command:
                 - /bin/bash

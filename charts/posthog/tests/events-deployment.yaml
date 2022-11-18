@@ -182,3 +182,19 @@ tests:
           content:
             name: SENTRY_DSN
             value: sentry.endpoint
+
+  - it: allows setting imagePullSecrets
+    template: templates/events-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      image.pullSecrets: [secret]
+      events.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: secret]
+
+
+
