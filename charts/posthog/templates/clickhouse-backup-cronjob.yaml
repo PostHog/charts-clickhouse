@@ -48,7 +48,7 @@ spec:
                 - |
                   until (
                       wget -qO- \
-                          "http://$CLICKHOUSE_USER:$CLICKHOUSE_PASSWORD@clickhouse-posthog.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local:8123" \
+                      "http://$CLICKHOUSE_USER:$CLICKHOUSE_PASSWORD@clickhouse-posthog.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.{{ .Values.clusterName }}.local:8123" \
                           --post-data "SELECT count() FROM clusterAllReplicas('posthog', system, one)"
                   ); do
                       echo "waiting for ClickHouse cluster to become available"; sleep 1;
