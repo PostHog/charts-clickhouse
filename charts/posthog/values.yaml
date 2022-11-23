@@ -2579,3 +2579,7 @@ busybox:
   ##   - myRegistryKeySecretName
   ##
   pullSecrets: []
+
+
+# -- Kubernetes cluster domain name
+clusterDomain: cluster.local
