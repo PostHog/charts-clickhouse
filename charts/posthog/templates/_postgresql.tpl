@@ -3,7 +3,7 @@
 {{/* ENV used by posthog deployments for connecting to postgresql */}}
 {{- define "snippet.postgresql-env" }}
 - name: POSTHOG_POSTGRES_HOST
-  value: {{ template "posthog.pgbouncer.fqdn" . }}
+  value: {{ template "posthog.pgbouncer.host" . }}
 - name: POSTHOG_POSTGRES_PORT
   value: {{ include "posthog.pgbouncer.port" . | quote }}
 - name: POSTHOG_DB_USER
