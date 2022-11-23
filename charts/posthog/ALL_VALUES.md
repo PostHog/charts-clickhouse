@@ -537,6 +537,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | busybox.image | string | `"busybox:1.34"` | Specify the image to use for e.g. init containers |
 | busybox.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | busybox.pullSecrets | list | `[]` |  |
+| clusterDomain | string | `"cluster.local"` | Kubernetes cluster domain name |
 
 Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
 
