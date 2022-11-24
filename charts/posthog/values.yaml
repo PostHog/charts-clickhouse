@@ -125,8 +125,8 @@ web:
       value: "posthog.com"
 
   internalMetrics:
-    # -- Whether to capture information on operation of posthog into posthog, exposed in /instance/status page
-    capture: true
+    # -- Deprecated: Whether to capture information on operation of posthog into posthog, exposed in /instance/status page
+    capture: false
 
   # -- Node labels for web stack deployment.
   nodeSelector: {}
