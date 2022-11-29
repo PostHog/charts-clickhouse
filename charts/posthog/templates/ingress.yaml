@@ -19,6 +19,8 @@ metadata:
     {{- end }}
    {{- end }}
    {{- if (and (eq (include "ingress.type" .) "nginx") .Values.ingress.nginx.redirectToTLS "true") }}
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "Strict-Transport-Security: max-age=30; includeSubDomains";
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
    {{- if eq (include "ingress.letsencrypt" .) "true"}}
