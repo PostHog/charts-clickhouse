@@ -81,8 +81,9 @@ spec:
           nodeSelector: {{ toYaml .Values.clickhouse.nodeSelector | nindent 12 }}
           {{- end }}
 
-          {{- if .Values.clickhouse.persistence.enabled }}
+          {{- if or .Values.clickhouse.persistence.enabled .Values.clickhouse.extraVolumes }}
           volumes:
+          {{- if .Values.clickhouse.persistence.enabled }}
           {{- if .Values.clickhouse.persistence.existingClaim }}
             - name: existing-volumeclaim
               persistentVolumeClaim:
@@ -91,6 +92,10 @@ spec:
             - name: data-volumeclaim-template
               persistentVolumeClaim:
                 claimName: data-volumeclaim-template
+          {{- end }}
+          {{- end }}
+          {{- with .Values.clickhouse.extraVolumes }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- end }}
 
@@ -148,6 +153,9 @@ spec:
               ports:
                 - name: backup-rest
                   containerPort: 7171
+              {{- with .Values.clickhouse.backup.extraVolumeMounts }}
+              volumeMounts: {{- toYaml . | nindent 16 }}
+              {{- end }}
             {{- end }}
 
     serviceTemplates:
