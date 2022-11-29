@@ -51,6 +51,8 @@ tests:
             meta.helm.sh/release-name: RELEASE-NAME
             meta.helm.sh/release-namespace: NAMESPACE
             kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              more_set_headers "Strict-Transport-Security: max-age=30; includeSubDomains";
             nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
             cert-manager.io/cluster-issuer: "letsencrypt-prod"
@@ -73,6 +75,8 @@ tests:
             meta.helm.sh/release-name: RELEASE-NAME
             meta.helm.sh/release-namespace: NAMESPACE
             kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              more_set_headers "Strict-Transport-Security: max-age=30; includeSubDomains";
             nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
             cert-manager.io/cluster-issuer: "letsencrypt-prod"
@@ -127,6 +131,8 @@ tests:
             meta.helm.sh/release-name: RELEASE-NAME
             meta.helm.sh/release-namespace: NAMESPACE
             kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              more_set_headers "Strict-Transport-Security: max-age=30; includeSubDomains";
             nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
 
