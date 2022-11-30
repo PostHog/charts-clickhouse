@@ -46,7 +46,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.env[0] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_KEY","value":null}` | Set google oauth 2 key. Requires posthog ee license. |
 | web.env[1] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET","value":null}` | Set google oauth 2 secret. Requires posthog ee license. |
 | web.env[2] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS","value":"posthog.com"}` | Set google oauth 2 whitelisted domains users can log in from. |
-| web.internalMetrics.capture | bool | `true` | Whether to capture information on operation of posthog into posthog, exposed in /instance/status page |
+| web.internalMetrics.capture | bool | `false` | Deprecated: Whether to capture information on operation of posthog into posthog, exposed in /instance/status page |
 | web.nodeSelector | object | `{}` | Node labels for web stack deployment. |
 | web.tolerations | list | `[]` | Toleration labels for web stack deployment. |
 | web.affinity | object | `{}` | Affinity settings for web stack deployment. |

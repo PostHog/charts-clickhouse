@@ -8,7 +8,7 @@ Set PgBouncer FQDN
     {{- $serviceName := printf "%s-pgbouncer" $fullname -}}
     {{- $releaseNamespace := .Release.Namespace -}}
     {{- $clusterDomain := .Values.clusterDomain -}}
-    {{- printf "%s.%s.svc.%s" $serviceName $releaseNamespace $clusterDomain -}}
+    {{- printf "%s.%s.svc.%s." $serviceName $releaseNamespace $clusterDomain -}}
 {{- end -}}
 
 {{/*
