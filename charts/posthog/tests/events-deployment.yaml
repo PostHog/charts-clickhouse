@@ -183,6 +183,32 @@ tests:
             name: SENTRY_DSN
             value: sentry.endpoint
 
+  - it: sets env vars from global, web and events sections
+    template: templates/events-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      env:
+            - name: FIRST
+              value: one
+      web:
+        env:
+            - name: SECOND
+              value: two
+      events:
+        env:
+            - name: THIRD
+              value: three
+      asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            - name: FIRST
+              value: one
+            - name: SECOND
+              value: two
+            - name: THIRD
+              value: three
+
   - it: allows setting imagePullSecrets
     template: templates/events-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
