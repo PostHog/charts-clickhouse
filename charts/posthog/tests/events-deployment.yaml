@@ -206,7 +206,7 @@ tests:
             name: SECOND
             value: two
 
-  - it: ignores web.env is events.env is set
+  - it: ignores web.env if events.env is set
     template: templates/events-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
