@@ -116,6 +116,9 @@ spec:
 {{- if .Values.web.env }}
 {{ toYaml .Values.web.env | indent 8 }}
 {{- end }}
+{{- if .Values.events.env }}
+{{ toYaml .Values.events.env | indent 8 }}
+{{- end }}
 
         {{- include "snippet.web-deployments.lifecycle" . | nindent 8 }}
 
