@@ -4,8 +4,8 @@
             {
                 "builtIn": 1,
                 "datasource": {
-                    "type": "grafana",
-                    "uid": "-- Grafana --"
+                    "type": "datasource",
+                    "uid": "grafana"
                 },
                 "enable": true,
                 "hide": true,
@@ -18,6 +18,20 @@
                     "type": "dashboard"
                 },
                 "type": "dashboard"
+            },
+            {
+                "datasource": {
+                    "type": "loki",
+                    "uid": "P8E80F9AEF21F6940"
+                },
+                "enable": true,
+                "expr": "{namespace=\"posthog\", container=~\"grafana-annotation-job-.*\"}",
+                "hide": false,
+                "iconColor": "dark-blue",
+                "name": "Deploy / Rollback",
+                "tagKeys": "container",
+                "target": {},
+                "titleFormat": ""
             }
         ]
     },
