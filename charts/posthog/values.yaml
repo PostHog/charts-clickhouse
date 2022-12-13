@@ -74,7 +74,7 @@ events:
     # for configuration options
     behavior:
 
-  # -- Additional env variables to inject into the events stack, applied after `web.env`.
+  # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
   env: []
 
   # -- Container security context for the events stack HorizontalPodAutoscaler.
