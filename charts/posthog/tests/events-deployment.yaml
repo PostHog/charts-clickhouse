@@ -188,39 +188,39 @@ tests:
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       env:
-            - name: FIRST
-              value: one
+        - name: FIRST
+          value: one
       web:
         env:
-            - name: SECOND
-              value: two
+          - name: SECOND
+            value: two
     asserts:
-    - contains:
-        path: spec.template.spec.containers[0].env
-        content:
-          name: FIRST
-          value: one
-    - contains:
-        path: spec.template.spec.containers[0].env
-        content:
-          name: SECOND
-          value: two
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FIRST
+            value: one
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SECOND
+            value: two
 
   - it: ignores web.env is events.env is set
     template: templates/events-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       env:
-            - name: FIRST
-              value: one
+        - name: FIRST
+          value: one
       web:
         env:
-            - name: SECOND
-              value: two
+          - name: SECOND
+            value: two
       events:
         env:
-            - name: THIRD
-              value: three
+          - name: THIRD
+            value: three
     asserts:
     - contains:
         path: spec.template.spec.containers[0].env
