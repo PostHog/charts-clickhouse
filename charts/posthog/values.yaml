@@ -1763,6 +1763,17 @@ prometheus:
       # https://github.com/samber/awesome-prometheus-alerts
       #
       groups:
+        - name: PostHog
+          rules:
+            - alert: ExportsConsumerGroupBacklogIncreasing
+              expr: sum(delta(kafka_consumergroup_lag{topic="clickhouse_events_json", consumergroup="clickhouse-plugin-server-async"}[10m])) > 0
+              for: 10m
+              labels:
+                severity: critical
+              annotations:
+                summary: Exports and WebHooks backlog appears to have been increasing for 10 minutes straight.
+                description: "The backlog on consumer group clickhouse-plugin-server-async for topic clickhouse_events_json is increasing."
+
         - name: Kubernetes # via kube-state-metrics
           rules:
             - alert: KubernetesNodeReady
