@@ -1792,7 +1792,7 @@ prometheus:
                 summary: ClickHouse person ingestion lag has been increasing for 10 minutes straight.
                 description: "The backlog on consumer group group1 for topic clickhouse_person is increasing."
 
-            - alert: ClickHousePersonConsumerLagIncreasing
+            - alert: ClickHouseGroupsConsumerLagIncreasing
               expr: sum(delta(kafka_consumergroup_lag{topic="clickhouse_groups", consumergroup="group1"}[10m])) > 0
               for: 10m
               labels:
