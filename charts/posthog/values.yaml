@@ -1765,7 +1765,7 @@ prometheus:
       groups:
         - name: PostHog
           rules:
-            - alert: ExportsConsumerGroupBacklogIncreasing
+            - alert: ExportsConsumerLagIncreasing
               expr: sum(delta(kafka_consumergroup_lag{topic="clickhouse_events_json", consumergroup="clickhouse-plugin-server-async"}[10m])) > 0
               for: 10m
               labels:
