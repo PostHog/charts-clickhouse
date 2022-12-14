@@ -1775,7 +1775,7 @@ prometheus:
                 description: "The backlog on consumer group clickhouse-plugin-server-async for topic clickhouse_events_json is increasing."
 
             - alert: ClickHouseConsumerLagIncreasing
-              expr: sum(delta(kafka_consumergroup_lag{topic=~"clickhouse_events_json|clickhouse_person|clickhouse_groups|clickhouse_person_distinct_id", consumergroup="group1"}[10m])) > 0
+              expr: sum(delta(kafka_consumergroup_lag{consumergroup="group1"}[10m])) by (topic) > 0
               for: 10m
               labels:
                 severity: critical
