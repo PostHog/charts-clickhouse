@@ -1763,6 +1763,71 @@ prometheus:
       # https://github.com/samber/awesome-prometheus-alerts
       #
       groups:
+        - name: PostHog
+          rules:
+            - alert: ExportsConsumerGroupBacklogIncreasing
+              expr: sum(delta(kafka_consumergroup_lag{topic="clickhouse_events_json", consumergroup="clickhouse-plugin-server-async"}[10m])) > 0
+              for: 10m
+              labels:
+                severity: critical
+              annotations:
+                summary: Exports and WebHooks backlog appears to have been increasing for 10 minutes straight.
+                description: "The backlog on consumer group clickhouse-plugin-server-async for topic clickhouse_events_json is increasing."
+
+            - alert: ClickHouseEventsConsumerLagIncreasing
+              expr: sum(delta(kafka_consumergroup_lag{topic="clickhouse_events_json", consumergroup="group1"}[10m])) > 0
+              for: 10m
+              labels:
+                severity: critical
+              annotations:
+                summary: ClickHouse events ingestion lag has been increasing for 10 minutes straight.
+                description: "The backlog on consumer group group1 for topic clickhouse_events_json is increasing."
+
+            - alert: ClickHousePersonConsumerLagIncreasing
+              expr: sum(delta(kafka_consumergroup_lag{topic="clickhouse_person", consumergroup="group1"}[10m])) > 0
+              for: 10m
+              labels:
+                severity: critical
+              annotations:
+                summary: ClickHouse person ingestion lag has been increasing for 10 minutes straight.
+                description: "The backlog on consumer group group1 for topic clickhouse_person is increasing."
+
+            - alert: ClickHousePersonConsumerLagIncreasing
+              expr: sum(delta(kafka_consumergroup_lag{topic="clickhouse_groups", consumergroup="group1"}[10m])) > 0
+              for: 10m
+              labels:
+                severity: critical
+              annotations:
+                summary: ClickHouse groups ingestion lag has been increasing for 10 minutes straight.
+                description: "The backlog on consumer group group1 for topic clickhouse_groups is increasing."
+
+            - alert: ClickHousePersonDistinctIdConsumerLagIncreasing
+              expr: sum(delta(kafka_consumergroup_lag{topic="clickhouse_person_distinct_id", consumergroup="group1"}[10m])) > 0
+              for: 10m
+              labels:
+                severity: critical
+              annotations:
+                summary: ClickHouse person distinct id ingestion lag has been increasing for 10 minutes straight.
+                description: "The backlog on consumer group group1 for topic clickhouse_person_distinct_id is increasing."
+
+            - alert: EventsIngestionConsumerLagIncreasing
+              expr: sum(delta(kafka_consumergroup_lag{topic="events_plugin_ingestion", consumergroup="clickhouse-ingestion"}[10m])) > 0
+              for: 10m
+              labels:
+                severity: critical
+              annotations:
+                summary: Events ingestion processing lag has been increasing for 10 minutes straight.
+                description: "The backlog on consumer group clickhouse-ingestion for topic events_plugin_ingestion is increasing."
+
+            - alert: EventsIngestionBufferConsumerLagIncreasing
+              expr: sum(delta(kafka_consumergroup_lag{topic="conversion_events_buffer", consumergroup="ingester"}[10m])) > 0
+              for: 10m
+              labels:
+                severity: critical
+              annotations:
+                summary: Events ingestion processing lag for delayed events has been increasing for 10 minutes straight.
+                description: "The backlog on consumer group ingester for topic conversion_events_buffer is increasing."
+
         - name: Kubernetes # via kube-state-metrics
           rules:
             - alert: KubernetesNodeReady
