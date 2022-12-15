@@ -23,7 +23,7 @@ spec:
       annotations:
         checksum/secrets.yaml: {{ include (print $.root.Template.BasePath "/secrets.yaml") .root | sha256sum }}
         prometheus.io/scrape: "true"
-        prometheus.io/path: /metrics
+        prometheus.io/path: /_metrics
         prometheus.io/port: "8001"
         {{- if .params.podAnnotations }}
         {{- toYaml .params.podAnnotations | nindent 8 }}
