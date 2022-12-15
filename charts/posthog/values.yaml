@@ -1763,6 +1763,44 @@ prometheus:
       # https://github.com/samber/awesome-prometheus-alerts
       #
       groups:
+        - name: PostHog
+          rules:
+            - alert: ExportsConsumerDelayed
+              expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="async_handlers",topic="clickhouse_events_json"}))) > 300000
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: Exports and WebHooks have delayed by more than 5 minutes for more than 5 minutes.
+                description: "Latest timestamp registered as processed on topic 'clickhouse_events_json', consumer group 'async_handlers' more then 5 minutes old"
+
+            - alert: ScheduledTasksConsumerDelayed
+              expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="scheduled-tasks-runner",topic="scheduled_tasks"}))) > 300000
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: RunEveryX tasks have been delayed by more than 5 minutes for more than 5 minutes.
+                description: "Latest timestamp registered as processed on topic 'scheduled_tasks', consumer group 'scheduled-tasks-runner' more then 5 minutes old"
+
+            - alert: JobsConsumerDelayed
+              expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="jobs-inserter",topic="jobs"}))) > 300000
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: Jobs scheduled via Apps jobs have been delayed by more than 5 minutes for more than 5 minutes.
+                description: "Latest timestamp registered as processed on topic 'jobs', consumer group 'jobs-inserter' more then 5 minutes old"
+
+            - alert: IngestionConsumerDelayed
+              expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="ingestion",topic="events_plugin_ingestion"}))) > 300000
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: Captured events, including session recording, have been delayed by more than 5 minutes for more than 5 minutes.
+                description: "Latest timestamp registered as processed on topic 'events_plugin_ingestion', consumer group 'ingestion' more then 5 minutes old"
+
         - name: Kubernetes # via kube-state-metrics
           rules:
             - alert: KubernetesNodeReady
