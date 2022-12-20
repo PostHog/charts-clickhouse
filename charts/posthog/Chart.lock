@@ -6,16 +6,16 @@ dependencies:
   repository: https://kubernetes.github.io/ingress-nginx
   version: 4.0.13
 - name: kafka
-  repository: https://charts.bitnami.com/bitnami
+  repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
   version: 14.9.3
 - name: minio
-  repository: https://charts.bitnami.com/bitnami
+  repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
   version: 11.3.5
 - name: postgresql
   repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
   version: 8.6.1
 - name: redis
-  repository: https://charts.bitnami.com/bitnami
+  repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
   version: 16.8.9
 - name: zookeeper
   repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
@@ -44,5 +44,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:2cfffe0d2d6df0b3c43983b18ecd517ba71ff31bab91901037b51d64dee74eb0
-generated: "2022-11-15T10:43:43.316599+01:00"
+digest: sha256:5ac223659ced28c44ff2c89963e0268427f848b5d4db98df9b8f1010f22f8207
+generated: "2022-12-20T11:35:36.888806538Z"

@@ -30,12 +30,12 @@ dependencies:
 
   - name: kafka
     version: 14.9.3
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
     condition: kafka.enabled
 
   - name: minio
     version: 11.3.5
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
     condition: minio.enabled
 
   - name: postgresql
@@ -45,7 +45,7 @@ dependencies:
 
   - name: redis
     version: 16.8.9
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
     condition: redis.enabled
 
   - name: zookeeper
