@@ -78,24 +78,57 @@ spec:
                 port:
                   number: {{ .Values.service.externalPort }}
           {{- if (ne (include "ingress.type" .) "clb") }}
+          # Match any url with a prefix ending with a forward-slash. Previously
+          # we would match without the forward-slash. To ensure that we pick up
+          # with the forward-slash omitted we also match Exact. Note that we
+          # could use e.g. [ingress-nginx regex support](https://kubernetes.github.io/ingress-nginx/user-guide/ingress-path-matching/#regular-expression-support)
+          # but to keep this agnostic we use a combination of Prefix and Exact.
+          #
+          # NOTE: we still use a Prefix match on paths with a forward-slash,
+          # just in case there are cases that we have subpaths for these
+          # endpoints that still need to be passed to the `posthog-events` pods.
           - pathType: Prefix
+            path: "/capture/"
+            backend: *INGESTION
+          - pathType: Exact
             path: "/capture"
             backend: *INGESTION
+
           - pathType: Prefix
+            path: "/decide/"
+            backend: *INGESTION
+          - pathType: Exact
             path: "/decide"
             backend: *INGESTION
+
           - pathType: Prefix
+            path: "/e/"
+            backend: *INGESTION
+          - pathType: Exact
             path: "/e"
             backend: *INGESTION
+
           - pathType: Prefix
+            path: "/engage/"
+            backend: *INGESTION
+          - pathType: Exact
             path: "/engage"
             backend: *INGESTION
+
           - pathType: Prefix
+            path: "/track/"
+            backend: *INGESTION
+          - pathType: Exact
             path: "/track"
             backend: *INGESTION
+
           - pathType: Prefix
+            path: "/s/"
+            backend: *INGESTION
+          - pathType: Exact
             path: "/s"
             backend: *INGESTION
+
           {{- else }}
           - pathType: ImplementationSpecific
             path: "/capture/*"
