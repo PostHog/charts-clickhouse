@@ -255,7 +255,7 @@ def exec_subprocess(cmd, ignore_errors=False):
 def install_external_kafka(namespace=NAMESPACE):
     log.debug("🔄 Setting up external Kafka...")
     cmd = """
-          helm repo add bitnami https://charts.bitnami.com/bitnami && \
+          helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami && \
           helm upgrade --install \
             --namespace {namespace} \
             kafka bitnami/kafka \
