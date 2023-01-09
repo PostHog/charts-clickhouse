@@ -75,7 +75,7 @@ the manifest should match the snapshot when using default values:
               - /bin/bash
               - -c
               - /usr/bin/clickhouse-server --config-file=/etc/clickhouse-server/config.xml
-              image: clickhouse/clickhouse-server:22.3.13.80
+              image: clickhouse/clickhouse-server:22.8.11.15
               name: clickhouse
               ports:
               - containerPort: 8123
