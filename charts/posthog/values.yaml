@@ -84,6 +84,37 @@ events:
   podSecurityContext:
     enabled: false
 
+sessionRecordings:
+  # -- Whether to install the PostHog events stack or not.
+  enabled: true
+
+  # -- Count of events pods to run. This setting is ignored if `events.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the events stack.
+    enabled: false
+    # -- CPU threshold percent for the events stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the events stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the events stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
+  env: []
+
+  # -- Container security context for the events stack HorizontalPodAutoscaler.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the events stack HorizontalPodAutoscaler.
+  podSecurityContext:
+    enabled: false
+
 web:
   # -- Whether to install the PostHog web stack or not.
   enabled: true
