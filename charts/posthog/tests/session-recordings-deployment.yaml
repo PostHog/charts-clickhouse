@@ -117,29 +117,6 @@ tests:
               cpu: 4000m
               memory: 16Gi
 
-  - it: for backwards compat. should use the web resources if specified
-    template: templates/session-recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
-    set:
-      cloud: local
-      web:
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 16Gi
-          requests:
-            cpu: 4000m
-            memory: 16Gi
-    asserts:
-      - equal:
-          path: spec.template.spec.containers[0].resources
-          value:
-            limits:
-              cpu: 1000m
-              memory: 16Gi
-            requests:
-              cpu: 4000m
-              memory: 16Gi
-
   - it: should set resources when specified and override web resource settings
     template: templates/session-recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:

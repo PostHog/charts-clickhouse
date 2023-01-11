@@ -87,3 +87,17 @@ the "spec" path should match the snapshot when using default values:
                 number: 8000
           path: /track
           pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-session-recordings
+              port:
+                number: 8000
+          path: /s/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-session-recordings
+              port:
+                number: 8000
+          path: /s
+          pathType: Exact
