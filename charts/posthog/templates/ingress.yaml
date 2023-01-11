@@ -132,7 +132,6 @@ spec:
           - pathType: Exact
             path: "/s"
             backend: *SESSION_RECORDINGS
-            backend: 
 
           {{- else }}
 
