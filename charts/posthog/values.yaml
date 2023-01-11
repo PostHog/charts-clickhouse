@@ -105,6 +105,9 @@ sessionRecordings:
     # for configuration options
     behavior:
 
+  # -- Resource limits for session recordings service.
+  resources: {}
+
   # -- Additional env variables to inject into the session recordings stack, uses `web.env` if empty.
   env: []
 
