@@ -84,6 +84,37 @@ events:
   podSecurityContext:
     enabled: false
 
+sessionRecordings:
+  # -- Whether to install the PostHog session recordings stack or not.
+  enabled: true
+
+  # -- Count of session recordings pods to run. This setting is ignored if `session recordings.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the session recordings stack.
+    enabled: false
+    # -- CPU threshold percent for the session recordings stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the session recordings stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the session recordings stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  # -- Additional env variables to inject into the session recordings stack, uses `web.env` if empty.
+  env: []
+
+  # -- Container security context for the session recordings stack HorizontalPodAutoscaler.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the session recordings stack HorizontalPodAutoscaler.
+  podSecurityContext:
+    enabled: false
+
 web:
   # -- Whether to install the PostHog web stack or not.
   enabled: true

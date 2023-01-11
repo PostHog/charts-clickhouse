@@ -122,14 +122,20 @@ spec:
             path: "/track"
             backend: *INGESTION
 
+          {{- else }}
+
           - pathType: Prefix
             path: "/s/"
-            backend: *INGESTION
+            backend: &SESSION_RECORDINGS
+              service:
+                name: {{ template "posthog.fullname" . }}-session-recordings
+                port:
+                  number: {{ .Values.service.externalPort }}
           - pathType: Exact
             path: "/s"
-            backend: *INGESTION
+            backend: *SESSION_RECORDINGS
+            backend: 
 
-          {{- else }}
           - pathType: ImplementationSpecific
             path: "/capture/*"
             backend: *INGESTION
