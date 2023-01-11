@@ -124,12 +124,18 @@ spec:
 
           - pathType: Prefix
             path: "/s/"
-            backend: *INGESTION
+            backend: &SESSION_RECORDINGS
+              service:
+                name: {{ template "posthog.fullname" . }}-session-recordings
+                port:
+                  number: {{ .Values.service.externalPort }}
           - pathType: Exact
             path: "/s"
-            backend: *INGESTION
+            backend: *SESSION_RECORDINGS
+            backend: 
 
           {{- else }}
+
           - pathType: ImplementationSpecific
             path: "/capture/*"
             backend: *INGESTION
@@ -147,7 +153,11 @@ spec:
             backend: *INGESTION
           - pathType: ImplementationSpecific
             path: "/s/*"
-            backend: *INGESTION
+            backend: 
+              service:
+                name: {{ template "posthog.fullname" . }}-session-recordings
+                port:
+                  number: {{ .Values.service.externalPort }}
           {{- end }}
 {{- if .Values.ingress.tls }}
 {{ toYaml .Values.ingress.tls | indent 4 }}
