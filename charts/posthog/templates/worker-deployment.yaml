@@ -14,6 +14,13 @@ spec:
   {{- if not .Values.worker.hpa.enabled }}
   replicas: {{ .Values.worker.replicacount }}
   {{- end }}
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.worker.rollout.maxSurge }}
+      maxUnavailable: {{ .Values.worker.rollout.maxUnavailable }}
+
   template:
     metadata:
       annotations:

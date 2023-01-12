@@ -14,6 +14,13 @@ spec:
   {{- if not .Values.events.hpa.enabled }}
   replicas: {{ .Values.events.replicacount }}
   {{- end }}
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.events.rollout.maxSurge }}
+      maxUnavailable: {{ .Values.events.rollout.maxUnavailable }}
+
   template:
     metadata:
       annotations:

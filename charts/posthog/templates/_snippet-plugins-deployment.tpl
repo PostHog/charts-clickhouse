@@ -18,6 +18,13 @@ spec:
   {{- if not .params.hpa.enabled }}
   replicas: {{ .params.replicacount }}
   {{- end }}
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .params.rollout.maxSurge }}
+      maxUnavailable: {{ .params.rollout.maxUnavailable }}
+
   template:
     metadata:
       annotations:
