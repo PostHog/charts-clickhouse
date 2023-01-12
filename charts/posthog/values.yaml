@@ -117,6 +117,12 @@ web:
     # for configuration options
     behavior:
 
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
   # -- Resource limits for web service.
   resources:
     {}
@@ -209,6 +215,12 @@ worker:
     # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
     # for configuration options
     behavior:
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
 
   # -- Additional env variables to inject into the worker stack deployment.
   env: []
