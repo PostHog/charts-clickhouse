@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.2.7](https://img.shields.io/badge/Version-30.2.7-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.3.0](https://img.shields.io/badge/Version-30.3.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -31,6 +31,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | events.hpa.minpods | int | `1` | Min pods for the events stack HorizontalPodAutoscaler. |
 | events.hpa.maxpods | int | `10` | Max pods for the events stack HorizontalPodAutoscaler. |
 | events.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| events.rollout.maxSurge | string | `"25%"` |  |
+| events.rollout.maxUnavailable | string | `"25%"` |  |
 | events.env | list | `[]` | Additional env variables to inject into the events stack, uses `web.env` if empty. |
 | events.securityContext | object | `{"enabled":false}` | Container security context for the events stack HorizontalPodAutoscaler. |
 | events.podSecurityContext | object | `{"enabled":false}` | Pod security context for the events stack HorizontalPodAutoscaler. |
@@ -42,6 +44,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.hpa.minpods | int | `1` | Min pods for the web stack HorizontalPodAutoscaler. |
 | web.hpa.maxpods | int | `10` | Max pods for the web stack HorizontalPodAutoscaler. |
 | web.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| web.rollout.maxSurge | string | `"25%"` |  |
+| web.rollout.maxUnavailable | string | `"25%"` |  |
 | web.resources | object | `{}` | Resource limits for web service. |
 | web.env | list | `[{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_KEY","value":null},{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET","value":null},{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS","value":"posthog.com"}]` | Additional env variables to inject into the web stack deployment. |
 | web.env[0] | object | `{"name":"SOCIAL_AUTH_GOOGLE_OAUTH2_KEY","value":null}` | Set google oauth 2 key. Requires posthog ee license. |
@@ -76,6 +80,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | worker.hpa.minpods | int | `1` | Min pods for the worker stack HorizontalPodAutoscaler. |
 | worker.hpa.maxpods | int | `10` | Max pods for the worker stack HorizontalPodAutoscaler. |
 | worker.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| worker.rollout.maxSurge | string | `"25%"` |  |
+| worker.rollout.maxUnavailable | string | `"25%"` |  |
 | worker.env | list | `[]` | Additional env variables to inject into the worker stack deployment. |
 | worker.resources | object | `{}` | Resource limits for the worker stack deployment. |
 | worker.nodeSelector | object | `{}` | Node labels for the worker stack deployment. |
@@ -90,6 +96,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | plugins.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
 | plugins.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
 | plugins.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| plugins.rollout.maxSurge | string | `"25%"` |  |
+| plugins.rollout.maxUnavailable | string | `"25%"` |  |
 | plugins.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
 | plugins.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
 | plugins.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
@@ -115,6 +123,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsAsync.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsAsync.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsAsync.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsAsync.rollout.maxSurge | string | `"25%"` |  |
+| pluginsAsync.rollout.maxUnavailable | string | `"25%"` |  |
 | pluginsAsync.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
 | pluginsAsync.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
 | pluginsAsync.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
@@ -133,7 +143,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsAsync.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | pluginsAsync.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | pluginsAsync.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
-| pluginsIngestion | object | `{"affinity":{},"enabled":false,"env":[],"hpa":{"behavior":null,"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"livenessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":2},"nodeSelector":{},"podSecurityContext":{"enabled":false},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":50,"periodSeconds":30,"successThreshold":1,"timeoutSeconds":5},"replicacount":1,"resources":{},"securityContext":{"enabled":false},"sentryDSN":null,"tolerations":[]}` | A deconstructed plugin-server that handles the various workloads of the pipeline separately. For most workloads this will not be needed, rather you can disable the below plugins* and instead just use `plugins.enabled=true`. Note that the behaviour of pluginsAsync is unchanged to maintain backwards compatibility. |
+| pluginsIngestion | object | `{"affinity":{},"enabled":false,"env":[],"hpa":{"behavior":null,"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"livenessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":2},"nodeSelector":{},"podSecurityContext":{"enabled":false},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":50,"periodSeconds":30,"successThreshold":1,"timeoutSeconds":5},"replicacount":1,"resources":{},"rollout":{"maxSurge":"25%","maxUnavailable":"25%"},"securityContext":{"enabled":false},"sentryDSN":null,"tolerations":[]}` | A deconstructed plugin-server that handles the various workloads of the pipeline separately. For most workloads this will not be needed, rather you can disable the below plugins* and instead just use `plugins.enabled=true`. Note that the behaviour of pluginsAsync is unchanged to maintain backwards compatibility. |
 | pluginsIngestion.enabled | bool | `false` | Whether to install the PostHog plugin-server ingestion capability as an individual workload. |
 | pluginsIngestion.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `pluginsIngestion.hpa.enabled` is set to `true`. |
 | pluginsIngestion.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
@@ -166,6 +176,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsExports.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsExports.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsExports.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsExports.rollout.maxSurge | string | `"25%"` |  |
+| pluginsExports.rollout.maxUnavailable | string | `"25%"` |  |
 | pluginsExports.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
 | pluginsExports.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
 | pluginsExports.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
@@ -191,6 +203,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsJobs.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsJobs.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsJobs.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsJobs.rollout.maxSurge | string | `"25%"` |  |
+| pluginsJobs.rollout.maxUnavailable | string | `"25%"` |  |
 | pluginsJobs.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
 | pluginsJobs.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
 | pluginsJobs.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
@@ -216,6 +230,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsScheduler.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsScheduler.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsScheduler.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsScheduler.rollout.maxSurge | string | `"25%"` |  |
+| pluginsScheduler.rollout.maxUnavailable | string | `"25%"` |  |
 | pluginsScheduler.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
 | pluginsScheduler.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
 | pluginsScheduler.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
