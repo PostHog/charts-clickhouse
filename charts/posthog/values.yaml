@@ -1858,7 +1858,7 @@ prometheus:
             - alert: RecordingsConsumerDelayed
               # TODO: fix these consumer delay alerts. The issue with the
               # current alerts is that they are not the _oldest_ message not
-              # processed but the _newest_ or the oldest _per partition_. This
+              # processed but the _newest_ of the oldest _per partition_. This
               # applies to all the alerts for consumer lag above. Adjusting the
               # query to the below could work, but also simply using absolute
               # lag may be the least work
