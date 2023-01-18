@@ -1892,6 +1892,7 @@ prometheus:
               annotations:
                 summary: Failed to process some session recording events and have been sent to the dead letter queue for review.
                 description: "The `session_recording_events_dlq` topic offset has increased over the past 5 minutes."
+
         - name: Kubernetes # via kube-state-metrics
           rules:
             - alert: KubernetesNodeReady
