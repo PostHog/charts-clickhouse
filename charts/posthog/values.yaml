@@ -1852,8 +1852,46 @@ prometheus:
               labels:
                 severity: critical
               annotations:
-                summary: Captured events, including session recording, have been delayed by more than 5 minutes for more than 5 minutes.
+                summary: Ingestion for analytics events has been delayed by more than 5 minutes for more than 5 minutes.
                 description: "Latest timestamp registered as processed on topic 'events_plugin_ingestion', consumer group 'ingestion' more then 5 minutes old"
+
+            - alert: RecordingsConsumerDelayed
+              # TODO: fix these consumer delay alerts. The issue with the
+              # current alerts is that they are not the _oldest_ message not
+              # processed but the _newest_ or the oldest _per partition_. This
+              # applies to all the alerts for consumer lag above. Adjusting the
+              # query to the below could work, but also simply using absolute
+              # lag may be the least work
+              #
+              # ```
+              # (time() * 1000 - (
+              #   min(
+              #     max(
+              #       latest_processed_timestamp_ms{groupId="session-recordings",topic="session_recording_events"}
+              #     ) by (topic)
+              #   )
+              # ))
+              # ```
+              #
+              # The issue with the above is when there is no volume on a
+              # partition, then we end up not reporting a timestamp for this
+              # partition and the alert will sound incorrectly.
+              expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="session-recordings",topic="session_recording_events"}))) > 300000
+              for: 5m
+              labels:
+                severity: critical
+              annotations:
+                summary: Session recording ingestion has been delayed by more than 5 minutes for more than 5 minutes.
+                description: "Latest timestamp registered as processed on topic 'session_recording_events', consumer group 'session-recordings' more then 5 minutes old"
+
+            - alert: RecordingsConsumerDLQ
+              expr: sum(delta(kafka_topic_partition_current_offset{topic="session_recording_events_dlq"}[5m])) > 0
+              for: 1m
+              labels:
+                severity: critical
+              annotations:
+                summary: Failed to process some session recording events and have been sent to the dead letter queue for review.
+                description: "The `session_recording_events_dlq` topic offset has increased over the past 5 minutes."
 
         - name: Kubernetes # via kube-state-metrics
           rules:
