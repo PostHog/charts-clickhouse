@@ -1881,7 +1881,7 @@ prometheus:
               labels:
                 severity: critical
               annotations:
-                summary: Session recording ingestion has been delayed by more than 5 minutes for more than 5 minutes.
+                summary: Ingestion for session recording and web performance events has been delayed by more than 5 minutes for more than 5 minutes.
                 description: "Latest timestamp registered as processed on topic 'session_recording_events', consumer group 'session-recordings' more then 5 minutes old"
 
             - alert: RecordingsConsumerDLQ
