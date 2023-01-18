@@ -47,9 +47,11 @@ env: []
 #   - name: FOO
 #     value: bar
 
+
 migrate:
   # -- Whether to install the PostHog migrate job or not.
   enabled: true
+
 
 events:
   # -- Whether to install the PostHog events stack or not.
@@ -122,7 +124,8 @@ web:
     maxUnavailable: 25%
 
   # -- Resource limits for web service.
-  resources: {}
+  resources:
+    {}
 
   # -- Additional env variables to inject into the web stack deployment.
   env:
@@ -223,7 +226,8 @@ worker:
   env: []
 
   # -- Resource limits for the worker stack deployment.
-  resources: {}
+  resources:
+    {}
 
   # -- Node labels for the worker stack deployment.
   nodeSelector: {}
@@ -274,7 +278,8 @@ plugins:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources: {}
+  resources:
+    {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -316,6 +321,7 @@ plugins:
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
+
 
 pluginsAsync:
   # -- Whether to install the PostHog plugin-server async stack or not.
@@ -350,7 +356,8 @@ pluginsAsync:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources: {}
+  resources:
+    {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -392,6 +399,7 @@ pluginsAsync:
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
+
 
 # -- A deconstructed plugin-server that handles the various workloads of the
 # pipeline separately. For most workloads this will not be needed, rather you
@@ -431,7 +439,8 @@ pluginsIngestion:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources: {}
+  resources:
+    {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -473,6 +482,7 @@ pluginsIngestion:
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
+
 
 pluginsExports:
   # -- Whether to install the PostHog plugin-server exports capability as an
@@ -506,7 +516,8 @@ pluginsExports:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources: {}
+  resources:
+    {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -549,6 +560,7 @@ pluginsExports:
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
+
 pluginsJobs:
   # -- Whether to install the PostHog plugin-server jobs capability as an
   # individual workload.
@@ -581,7 +593,8 @@ pluginsJobs:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources: {}
+  resources:
+    {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -656,7 +669,8 @@ pluginsScheduler:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources: {}
+  resources:
+    {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -699,6 +713,7 @@ pluginsScheduler:
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
+
 email:
   # -- SMTP service host.
   host:
@@ -718,6 +733,7 @@ email:
   use_ssl:
   # -- Outbound email sender to use.
   from_email:
+
 
 saml:
   # -- Whether password-based login is disabled and users automatically redirected to SAML login. Requires SAML to be properly configured.
@@ -767,6 +783,7 @@ saml:
   # attr_email: "email"
   attr_email:
 
+
 service:
   # -- PostHog service name.
   name: posthog
@@ -777,6 +794,7 @@ service:
 
   # -- PostHog service annotations.
   annotations: {}
+
 
 ###
 ###
@@ -813,6 +831,7 @@ cert-manager:
       - 1.1.1.1
       - 208.67.222.222
 
+
 ###
 ###
 ### ---- INGRESS ----
@@ -844,6 +863,7 @@ ingress:
   # -- TLS secret to be used by the ingress.
   secretName:
 
+
 ingress-nginx:
   controller:
     config:
@@ -866,24 +886,24 @@ ingress-nginx:
       #
       log-format-escape-json: "true"
       log-format-upstream: '{
-        "time": "$time_iso8601",
-        "remote_addr": "$proxy_protocol_addr",
-        "request_id": "$request_id",
-        "correlation_id": "$request_id",
-        "remote_user": "$remote_user",
-        "bytes_sent": $bytes_sent,
-        "request_time": $request_time,
-        "status": $status,
-        "host": "$host",
-        "request_proto": "$server_protocol",
-        "uri": "$uri",
-        "request_query": "$args",
-        "request_length": $request_length,
-        "duration": $request_time,
-        "method": "$request_method",
-        "http_referrer": "$http_referer",
-        "http_user_agent": "$http_user_agent",
-        "http_x_forwarded_for": "$http_x_forwarded_for"
+          "time": "$time_iso8601",
+          "remote_addr": "$proxy_protocol_addr",
+          "request_id": "$request_id",
+          "correlation_id": "$request_id",
+          "remote_user": "$remote_user",
+          "bytes_sent": $bytes_sent,
+          "request_time": $request_time,
+          "status": $status,
+          "host": "$host",
+          "request_proto": "$server_protocol",
+          "uri": "$uri",
+          "request_query": "$args",
+          "request_length": $request_length,
+          "duration": $request_time,
+          "method": "$request_method",
+          "http_referrer": "$http_referer",
+          "http_user_agent": "$http_user_agent",
+          "http_x_forwarded_for": "$http_x_forwarded_for"
         }'
 
     # Pass NGINX generated $request_id as X-Correlation-ID such that downstreams can use it
@@ -903,6 +923,7 @@ ingress-nginx:
     #     annotations:
     #       prometheus.io/port: "10254"
     #       prometheus.io/scrape: "true"
+
 
 ###
 ###
@@ -939,6 +960,7 @@ externalPostgresql:
   existingSecret:
   # -- Name of the key pointing to the password in your Kubernetes secret
   existingSecretPasswordKey: postgresql-password
+
 
 ###
 ###
@@ -1065,6 +1087,7 @@ pgbouncer:
   ## -- PgBouncer pod(s) annotation.
   podAnnotations: {}
 
+
 ###
 ###
 ### ---- REDIS ----
@@ -1132,6 +1155,7 @@ externalRedis:
   # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
 
+
 ###
 ###
 ### ---- KAFKA ----
@@ -1173,6 +1197,7 @@ externalKafka:
   # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
   brokers: []
 
+
 ###
 ###
 ### ---- ZOOKEEPER ----
@@ -1196,10 +1221,9 @@ zookeeper:
     enabled: false
     service:
       annotations:
-        "prometheus.io/scrape":
-          "false" # let's make Prometheus skip the scraping of the
-          # service as we already scrape the pods (see below
-          # and https://github.com/bitnami/charts/issues/10101)
+        "prometheus.io/scrape": "false" # let's make Prometheus skip the scraping of the
+                                        # service as we already scrape the pods (see below
+                                        # and https://github.com/bitnami/charts/issues/10101)
 
   ## -- Zookeeper pod(s) annotation.
   podAnnotations:
@@ -1207,6 +1231,7 @@ zookeeper:
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9141"
+
 
 ###
 ###
@@ -1325,6 +1350,7 @@ clickhouse:
     default/allow_experimental_window_functions: "1"
     default/allow_nondeterministic_mutations: "1"
 
+
   ## -- Clickhouse cluster layout. (Experimental, use at own risk)
   ## For a full list of options, see https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md
   ## section on clusters and layouts.
@@ -1336,8 +1362,7 @@ clickhouse:
   ## You can use this to override settings, for example `prometheus/port: 9363`
   ## For the full list of settings, see:
   ## - https://clickhouse.com/docs/en/operations/settings/settings/
-  settings:
-    {}
+  settings: {}
     # Uncomment those lines if you want to enable the built-in Prometheus HTTP endpoint in ClickHouse.
     # prometheus/endpoint: /metrics
     # prometheus/port: 9363
@@ -1432,6 +1457,7 @@ clickhouse:
         value: "0"
       # Add settings for remote backup storage.
 
+
 ## External clickhouse configuration
 ##
 externalClickhouse:
@@ -1454,6 +1480,7 @@ externalClickhouse:
   # -- Whether to verify TLS connection connecting to ClickHouse
   verify: false
 
+
 cloudwatch:
   # -- Enable cloudwatch container insights to get logs and metrics on AWS
   enabled: false
@@ -1467,6 +1494,7 @@ cloudwatch:
     port: 2020
     readHead: "On"
     readTail: "Off"
+
 
 # Provide affinity for hooks if needed
 hooks:
@@ -1482,6 +1510,7 @@ hooks:
     # -- Hook job resource limits/requests
     resources: {}
 
+
 serviceAccount:
   # -- Configures if a ServiceAccount with this name should be created
   create: true
@@ -1492,6 +1521,7 @@ serviceAccount:
   name:
   # -- Configures annotation for the ServiceAccount
   annotations: {}
+
 
 ###
 ###
@@ -1568,32 +1598,32 @@ grafana:
     datasources.yaml:
       apiVersion: 1
       datasources:
-        # Comment the snippet below if you are running with `prometheus.enabled: false`
-        - name: Prometheus
-          type: prometheus
-          url: http://posthog-prometheus-server
-          access: proxy
-          isDefault: true
-          jsonData:
-            timeInterval:
-              60s # pass this explicitly so it can be used by '$__rate_interval'
-              # https://grafana.com/blog/2020/09/28/new-in-grafana-7.2-__rate_interval-for-prometheus-rate-queries-that-just-work/
 
-        # Comment the snippet below if you are running with `loki.enabled: false`
-        - name: Loki
-          type: loki
-          url: http://posthog-loki-read:3100
-          access: proxy
-          isDefault: false
+      # Comment the snippet below if you are running with `prometheus.enabled: false`
+      - name: Prometheus
+        type: prometheus
+        url: http://posthog-prometheus-server
+        access: proxy
+        isDefault: true
+        jsonData:
+          timeInterval: 60s # pass this explicitly so it can be used by '$__rate_interval'
+                            # https://grafana.com/blog/2020/09/28/new-in-grafana-7.2-__rate_interval-for-prometheus-rate-queries-that-just-work/
 
-        # Comment the snippet below if you are running with `prometheus.alertmanager.enabled: false`
-        - name: Alertmanager
-          type: alertmanager
-          url: http://posthog-prometheus-alertmanager
-          access: proxy
-          isDefault: false
-          jsonData:
-            implementation: prometheus
+      # Comment the snippet below if you are running with `loki.enabled: false`
+      - name: Loki
+        type: loki
+        url: http://posthog-loki-read:3100
+        access: proxy
+        isDefault: false
+
+      # Comment the snippet below if you are running with `prometheus.alertmanager.enabled: false`
+      - name: Alertmanager
+        type: alertmanager
+        url: http://posthog-prometheus-alertmanager
+        access: proxy
+        isDefault: false
+        jsonData:
+          implementation: prometheus
 
 ###
 ###
@@ -1616,8 +1646,7 @@ loki:
       replication_factor: 1
 
     ## -- Pod annotations.
-    podAnnotations:
-      {}
+    podAnnotations: {}
       # Uncomment those lines if you want Prometheus server to scrape metrics.
       # prometheus.io/scrape: "true"
       # prometheus.io/path: /metrics
@@ -1745,8 +1774,7 @@ promtail:
                   format: RFC3339Nano
 
   ## -- Pod annotations.
-  podAnnotations:
-    {}
+  podAnnotations: {}
     # Uncomment those lines if you want Prometheus server to scrape metrics.
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
@@ -1764,8 +1792,7 @@ prometheus:
   alertmanager:
     # -- Whether to install Prometheus AlertManager or not.
     enabled: false
-    podAnnotations:
-      {}
+    podAnnotations: {}
       # Uncomment those lines if you want Prometheus server to scrape metrics.
       # prometheus.io/scrape: "true"
       # prometheus.io/path: /metrics
@@ -1825,7 +1852,7 @@ prometheus:
               labels:
                 severity: critical
               annotations:
-                summary: Captured events, have been delayed by more than 5 minutes for more than 5 minutes.
+                summary: Captured events, including session recording, have been delayed by more than 5 minutes for more than 5 minutes.
                 description: "Latest timestamp registered as processed on topic 'events_plugin_ingestion', consumer group 'ingestion' more then 5 minutes old"
 
             - alert: RecordingsConsumerDelayed
@@ -1865,7 +1892,6 @@ prometheus:
               annotations:
                 summary: Failed to process some session recording events and have been sent to the dead letter queue for review.
                 description: "The `session_recording_events_dlq` topic offset has increased over the past 5 minutes."
-
         - name: Kubernetes # via kube-state-metrics
           rules:
             - alert: KubernetesNodeReady
@@ -2171,6 +2197,7 @@ prometheus:
                 summary: Kubernetes API server latency (instance {{ $labels.instance }})
                 description: "Kubernetes API server has a 99th percentile latency of {{ $value }} seconds for {{ $labels.verb }} {{ $labels.resource }}."
 
+
         - name: Loki # via embedded exporter
           rules:
             - alert: LokiProcessTooManyRestarts
@@ -2198,7 +2225,7 @@ prometheus:
                 severity: warning
               annotations:
                 summary: Loki request panic (instance {{ $labels.instance }})
-                description: 'The {{ $labels.job }} is experiencing {{ printf "%.2f" $value }}% increase of panics'
+                description: "The {{ $labels.job }} is experiencing {{ printf \"%.2f\" $value }}% increase of panics"
 
             - alert: LokiRequestLatency
               expr: (histogram_quantile(0.99, sum(rate(loki_request_duration_seconds_bucket{route!~"(?i).*tail.*"}[5m])) by (le))) > 3
@@ -2207,7 +2234,8 @@ prometheus:
                 severity: warning
               annotations:
                 summary: Loki request latency (instance {{ $labels.instance }})
-                description: 'The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}s 99th percentile latency'
+                description: "The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf \"%.2f\" $value }}s 99th percentile latency"
+
 
         - name: Promtail # via embedded exporter
           rules:
@@ -2218,7 +2246,7 @@ prometheus:
                 severity: critical
               annotations:
                 summary: Promtail request errors (instance {{ $labels.instance }})
-                description: 'The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}% errors.'
+                description: "The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf \"%.2f\" $value }}% errors."
 
             - alert: PromtailRequestLatency
               expr: histogram_quantile(0.99, sum(rate(promtail_request_duration_seconds_bucket[5m])) by (le)) > 1
@@ -2227,7 +2255,8 @@ prometheus:
                 severity: critical
               annotations:
                 summary: Promtail request latency (instance {{ $labels.instance }})
-                description: 'The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}s 99th percentile latency.'
+                description: "The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf \"%.2f\" $value }}s 99th percentile latency."
+
 
         - name: Prometheus # via embedded exporter
           rules:
@@ -2576,6 +2605,7 @@ prometheus:
                 summary: Redis rejected connections (instance {{ $labels.instance }})
                 description: "Some connections to Redis has been rejected"
 
+
 ###
 ###
 ### ---- prometheus-statsd-exporter ----
@@ -2596,6 +2626,7 @@ externalStatsd:
   # -- External Statsd port to use.
   port:
 
+
 ###
 ###
 ### ---- prometheus-kafka-exporter ----
@@ -2614,6 +2645,7 @@ prometheus-kafka-exporter:
   # -- Specify the target Kafka brokers to monitor.
   kafkaServer:
     - posthog-posthog-kafka:9092
+
 
 ###
 ###
@@ -2639,6 +2671,7 @@ prometheus-postgres-exporter:
         name: posthog-posthog-postgresql
         key: postgresql-password
 
+
 ###
 ###
 ### ---- prometheus-redis-exporter ----
@@ -2656,6 +2689,7 @@ prometheus-redis-exporter:
 
   # -- Specify the target Redis instance to monitor.
   redisAddress: redis://posthog-posthog-redis-master:6379
+
 
 ###
 ###
@@ -2677,6 +2711,7 @@ busybox:
   ##   - myRegistryKeySecretName
   ##
   pullSecrets: []
+
 
 # -- Kubernetes cluster domain name
 clusterDomain: cluster.local
