@@ -417,6 +417,7 @@
           "editorMode": "code",
           "exemplar": true,
           "expr": "sum by (le)(\n  increase(\n    django_http_requests_latency_seconds_by_view_method_bucket{view=~\"$view\"}[5m]\n  )\n)",
+          "format": "heatmap",
           "interval": "5m",
           "legendFormat": "{{le}}",
           "range": true,
