@@ -1440,7 +1440,7 @@
                     "editorMode": "code",
                     "exemplar": true,
                     "expr": "sum by (le)(\n  increase(\n    nginx_ingress_controller_request_duration_seconds_bucket{\n      status!=\"404\", \n      status!=\"500\", \n      ingress=~\"$ingress\", \n      controller_pod=~\"$pod\", \n      path=~\"$path\"\n    }[$__interval]\n  )\n)",
-                    "format": "time_series",
+                    "format": "heatmap",
                     "hide": false,
                     "interval": "5m",
                     "intervalFactor": 1,
