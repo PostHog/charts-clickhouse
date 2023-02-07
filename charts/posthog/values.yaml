@@ -2613,7 +2613,7 @@ prometheus:
 ###
 prometheus-pushgateway:
   # -- Whether to install the `prometheus-pushgateway` or not.
-  enabled: true
+  enabled: false
   # -- Map of annotations to add to the pods.
   podAnnotations:
     prometheus.io/scrape: "true"
