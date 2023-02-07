@@ -83,6 +83,15 @@ events:
   # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
   env: []
 
+  # -- TopologySpreadConstraints settings for the events stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: events
+
   # -- Container security context for the events stack HorizontalPodAutoscaler.
   securityContext:
     enabled: false
@@ -149,6 +158,16 @@ web:
   tolerations: []
   # -- Affinity settings for web stack deployment.
   affinity: {}
+
+  # -- TopologySpreadConstraints settings for the web stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: web
+
   # :TODO:
   secureCookies: true
 
@@ -236,6 +255,15 @@ worker:
   # -- Affinity settings for the worker stack deployment.
   affinity: {}
 
+  # -- TopologySpreadConstraints settings for the worker stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: worker
+
   # -- Container security context for the worker stack deployment.
   securityContext:
     enabled: false
@@ -287,6 +315,15 @@ plugins:
   tolerations: []
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
+
+  # -- TopologySpreadConstraints settings for the plugins stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: plugins
 
   # -- Container security context for the plugin-server stack deployment.
   securityContext:
@@ -365,6 +402,15 @@ pluginsAsync:
   tolerations: []
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
+
+  # -- TopologySpreadConstraints settings for the plugins-async stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: plugins-async
 
   # -- Container security context for the plugin-server stack deployment.
   securityContext:
@@ -449,6 +495,15 @@ pluginsIngestion:
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
+  # -- TopologySpreadConstraints settings for the plugins-ingestion stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: plugins-ingestion
+
   # -- Container security context for the plugin-server stack deployment.
   securityContext:
     enabled: false
@@ -525,6 +580,15 @@ pluginsExports:
   tolerations: []
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
+
+  # -- TopologySpreadConstraints settings for the plugins-exports stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: plugins-exports
 
   # -- Container security context for the plugin-server stack deployment.
   securityContext:
@@ -603,6 +667,15 @@ pluginsJobs:
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
+  # -- TopologySpreadConstraints settings for the plugins-jobs stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: plugins-jobs
+
   # -- Container security context for the plugin-server stack deployment.
   securityContext:
     enabled: false
@@ -678,6 +751,15 @@ pluginsScheduler:
   tolerations: []
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
+
+  # -- TopologySpreadConstraints settings for the plugins-scheduler stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: plugins-scheduler
 
   # -- Container security context for the plugin-server stack deployment.
   securityContext:
@@ -1035,6 +1117,15 @@ pgbouncer:
   # -- Affinity settings for the pgbouncer stack deployment.
   affinity: {}
 
+  # -- TopologySpreadConstraints settings for the pgbouncer stack deployment.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       role: pgbouncer
+
   # -- Container security context for the pgbouncer stack deployment.
   securityContext:
     enabled: false
@@ -1291,6 +1382,15 @@ clickhouse:
   # -- Affinity settings for clickhouse pod
   affinity: {}
   # -- Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/
+  # -- TopologySpreadConstraints settings for the clickhouse pods.
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       clickhouse.altinity.com/app: chop
+
   resources: {}
   #   limits:
   #     cpu: 1000m

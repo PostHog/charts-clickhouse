@@ -55,6 +55,10 @@ spec:
       tolerations: {{ toYaml .Values.pgbouncer.tolerations | nindent 8 }}
       {{- end }}
 
+      {{- if .Values.pgbouncer.topologySpreadConstraints }}
+      topologySpreadConstraints: {{ toYaml .Values.pgbouncer.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
+
       {{- if .Values.pgbouncer.schedulerName }}
       schedulerName: "{{ .Values.pgbouncer.schedulerName }}"
       {{- end }}

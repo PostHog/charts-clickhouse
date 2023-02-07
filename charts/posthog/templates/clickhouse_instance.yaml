@@ -80,6 +80,9 @@ spec:
           {{- if .Values.clickhouse.nodeSelector }}
           nodeSelector: {{ toYaml .Values.clickhouse.nodeSelector | nindent 12 }}
           {{- end }}
+          {{- if .Values.clickhouse.topologySpreadConstraints }}
+          topologySpreadConstraints: {{ toYaml .Values.clickhouse.topologySpreadConstraints | nindent 12 }}
+          {{- end }}
 
           {{- if .Values.clickhouse.persistence.enabled }}
           volumes:

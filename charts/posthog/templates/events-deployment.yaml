@@ -57,6 +57,10 @@ spec:
 {{ toYaml .Values.web.tolerations | indent 8 }}
       {{- end }}
 
+      {{- if .Values.events.topologySpreadConstraints }}
+      tolerations: {{ toYaml .Values.events.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
+
       {{- if .Values.web.schedulerName }}
       schedulerName: "{{ .Values.web.schedulerName }}"
       {{- end }}

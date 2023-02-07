@@ -60,6 +60,11 @@ spec:
         {{- toYaml .params.tolerations | nindent 8 }}
       {{- end }}
 
+      {{- if .params.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml .params.topologySpreadConstraints | nindent 8 }}
+      {{- end }}
+
       {{- if .params.schedulerName }}
       schedulerName: "{{ .params.schedulerName }}"
       {{- end }}
