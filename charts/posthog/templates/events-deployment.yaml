@@ -58,7 +58,7 @@ spec:
       {{- end }}
 
       {{- if .Values.events.topologySpreadConstraints }}
-      tolerations: {{ toYaml .Values.events.topologySpreadConstraints | nindent 8 }}
+      topologySpreadConstraints: {{ toYaml .Values.events.topologySpreadConstraints | nindent 8 }}
       {{- end }}
 
       {{- if .Values.web.schedulerName }}
