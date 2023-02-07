@@ -11,7 +11,7 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 30.3.4
+version: 30.3.5
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
@@ -73,6 +73,11 @@ dependencies:
     version: 15.10.4
     repository: https://prometheus-community.github.io/helm-charts
     condition: prometheus.enabled
+
+  - name: prometheus-pushgateway
+    version: 2.1.1
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: prometheus-pushgateway.enabled
 
   - name: prometheus-kafka-exporter
     version: 1.6.0

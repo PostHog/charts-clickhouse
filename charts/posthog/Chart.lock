@@ -32,6 +32,9 @@ dependencies:
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 15.10.4
+- name: prometheus-pushgateway
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 2.1.1
 - name: prometheus-kafka-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 1.6.0
@@ -44,5 +47,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:5ac223659ced28c44ff2c89963e0268427f848b5d4db98df9b8f1010f22f8207
-generated: "2022-12-20T11:35:36.888806538Z"
+digest: sha256:64a899e41608da7fc9bd0a8689b9f0005d1cfffbd83e4fb78e6f1cff1ba7d4ef
+generated: "2023-02-07T15:10:06.892265+01:00"
