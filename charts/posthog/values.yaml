@@ -962,6 +962,8 @@ externalPostgresql:
   existingSecretPasswordKey: postgresql-password
   # -- Wether the external PostgreSQL instance is using pgbouncer
   usingPgbouncer: false
+  # -- The PostgreSQL SSL mode to use. See https://www.postgresql.org/docs/current/libpq-ssl.html for more information.
+  mode: ""
 
 
 ###

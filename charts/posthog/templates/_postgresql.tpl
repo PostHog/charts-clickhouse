@@ -25,6 +25,10 @@
       key: {{ include "posthog.postgresql.secretPasswordKey" . }}
 - name: USING_PGBOUNCER
   value: {{ template "posthog.pgbouncer.enabled" . | quote }}
+{{- if and (not .Values.postgresql.enabled) (not .Values.pgbouncer.enabled) .Values.externalPostgresql.mode }}
+- name: POSTHOG_POSTGRES_SSL_MODE
+  value: {{ .Values.externalPostgresql.mode | quote }}
+{{- end }}
 {{- end }}
 
 {{/* ENV used by migrate job for connecting to postgresql */}}
