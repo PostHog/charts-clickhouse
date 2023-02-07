@@ -3,9 +3,17 @@
 {{/* ENV used by posthog deployments for connecting to postgresql */}}
 {{- define "snippet.postgresql-env" }}
 - name: POSTHOG_POSTGRES_HOST
+  {{- if .Values.pgbouncer.enabled }}
   value: {{ template "posthog.pgbouncer.host" . }}
+  {{- else }}
+  value: {{ template "posthog.postgresql.host" . }}
+  {{- end }}
 - name: POSTHOG_POSTGRES_PORT
+  {{- if .Values.pgbouncer.enabled }}
   value: {{ include "posthog.pgbouncer.port" . | quote }}
+  {{- else }}
+  value: {{ include "posthog.postgresql.port" . | quote }}
+  {{- end }}
 - name: POSTHOG_DB_USER
   value: {{ include "posthog.postgresql.username" . }}
 - name: POSTHOG_DB_NAME
@@ -16,7 +24,7 @@
       name: {{ include "posthog.postgresql.secretName" . }}
       key: {{ include "posthog.postgresql.secretPasswordKey" . }}
 - name: USING_PGBOUNCER
-  value: 'true'
+  value: {{ template "posthog.pgbouncer.enabled" . | quote }}
 {{- end }}
 
 {{/* ENV used by migrate job for connecting to postgresql */}}

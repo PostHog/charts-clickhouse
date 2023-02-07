@@ -960,6 +960,8 @@ externalPostgresql:
   existingSecret:
   # -- Name of the key pointing to the password in your Kubernetes secret
   existingSecretPasswordKey: postgresql-password
+  # -- Wether the external PostgreSQL instance is using pgbouncer
+  usingPgbouncer: false
 
 
 ###

@@ -22,17 +22,17 @@
         done
         {{ end }}
 
+        {{ if .Values.pgbouncer.enabled }}
         until (nc -vz "{{ include "posthog.pgbouncer.fqdn" . }}" {{ include "posthog.pgbouncer.port" . }});
         do
             echo "waiting for PgBouncer"; sleep 1;
         done
+        {{ end }}
 
-        {{ if .Values.postgresql.enabled }}
-        until (nc -vz "{{ include "posthog.postgresql.host" . }}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local" {{ include "posthog.postgresql.port" . }});
+        until (nc -vz "{{ include "posthog.postgresql.host" . }}" {{ include "posthog.postgresql.port" . }});
         do
             echo "waiting for PostgreSQL"; sleep 1;
         done
-        {{ end }}
 
         {{ if .Values.redis.enabled }}
         until (nc -vz "{{ include "posthog.redis.host" . }}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local" {{ include "posthog.redis.port" . }});

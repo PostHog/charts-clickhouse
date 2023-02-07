@@ -24,3 +24,16 @@ Set PgBouncer port
 {{- define "posthog.pgbouncer.port" -}}
     6543
 {{- end -}}
+
+{{/*
+Set PgBouncer enabled
+*/}}
+{{- define "posthog.pgbouncer.enabled" -}}
+{{- if .Values.pgbouncer.enabled -}}
+true
+{{- else if and (not .Values.postgresql.enabled) .Values.externalPostgresql.postgresqlHost }}
+{{.Values.externalPostgresql.usingPgbouncer }}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
