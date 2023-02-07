@@ -102,6 +102,12 @@ spec:
         # statsd env variables
         {{- include "snippet.statsd-env" . | indent 8 }}
 
+        # prometheus pushgateway if enabled
+        {{- if index .Values "prometheus-pushgateway" "enabled" }}
+        - name: PROM_PUSHGATEWAY_ADDRESS
+          value: "posthog-prometheus-pushgateway:9091"
+        {{- end }}
+
         - name: PRIMARY_DB
           value: clickhouse
         {{- include "snippet.posthog-env" . | indent 8 }}
