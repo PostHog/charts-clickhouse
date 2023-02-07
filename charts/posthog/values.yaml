@@ -2606,6 +2606,19 @@ prometheus:
                 summary: Redis rejected connections (instance {{ $labels.instance }})
                 description: "Some connections to Redis has been rejected"
 
+###
+###
+### ---- prometheus-pushgateway ----
+###
+###
+prometheus-pushgateway:
+  # -- Whether to install the `prometheus-pushgateway` or not.
+  enabled: false
+  # -- Map of annotations to add to the pods.
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9091"
 
 ###
 ###
