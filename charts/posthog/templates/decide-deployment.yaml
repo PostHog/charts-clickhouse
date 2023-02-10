@@ -1,0 +1,178 @@
+{{- if .Values.decide.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "posthog.fullname" . }}-decide
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: events
+  {{- if not .Values.decide.hpa.enabled }}
+  replicas: {{ .Values.decide.replicacount }}
+  {{- end }}
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.decide.rollout.maxSurge }}
+      maxUnavailable: {{ .Values.decide.rollout.maxUnavailable }}
+
+  template:
+    metadata:
+      annotations:
+        checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+      {{- if .Values.web.podAnnotations }}
+{{ toYaml .Values.web.podAnnotations | indent 8 }}
+      {{- end }}
+      labels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: events
+        {{- if (eq (default .Values.image.tag "none") "latest") }}
+        date: "{{ now | unixEpoch }}"
+        {{- end }}
+        {{- if .Values.web.podLabels }}
+{{ toYaml .Values.web.podLabels | indent 8 }}
+        {{- end }}
+    spec:
+      terminationGracePeriodSeconds: {{ include "snippet.web-deployments.terminationGracePeriodSeconds" . }}
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+
+      {{- if .Values.web.affinity }}
+      affinity:
+{{ toYaml .Values.web.affinity | indent 8 }}
+      {{- end }}
+
+      {{- if .Values.web.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.web.nodeSelector | indent 8 }}
+      {{- end }}
+
+      {{- if .Values.web.tolerations }}
+      tolerations:
+{{ toYaml .Values.web.tolerations | indent 8 }}
+      {{- end }}
+
+      {{- if .Values.web.schedulerName }}
+      schedulerName: "{{ .Values.web.schedulerName }}"
+      {{- end }}
+
+      {{- if .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+      {{- end }}
+
+      # I do not know for sure if the old one has been used anywhere, so do both :(
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+
+      {{- if .Values.decide.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.decide.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: {{ .Chart.Name }}-decide
+        image: {{ template "posthog.image.fullPath" . }}
+        command:
+          - ./bin/docker-server
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.internalPort }}
+        # Expose the port on which Prometheus /metrics endpoint resides
+        - containerPort: 8001
+        env:
+        # Kafka env variables
+        {{- include "snippet.kafka-env" . | indent 8 }}
+
+        # Object Storage env variables
+        {{- include "snippet.objectstorage-env" . | indent 8 }}
+
+        # Redis env variables
+        {{- include "snippet.redis-env" . | indent 8 }}
+
+        # statsd env variables
+        {{- include "snippet.statsd-env" . | indent 8 }}
+
+        - name: DISABLE_SECURE_SSL_REDIRECT
+          value: '1'
+        - name: IS_BEHIND_PROXY
+          value: '1'
+      {{- if eq .Values.web.secureCookies false }}
+        - name: SECURE_COOKIES
+          value: '0'
+      {{- end }}
+        # PostHog app settings
+        {{- include "snippet.posthog-env" . | indent 8 }}
+        {{- include "snippet.posthog-sentry-env" . | indent 8 }}
+        - name: PRIMARY_DB
+          value: clickhouse
+        {{- include "snippet.postgresql-env" . | nindent 8 }}
+        {{- include "snippet.clickhouse-env" . | nindent 8 }}
+        {{- include "snippet.email-env" . | nindent 8 }}
+{{- if .Values.env }}
+{{ toYaml .Values.env | indent 8 }}
+{{- end }}
+{{- if .Values.decide.env }}
+{{ toYaml .Values.decide.env | indent 8 }}
+{{- else if .Values.web.env }}
+{{ toYaml .Values.web.env | indent 8 }}
+{{- end }}
+
+        {{- include "snippet.web-deployments.lifecycle" . | nindent 8 }}
+
+        livenessProbe:
+          httpGet:
+            path: /_livez
+            port: {{ .Values.service.internalPort }}
+            scheme: HTTP
+          failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.web.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.web.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.web.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.web.livenessProbe.timeoutSeconds }}
+        readinessProbe:
+          httpGet:
+            # For readiness, we want to use the checks specific to the events
+            # role, which may be a subset of all the apps dependencies
+            path: /_readyz?role=events
+            port: {{ .Values.service.internalPort }}
+            scheme: HTTP
+          failureThreshold: {{ .Values.web.readinessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.web.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.web.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.web.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
+        startupProbe:
+          httpGet:
+            # For startup, we want to make sure that everything is in place,
+            # including postgres. This does however mean we would not be able to
+            # deploy new releases when we have a postgres outage
+            path: /_readyz
+            port: {{ .Values.service.internalPort }}
+            scheme: HTTP
+          failureThreshold: {{ .Values.web.startupProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.web.startupProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.web.startupProbe.periodSeconds }}
+          successThreshold: {{ .Values.web.startupProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.web.startupProbe.timeoutSeconds }}
+        resources:
+        {{ if not .Values.decide.resources }}
+{{ toYaml .Values.web.resources | indent 12 }}
+        {{ else }}
+{{ toYaml .Values.decide.resources | indent 12 }}
+        {{ end }}
+        {{- if .Values.decide.securityContext.enabled }}
+        securityContext: {{- omit .Values.decide.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
+      initContainers:
+      {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
+      {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
+{{- end }}
