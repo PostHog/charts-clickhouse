@@ -24,7 +24,7 @@ spec:
 {{- end }}
   selector:
     app: {{ template "posthog.fullname" . }}
-    role: events
+    role: decide
   {{- with .Values.service.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
     {{- toYaml . | nindent 4 }}

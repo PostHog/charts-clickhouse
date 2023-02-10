@@ -10,7 +10,7 @@ spec:
     matchLabels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: events
+        role: decide
   {{- if not .Values.decide.hpa.enabled }}
   replicas: {{ .Values.decide.replicacount }}
   {{- end }}
@@ -31,7 +31,7 @@ spec:
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: events
+        role: decide
         {{- if (eq (default .Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
@@ -140,9 +140,9 @@ spec:
           timeoutSeconds: {{ .Values.web.livenessProbe.timeoutSeconds }}
         readinessProbe:
           httpGet:
-            # For readiness, we want to use the checks specific to the events
+            # For readiness, we want to use the checks specific to the decide
             # role, which may be a subset of all the apps dependencies
-            path: /_readyz?role=events
+            path: /_readyz?role=decide
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.readinessProbe.failureThreshold }}
