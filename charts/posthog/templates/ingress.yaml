@@ -94,7 +94,7 @@ spec:
             path: "/capture"
             backend: *INGESTION
 
-          {{- if .Values.decide.enabled}}
+          {{- if .Values.decide.ingressEnabled}}
           - pathType: Prefix
             path: "/decide/"
             backend: *INGESTION

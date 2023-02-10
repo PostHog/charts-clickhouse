@@ -93,6 +93,7 @@ events:
 decide:
   # -- Whether to install the PostHog decide stack or not.
   enabled: false
+  ingressEnabled: false
 
   # -- Count of decide pods to run. This setting is ignored if `decide.hpa.enabled` is set to `true`.
   replicacount: 1
