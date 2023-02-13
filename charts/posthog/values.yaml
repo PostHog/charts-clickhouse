@@ -1843,7 +1843,7 @@ prometheus:
                 summary: End-to-end analytics event ingestion lag exceeds 5 minutes.
                 description: |
                   Our end-to-end probe measured an ingestion lag higher than 5 minutes for scenario {{ $labels.scenario }}.
-                  Check the Kafka (cluster overview) dashboard to identify what topics and partitions are lagging and
+                  Check the "Kafka (cluster overview)" dashboard to identify what topics and partitions are lagging and
                   follow the https://posthog.com/docs/runbook/services/plugin-server/ingestion-lag runbook for recovery
                   steps.
 
