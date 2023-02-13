@@ -1819,6 +1819,21 @@ prometheus:
       groups:
         - name: PostHog
           rules:
+            - alert: DjangoErrorRate
+              expr: |
+                sum by (role) (increase(django_http_responses_total_by_status_view_method_total{status=~"^5.*"}[5m])) /
+                sum by (role) (increase(django_http_responses_total_by_status_view_method_total[5m])) > 0.02
+              for: 5m
+              labels:
+                severity: warning # TODO: move up to critical after testing for two days
+              annotations:
+                summary: Django error rate exceeds 2% on role {{ $labels.role }}
+                description: |
+                  Django reports a high error rate (5xx status codes) on role {{ $labels.role }}.
+                  Check the "Exceptions" widget in the "HTTP by application endpoint" dashboard and the pod logs to
+                  identify the issue. Either a dependency is unhealthy, or a recent code change triggered a bug and
+                  needs to be rolled-back.
+
             - alert: End2EndIngestionLag
               expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 3000
               for: 2m
