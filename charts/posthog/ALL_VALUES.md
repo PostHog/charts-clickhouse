@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.3.6](https://img.shields.io/badge/Version-30.3.6-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.3.7](https://img.shields.io/badge/Version-30.3.7-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -36,6 +36,19 @@ The following table lists the configurable parameters of the PostHog chart and t
 | events.env | list | `[]` | Additional env variables to inject into the events stack, uses `web.env` if empty. |
 | events.securityContext | object | `{"enabled":false}` | Container security context for the events stack HorizontalPodAutoscaler. |
 | events.podSecurityContext | object | `{"enabled":false}` | Pod security context for the events stack HorizontalPodAutoscaler. |
+| decide.enabled | bool | `false` | Whether to install the PostHog decide stack or not. |
+| decide.ingressEnabled | bool | `false` |  |
+| decide.replicacount | int | `1` | Count of decide pods to run. This setting is ignored if `decide.hpa.enabled` is set to `true`. |
+| decide.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the decide stack. |
+| decide.hpa.cputhreshold | int | `60` | CPU threshold percent for the decide stack HorizontalPodAutoscaler. |
+| decide.hpa.minpods | int | `1` | Min pods for the decide stack HorizontalPodAutoscaler. |
+| decide.hpa.maxpods | int | `10` | Max pods for the decide stack HorizontalPodAutoscaler. |
+| decide.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| decide.rollout.maxSurge | string | `"25%"` |  |
+| decide.rollout.maxUnavailable | string | `"25%"` |  |
+| decide.env | list | `[]` | Additional env variables to inject into the decide stack, uses `web.env` if empty. |
+| decide.securityContext | object | `{"enabled":false}` | Container security context for the decide stack HorizontalPodAutoscaler. |
+| decide.podSecurityContext | object | `{"enabled":false}` | Pod security context for the decide stack HorizontalPodAutoscaler. |
 | web.enabled | bool | `true` | Whether to install the PostHog web stack or not. |
 | web.podAnnotations | string | `nil` |  |
 | web.replicacount | int | `1` | Count of web pods to run. This setting is ignored if `web.hpa.enabled` is set to `true`. |
