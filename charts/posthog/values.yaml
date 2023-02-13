@@ -90,6 +90,44 @@ events:
   podSecurityContext:
     enabled: false
 
+decide:
+  # -- Whether to install the PostHog decide stack or not.
+  enabled: false
+  ingressEnabled: false
+
+  # -- Count of decide pods to run. This setting is ignored if `decide.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the decide stack.
+    enabled: false
+    # -- CPU threshold percent for the decide stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the decide stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the decide stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the decide stack, uses `web.env` if empty.
+  env: []
+
+  # -- Container security context for the decide stack HorizontalPodAutoscaler.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the decide stack HorizontalPodAutoscaler.
+  podSecurityContext:
+    enabled: false
+
 web:
   # -- Whether to install the PostHog web stack or not.
   enabled: true

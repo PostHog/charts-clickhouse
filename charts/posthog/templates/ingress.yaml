@@ -94,12 +94,25 @@ spec:
             path: "/capture"
             backend: *INGESTION
 
+          {{- if .Values.decide.ingressEnabled}}
+          - pathType: Prefix
+            path: "/decide/"
+            backend: *INGESTION
+          - pathType: Exact
+            path: "/decide"
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-decide
+                port:
+                  number: {{ .Values.service.externalPort }}
+          {{- else }}
           - pathType: Prefix
             path: "/decide/"
             backend: *INGESTION
           - pathType: Exact
             path: "/decide"
             backend: *INGESTION
+          {{- end }}
 
           - pathType: Prefix
             path: "/e/"
