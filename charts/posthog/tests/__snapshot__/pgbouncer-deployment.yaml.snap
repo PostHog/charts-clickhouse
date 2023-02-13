@@ -1,5 +1,6 @@
 should match snapshot data:
   1: |
+    affinity: {}
     containers:
     - env:
       - name: POSTGRESQL_USERNAME
@@ -54,5 +55,7 @@ should match snapshot data:
         tcpSocket:
           port: 6543
         timeoutSeconds: 2
+    nodeSelector: {}
     serviceAccountName: RELEASE-NAME-posthog
     terminationGracePeriodSeconds: 65
+    tolerations: null

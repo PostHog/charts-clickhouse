@@ -40,21 +40,10 @@ spec:
       # shuts down and exits before the terminationGracePeriod is done, we
       # moves to the next step immediately.
       terminationGracePeriodSeconds: 65
-
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
-
-      {{- if .Values.pgbouncer.affinity }}
-      affinity: {{ toYaml .Values.pgbouncer.affinity | nindent 8 }}
-      {{- end }}
-
-      {{- if .Values.pgbouncer.nodeSelector }}
-      nodeSelector: {{ toYaml .Values.pgbouncer.nodeSelector | nindent 8 }}
-      {{- end }}
-
-      {{- if .Values.pgbouncer.tolerations }}
-      tolerations: {{ toYaml .Values.pgbouncer.tolerations | nindent 8 }}
-      {{- end }}
-
+      affinity: {{ toYaml (merge .Values.pgbouncer.affinity .Values.affinity) | nindent 8 }}
+      nodeSelector: {{ toYaml (merge .Values.pgbouncer.nodeSelector .Values.nodeSelector) | nindent 8 }}
+      tolerations: {{ toYaml (coalesce .Values.pgbouncer.tolerations .Values.tolerations) | nindent 8 }}
       {{- if .Values.pgbouncer.schedulerName }}
       schedulerName: "{{ .Values.pgbouncer.schedulerName }}"
       {{- end }}

@@ -21,28 +21,16 @@ spec:
 {{ toYaml .Values.worker.podLabels | indent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.hooks.affinity }}
-      affinity:
-{{ toYaml . | indent 8 }}
-      {{- end }}
-
-      {{- with .Values.hooks.nodeSelector }}
-      nodeSelector:
-{{ toYaml . | indent 8 }}
-      {{- end }}
-
-      {{- with .Values.hooks.tolerations }}
-      tolerations:
-{{ toYaml . | indent 8 }}
-      {{- end }}
-
+      affinity: {{ toYaml (merge .Values.hooks.affinity .Values.affinity) | nindent 8 }}
+      nodeSelector: {{ toYaml (merge .Values.hooks.nodeSelector .Values.nodeSelector) | nindent 8 }}
+      tolerations: {{ toYaml (coalesce .Values.hooks.tolerations .Values.tolerations) | nindent 8 }}
       restartPolicy: Never
 
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
       {{- end }}
-      
+
       # I do not know for sure if the old one has been used anywhere, so do both :(
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:

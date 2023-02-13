@@ -47,15 +47,26 @@ env: []
 #   - name: FOO
 #     value: bar
 
+# -- Global Node labels for all deployment.
+nodeSelector: {}
+# -- Global Toleration labels for all deployment.
+tolerations: []
+# -- Global Affinity settings for all deployment.
+affinity: {}
 
 migrate:
   # -- Whether to install the PostHog migrate job or not.
   enabled: true
 
-
 events:
   # -- Whether to install the PostHog events stack or not.
   enabled: true
+
+  podAnnotations:
+    # Uncomment these lines if you want Prometheus server to scrape metrics.
+    # prometheus.io/scrape: "true"
+    # prometheus.io/path: /metrics
+    # prometheus.io/port: "8001"
 
   # -- Count of events pods to run. This setting is ignored if `events.hpa.enabled` is set to `true`.
   replicacount: 1
@@ -82,6 +93,17 @@ events:
 
   # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
   env: []
+
+  # -- Resource limits for events service.
+  resources:
+    {}
+
+  # -- Node labels for events stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for events stack deployment.
+  tolerations: []
+  # -- Affinity settings for events stack deployment.
+  affinity: {}
 
   # -- Container security context for the events stack HorizontalPodAutoscaler.
   securityContext:
@@ -357,6 +379,18 @@ plugins:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
 
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
+    timeoutSeconds: 5
+
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
@@ -433,6 +467,18 @@ pluginsAsync:
     # -- The readiness probe success threshold
     successThreshold: 1
     # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
     timeoutSeconds: 5
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
@@ -518,6 +564,18 @@ pluginsIngestion:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
 
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
+    timeoutSeconds: 5
+
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
@@ -593,6 +651,18 @@ pluginsExports:
     # -- The readiness probe success threshold
     successThreshold: 1
     # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
     timeoutSeconds: 5
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
@@ -672,6 +742,18 @@ pluginsJobs:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
 
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
+    timeoutSeconds: 5
+
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
@@ -746,6 +828,18 @@ pluginsScheduler:
     # -- The readiness probe success threshold
     successThreshold: 1
     # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
     timeoutSeconds: 5
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
@@ -1324,6 +1418,8 @@ clickhouse:
     ##
     pullSecrets: []
 
+  # -- Node labels for clickhouse pod assignment
+  nodeSelector: {}
   # -- Toleration labels for clickhouse pod assignment
   tolerations: []
   # -- Affinity settings for clickhouse pod

@@ -29,6 +29,9 @@ spec:
             {{- end }}
             {{- end }}
           {{- end }}
+          affinity: {{ toYaml (merge .Values.clickhouse.affinity .Values.affinity) | nindent 12 }}
+          nodeSelector: {{ toYaml (merge .Values.clickhouse.nodeSelector .Values.nodeSelector) | nindent 12 }}
+          tolerations: {{ toYaml (coalesce .Values.clickhouse.tolerations .Values.tolerations) | nindent 12 }}
 
           initContainers:
             #

@@ -16,6 +16,7 @@ should match the snapshot when backup is true:
               labels:
                 job: clickhouse-backup
             spec:
+              affinity: {}
               containers:
               - command:
                 - /bin/sh
@@ -67,7 +68,9 @@ should match the snapshot when backup is true:
                 image: busybox:1.34
                 imagePullPolicy: IfNotPresent
                 name: wait-for-service-dependencies
+              nodeSelector: {}
               restartPolicy: Never
+              tolerations: null
               volumes:
               - configMap:
                   defaultMode: 511

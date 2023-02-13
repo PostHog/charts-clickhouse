@@ -70,6 +70,7 @@ the manifest should match the snapshot when using default values:
         podTemplates:
         - name: pod-template
           spec:
+            affinity: {}
             containers:
             - command:
               - /bin/bash
@@ -87,10 +88,12 @@ the manifest should match the snapshot when using default values:
               volumeMounts:
               - mountPath: /var/lib/clickhouse
                 name: data-volumeclaim-template
+            nodeSelector: {}
             securityContext:
               fsGroup: 101
               runAsGroup: 101
               runAsUser: 101
+            tolerations: null
             volumes:
             - name: data-volumeclaim-template
               persistentVolumeClaim:

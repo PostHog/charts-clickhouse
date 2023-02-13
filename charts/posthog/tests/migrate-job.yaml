@@ -45,13 +45,88 @@ tests:
             name: SENTRY_DSN
             value: sentry.endpoint
 
+  - it: nodeSelector via 'nodeSelector' works
+    template: templates/migrate.job.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      nodeSelector:
+        diskType: hdd
+        nodeType: slow
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-group
+                    operator: In
+                    values:
+                      - test
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: test
+          effect: NoExecute
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            diskType: hdd
+            nodeType: slow
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0]
+          value:
+            key: node-group
+            operator: In
+            values:
+              - test
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0]
+          value:
+            key: node-group
+            operator: In
+            values:
+              - test
+
   - it: nodeSelector override via 'hooks.nodeSelector' works
     template: templates/migrate.job.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      nodeSelector:
+        diskType: hdd
+        nodeType: slow
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-group
+                    operator: In
+                    values:
+                      - test
+      tolerations:
+        - key: dedicated
+          operator: Equal
+          value: test
+          effect: NoExecute
       hooks.nodeSelector:
         diskType: ssd
         nodeType: fast
+      hooks.affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-group
+                    operator: In
+                    values:
+                      - test-override
+      hooks.tolerations:
+        - key: dedicated
+          operator: Equal
+          value: test-override
+          effect: NoExecute
     asserts:
       - hasDocuments:
           count: 1
@@ -60,6 +135,20 @@ tests:
           value:
             diskType: ssd
             nodeType: fast
+      - equal:
+          path: spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0]
+          value:
+            key: node-group
+            operator: In
+            values:
+              - test-override
+      - equal:
+          path: spec.template.spec.tolerations[0]
+          value:
+            key: dedicated
+            operator: Equal
+            value: test-override
+            effect: NoExecute
 
   - it: allows setting imagePullSecrets
     template: templates/migrate.job.yaml # TODO: remove once secrets.yaml will be fixed/removed
