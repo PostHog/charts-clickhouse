@@ -1,3 +1,14 @@
 {{ if .Values.pluginsIngestion.enabled }}
+{{/*
+    The ingestion deployments handle processing of analytic events e.g. captured
+    via the `/e/` and similar endpoints.
+
+    To allow for near real time processing of most of the events, we will divert
+    some events that break certain criteria e.g. sending 1000s of events per
+    second with the same distinct id to a separate consumer to be processed.
+    This is consumer is run by the plugins-ingestion-overflow deployment and can
+    be scaled independently.
+ */}}
 {{ include "plugins-deployment" ( dict "root" . "params" .Values.pluginsIngestion "name" "plugins-ingestion" "mode" "ingestion" ) }}
+{{ include "plugins-deployment" ( dict "root" . "params" .Values.pluginsIngestion "name" "plugins-ingestion-overflow" "mode" "ingestion-overflow" ) }}
 {{ end }}
