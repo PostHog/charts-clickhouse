@@ -1,4 +1,8 @@
-suite: PostHog plugins ingestion deployment definition
+suite: |
+  PostHog plugins ingestion deployment definition. This should consist of two
+  deployments, one for the near real time processing, and the other for "bad
+  actors" for which we can't process in real time e.g. sending thousands of
+  events per second from a single device.
 templates:
   - templates/plugins-ingestion-deployment.yaml
   - templates/secrets.yaml
@@ -20,7 +24,7 @@ tests:
       pluginsIngestion.enabled: true
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - isAPIVersion:
           of: apps/v1
 
@@ -31,7 +35,7 @@ tests:
       pluginsIngestion.enabled: true
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - isKind:
           of: Deployment
 
@@ -45,7 +49,7 @@ tests:
       pluginsIngestion.podSecurityContext.fsGroup: 2000
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - equal:
           path: spec.template.spec.securityContext.runAsUser
           value: 1001
@@ -63,7 +67,7 @@ tests:
       pluginsIngestion.securityContext.allowPrivilegeEscalation: false
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - equal:
           path: spec.template.spec.containers[0].securityContext.runAsUser
           value: 1001
@@ -79,7 +83,7 @@ tests:
       pluginsIngestion.podSecurityContext.enabled: false
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - isEmpty:
           path: spec.template.spec.securityContext
           value: 1001
@@ -92,7 +96,7 @@ tests:
       pluginsIngestion.securityContext.enabled: false
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - isEmpty:
           path: spec.template.spec.containers[0].securityContext
 
@@ -101,12 +105,26 @@ tests:
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
+    documentIndex: 0
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: PLUGIN_SERVER_MODE
             value: ingestion
+
+  - it: sets PLUGIN_SERVER_MODE
+    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestion.enabled: true
+    documentIndex: 1
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PLUGIN_SERVER_MODE
+            value: ingestion-overflow
 
   - it: sets SENTRY_DSN env var
     template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
@@ -143,7 +161,7 @@ tests:
       image.pullSecrets: [secret]
     asserts:
       - hasDocuments:
-          count: 1
+          count: 2
       - equal:
           path: spec.template.spec.imagePullSecrets
           value: [name: secret]
