@@ -132,6 +132,16 @@ spec:
           periodSeconds: {{ .params.readinessProbe.periodSeconds }}
           successThreshold: {{ .params.readinessProbe.successThreshold }}
           timeoutSeconds: {{ .params.readinessProbe.timeoutSeconds }}
+        startupProbe:
+          failureThreshold: {{ .params.startupProbe.failureThreshold }}
+          httpGet:
+            path: /_health
+            port: 6738
+            scheme: HTTP
+          initialDelaySeconds: {{ .params.startupProbe.initialDelaySeconds }}
+          periodSeconds: {{ .params.startupProbe.periodSeconds }}
+          successThreshold: {{ .params.startupProbe.successThreshold }}
+          timeoutSeconds: {{ .params.startupProbe.timeoutSeconds }}
         resources:
           {{- toYaml .params.resources | nindent 12 }}
         {{- if .params.securityContext.enabled }}

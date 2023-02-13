@@ -341,6 +341,18 @@ plugins:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
 
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
+    timeoutSeconds: 5
+
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
@@ -417,6 +429,18 @@ pluginsAsync:
     # -- The readiness probe success threshold
     successThreshold: 1
     # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
     timeoutSeconds: 5
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
@@ -502,6 +526,18 @@ pluginsIngestion:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
 
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
+    timeoutSeconds: 5
+
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
@@ -577,6 +613,18 @@ pluginsExports:
     # -- The readiness probe success threshold
     successThreshold: 1
     # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
     timeoutSeconds: 5
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
@@ -656,6 +704,18 @@ pluginsJobs:
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
 
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
+    timeoutSeconds: 5
+
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
@@ -730,6 +790,18 @@ pluginsScheduler:
     # -- The readiness probe success threshold
     successThreshold: 1
     # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  startupProbe:
+    # -- The startup probe failure threshold
+    failureThreshold: 30
+    # -- The startup probe initial delay seconds
+    initialDelaySeconds: 0
+    # -- The startup probe period seconds
+    periodSeconds: 10
+    # -- The startup probe success threshold
+    successThreshold: 1
+    # -- The startup probe timeout seconds
     timeoutSeconds: 5
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
