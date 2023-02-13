@@ -1835,7 +1835,7 @@ prometheus:
                   needs to be rolled-back.
 
             - alert: End2EndIngestionLag
-              expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 3000
+              expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 300
               for: 2m
               labels:
                 severity: warning # TODO: move up to critical after testing for two days
