@@ -1819,6 +1819,19 @@ prometheus:
       groups:
         - name: PostHog
           rules:
+            - alert: End2EndIngestionLag
+              expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 3000
+              for: 2m
+              labels:
+                severity: warning # TODO: move up to critical after testing for two days
+              annotations:
+                summary: End-to-end analytics event ingestion lag exceeds 5 minutes.
+                description: |
+                  Our end-to-end probe measured an ingestion lag higher than 5 minutes for scenario {{ $labels.scenario }}.
+                  Check the Kafka (cluster overview) dashboard to identify what topics and partitions are lagging and
+                  follow the https://posthog.com/docs/runbook/services/plugin-server/ingestion-lag runbook for recovery
+                  steps.
+
             - alert: ExportsConsumerDelayed
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="async_handlers",topic="clickhouse_events_json"}))) > 300000
               for: 5m
