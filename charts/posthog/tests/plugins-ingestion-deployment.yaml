@@ -1,8 +1,4 @@
-suite: |
-  PostHog plugins ingestion deployment definition. This should consist of two
-  deployments, one for the near real time processing, and the other for "bad
-  actors" for which we can't process in real time e.g. sending thousands of
-  events per second from a single device.
+suite: PostHog plugins ingestion deployment definition
 templates:
   - templates/plugins-ingestion-deployment.yaml
   - templates/secrets.yaml
@@ -105,7 +101,6 @@ tests:
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
-    documentIndex: 0
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
