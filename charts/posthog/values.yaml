@@ -484,6 +484,36 @@ pluginsIngestion:
   sentryDSN:
 
 
+pluginsIngestionOverflow:
+  # -- PostHog plugin-server ingestion overflow capability, loaded if the
+  # ingestion deployment is enabled. We do not provide a separate control to
+  # enable this as it is key to running ingestion and will result in potential
+  # odd behaviour if no enabled. HPA is separate to allow for independently
+  # scaling the deployment, as well as resource requests/limits. By default we
+  # will use the values from `pluginsIngestion` unless they are overridden here.
+
+  # -- Count of plugin-server overflow pods to run. This setting is ignored if
+  # `pluginsIngestionOverflow.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
+
+
 pluginsExports:
   # -- Whether to install the PostHog plugin-server exports capability as an
   # individual workload.

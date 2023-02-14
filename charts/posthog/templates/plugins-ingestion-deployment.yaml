@@ -8,7 +8,11 @@
     second with the same distinct id to a separate consumer to be processed.
     This is consumer is run by the plugins-ingestion-overflow deployment and can
     be scaled independently.
+
+    NOTE: before the PostHog app supports the `ingestion-overflow` mode, we'll
+    end up starting two deployments that are the same, but on a subsequent
+    deploy when we have the support, we should then start using the overflow
+    functionality.
  */}}
 {{ include "plugins-deployment" ( dict "root" . "params" .Values.pluginsIngestion "name" "plugins-ingestion" "mode" "ingestion" ) }}
-{{ include "plugins-deployment" ( dict "root" . "params" .Values.pluginsIngestion "name" "plugins-ingestion-overflow" "mode" "ingestion-overflow" ) }}
 {{ end }}
