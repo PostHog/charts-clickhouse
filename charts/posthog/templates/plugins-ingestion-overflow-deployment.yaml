@@ -1,7 +1,11 @@
 {{ if .Values.pluginsIngestion.enabled }}
 {{/* 
     A deployment for "overflow" events using pluginsIngestion settings unless
-    they are overridden by pluginsIngestionOverflow
+    they are overridden by pluginsIngestionOverflow.
+
+    Note that we enable on `.Values.pluginsIngestion.enabled` rather than e.g.
+    `.Values.pluginsIngestionOverflow.enabled` as they are not independent
+    deployments and are both needed to function as expected.
 */}}
 {{ 
     include "plugins-deployment" ( dict "root" . "params" (
