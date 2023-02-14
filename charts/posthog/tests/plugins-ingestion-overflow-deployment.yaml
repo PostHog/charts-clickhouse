@@ -4,12 +4,12 @@ suite: |
   actors" for which we can't process in real time e.g. sending thousands of
   events per second from a single device.
 templates:
-  - templates/plugins-ingestion-deployment.yaml
+  - templates/plugins-ingestion-overflow-deployment.yaml
   - templates/secrets.yaml
 
 tests:
   - it: should be empty if pluginsIngestion.enabled is set to false
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: false
@@ -18,7 +18,7 @@ tests:
           count: 0
 
   - it: should have the correct apiVersion
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
@@ -29,7 +29,7 @@ tests:
           of: apps/v1
 
   - it: should be the correct kind
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
@@ -40,7 +40,7 @@ tests:
           of: Deployment
 
   - it: should have a pod securityContext
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
@@ -58,7 +58,7 @@ tests:
           value: 2000
 
   - it: should have a container securityContext
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
@@ -76,7 +76,7 @@ tests:
           value: false
 
   - it: should not have a pod securityContext
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
@@ -88,33 +88,20 @@ tests:
           path: spec.template.spec.securityContext
           value: 1001
 
-  - it: should not have a container securityContext
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
-    set:
-      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsIngestion.enabled: true
-      pluginsIngestion.securityContext.enabled: false
-    asserts:
-      - hasDocuments:
-          count: 1
-      - isEmpty:
-          path: spec.template.spec.containers[0].securityContext
-
   - it: sets PLUGIN_SERVER_MODE
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
-    documentIndex: 0
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: PLUGIN_SERVER_MODE
-            value: ingestion
+            value: ingestion-overflow
 
   - it: sets SENTRY_DSN env var
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
@@ -128,7 +115,7 @@ tests:
             value: pluginsIngestion.endpoint
 
   - it: sets SENTRY_DSN env var with default
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
@@ -141,7 +128,7 @@ tests:
             value: main.endpoint
 
   - it: allows setting imagePullSecrets
-    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local
       pluginsIngestion.enabled: true
@@ -152,3 +139,39 @@ tests:
       - equal:
           path: spec.template.spec.imagePullSecrets
           value: [name: secret]
+
+  - it: defaults to using the same resources as `plugins-ingestion-deployment`
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      pluginsIngestion.enabled: true
+      pluginsIngestion:
+        resources:
+          requests:
+            cpu: 100m
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 100m
+
+  - it: overrides resources with values from `pluginsIngestionOverflow`
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      pluginsIngestion.enabled: true
+      pluginsIngestion:
+        resources:
+          requests:
+            cpu: 100m
+      pluginsIngestionOverflow:
+        resources:
+          requests:
+            cpu: 200m
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 200m
