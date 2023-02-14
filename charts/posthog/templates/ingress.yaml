@@ -97,7 +97,11 @@ spec:
           {{- if .Values.decide.ingressEnabled}}
           - pathType: Prefix
             path: "/decide/"
-            backend: *INGESTION
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-decide
+                port:
+                  number: {{ .Values.service.externalPort }}
           - pathType: Exact
             path: "/decide"
             backend:
