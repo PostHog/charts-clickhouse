@@ -485,12 +485,9 @@ pluginsIngestion:
 
 
 pluginsIngestionOverflow:
-  # -- PostHog plugin-server ingestion overflow capability, loaded if the
-  # ingestion deployment is enabled. We do not provide a separate control to
-  # enable this as it is key to running ingestion and will result in potential
-  # odd behaviour if no enabled. HPA is separate to allow for independently
-  # scaling the deployment, as well as resource requests/limits. By default we
-  # will use the values from `pluginsIngestion` unless they are overridden here.
+  # -- Whether to install the PostHog plugin-server ingestion overflow
+  # capability as an individual workload.
+  enabled: false
 
   # -- Count of plugin-server overflow pods to run. This setting is ignored if
   # `pluginsIngestionOverflow.hpa.enabled` is set to `true`.
