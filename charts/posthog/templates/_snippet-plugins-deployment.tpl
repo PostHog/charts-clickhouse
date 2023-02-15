@@ -104,6 +104,16 @@ spec:
         - name: SENTRY_DSN
           value: {{ .params.sentryDSN | default .root.Values.sentryDSN }}
 
+        # Based on if we have an ingestion consumer `plugins-ingestion-overflow`
+        # deployment we want to enable producing to the overflow topic.
+        {{ if .root.Values.pluginsIngestionOverflow.enabled }}
+        - name: INGESTION_OVERFLOW_ENABLED
+          value: "true"
+        {{ else }}
+        - name: INGESTION_OVERFLOW_ENABLED
+          value: "false"
+        {{ end }}
+
         # Kafka env variables
         {{- include "snippet.kafka-env" .root | nindent 8 }}
 
