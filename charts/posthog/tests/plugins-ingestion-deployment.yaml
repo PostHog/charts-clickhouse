@@ -108,12 +108,11 @@ tests:
             name: PLUGIN_SERVER_MODE
             value: ingestion
 
-  - it: sets INGESTION_OVERFLOW_ENABLED to false when pluginsIngestionOverflow disabled
+  - it: sets INGESTION_OVERFLOW_ENABLED to false by default
     template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       pluginsIngestion.enabled: true
-      pluginsIngestionOverflow.enabled: false
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
@@ -121,12 +120,15 @@ tests:
             name: INGESTION_OVERFLOW_ENABLED
             value: "false"
 
-  - it: sets INGESTION_OVERFLOW_ENABLED to true when pluginsIngestionOverflow enabled
+  - it: can set INGESTION_OVERFLOW_ENABLED to true
     template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pluginsIngestion.enabled: true
-      pluginsIngestionOverflow.enabled: true
+      pluginsIngestion:
+        enabled: true
+        env:
+          - name: INGESTION_OVERFLOW_ENABLED
+            value: "true"
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
