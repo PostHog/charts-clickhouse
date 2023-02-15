@@ -1,0 +1,174 @@
+suite: |
+  PostHog plugins ingestion overflow deployment definition.
+templates:
+  - templates/plugins-ingestion-overflow-deployment.yaml
+  - templates/secrets.yaml
+
+tests:
+  - it: should be empty if pluginsIngestionOverflow.enabled is set to false
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestionOverflow.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should have the correct apiVersion
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestionOverflow.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: apps/v1
+
+  - it: should be the correct kind
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestionOverflow.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Deployment
+
+  - it: should have a pod securityContext
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestionOverflow.enabled: true
+      pluginsIngestion.podSecurityContext.enabled: true
+      pluginsIngestion.podSecurityContext.runAsUser: 1001
+      pluginsIngestion.podSecurityContext.fsGroup: 2000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+
+  - it: should have a container securityContext
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestionOverflow.enabled: true
+      pluginsIngestion.securityContext.enabled: true
+      pluginsIngestion.securityContext.runAsUser: 1001
+      pluginsIngestion.securityContext.allowPrivilegeEscalation: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+
+  - it: should not have a pod securityContext
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestionOverflow.enabled: true
+      pluginsIngestion.podSecurityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.securityContext
+          value: 1001
+
+  - it: sets PLUGIN_SERVER_MODE
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestionOverflow.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PLUGIN_SERVER_MODE
+            value: ingestion-overflow
+
+  - it: sets SENTRY_DSN env var
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestionOverflow.enabled: true
+      sentryDSN: main.endpoint
+      pluginsIngestion.sentryDSN: pluginsIngestion.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: pluginsIngestion.endpoint
+
+  - it: sets SENTRY_DSN env var with default
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestionOverflow.enabled: true
+      sentryDSN: main.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: main.endpoint
+
+  - it: allows setting imagePullSecrets
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      pluginsIngestionOverflow.enabled: true
+      image.pullSecrets: [secret]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: secret]
+
+  - it: defaults to using the same resources as `plugins-ingestion-deployment`
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      pluginsIngestionOverflow.enabled: true
+      pluginsIngestion:
+        resources:
+          requests:
+            cpu: 100m
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 100m
+
+  - it: overrides resources with values from `pluginsIngestionOverflow`
+    template: templates/plugins-ingestion-overflow-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      pluginsIngestionOverflow.enabled: true
+      pluginsIngestion:
+        resources:
+          requests:
+            cpu: 100m
+      pluginsIngestionOverflow:
+        resources:
+          requests:
+            cpu: 200m
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: 200m
