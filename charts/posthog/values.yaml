@@ -1863,6 +1863,7 @@ prometheus:
                 sum by (role) (increase(django_http_responses_total_by_status_view_method_total[5m])) > 0.02
               for: 5m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Django error rate exceeds 2% on role {{ $labels.role }}
@@ -1876,6 +1877,7 @@ prometheus:
               expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 300
               for: 2m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: End-to-end analytics event ingestion lag exceeds 5 minutes.
@@ -1889,6 +1891,7 @@ prometheus:
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="async_handlers",topic="clickhouse_events_json"}))) > 300000
               for: 5m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Exports and WebHooks have delayed by more than 5 minutes for more than 5 minutes.
@@ -1898,6 +1901,7 @@ prometheus:
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="scheduled-tasks-runner",topic="scheduled_tasks"}))) > 300000
               for: 5m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: RunEveryX tasks have been delayed by more than 5 minutes for more than 5 minutes.
@@ -1907,6 +1911,7 @@ prometheus:
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="jobs-inserter",topic="jobs"}))) > 300000
               for: 5m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Jobs scheduled via Apps jobs have been delayed by more than 5 minutes for more than 5 minutes.
@@ -1916,6 +1921,7 @@ prometheus:
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="ingestion",topic="events_plugin_ingestion"}))) > 300000
               for: 5m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Ingestion for analytics events has been delayed by more than 5 minutes for more than 5 minutes.
@@ -1945,6 +1951,7 @@ prometheus:
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="session-recordings",topic="session_recording_events"}))) > 300000
               for: 5m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Ingestion for session recording and web performance events has been delayed by more than 5 minutes for more than 5 minutes.
@@ -1954,6 +1961,7 @@ prometheus:
               expr: sum(delta(kafka_topic_partition_current_offset{topic="session_recording_events_dlq"}[5m])) > 0
               for: 1m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Failed to process some session recording events and have been sent to the dead letter queue for review.
