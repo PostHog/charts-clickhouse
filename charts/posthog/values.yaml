@@ -1863,7 +1863,7 @@ prometheus:
                 sum by (role) (increase(django_http_responses_total_by_status_view_method_total[5m])) > 0.02
               for: 5m
               labels:
-                severity: warning # TODO: move up to critical after testing for two days
+                severity: critical
               annotations:
                 summary: Django error rate exceeds 2% on role {{ $labels.role }}
                 description: |
@@ -1876,7 +1876,7 @@ prometheus:
               expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 300
               for: 2m
               labels:
-                severity: warning # TODO: move up to critical after testing for two days
+                severity: critical
               annotations:
                 summary: End-to-end analytics event ingestion lag exceeds 5 minutes.
                 description: |
