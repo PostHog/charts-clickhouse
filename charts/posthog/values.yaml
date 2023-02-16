@@ -1967,6 +1967,31 @@ prometheus:
                 summary: Failed to process some session recording events and have been sent to the dead letter queue for review.
                 description: "The `session_recording_events_dlq` topic offset has increased over the past 5 minutes."
 
+            - alert: KafkaDiskCritical
+              expr: min by (instance) (aws_msk_node_filesystem_free_bytes{mountpoint="/kafka/datalogs"}) < 536870912000
+              for: 2m
+              labels:
+                severity: critical
+                rotation: common
+              annotations:
+                summary: Less than 500GB free on Kafka broker(s)
+                description: |
+                  Kafka disks are getting full and should be upscaled before we lose new events.
+                  We should upscale the disks, or (as a last-ditch option) lower the data retention
+                  to free up disk space.
+
+            - alert: KafkaDiskCapacityPlanning
+              expr: min by (instance) (aws_msk_node_filesystem_free_bytes{mountpoint="/kafka/datalogs"}) < 1036870912000
+              for: 2m
+              labels:
+                severity: warning
+                rotation: infra
+              annotations:
+                summary: Less than 1GB free on Kafka broker(s)
+                description: |
+                  Kafka disks are getting full and should be upscaled before we lose new events.
+                  If not handled, the KafkaDiskCritical will page the common rotation.
+
         - name: Kubernetes # via kube-state-metrics
           rules:
             - alert: KubernetesNodeReady
