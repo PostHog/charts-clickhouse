@@ -19,7 +19,7 @@ dependencies:
   version: 16.8.9
 - name: zookeeper
   repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
-  version: 7.0.5
+  version: 7.4.11
 - name: grafana
   repository: https://grafana.github.io/helm-charts
   version: 6.40.0
@@ -44,5 +44,5 @@ dependencies:
 - name: prometheus-statsd-exporter
   repository: https://prometheus-community.github.io/helm-charts
   version: 0.3.1
-digest: sha256:5ac223659ced28c44ff2c89963e0268427f848b5d4db98df9b8f1010f22f8207
-generated: "2022-12-20T11:35:36.888806538Z"
+digest: sha256:5615fc5fda7592b7c87d352789702c33db0ec6c6ff8625aee1ef20465aaa442f
+generated: "2023-02-17T16:38:29.581158+05:00"
