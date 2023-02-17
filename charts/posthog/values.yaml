@@ -91,7 +91,7 @@ events:
     enabled: false
 
 decide:
-  # -- Whether to install the PostHog decide stack or not.
+  # -- Whether to install the PostHog decide stack or not. Requires PostHog 1.44+
   enabled: false
   ingressEnabled: false
 
