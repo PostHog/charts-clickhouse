@@ -142,7 +142,7 @@ spec:
           httpGet:
             # For readiness, we want to use the checks specific to the decide
             # role, which may be a subset of all the apps dependencies
-            path: /_readyz?role=events
+            path: /_readyz?role=web
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.readinessProbe.failureThreshold }}
