@@ -478,7 +478,7 @@ pluginsIngestion:
     - name: INGESTION_OVERFLOW_ENABLED
       # -- Whether or not to send events to a "slow-lane" to be consumed
       # separately by the pluginsIngestionOverflow deployment. When setting this
-      # to true, you much set pluginsIngestionOverflow.enabled to `true``
+      # to true, you must set pluginsIngestionOverflow.enabled to `true``
       # otherwise some events will not be processed in cases of overflow. This
       # behaviour is triggered for instance if there are too many events to be
       # processed in near real time from a single device.
