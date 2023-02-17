@@ -14,7 +14,7 @@
 {{/* Return the Kafka hosts (brokers) */}}
 {{- define "posthog.kafka.brokers"}}
 {{- if .Values.kafka.enabled -}}
-    {{- printf "%s:%d" (include "posthog.kafka.fullname" .) (.Values.kafka.service.port | int) }}
+    {{- printf "%s:%d" (include "posthog.kafka.fullname" .) (.Values.kafka.service.ports.client | int) }}
 {{- else -}}
     {{- printf "%s" .Values.externalKafka.brokers }}
 {{- end }}
