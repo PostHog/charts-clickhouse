@@ -1,0 +1,12 @@
+{{ if .Values.pluginsIngestionOverflow.enabled }}
+{{/* 
+    A deployment for "overflow" events using pluginsIngestion settings unless
+    they are overridden by pluginsIngestionOverflow.
+
+    TODO: for the next PostHog release, make this deployment required.
+*/}}
+{{ 
+    include "plugins-deployment" ( dict "root" . "params" (
+        merge .Values.pluginsIngestionOverflow (omit .Values.pluginsIngestion "hpa")
+    ) "name" "plugins-ingestion-overflow" "mode" "ingestion-overflow" ) }}
+{{ end }}
