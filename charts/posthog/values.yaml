@@ -1875,12 +1875,12 @@ prometheus:
 
             - alert: End2EndIngestionLag
               expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 300
-              for: 2m
+              for: 5m
               labels:
                 rotation: common
                 severity: critical
               annotations:
-                summary: End-to-end analytics event ingestion lag exceeds 5 minutes.
+                summary: End-to-end analytics event ingestion lag exceeds 5 minutes for more than 5 minutes.
                 description: |
                   Our end-to-end probe measured an ingestion lag higher than 5 minutes for scenario {{ $labels.scenario }}.
                   Check the "Kafka (cluster overview)" dashboard to identify what topics and partitions are lagging and
