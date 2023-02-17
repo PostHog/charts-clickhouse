@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.5.2](https://img.shields.io/badge/Version-30.5.2-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.6.0](https://img.shields.io/badge/Version-30.6.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -156,7 +156,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsAsync.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | pluginsAsync.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | pluginsAsync.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
-| pluginsIngestion | object | `{"affinity":{},"enabled":false,"env":[],"hpa":{"behavior":null,"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"livenessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":2},"nodeSelector":{},"podSecurityContext":{"enabled":false},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":50,"periodSeconds":30,"successThreshold":1,"timeoutSeconds":5},"replicacount":1,"resources":{},"rollout":{"maxSurge":"25%","maxUnavailable":"25%"},"securityContext":{"enabled":false},"sentryDSN":null,"tolerations":[]}` | A deconstructed plugin-server that handles the various workloads of the pipeline separately. For most workloads this will not be needed, rather you can disable the below plugins* and instead just use `plugins.enabled=true`. Note that the behaviour of pluginsAsync is unchanged to maintain backwards compatibility. |
+| pluginsIngestion | object | `{"affinity":{},"enabled":false,"env":[{"name":"INGESTION_OVERFLOW_ENABLED","value":"false"}],"hpa":{"behavior":null,"cputhreshold":60,"enabled":false,"maxpods":10,"minpods":1},"livenessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":2},"nodeSelector":{},"podSecurityContext":{"enabled":false},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":50,"periodSeconds":30,"successThreshold":1,"timeoutSeconds":5},"replicacount":1,"resources":{},"rollout":{"maxSurge":"25%","maxUnavailable":"25%"},"securityContext":{"enabled":false},"sentryDSN":null,"tolerations":[]}` | A deconstructed plugin-server that handles the various workloads of the pipeline separately. For most workloads this will not be needed, rather you can disable the below plugins* and instead just use `plugins.enabled=true`. Note that the behaviour of pluginsAsync is unchanged to maintain backwards compatibility. |
 | pluginsIngestion.enabled | bool | `false` | Whether to install the PostHog plugin-server ingestion capability as an individual workload. |
 | pluginsIngestion.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `pluginsIngestion.hpa.enabled` is set to `true`. |
 | pluginsIngestion.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
@@ -164,7 +164,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsIngestion.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsIngestion.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsIngestion.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
-| pluginsIngestion.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
+| pluginsIngestion.env | list | `[{"name":"INGESTION_OVERFLOW_ENABLED","value":"false"}]` | Additional env variables to inject into the plugin-server stack deployment. |
 | pluginsIngestion.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
 | pluginsIngestion.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
 | pluginsIngestion.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
@@ -182,6 +182,14 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsIngestion.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | pluginsIngestion.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | pluginsIngestion.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
+| pluginsIngestionOverflow.enabled | bool | `false` | Whether to install the PostHog plugin-server ingestion overflow capability as an individual workload. |
+| pluginsIngestionOverflow.replicacount | int | `1` | Count of plugin-server overflow pods to run. This setting is ignored if `pluginsIngestionOverflow.hpa.enabled` is set to `true`. |
+| pluginsIngestionOverflow.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
+| pluginsIngestionOverflow.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsIngestionOverflow.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsIngestionOverflow.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsIngestionOverflow.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsIngestionOverflow.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
 | pluginsExports.enabled | bool | `false` | Whether to install the PostHog plugin-server exports capability as an individual workload. |
 | pluginsExports.replicacount | int | `1` | Count of plugin-server-async pods to run. This setting is ignored if `pluginsExports.hpa.enabled` is set to `true`. |
 | pluginsExports.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
