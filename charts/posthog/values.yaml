@@ -474,7 +474,15 @@ pluginsIngestion:
     maxUnavailable: 25%
 
   # -- Additional env variables to inject into the plugin-server stack deployment.
-  env: []
+  env:
+    - name: INGESTION_OVERFLOW_ENABLED
+      # -- Whether or not to send events to a "slow-lane" to be consumed
+      # separately by the pluginsIngestionOverflow deployment. When setting this
+      # to true, you must set pluginsIngestionOverflow.enabled to `true``
+      # otherwise some events will not be processed in cases of overflow. This
+      # behaviour is triggered for instance if there are too many events to be
+      # processed in near real time from a single device.
+      value: "false"
 
   # -- Resource limits for the plugin-server stack deployment.
   resources:
@@ -517,6 +525,33 @@ pluginsIngestion:
     successThreshold: 1
     # -- The readiness probe timeout seconds
     timeoutSeconds: 5
+
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
+
+
+pluginsIngestionOverflow:
+  # -- Whether to install the PostHog plugin-server ingestion overflow
+  # capability as an individual workload.
+  enabled: false
+
+  # -- Count of plugin-server overflow pods to run. This setting is ignored if
+  # `pluginsIngestionOverflow.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
