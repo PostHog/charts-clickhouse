@@ -159,12 +159,12 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_BUCKET
-            value: bucket_region
+            value: bucket_name
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_REGION
-            value: region
+            value: bucket_region
       - contains:
           path: spec.template.spec.containers[0].env
           content:
