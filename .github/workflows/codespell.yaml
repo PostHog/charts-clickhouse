@@ -20,4 +20,4 @@ jobs:
         with:
           check_filenames: true
           check_hidden: true
-          skip: .git,./ci/k6/lib/*,./charts/posthog/crds/*,./charts/posthog/tests/clickhouse-operator/__snapshot__/*,./charts/posthog/templates/clickhouse-operator/*,./charts/posthog/grafana-dashboards/http-by-application-endpoint.json,./charts/posthog/grafana-dashboards/instance-overview.json,./yarn.lock,charts/posthog/ALL_VALUES.md
+          skip: .git,./ci/k6/lib/*,./charts/posthog/crds/*,./charts/posthog/tests/clickhouse-operator/__snapshot__/*,./charts/posthog/templates/clickhouse-operator/*,./charts/posthog/grafana-dashboards/http-by-application-endpoint.json,./charts/posthog/grafana-dashboards/instance-overview.json,./yarn.lock,./charts/posthog/ALL_VALUES.md
