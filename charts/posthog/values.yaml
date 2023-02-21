@@ -1920,7 +1920,7 @@ prometheus:
               expr: | 
                 delta(
                   sum(
-                    kafka_consumergroup_lag{topic='events_plugin_ingestion', consumergroup="clickhouse-ingestion-overflow"}
+                    kafka_consumergroup_lag{topic='events_plugin_ingestion_overflow', consumergroup="clickhouse-ingestion-overflow"}
                   )[20m]
                 ) > 0
               for: 1m
