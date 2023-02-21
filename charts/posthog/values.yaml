@@ -1610,6 +1610,8 @@ externalObjectStorage:
   port:
   # -- Bucket name to use.
   bucket:
+  # -- Region of the bucket (for AWS).
+  region:
   # -- Name of an existing Kubernetes secret object containing the `access_key_id` and `secret_access_key`. The secret has to contain the keys `root-user` and `root-password`).
   existingSecret:
 

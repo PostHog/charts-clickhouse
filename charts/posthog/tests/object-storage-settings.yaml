@@ -36,6 +36,10 @@ tests:
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
+            name: OBJECT_STORAGE_REGION
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
             name: OBJECT_STORAGE_ACCESS_KEY_ID
       - notContains:
           path: spec.template.spec.containers[0].env
@@ -138,6 +142,7 @@ tests:
         host: host_name
         port: "12345"
         bucket: bucket_name
+        region: bucket_region
         existingSecret: existing_secret
     asserts:
       - contains:
@@ -154,7 +159,12 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: OBJECT_STORAGE_BUCKET
-            value: bucket_name
+            value: bucket_region
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: OBJECT_STORAGE_REGION
+            value: region
       - contains:
           path: spec.template.spec.containers[0].env
           content:

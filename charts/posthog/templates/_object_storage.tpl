@@ -64,6 +64,8 @@ https://{{- .Values.externalObjectStorage.host -}}:{{- .Values.externalObjectSto
   value: {{ include "posthog.externalObjectStorage.endpoint" . }}
 - name: OBJECT_STORAGE_BUCKET
   value: {{ .Values.externalObjectStorage.bucket }}
+- name: OBJECT_STORAGE_REGION
+  value: {{ .Values.externalObjectStorage.region }}
 - name: OBJECT_STORAGE_ACCESS_KEY_ID
   valueFrom:
     secretKeyRef:
