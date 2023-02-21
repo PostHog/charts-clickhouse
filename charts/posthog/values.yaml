@@ -1894,6 +1894,48 @@ prometheus:
       groups:
         - name: PostHog
           rules:
+            - alert: IngestionOverflowProduction
+              expr: |
+                sum(
+                  delta(
+                    kafka_topic_partition_current_offset{topic="events_plugin_ingestion_overflow"}[1m]
+                  )
+                ) > 0
+              for: 10m
+              labels:
+                rotation: common
+                severity: warning
+              annotations:
+                summary: |
+                  Ingestion has pushed events to the overflow topic for
+                  10 minutes.
+                description: Due to some scenario such as many events from a
+                  single distinct_id, we have pushed some events to the
+                  ingestion overflow topic so we can keed up with events from
+                  other users. Check partition stats for how many events we've
+                  received for each distinct_id or team_id, or look in
+                  ClickHouse for any recent trends for distinct_ids.
+
+            - alert: IngestionOverflowConsumerLag
+              expr: | 
+                delta(
+                  sum(
+                    kafka_consumergroup_lag{topic='events_plugin_ingestion', consumergroup="clickhouse-ingestion-overflow"}
+                  )[20m]
+                ) > 0
+              for: 1m
+              labels:
+                rotation: common
+                severity: warning
+              annotations:
+                summary: |
+                  Ingestion lag on the Overflow topic has been increasing over the past 10 minutes.
+                description: |
+                  Lag on the ingestion topic is increasing. Check that the
+                  consumer for the topic is running. Also check the production
+                  rate to the topic to see if there is an unusually high volume
+                  going to it.
+
             - alert: DjangoErrorRate
               expr: |
                 sum by (role) (increase(django_http_responses_total_by_status_view_method_total{status=~"^5.*"}[5m])) /
