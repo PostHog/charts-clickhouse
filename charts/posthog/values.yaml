@@ -1898,7 +1898,9 @@ prometheus:
               expr: |
                 sum(
                   delta(
-                    kafka_topic_partition_current_offset{topic="events_plugin_ingestion_overflow"}[1m]
+                    kafka_topic_partition_current_offset{
+                      topic="events_plugin_ingestion_overflow"
+                    }[1m]
                   )
                 ) > 0
               for: 10m
@@ -1918,10 +1920,12 @@ prometheus:
 
             - alert: IngestionOverflowConsumerLag
               expr: | 
-                delta(
-                  sum(
-                    kafka_consumergroup_lag{topic='events_plugin_ingestion_overflow', consumergroup="clickhouse-ingestion-overflow"}
-                  )[20m]
+                sum(
+                  delta(
+                    kafka_consumergroup_lag{
+                      topic='events_plugin_ingestion_overflow', consumergroup="clickhouse-ingestion-overflow"
+                    }[10m]
+                  )
                 ) > 0
               for: 1m
               labels:
