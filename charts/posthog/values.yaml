@@ -1924,10 +1924,10 @@ prometheus:
                   delta(
                     kafka_consumergroup_lag{
                       topic='events_plugin_ingestion_overflow', consumergroup="clickhouse-ingestion-overflow"
-                    }[10m]
+                    }[2m]
                   )
                 ) > 0
-              for: 1m
+              for: 10m
               labels:
                 rotation: common
                 severity: warning
