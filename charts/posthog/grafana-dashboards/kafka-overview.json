@@ -446,12 +446,12 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(kafka_consumergroup_lag{instance=\"$instance\",topic=~\"$topic_detailed\"}) by (consumergroup, topic,partition) ",
+          "expr": "sum(kafka_consumergroup_lag{instance=\"$instance\",topic=~\"$topic_detailed\"}) by (consumergroup, topic, partition) ",
           "format": "time_series",
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{consumergroup}} (topic: {{topic:partition}})",
+          "legendFormat": "{{consumergroup}} (topic: {{topic}}:{{partition}})",
           "refId": "A"
         }
       ],
@@ -541,10 +541,10 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(delta(kafka_topic_partition_current_offset{instance=~'$instance', topic=~\"$topic_detailed\"}[5m])/5) by (topic,partition)",
+          "expr": "sum(delta(kafka_topic_partition_current_offset{instance=~'$instance', topic=~\"$topic_detailed\"}[5m])/5) by (topic, partition)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{topic:partition}}",
+          "legendFormat": "{{topic}}:{{partition}}",
           "range": true,
           "refId": "A"
         }
@@ -635,10 +635,10 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(delta(kafka_consumergroup_current_offset{instance=~'$instance',topic=~\"$topic_detailed\"}[5m])/5) by (consumergroup, topic,partition)",
+          "expr": "sum(delta(kafka_consumergroup_current_offset{instance=~'$instance',topic=~\"$topic_detailed\"}[5m])/5) by (consumergroup, topic, partition)",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{consumergroup}} (topic: {{topic:partition}})",
+          "legendFormat": "{{consumergroup}} (topic: {{topic}}:{{partition}})",
           "range": true,
           "refId": "A"
         }
