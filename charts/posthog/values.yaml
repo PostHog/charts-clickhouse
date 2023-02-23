@@ -2070,10 +2070,10 @@ prometheus:
                 severity: warning
                 rotation: infra
               annotations:
-                summary: Less than 1GB free on Kafka broker(s)
+                summary: Less than 1TB free on Kafka broker(s)
                 description: |
                   Kafka disks are getting full and should be upscaled before we lose new events.
-                  If not handled, the KafkaDiskCritical will page the common rotation.
+                  If not handled, the KafkaDiskCritical will page the common rotation at 500GB.
 
         - name: Kubernetes # via kube-state-metrics
           rules:
