@@ -1,0 +1,9 @@
+{{ if .Values.recordingsIngestion.enabled }}
+{{/*
+    Ingests Recordings events, transforming them ready for playback. At the time
+    of writing this is based on the `plugins-server` and the
+    `plugins-deployment` but there is no need for it to be part of plugin
+    server and could be separated in the future.
+ */}}
+{{ include "plugins-deployment" ( dict "root" . "params" .Values.recordingsIngestion "name" "recordings-ingestion" "mode" "recordings-ingestion" ) }}
+{{ end }}

@@ -1,0 +1,20 @@
+{{ if .Values.pluginsAnalyticsIngestion.enabled }}
+{{/*
+    The ingestion deployments handle processing of analytic events e.g. captured
+    via the `/e/` and similar endpoints. Specifically, unlike the
+    `posthog-plugins-ingestion` deployment if does _not_ handle session
+    recordings events.
+
+    To allow for near real time processing of most of the events, we will divert
+    some events that break certain criteria e.g. sending 1000s of events per
+    second with the same distinct id to a separate consumer to be processed.
+    This is consumer is run by the plugins-ingestion-overflow deployment and can
+    be scaled independently.
+
+    NOTE: before the PostHog app supports the `ingestion-overflow` mode, we'll
+    end up starting two deployments that are the same, but on a subsequent
+    deploy when we have the support, we should then start using the overflow
+    functionality.
+ */}}
+{{ include "plugins-deployment" ( dict "root" . "params" .Values.pluginsAnalyticsIngestion "name" "plugins-ingestion" "mode" "analytics-ingestion" ) }}
+{{ end }}
