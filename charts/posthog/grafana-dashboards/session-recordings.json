@@ -668,7 +668,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(kube_deployment_status_replicas_updated{namespace=\"posthog\", deployment=\"posthog-plugins-ingestion\"})",
+          "expr": "sum(kube_deployment_status_replicas_updated{namespace=\"posthog\", deployment=\"posthog-recordings-ingestion\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -682,7 +682,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(kube_deployment_status_replicas_available{namespace=\"posthog\",deployment=\"posthog-plugins-ingestion\"})",
+          "expr": "sum(kube_deployment_status_replicas_available{namespace=\"posthog\",deployment=\"posthog-recordings-ingestion\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -696,7 +696,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(kube_deployment_status_replicas_unavailable{namespace=\"posthog\",deployment=\"posthog-plugins-ingestion\"})",
+          "expr": "sum(kube_deployment_status_replicas_unavailable{namespace=\"posthog\",deployment=\"posthog-recordings-ingestion\"})",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -705,7 +705,7 @@
           "refId": "C"
         }
       ],
-      "title": "posthog-plugins-ingestion replica status",
+      "title": "posthog-recordings-ingestion replica status",
       "type": "timeseries"
     },
     {
@@ -1186,7 +1186,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "builder",
-          "expr": "{container=\"posthog-plugins-ingestion\"} | json",
+          "expr": "{container=\"posthog-recordings-ingestion\"} | json",
           "queryType": "range",
           "refId": "A"
         }
