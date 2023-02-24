@@ -1,0 +1,149 @@
+suite: PostHog recordings ingestion deployment definition
+templates:
+  - templates/recordings-ingestion-deployment.yaml
+  - templates/secrets.yaml
+
+tests:
+  - it: should be empty if recordingsIngestion.enabled is set to false
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should have the correct apiVersion
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: apps/v1
+
+  - it: should be the correct kind
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Deployment
+
+  - it: should have a pod securityContext
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: true
+      recordingsIngestion.podSecurityContext.enabled: true
+      recordingsIngestion.podSecurityContext.runAsUser: 1001
+      recordingsIngestion.podSecurityContext.fsGroup: 2000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+
+  - it: should have a container securityContext
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: true
+      recordingsIngestion.securityContext.enabled: true
+      recordingsIngestion.securityContext.runAsUser: 1001
+      recordingsIngestion.securityContext.allowPrivilegeEscalation: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+
+  - it: should not have a pod securityContext
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: true
+      recordingsIngestion.podSecurityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.securityContext
+          value: 1001
+
+  - it: should not have a container securityContext
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: true
+      recordingsIngestion.securityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.containers[0].securityContext
+
+  - it: sets PLUGIN_SERVER_MODE
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PLUGIN_SERVER_MODE
+            value: recordings-ingestion
+
+  - it: sets SENTRY_DSN env var
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: true
+      sentryDSN: main.endpoint
+      recordingsIngestion.sentryDSN: recordingsIngestion.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: recordingsIngestion.endpoint
+
+  - it: sets SENTRY_DSN env var with default
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsIngestion.enabled: true
+      sentryDSN: main.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: main.endpoint
+
+  - it: allows setting imagePullSecrets
+    template: templates/recordings-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      recordingsIngestion.enabled: true
+      image.pullSecrets: [secret]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: secret]
