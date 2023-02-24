@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.7.5](https://img.shields.io/badge/Version-30.7.5-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.8.0](https://img.shields.io/badge/Version-30.8.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -182,6 +182,33 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsIngestion.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | pluginsIngestion.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | pluginsIngestion.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
+| pluginsAnalyticsIngestion.enabled | bool | `false` | Whether to install the PostHog plugin-server analytics ingestion capability as an individual workload. Note that this is different from the `pluginsIngestion` setting above specifically in that the deployment controlled by these settings does not handle session recordings. This deployment is intended to be a replacement for `pluginsIngestion` and is intended to be used along side the `recordingsIngestion` deployment. The reason these values were added is to be able to scale analytics and session recordings events indepentently, and to be able to roll this out in a backwards compatible way. |
+| pluginsAnalyticsIngestion.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `pluginsAnalyticsIngestion.hpa.enabled` is set to `true`.  |
+| pluginsAnalyticsIngestion.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
+| pluginsAnalyticsIngestion.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsAnalyticsIngestion.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsAnalyticsIngestion.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| pluginsAnalyticsIngestion.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pluginsAnalyticsIngestion.rollout.maxSurge | string | `"25%"` |  |
+| pluginsAnalyticsIngestion.rollout.maxUnavailable | string | `"25%"` |  |
+| pluginsAnalyticsIngestion.env | list | `[{"name":"INGESTION_OVERFLOW_ENABLED","value":"false"}]` | Additional env variables to inject into the plugin-server stack deployment. |
+| pluginsAnalyticsIngestion.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
+| pluginsAnalyticsIngestion.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
+| pluginsAnalyticsIngestion.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
+| pluginsAnalyticsIngestion.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
+| pluginsAnalyticsIngestion.securityContext | object | `{"enabled":false}` | Container security context for the plugin-server stack deployment. |
+| pluginsAnalyticsIngestion.podSecurityContext | object | `{"enabled":false}` | Pod security context for the plugin-server stack deployment. |
+| pluginsAnalyticsIngestion.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| pluginsAnalyticsIngestion.livenessProbe.initialDelaySeconds | int | `10` | The liveness probe initial delay seconds |
+| pluginsAnalyticsIngestion.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| pluginsAnalyticsIngestion.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| pluginsAnalyticsIngestion.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| pluginsAnalyticsIngestion.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| pluginsAnalyticsIngestion.readinessProbe.initialDelaySeconds | int | `50` | The readiness probe initial delay seconds |
+| pluginsAnalyticsIngestion.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
+| pluginsAnalyticsIngestion.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| pluginsAnalyticsIngestion.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| pluginsAnalyticsIngestion.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
 | pluginsIngestionOverflow.enabled | bool | `false` | Whether to install the PostHog plugin-server ingestion overflow capability as an individual workload. |
 | pluginsIngestionOverflow.replicacount | int | `1` | Count of plugin-server overflow pods to run. This setting is ignored if `pluginsIngestionOverflow.hpa.enabled` is set to `true`. |
 | pluginsIngestionOverflow.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
@@ -190,6 +217,33 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsIngestionOverflow.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsIngestionOverflow.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
 | pluginsIngestionOverflow.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
+| recordingsIngestion.enabled | bool | `false` | Whether to install the PostHog session recordings ingestion capability as an individual workload. |
+| recordingsIngestion.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `recordingsIngestion.hpa.enabled` is set to `true`. |
+| recordingsIngestion.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
+| recordingsIngestion.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
+| recordingsIngestion.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
+| recordingsIngestion.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
+| recordingsIngestion.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| recordingsIngestion.rollout.maxSurge | string | `"25%"` |  |
+| recordingsIngestion.rollout.maxUnavailable | string | `"25%"` |  |
+| recordingsIngestion.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
+| recordingsIngestion.resources | object | `{}` | Resource limits for the plugin-server stack deployment. |
+| recordingsIngestion.nodeSelector | object | `{}` | Node labels for the plugin-server stack deployment. |
+| recordingsIngestion.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
+| recordingsIngestion.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
+| recordingsIngestion.securityContext | object | `{"enabled":false}` | Container security context for the plugin-server stack deployment. |
+| recordingsIngestion.podSecurityContext | object | `{"enabled":false}` | Pod security context for the plugin-server stack deployment. |
+| recordingsIngestion.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| recordingsIngestion.livenessProbe.initialDelaySeconds | int | `10` | The liveness probe initial delay seconds |
+| recordingsIngestion.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| recordingsIngestion.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| recordingsIngestion.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| recordingsIngestion.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| recordingsIngestion.readinessProbe.initialDelaySeconds | int | `50` | The readiness probe initial delay seconds |
+| recordingsIngestion.readinessProbe.periodSeconds | int | `30` | The readiness probe period seconds |
+| recordingsIngestion.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| recordingsIngestion.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
+| recordingsIngestion.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
 | pluginsExports.enabled | bool | `false` | Whether to install the PostHog plugin-server exports capability as an individual workload. |
 | pluginsExports.replicacount | int | `1` | Count of plugin-server-async pods to run. This setting is ignored if `pluginsExports.hpa.enabled` is set to `true`. |
 | pluginsExports.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
