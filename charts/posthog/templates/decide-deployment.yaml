@@ -152,10 +152,7 @@ spec:
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
         startupProbe:
           httpGet:
-            # For startup, we want to make sure that everything is in place,
-            # including postgres. This does however mean we would not be able to
-            # deploy new releases when we have a postgres outage
-            path: /_readyz
+            path: /_readyz?role=decide
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.startupProbe.failureThreshold }}
