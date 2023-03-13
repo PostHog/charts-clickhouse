@@ -2169,7 +2169,10 @@ prometheus:
                 severity: critical
               annotations:
                 summary: Jobs scheduled via Apps jobs have been delayed by more than 5 minutes for more than 5 minutes.
-                description: "Latest timestamp registered as processed on topic 'jobs', consumer group 'jobs-inserter' more then 5 minutes old"
+                description: |
+                  Latest timestamp registered as processed on topic 'jobs', consumer group 'jobs-inserter' more then 5 minutes old.
+                  Check https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
+                  for more context and steps to recovery.
 
             - alert: IngestionConsumerDelayed
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="ingestion",topic="events_plugin_ingestion"}))) > 300000
