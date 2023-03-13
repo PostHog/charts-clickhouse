@@ -2169,7 +2169,10 @@ prometheus:
                 severity: critical
               annotations:
                 summary: Jobs scheduled via Apps jobs have been delayed by more than 5 minutes for more than 5 minutes.
-                description: "Latest timestamp registered as processed on topic 'jobs', consumer group 'jobs-inserter' more then 5 minutes old"
+                description: |
+                  Latest timestamp registered as processed on topic 'jobs', consumer group 'jobs-inserter' more then 5 minutes old.
+                  Check https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
+                  for more context and steps to recovery.
 
             - alert: IngestionConsumerDelayed
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="ingestion",topic="events_plugin_ingestion"}))) > 300000
@@ -2220,6 +2223,20 @@ prometheus:
               annotations:
                 summary: Failed to process some session recording events and have been sent to the dead letter queue for review.
                 description: "The `session_recording_events_dlq` topic offset has increased over the past 5 minutes."
+
+            - alert: GraphileJobExecutionLag
+              expr: (max by(task_identifier) (posthog_celery_graphile_lag_seconds{task_identifier!="bufferJob"})) > 300
+              for: 5m
+              labels:
+                rotation: common
+                severity: warning # TODO: graduate to critical after 48h
+              annotations:
+                summary: Graphile jobs execution lag exceeds 5 minutes for more than 5 minutes.
+                description: |
+                  Jobs of type {{ $labels.task_identifier }} have been sitting in the Graphile execution queue for more
+                  than 5 minutes, possibly delaying apps and/or exports.
+                  Check https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
+                  for more context and steps to recovery.
 
             - alert: KafkaDiskCritical
               expr: min by (instance) (aws_msk_node_filesystem_free_bytes{mountpoint="/kafka/datalogs"}) < 536870912000
