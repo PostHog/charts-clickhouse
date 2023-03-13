@@ -2169,6 +2169,7 @@ prometheus:
                 severity: critical
               annotations:
                 summary: Jobs scheduled via Apps jobs have been delayed by more than 5 minutes for more than 5 minutes.
+                runbook_url: https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
                 description: |
                   Latest timestamp registered as processed on topic 'jobs', consumer group 'jobs-inserter' more then 5 minutes old.
                   Check https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
@@ -2232,6 +2233,7 @@ prometheus:
                 severity: warning # TODO: graduate to critical after 48h
               annotations:
                 summary: Graphile jobs execution lag exceeds 5 minutes for more than 5 minutes.
+                runbook_url: https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
                 description: |
                   Jobs of type {{ $labels.task_identifier }} have been sitting in the Graphile execution queue for more
                   than 5 minutes, possibly delaying apps and/or exports.
