@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.10.1](https://img.shields.io/badge/Version-30.10.1-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.10.2](https://img.shields.io/badge/Version-30.10.2-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -416,7 +416,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pgbouncer.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
 | pgbouncer.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
 | pgbouncer.image.repository | string | `"bitnami/pgbouncer"` |  |
-| pgbouncer.image.tag | string | `"1.17.0"` |  |
+| pgbouncer.image.tag | string | `"1.18.0"` |  |
 | pgbouncer.image.pullPolicy | string | `"IfNotPresent"` |  |
 | pgbouncer.image.pullSecrets | list | `[]` |  |
 | pgbouncer.service.type | string | `"ClusterIP"` |  |
