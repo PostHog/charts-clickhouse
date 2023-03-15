@@ -2226,13 +2226,13 @@ prometheus:
                 description: "The `session_recording_events_dlq` topic offset has increased over the past 5 minutes."
 
             - alert: GraphileJobExecutionLag
-              expr: (max by(task_identifier) (posthog_celery_graphile_lag_seconds{task_identifier!="bufferJob"})) > 300
+              expr: (max by(task_identifier) (posthog_celery_graphile_lag_seconds{task_identifier!="bufferJob"})) > 600
               for: 5m
               labels:
                 rotation: common
-                severity: warning # TODO: graduate to critical after 48h
+                severity: critical
               annotations:
-                summary: Graphile jobs execution lag exceeds 5 minutes for more than 5 minutes.
+                summary: Graphile jobs execution lag exceeds 10 minutes for more than 5 minutes.
                 runbook_url: https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
                 description: |
                   Jobs of type {{ $labels.task_identifier }} have been sitting in the Graphile execution queue for more
