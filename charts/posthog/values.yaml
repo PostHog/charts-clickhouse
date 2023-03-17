@@ -2256,6 +2256,20 @@ prometheus:
                     - check the health of Postgres and Clickhouse, many jobs query them and could hang if these
                       stores get slow
 
+            - alert: CeleryNotReporting
+              expr: absent_over_time(posthog_celery_queue_depth[10m]) > 0
+              labels:
+                rotation: common
+                severity: critical
+              annotations:
+                summary: Celery has not pushed metrics for more than 10 minutes.
+                description: |
+                  The posthog-worker pods have not reported points for the posthog_celery_queue_depth metric
+                  in the last 10 minutes. Because many of our alerts rely on metrics reported by Celery jobs,
+                  this is a critical alert (other issues could be hidden).
+                    - make sure posthog-worker pods are healthy and check their logs
+                    - look for recent code changes to posthog/celery.py and rollback if needed
+
             - alert: KafkaDiskCritical
               expr: min by (instance) (aws_msk_node_filesystem_free_bytes{mountpoint="/kafka/datalogs"}) < 536870912000
               for: 2m
