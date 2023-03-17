@@ -2240,6 +2240,22 @@ prometheus:
                   Check https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
                   for more context and steps to recovery.
 
+            - alert: CeleryQueueDepth
+              expr: (max (posthog_celery_queue_depth)) > 1000
+              for: 10m
+              labels:
+                rotation: common
+                severity: critical
+              annotations:
+                summary: Celery job execution delayed for more than 5 minutes.
+                description: |
+                  The Celery jobs queue (stored in Redis) is filling up faster than it is consumed. This impacts our
+                  monitoring, as some paging monitors depend on metrics exported by Celery jobs.
+                    - make sure posthog-worker pods are healthy and check their logs
+                    - look for recent code changes to posthog/celery.py and rollback if needed
+                    - check the health of Postgres and Clickhouse, many jobs query them and could hang if these
+                      stores get slow
+
             - alert: KafkaDiskCritical
               expr: min by (instance) (aws_msk_node_filesystem_free_bytes{mountpoint="/kafka/datalogs"}) < 536870912000
               for: 2m
