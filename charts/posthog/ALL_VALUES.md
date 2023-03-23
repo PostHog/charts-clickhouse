@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.10.4](https://img.shields.io/badge/Version-30.10.4-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.10.5](https://img.shields.io/badge/Version-30.10.5-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -44,6 +44,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | decide.hpa.minpods | int | `1` | Min pods for the decide stack HorizontalPodAutoscaler. |
 | decide.hpa.maxpods | int | `10` | Max pods for the decide stack HorizontalPodAutoscaler. |
 | decide.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| decide.pdb.enabled | bool | `true` | Whether to create a PodDisruptionBudget for the decide stack. |
+| decide.pdb.maxUnavailable | int | `1` | Maximum number of decide pods that can be unavailable at any time |
 | decide.rollout.maxSurge | string | `"25%"` |  |
 | decide.rollout.maxUnavailable | string | `"25%"` |  |
 | decide.env | list | `[]` | Additional env variables to inject into the decide stack, uses `web.env` if empty. |
