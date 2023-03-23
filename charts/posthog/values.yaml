@@ -112,6 +112,12 @@ decide:
     # for configuration options
     behavior:
 
+  pdb:
+    # -- Whether to create a PodDisruptionBudget for the decide stack.
+    enabled: true
+    # -- Maximum number of decide pods that can be unavailable at any time
+    maxUnavailable: 1
+
   rollout:
     # The max surge in pods during a rollout
     maxSurge: 25%
