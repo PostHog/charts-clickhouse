@@ -1,17 +1,32 @@
 cloud: "do"
 
 ingress:
+  enabled: false
+
+service:
+  externalPort: 80
+
+image:
+  repository: ghcr.io/posthog/posthog/posthog
+  pullPolicy: Always
+  tag: pr-14915
+
+env:
+- name: bump
+  value: "2"
+- name: SELF_CAPTURE
+  value: "1"
+- name: PERSISTED_FEATURE_FLAGS
+  value: "hogql"
+
+siteUrl: https://posthog-databeach.hedgehog-kitefin.ts.net
+tailscale:
   enabled: true
-  type: nginx
-  secretName: posthog-prod-private-key
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-  nginx:
-    enabled: false
+  hostname: posthog-databeach
 
 clickhouse:
   persistence:
-    size: 1Gi
+    size: 100Gi
 
 kafka:
   persistence:
@@ -19,7 +34,10 @@ kafka:
 
 postgresql:
   persistence:
-    size: 1Gi
+    size: 10Gi
+  primary:
+    nodeSelector:
+      kubernetes.io/arch: amd64
 
 redis:
   master:
@@ -29,4 +47,8 @@ redis:
 zookeeper:
   persistence:
     size: 1Gi
+
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
 
