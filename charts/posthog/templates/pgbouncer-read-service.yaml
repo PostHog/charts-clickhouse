@@ -1,15 +1,15 @@
-{{- if .Values.pgbouncer-read.enabled -}}
+{{- if .Values.pgbouncer_read.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "posthog.fullname" . }}-pgbouncer-read
   annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
-   {{- range $key, $value := .Values.pgbouncer-read.service.annotations }}
+   {{- range $key, $value := .Values.pgbouncer_read.service.annotations }}
      {{ $key }}: {{ $value | quote }}
    {{- end }}
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
 spec:
-  type: {{ .Values.pgbouncer-read.service.type }}
+  type: {{ .Values.pgbouncer_read.service.type }}
   ports:
   - name: {{ template "posthog.fullname" . }}-pgbouncer-read
     port: 6543
