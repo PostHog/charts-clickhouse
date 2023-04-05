@@ -1217,7 +1217,8 @@ externalPostgresql:
 ### ---- PGBOUNCER ----
 ###
 ###
-pgbouncer:
+
+_pgbouncer: &_pgbouncer 
   # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
   enabled: true
 
@@ -1336,6 +1337,13 @@ pgbouncer:
 
   ## -- PgBouncer pod(s) annotation.
   podAnnotations: {}
+
+pgbouncer:
+  <<: *_pgbouncer
+
+pgbouncer_read:
+  <<: *_pgbouncer
+  enabled: false
 
 ###
 ###
