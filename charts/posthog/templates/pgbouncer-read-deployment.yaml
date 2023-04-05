@@ -1,0 +1,207 @@
+{{- if .Values.pgbouncer_read.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "posthog.fullname" . }}-pgbouncer-read
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "posthog.fullname" . }}
+      release: "{{ .Release.Name }}"
+      role: pgbouncer
+  {{- if not .Values.pgbouncer_read.hpa.enabled }}
+  replicas: {{ .Values.pgbouncer_read.replicacount }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        {{- if .Values.pgbouncer_read.podAnnotations }}
+        {{ toYaml .Values.pgbouncer_read.podAnnotations | nindent 8 }}
+        {{- end }}
+
+        {{ if .Values.pgbouncer_read.exporter.enabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "{{ .Values.pgbouncer_read.exporter.port }}"
+        {{- end }}
+
+      labels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: pgbouncer
+        {{- if .Values.pgbouncer_read.podLabels }}
+        {{ toYaml .Values.pgbouncer_read.podLabels | nindent 8 }}
+        {{- end }}
+    spec:
+      # Time to wait before hard killing the container. Note: if the container
+      # shuts down and exits before the terminationGracePeriod is done, we
+      # moves to the next step immediately.
+      terminationGracePeriodSeconds: 65
+
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+
+      {{- if .Values.pgbouncer_read.affinity }}
+      affinity: {{ toYaml .Values.pgbouncer_read.affinity | nindent 8 }}
+      {{- end }}
+
+      {{- if .Values.pgbouncer_read.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.pgbouncer_read.nodeSelector | nindent 8 }}
+      {{- end }}
+
+      {{- if .Values.pgbouncer_read.tolerations }}
+      tolerations: {{ toYaml .Values.pgbouncer_read.tolerations | nindent 8 }}
+      {{- end }}
+
+      {{- if .Values.pgbouncer_read.schedulerName }}
+      schedulerName: "{{ .Values.pgbouncer_read.schedulerName }}"
+      {{- end }}
+
+      {{- if .Values.pgbouncer_read.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.pgbouncer_read.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+
+      {{- if or .Values.pgbouncer_read.image.pullSecrets .Values.pgbouncer_read.exporter.image.pullSecrets }}
+      imagePullSecrets:
+        {{- if .Values.pgbouncer_read.image.pullSecrets }}
+        {{- range .Values.pgbouncer_read.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+        {{- end }}
+        {{- if .Values.pgbouncer_read.exporter.image.pullSecrets }}
+        {{- range .Values.pgbouncer_read.exporter.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+
+      containers:
+
+      - name: {{ .Chart.Name }}-pgbouncer-read
+        image: "{{ .Values.pgbouncer_read.image.repository }}:{{ .Values.pgbouncer_read.image.tag }}"
+        imagePullPolicy: {{ .Values.pgbouncer_read.image.pullPolicy }}
+        ports:
+        - name: pgbouncer
+          containerPort: 6543
+        env:
+        - name: POSTGRESQL_USERNAME
+          value: {{ include "posthog.postgresql.username" . }}
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "posthog.postgresql.secretName" . }}
+              key: {{ include "posthog.postgresql.secretPasswordKey" . }}
+        - name: POSTGRESQL_DATABASE
+          value: {{ include "posthog.postgresql.database" . }}
+        - name: POSTGRESQL_HOST
+          value: {{ include "posthog.postgresql.host" . }}
+        - name: POSTGRESQL_PORT
+          value: {{ include "posthog.postgresql.port" . | quote }}
+
+        - name: PGBOUNCER_DATABASE
+          value: {{ include "posthog.postgresql.database" . }}
+
+        {{- if .Values.pgbouncer_read.env }}
+        {{ toYaml .Values.pgbouncer_read.env | nindent 8 }}
+        {{- end }}
+
+        readinessProbe:
+          tcpSocket:
+            port: 6543
+          failureThreshold: {{ .Values.pgbouncer_read.readinessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.pgbouncer_read.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.pgbouncer_read.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.pgbouncer_read.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.pgbouncer_read.readinessProbe.timeoutSeconds }}
+
+        livenessProbe:
+          tcpSocket:
+            port: 6543
+          failureThreshold: {{ .Values.pgbouncer_read.livenessProbe.failureThreshold }}
+          initialDelaySeconds: {{ .Values.pgbouncer_read.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.pgbouncer_read.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.pgbouncer_read.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.pgbouncer_read.livenessProbe.timeoutSeconds }}
+
+        lifecycle:
+          preStop:
+            exec:
+              command: [
+                "sh", "-c",
+                #
+                # Introduce a delay to the shutdown sequence to wait for the
+                # pod eviction event to propagate into the cluster.
+                #
+                # See: https://blog.gruntwork.io/delaying-shutdown-to-wait-for-pod-deletion-propagation-445f779a8304
+                #
+                #
+                # Then, gracefully shutdown pgbouncer by sending a SIGINT
+                # to the process (see https://www.pgbouncer.org/usage.html)
+                # and sleep again for max query timeout + 1s.
+                #
+                # Note: once the connections are all drained, the process will
+                # exit before the 'sleep 31' completes and the pod will be
+                # removed. Unfortunately we will also get an ugly 'FailedPreStopHook'
+                # warning in the k8s event logs but I'm not sure how we can avoid it.
+                #
+                "sleep 30 && kill -INT 1 && sleep 31"
+              ]
+
+        {{- if .Values.pgbouncer_read.extraVolumeMounts }}
+        volumeMounts: {{- toYaml .Values.pgbouncer_read.extraVolumeMounts | nindent 8 }}
+        {{- end }}
+
+        {{- if .Values.pgbouncer_read.resources }}
+        resources: {{ toYaml .Values.pgbouncer_read.resources | nindent 10 }}
+        {{- end }}
+
+        {{- if .Values.pgbouncer_read.securityContext.enabled }}
+        securityContext: {{- omit .Values.pgbouncer_read.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
+
+      {{- if .Values.pgbouncer_read.extraVolumes }}
+      volumes: {{- toYaml .Values.pgbouncer_read.extraVolumes | nindent 6 }}
+      {{- end }}
+
+      {{ if .Values.pgbouncer_read.exporter.enabled }}
+      - name: metrics
+        image: "{{ .Values.pgbouncer_read.exporter.image.repository }}:{{ .Values.pgbouncer_read.exporter.image.tag }}"
+        imagePullPolicy: {{ .Values.pgbouncer_read.exporter.image.pullPolicy }}
+        env:
+        - name: POSTGRESQL_USERNAME
+          value: {{ include "posthog.postgresql.username" . }}
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "posthog.postgresql.secretName" . }}
+              key: {{ include "posthog.postgresql.secretPasswordKey" . }}
+        command:
+          - /bin/sh
+          - -c
+          - >
+              until (nc -vz 127.0.0.1 6543);
+              do
+                echo "waiting for PgBouncer"; sleep 1;
+              done
+
+              pgbouncer_exporter \
+                --web.listen-address=":{{ .Values.pgbouncer_read.exporter.port }}" \
+                --web.telemetry-path="/metrics" \
+                --log.level="info" \
+                --log.format="json" \
+                --pgBouncer.connectionString="postgres://$POSTGRESQL_USERNAME:$POSTGRESQL_PASSWORD@127.0.0.1:6543/pgbouncer?sslmode=disable&connect_timeout=10"
+        ports:
+          - name: metrics
+            containerPort: {{ .Values.pgbouncer_read.exporter.port }}
+
+        {{- if .Values.pgbouncer_read.exporter.resources }}
+        resources: {{ toYaml .Values.pgbouncer_read.exporter.resources | nindent 10 }}
+        {{- end }}
+
+        {{- if .Values.pgbouncer_read.exporter.securityContext.enabled }}
+        securityContext: {{- omit .Values.pgbouncer_read.exporter.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
+      {{- end -}}
+{{- end }}
