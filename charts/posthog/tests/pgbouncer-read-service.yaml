@@ -1,0 +1,34 @@
+suite: PostHog pgbouncer service definition
+templates:
+  - templates/pgbouncer-read-service.yaml
+
+tests:
+  - it: should be empty if not enabled
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not be empty if pgbouncerRead.enabled is set to true
+    set:
+      pgbouncerRead.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should have the correct apiVersion
+    set:
+      pgbouncerRead.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: v1
+
+  - it: should be the correct kind
+    set:
+      pgbouncerRead.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Service
