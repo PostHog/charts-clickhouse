@@ -8,26 +8,26 @@ tests:
       - hasDocuments:
           count: 0
 
-  - it: should be empty if pgbouncer_read.enabled is true and pgbouncer_read.hpa.enabled is set to false
+  - it: should be empty if pgbouncerRead.enabled is true and pgbouncerRead.hpa.enabled is set to false
     set:
-      pgbouncer_read.enabled: true
-      pgbouncer_read.hpa.enabled: false
+      pgbouncerRead.enabled: true
+      pgbouncerRead.hpa.enabled: false
     asserts:
       - hasDocuments:
           count: 0
 
-  - it: should be not empty if pgbouncer_read.enabled and pgbouncer_read.hpa.enabled are set to true
+  - it: should be not empty if pgbouncerRead.enabled and pgbouncerRead.hpa.enabled are set to true
     set:
-      pgbouncer_read.enabled: true
-      pgbouncer_read.hpa.enabled: true
+      pgbouncerRead.enabled: true
+      pgbouncerRead.hpa.enabled: true
     asserts:
       - hasDocuments:
           count: 1
 
   - it: should have the correct apiVersion
     set:
-      pgbouncer_read.enabled: true
-      pgbouncer_read.hpa.enabled: true
+      pgbouncerRead.enabled: true
+      pgbouncerRead.hpa.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -36,8 +36,8 @@ tests:
 
   - it: should be the correct kind
     set:
-      pgbouncer_read.enabled: true
-      pgbouncer_read.hpa.enabled: true
+      pgbouncerRead.enabled: true
+      pgbouncerRead.hpa.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -46,7 +46,7 @@ tests:
 
   - it: sets hpa spec
     set:
-      pgbouncer_read:
+      pgbouncerRead:
         enabled: true
         hpa:
           enabled: true

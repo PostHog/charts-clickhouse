@@ -1,4 +1,4 @@
-{{- if and .Values.pgbouncer_read.enabled .Values.pgbouncer_read.hpa.enabled -}}
+{{- if and .Values.pgbouncerRead.enabled .Values.pgbouncerRead.hpa.enabled -}}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -9,10 +9,10 @@ spec:
     kind: Deployment
     apiVersion: apps/v1
     name: {{ template "posthog.fullname" . }}-pgbouncer-read
-  minReplicas: {{ .Values.pgbouncer_read.hpa.minpods }}
-  maxReplicas: {{ .Values.pgbouncer_read.hpa.maxpods }}
+  minReplicas: {{ .Values.pgbouncerRead.hpa.minpods }}
+  maxReplicas: {{ .Values.pgbouncerRead.hpa.maxpods }}
   metrics:
-  {{- with .Values.pgbouncer_read.hpa.cputhreshold }}
+  {{- with .Values.pgbouncerRead.hpa.cputhreshold }}
   - type: Resource
     resource:
       name: cpu
@@ -21,5 +21,5 @@ spec:
         averageUtilization: {{ . }}
   {{- end }}
   behavior:
-    {{ toYaml .Values.pgbouncer_read.hpa.behavior | nindent 4 }}
+    {{ toYaml .Values.pgbouncerRead.hpa.behavior | nindent 4 }}
 {{- end }}

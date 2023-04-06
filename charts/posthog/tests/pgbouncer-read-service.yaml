@@ -8,16 +8,16 @@ tests:
       - hasDocuments:
           count: 0
 
-  - it: should not be empty if pgbouncer_read.enabled is set to true
+  - it: should not be empty if pgbouncerRead.enabled is set to true
     set:
-      pgbouncer_read.enabled: true
+      pgbouncerRead.enabled: true
     asserts:
       - hasDocuments:
           count: 1
 
   - it: should have the correct apiVersion
     set:
-      pgbouncer_read.enabled: true
+      pgbouncerRead.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -26,7 +26,7 @@ tests:
 
   - it: should be the correct kind
     set:
-      pgbouncer_read.enabled: true
+      pgbouncerRead.enabled: true
     asserts:
       - hasDocuments:
           count: 1
