@@ -1341,7 +1341,7 @@ _pgbouncer: &_pgbouncer
 pgbouncer:
   <<: *_pgbouncer
 
-pgbouncer_read:
+pgbouncerRead:
   <<: *_pgbouncer
   enabled: false
 

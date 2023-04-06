@@ -16,7 +16,7 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read.enabled: true
+      pgbouncerRead.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -25,7 +25,7 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read.enabled: true
+      pgbouncerRead.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -36,7 +36,7 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read.enabled: true
+      pgbouncerRead.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -47,8 +47,8 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read.enabled: true
-      pgbouncer_read:
+      pgbouncerRead.enabled: true
+      pgbouncerRead:
         enabled: true
         podSecurityContext: 
           enabled: true
@@ -68,8 +68,8 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read.enabled: true
-      pgbouncer_read:
+      pgbouncerRead.enabled: true
+      pgbouncerRead:
         enabled: true
         securityContext:
           enabled: true
@@ -89,8 +89,8 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read.enabled: true
-      pgbouncer_read.podSecurityContext.enabled: false
+      pgbouncerRead.enabled: true
+      pgbouncerRead.podSecurityContext.enabled: false
     asserts:
       - hasDocuments:
           count: 1
@@ -102,8 +102,8 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read.enabled: true
-      pgbouncer_read.securityContext.enabled: false
+      pgbouncerRead.enabled: true
+      pgbouncerRead.securityContext.enabled: false
     asserts:
       - hasDocuments:
           count: 1
@@ -114,8 +114,8 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read.enabled: true
-      pgbouncer_read.resources:
+      pgbouncerRead.enabled: true
+      pgbouncerRead.resources:
         requests:
           cpu: 100m
           memory: 50M
@@ -139,8 +139,8 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read.enabled: true
-      pgbouncer_read.exporter:
+      pgbouncerRead.enabled: true
+      pgbouncerRead.exporter:
         enabled: true
         resources:
           requests:
@@ -166,7 +166,7 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read:
+      pgbouncerRead:
         enabled: true
         exporter:
           enabled: true
@@ -183,7 +183,7 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read:
+      pgbouncerRead:
         enabled: true
         image:
           pullSecrets: [foo]
@@ -198,7 +198,7 @@ tests:
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
-      pgbouncer_read:
+      pgbouncerRead:
         enabled: true
         image:
           pullSecrets: [main]
