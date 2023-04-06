@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.11.1](https://img.shields.io/badge/Version-30.11.1-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.12.0](https://img.shields.io/badge/Version-30.12.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -391,45 +391,125 @@ The following table lists the configurable parameters of the PostHog chart and t
 | externalPostgresql.postgresqlPassword | string | `nil` | External PostgreSQL service password. Either this or `externalPostgresql.existingSecret` must be set. |
 | externalPostgresql.existingSecret | string | `nil` | Name of an existing Kubernetes secret object containing the PostgreSQL password |
 | externalPostgresql.existingSecretPasswordKey | string | `"postgresql-password"` | Name of the key pointing to the password in your Kubernetes secret |
-| pgbouncer.enabled | bool | `true` | Whether to deploy a PgBouncer service to satisfy the applications requirements. |
-| pgbouncer.exporter.enabled | bool | `false` | Whether to install a Prometheus export as a sidecar |
-| pgbouncer.exporter.port | int | `9127` |  |
-| pgbouncer.exporter.image.repository | string | `"prometheuscommunity/pgbouncer-exporter"` |  |
-| pgbouncer.exporter.image.tag | string | `"v0.4.1"` |  |
-| pgbouncer.exporter.image.pullPolicy | string | `"IfNotPresent"` |  |
-| pgbouncer.exporter.image.pullSecrets | list | `[]` |  |
-| pgbouncer.exporter.resources | object | `{}` | Resource limits for pgbouncer-exporter. |
-| pgbouncer.exporter.securityContext | object | `{"enabled":false}` | Container security context for pgbouncer-exporter. |
-| pgbouncer.replicacount | int | `1` | Count of pgbouncer pods to run. This setting is ignored if `pgbouncer.hpa.enabled` is set to `true`. |
-| pgbouncer.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the pgbouncer stack. |
-| pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for the pgbouncer stack HorizontalPodAutoscaler. |
-| pgbouncer.hpa.minpods | int | `1` | Min pods for the pgbouncer stack HorizontalPodAutoscaler. |
-| pgbouncer.hpa.maxpods | int | `10` | Max pods for the pgbouncer stack HorizontalPodAutoscaler. |
-| pgbouncer.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
-| pgbouncer.env | list | `[{"name":"PGBOUNCER_PORT","value":"6543"},{"name":"PGBOUNCER_MAX_CLIENT_CONN","value":"1000"},{"name":"PGBOUNCER_POOL_MODE","value":"transaction"},{"name":"PGBOUNCER_IGNORE_STARTUP_PARAMETERS","value":"extra_float_digits"}]` | Additional env variables to inject into the pgbouncer stack deployment. |
-| pgbouncer.resources | object | `{}` | Resource limits for the pgbouncer stack deployment. |
-| pgbouncer.nodeSelector | object | `{}` | Node labels for the pgbouncer stack deployment. |
-| pgbouncer.tolerations | list | `[]` | Toleration labels for the pgbouncer stack deployment. |
-| pgbouncer.affinity | object | `{}` | Affinity settings for the pgbouncer stack deployment. |
-| pgbouncer.securityContext | object | `{"enabled":false}` | Container security context for the pgbouncer stack deployment. |
-| pgbouncer.podSecurityContext | object | `{"enabled":false}` | Pod security context for the pgbouncer stack deployment. |
-| pgbouncer.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
-| pgbouncer.readinessProbe.initialDelaySeconds | int | `10` | The readiness probe initial delay seconds |
-| pgbouncer.readinessProbe.periodSeconds | int | `5` | The readiness probe period seconds |
-| pgbouncer.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
-| pgbouncer.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
-| pgbouncer.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
-| pgbouncer.livenessProbe.initialDelaySeconds | int | `60` | The liveness probe initial delay seconds |
-| pgbouncer.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
-| pgbouncer.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
-| pgbouncer.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
-| pgbouncer.image.repository | string | `"bitnami/pgbouncer"` |  |
-| pgbouncer.image.tag | string | `"1.18.0"` |  |
-| pgbouncer.image.pullPolicy | string | `"IfNotPresent"` |  |
-| pgbouncer.image.pullSecrets | list | `[]` |  |
-| pgbouncer.service.type | string | `"ClusterIP"` |  |
-| pgbouncer.service.annotations | object | `{}` |  |
-| pgbouncer.podAnnotations | object | `{}` |  |
+| _pgbouncer.enabled | bool | `true` | Whether to deploy a PgBouncer service to satisfy the applications requirements. |
+| _pgbouncer.exporter.enabled | bool | `false` | Whether to install a Prometheus export as a sidecar |
+| _pgbouncer.exporter.port | int | `9127` |  |
+| _pgbouncer.exporter.image.repository | string | `"prometheuscommunity/pgbouncer-exporter"` |  |
+| _pgbouncer.exporter.image.tag | string | `"v0.4.1"` |  |
+| _pgbouncer.exporter.image.pullPolicy | string | `"IfNotPresent"` |  |
+| _pgbouncer.exporter.image.pullSecrets | list | `[]` |  |
+| _pgbouncer.exporter.resources | object | `{}` | Resource limits for pgbouncer-exporter. |
+| _pgbouncer.exporter.securityContext | object | `{"enabled":false}` | Container security context for pgbouncer-exporter. |
+| _pgbouncer.replicacount | int | `1` | Count of pgbouncer pods to run. This setting is ignored if `pgbouncer.hpa.enabled` is set to `true`. |
+| _pgbouncer.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the pgbouncer stack. |
+| _pgbouncer.hpa.cputhreshold | int | `60` | CPU threshold percent for the pgbouncer stack HorizontalPodAutoscaler. |
+| _pgbouncer.hpa.minpods | int | `1` | Min pods for the pgbouncer stack HorizontalPodAutoscaler. |
+| _pgbouncer.hpa.maxpods | int | `10` | Max pods for the pgbouncer stack HorizontalPodAutoscaler. |
+| _pgbouncer.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| _pgbouncer.env | list | `[{"name":"PGBOUNCER_PORT","value":"6543"},{"name":"PGBOUNCER_MAX_CLIENT_CONN","value":"1000"},{"name":"PGBOUNCER_POOL_MODE","value":"transaction"},{"name":"PGBOUNCER_IGNORE_STARTUP_PARAMETERS","value":"extra_float_digits"}]` | Additional env variables to inject into the pgbouncer stack deployment. |
+| _pgbouncer.resources | object | `{}` | Resource limits for the pgbouncer stack deployment. |
+| _pgbouncer.nodeSelector | object | `{}` | Node labels for the pgbouncer stack deployment. |
+| _pgbouncer.tolerations | list | `[]` | Toleration labels for the pgbouncer stack deployment. |
+| _pgbouncer.affinity | object | `{}` | Affinity settings for the pgbouncer stack deployment. |
+| _pgbouncer.securityContext | object | `{"enabled":false}` | Container security context for the pgbouncer stack deployment. |
+| _pgbouncer.podSecurityContext | object | `{"enabled":false}` | Pod security context for the pgbouncer stack deployment. |
+| _pgbouncer.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| _pgbouncer.readinessProbe.initialDelaySeconds | int | `10` | The readiness probe initial delay seconds |
+| _pgbouncer.readinessProbe.periodSeconds | int | `5` | The readiness probe period seconds |
+| _pgbouncer.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| _pgbouncer.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
+| _pgbouncer.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| _pgbouncer.livenessProbe.initialDelaySeconds | int | `60` | The liveness probe initial delay seconds |
+| _pgbouncer.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| _pgbouncer.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| _pgbouncer.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| _pgbouncer.image.repository | string | `"bitnami/pgbouncer"` |  |
+| _pgbouncer.image.tag | string | `"1.18.0"` |  |
+| _pgbouncer.image.pullPolicy | string | `"IfNotPresent"` |  |
+| _pgbouncer.image.pullSecrets | list | `[]` |  |
+| _pgbouncer.service.type | string | `"ClusterIP"` |  |
+| _pgbouncer.service.annotations | object | `{}` |  |
+| _pgbouncer.podAnnotations | object | `{}` |  |
+| pgbouncer.<<.enabled | bool | `true` | Whether to deploy a PgBouncer service to satisfy the applications requirements. |
+| pgbouncer.<<.exporter.enabled | bool | `false` | Whether to install a Prometheus export as a sidecar |
+| pgbouncer.<<.exporter.port | int | `9127` |  |
+| pgbouncer.<<.exporter.image.repository | string | `"prometheuscommunity/pgbouncer-exporter"` |  |
+| pgbouncer.<<.exporter.image.tag | string | `"v0.4.1"` |  |
+| pgbouncer.<<.exporter.image.pullPolicy | string | `"IfNotPresent"` |  |
+| pgbouncer.<<.exporter.image.pullSecrets | list | `[]` |  |
+| pgbouncer.<<.exporter.resources | object | `{}` | Resource limits for pgbouncer-exporter. |
+| pgbouncer.<<.exporter.securityContext | object | `{"enabled":false}` | Container security context for pgbouncer-exporter. |
+| pgbouncer.<<.replicacount | int | `1` | Count of pgbouncer pods to run. This setting is ignored if `pgbouncer.hpa.enabled` is set to `true`. |
+| pgbouncer.<<.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the pgbouncer stack. |
+| pgbouncer.<<.hpa.cputhreshold | int | `60` | CPU threshold percent for the pgbouncer stack HorizontalPodAutoscaler. |
+| pgbouncer.<<.hpa.minpods | int | `1` | Min pods for the pgbouncer stack HorizontalPodAutoscaler. |
+| pgbouncer.<<.hpa.maxpods | int | `10` | Max pods for the pgbouncer stack HorizontalPodAutoscaler. |
+| pgbouncer.<<.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pgbouncer.<<.env | list | `[{"name":"PGBOUNCER_PORT","value":"6543"},{"name":"PGBOUNCER_MAX_CLIENT_CONN","value":"1000"},{"name":"PGBOUNCER_POOL_MODE","value":"transaction"},{"name":"PGBOUNCER_IGNORE_STARTUP_PARAMETERS","value":"extra_float_digits"}]` | Additional env variables to inject into the pgbouncer stack deployment. |
+| pgbouncer.<<.resources | object | `{}` | Resource limits for the pgbouncer stack deployment. |
+| pgbouncer.<<.nodeSelector | object | `{}` | Node labels for the pgbouncer stack deployment. |
+| pgbouncer.<<.tolerations | list | `[]` | Toleration labels for the pgbouncer stack deployment. |
+| pgbouncer.<<.affinity | object | `{}` | Affinity settings for the pgbouncer stack deployment. |
+| pgbouncer.<<.securityContext | object | `{"enabled":false}` | Container security context for the pgbouncer stack deployment. |
+| pgbouncer.<<.podSecurityContext | object | `{"enabled":false}` | Pod security context for the pgbouncer stack deployment. |
+| pgbouncer.<<.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| pgbouncer.<<.readinessProbe.initialDelaySeconds | int | `10` | The readiness probe initial delay seconds |
+| pgbouncer.<<.readinessProbe.periodSeconds | int | `5` | The readiness probe period seconds |
+| pgbouncer.<<.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| pgbouncer.<<.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
+| pgbouncer.<<.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| pgbouncer.<<.livenessProbe.initialDelaySeconds | int | `60` | The liveness probe initial delay seconds |
+| pgbouncer.<<.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| pgbouncer.<<.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| pgbouncer.<<.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| pgbouncer.<<.image.repository | string | `"bitnami/pgbouncer"` |  |
+| pgbouncer.<<.image.tag | string | `"1.18.0"` |  |
+| pgbouncer.<<.image.pullPolicy | string | `"IfNotPresent"` |  |
+| pgbouncer.<<.image.pullSecrets | list | `[]` |  |
+| pgbouncer.<<.service.type | string | `"ClusterIP"` |  |
+| pgbouncer.<<.service.annotations | object | `{}` |  |
+| pgbouncer.<<.podAnnotations | object | `{}` |  |
+| pgbouncerRead.<<.enabled | bool | `true` | Whether to deploy a PgBouncer service to satisfy the applications requirements. |
+| pgbouncerRead.<<.exporter.enabled | bool | `false` | Whether to install a Prometheus export as a sidecar |
+| pgbouncerRead.<<.exporter.port | int | `9127` |  |
+| pgbouncerRead.<<.exporter.image.repository | string | `"prometheuscommunity/pgbouncer-exporter"` |  |
+| pgbouncerRead.<<.exporter.image.tag | string | `"v0.4.1"` |  |
+| pgbouncerRead.<<.exporter.image.pullPolicy | string | `"IfNotPresent"` |  |
+| pgbouncerRead.<<.exporter.image.pullSecrets | list | `[]` |  |
+| pgbouncerRead.<<.exporter.resources | object | `{}` | Resource limits for pgbouncer-exporter. |
+| pgbouncerRead.<<.exporter.securityContext | object | `{"enabled":false}` | Container security context for pgbouncer-exporter. |
+| pgbouncerRead.<<.replicacount | int | `1` | Count of pgbouncer pods to run. This setting is ignored if `pgbouncer.hpa.enabled` is set to `true`. |
+| pgbouncerRead.<<.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the pgbouncer stack. |
+| pgbouncerRead.<<.hpa.cputhreshold | int | `60` | CPU threshold percent for the pgbouncer stack HorizontalPodAutoscaler. |
+| pgbouncerRead.<<.hpa.minpods | int | `1` | Min pods for the pgbouncer stack HorizontalPodAutoscaler. |
+| pgbouncerRead.<<.hpa.maxpods | int | `10` | Max pods for the pgbouncer stack HorizontalPodAutoscaler. |
+| pgbouncerRead.<<.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| pgbouncerRead.<<.env | list | `[{"name":"PGBOUNCER_PORT","value":"6543"},{"name":"PGBOUNCER_MAX_CLIENT_CONN","value":"1000"},{"name":"PGBOUNCER_POOL_MODE","value":"transaction"},{"name":"PGBOUNCER_IGNORE_STARTUP_PARAMETERS","value":"extra_float_digits"}]` | Additional env variables to inject into the pgbouncer stack deployment. |
+| pgbouncerRead.<<.resources | object | `{}` | Resource limits for the pgbouncer stack deployment. |
+| pgbouncerRead.<<.nodeSelector | object | `{}` | Node labels for the pgbouncer stack deployment. |
+| pgbouncerRead.<<.tolerations | list | `[]` | Toleration labels for the pgbouncer stack deployment. |
+| pgbouncerRead.<<.affinity | object | `{}` | Affinity settings for the pgbouncer stack deployment. |
+| pgbouncerRead.<<.securityContext | object | `{"enabled":false}` | Container security context for the pgbouncer stack deployment. |
+| pgbouncerRead.<<.podSecurityContext | object | `{"enabled":false}` | Pod security context for the pgbouncer stack deployment. |
+| pgbouncerRead.<<.readinessProbe.failureThreshold | int | `3` | The readiness probe failure threshold |
+| pgbouncerRead.<<.readinessProbe.initialDelaySeconds | int | `10` | The readiness probe initial delay seconds |
+| pgbouncerRead.<<.readinessProbe.periodSeconds | int | `5` | The readiness probe period seconds |
+| pgbouncerRead.<<.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
+| pgbouncerRead.<<.readinessProbe.timeoutSeconds | int | `2` | The readiness probe timeout seconds |
+| pgbouncerRead.<<.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
+| pgbouncerRead.<<.livenessProbe.initialDelaySeconds | int | `60` | The liveness probe initial delay seconds |
+| pgbouncerRead.<<.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
+| pgbouncerRead.<<.livenessProbe.successThreshold | int | `1` | The liveness probe success threshold |
+| pgbouncerRead.<<.livenessProbe.timeoutSeconds | int | `2` | The liveness probe timeout seconds |
+| pgbouncerRead.<<.image.repository | string | `"bitnami/pgbouncer"` |  |
+| pgbouncerRead.<<.image.tag | string | `"1.18.0"` |  |
+| pgbouncerRead.<<.image.pullPolicy | string | `"IfNotPresent"` |  |
+| pgbouncerRead.<<.image.pullSecrets | list | `[]` |  |
+| pgbouncerRead.<<.service.type | string | `"ClusterIP"` |  |
+| pgbouncerRead.<<.service.annotations | object | `{}` |  |
+| pgbouncerRead.<<.podAnnotations | object | `{}` |  |
+| pgbouncerRead.host | string | `""` |  |
+| pgbouncerRead.enabled | bool | `false` |  |
 | redis.enabled | bool | `true` | Whether to deploy a Redis server to satisfy the applications requirements. To use an external redis instance set this to `false` and configure the `externalRedis` parameters. |
 | redis.nameOverride | string | `"posthog-redis"` |  |
 | redis.fullnameOverride | string | `""` |  |
