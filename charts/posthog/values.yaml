@@ -691,7 +691,7 @@ recordingsIngestion:
         lagThreshold: "1000"
         # -- At what lag value should KEDA scale from 0 replicas.
         activationLagThreshold: "0"
-        excludePersistentLag: true # Don't include stuck partitions in autoscaling decisions.
+        excludePersistentLag: "true" # Don't include stuck partitions in autoscaling decisions.
 
   rollout:
     # The max surge in pods during a rollout
