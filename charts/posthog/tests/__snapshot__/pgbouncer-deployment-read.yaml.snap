@@ -12,7 +12,7 @@ should match snapshot data:
       - name: POSTGRESQL_DATABASE
         value: posthog
       - name: POSTGRESQL_HOST
-        value: RELEASE-NAME-posthog-postgresql
+        value: null
       - name: POSTGRESQL_PORT
         value: "5432"
       - name: PGBOUNCER_DATABASE

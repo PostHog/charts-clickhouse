@@ -21,6 +21,19 @@ tests:
       - hasDocuments:
           count: 1
 
+  - it: should override the host env var
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+      pgbouncerRead.host: "beepboop"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].env[3].value
+          value: "beepboop"
+
   - it: should match snapshot data
     template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
