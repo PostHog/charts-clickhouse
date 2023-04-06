@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.11.0](https://img.shields.io/badge/Version-30.11.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.11.1](https://img.shields.io/badge/Version-30.11.1-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -231,7 +231,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | recordingsIngestion.keda.kafkaTrigger.enabled | bool | `true` |  |
 | recordingsIngestion.keda.kafkaTrigger.metadata.lagThreshold | string | `"1000"` | At what lag value should KEDA scaling start. |
 | recordingsIngestion.keda.kafkaTrigger.metadata.activationLagThreshold | string | `"0"` | At what lag value should KEDA scale from 0 replicas. |
-| recordingsIngestion.keda.kafkaTrigger.metadata.excludePersistentLag | bool | `true` |  |
+| recordingsIngestion.keda.kafkaTrigger.metadata.excludePersistentLag | string | `"true"` |  |
 | recordingsIngestion.rollout.maxSurge | string | `"25%"` |  |
 | recordingsIngestion.rollout.maxUnavailable | string | `"25%"` |  |
 | recordingsIngestion.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
