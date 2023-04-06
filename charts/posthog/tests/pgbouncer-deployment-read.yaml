@@ -1,0 +1,228 @@
+suite: PostHog pgbouncer read deployment definition
+templates:
+  - templates/pgbouncer-read-deployment.yaml
+  - templates/secrets.yaml
+
+tests:
+  - it: should be empty by default
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not be empty if enabled
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should override the host env var
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+      pgbouncerRead.host: "beepboop"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].env[3].value
+          value: "beepboop"
+
+  - it: should match snapshot data
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot:
+          path: spec.template.spec
+
+  - it: should be the correct kind
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Deployment
+
+  - it: should have a pod securityContext
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+      pgbouncerRead:
+        enabled: true
+        podSecurityContext: 
+          enabled: true
+          runAsUser: 1001
+          fsGroup: 2000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+
+  - it: should have a container securityContext
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+      pgbouncerRead:
+        enabled: true
+        securityContext:
+          enabled: true
+          runAsUser: 1001
+          allowPrivilegeEscalation: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+
+  - it: should not have a pod securityContext
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+      pgbouncerRead.podSecurityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.securityContext
+          value: 1001
+
+  - it: should not have a container securityContext
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+      pgbouncerRead.securityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.containers[0].securityContext
+
+  - it: pgbouncer should have the correct resources if set
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+      pgbouncerRead.resources:
+        requests:
+          cpu: 100m
+          memory: 50M
+        limits:
+          cpu: 512m
+          memory: 100M
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            requests:
+              cpu: 100m
+              memory: 50M
+            limits:
+              cpu: 512m
+              memory: 100M
+
+  - it: pgbouncer metrics exporter should have the correct resources if set
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead.enabled: true
+      pgbouncerRead.exporter:
+        enabled: true
+        resources:
+          requests:
+            cpu: 125m
+            memory: 100M
+          limits:
+            cpu: 250m
+            memory: 200M
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[1].resources
+          value:
+            requests:
+              cpu: 125m
+              memory: 100M
+            limits:
+              cpu: 250m
+              memory: 200M
+
+  - it: allows setting pgbouncer exporter pullSecrets only
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead:
+        enabled: true
+        exporter:
+          enabled: true
+          image:
+            pullSecrets: [foo]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: foo]
+
+  - it: allows setting pgbouncer pullSecrets only
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead:
+        enabled: true
+        image:
+          pullSecrets: [foo]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: foo]
+
+  - it: allows setting pgbouncer and exporter secrets
+    template: templates/pgbouncer-read-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pgbouncerRead:
+        enabled: true
+        image:
+          pullSecrets: [main]
+        exporter:
+          image:
+            pullSecrets: [exporter]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: 
+          - name: main
+          - name: exporter
