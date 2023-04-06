@@ -11,12 +11,12 @@
 {{- end }}
 {{- end }}
 
-{{/* Return the Kafka hosts (brokers) */}}
+{{/* Return the Kafka hosts (brokers) as a comma separated list */}}
 {{- define "posthog.kafka.brokers"}}
 {{- if .Values.kafka.enabled -}}
     {{- printf "%s:%d" (include "posthog.kafka.fullname" .) (.Values.kafka.service.port | int) }}
 {{- else -}}
-    {{- printf "%s" .Values.externalKafka.brokers }}
+    {{ join "," .Values.externalKafka.brokers | quote }}
 {{- end }}
 {{- end }}
 

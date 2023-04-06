@@ -91,7 +91,7 @@ tests:
             metadata:
               lagThreshold: "1234"
               activationLagThreshold: "2345"
-              excludePersistentLag: false
+              excludePersistentLag: "false"
           config:
             pollingInterval: 30
             cooldownPeriod: 300
@@ -102,7 +102,7 @@ tests:
               failureThreshold: 3
               replicas: 6
             advanced:
-              restoreToOriginalReplicaCount: true/false
+              restoreToOriginalReplicaCount: "true"
               horizontalPodAutoscalerConfig:
                 name: some-hpa
                 behavior:
@@ -120,7 +120,7 @@ tests:
       - equal:
           path: spec.advanced
           value:
-            restoreToOriginalReplicaCount: true/false
+            restoreToOriginalReplicaCount: "true"
             horizontalPodAutoscalerConfig:
               name: some-hpa
               behavior:
@@ -144,10 +144,41 @@ tests:
             metadata:
               lagThreshold: "1234"
               activationLagThreshold: "2345"
-              excludePersistentLag: false
+              excludePersistentLag: "false"
               bootstrapServers: RELEASE-NAME-posthog-kafka:9092
               consumerGroup: session-recordings
               topic: session_recording_events
-              allowIdleConsumers: false
+              allowIdleConsumers: "false"
+              offsetResetPolicy: earliest
+        documentIndex: 1
+
+  - it: sets ScaledObject kafka bootstrap servers correctly if using externalKafka.brokers
+    templates:
+      - templates/recordings-ingestion-deployment.yaml
+    set:
+      cloud: private
+      kafka:
+        enabled: false
+      externalKafka:
+        brokers:
+          - broker1:1234
+          - broker2:2345
+      recordingsIngestion:
+        enabled: true
+        keda:
+          enabled: true
+    asserts:
+      - contains:
+          path: spec.triggers
+          content:
+            type: kafka
+            metadata:
+              lagThreshold: "1000"
+              activationLagThreshold: "0"
+              excludePersistentLag: "true"
+              bootstrapServers: broker1:1234,broker2:2345
+              consumerGroup: session-recordings
+              topic: session_recording_events
+              allowIdleConsumers: "false"
               offsetResetPolicy: earliest
         documentIndex: 1
