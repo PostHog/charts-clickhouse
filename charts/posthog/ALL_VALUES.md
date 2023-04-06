@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.10.6](https://img.shields.io/badge/Version-30.10.6-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.11.0](https://img.shields.io/badge/Version-30.11.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -185,7 +185,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsIngestion.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | pluginsIngestion.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
 | pluginsAnalyticsIngestion.enabled | bool | `false` | Whether to install the PostHog plugin-server analytics ingestion capability as an individual workload. Note that this is different from the `pluginsIngestion` setting above specifically in that the deployment controlled by these settings does not handle session recordings. This deployment is intended to be a replacement for `pluginsIngestion` and is intended to be used along side the `recordingsIngestion` deployment. The reason these values were added is to be able to scale analytics and session recordings events indepentently, and to be able to roll this out in a backwards compatible way. |
-| pluginsAnalyticsIngestion.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `pluginsAnalyticsIngestion.hpa.enabled` is set to `true`.  |
+| pluginsAnalyticsIngestion.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `pluginsAnalyticsIngestion.hpa.enabled` is set to `true`. |
 | pluginsAnalyticsIngestion.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
 | pluginsAnalyticsIngestion.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
 | pluginsAnalyticsIngestion.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
@@ -226,6 +226,12 @@ The following table lists the configurable parameters of the PostHog chart and t
 | recordingsIngestion.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
 | recordingsIngestion.hpa.maxpods | int | `10` | Max pods for the plugin-server stack HorizontalPodAutoscaler. |
 | recordingsIngestion.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| recordingsIngestion.keda.enabled | bool | `false` |  |
+| recordingsIngestion.keda.config | object | `{"pollingInterval":30}` | Config added to spec at the top level of the `ScaledObject`. |
+| recordingsIngestion.keda.kafkaTrigger.enabled | bool | `true` |  |
+| recordingsIngestion.keda.kafkaTrigger.metadata.lagThreshold | string | `"1000"` | At what lag value should KEDA scaling start. |
+| recordingsIngestion.keda.kafkaTrigger.metadata.activationLagThreshold | string | `"0"` | At what lag value should KEDA scale from 0 replicas. |
+| recordingsIngestion.keda.kafkaTrigger.metadata.excludePersistentLag | bool | `true` |  |
 | recordingsIngestion.rollout.maxSurge | string | `"25%"` |  |
 | recordingsIngestion.rollout.maxUnavailable | string | `"25%"` |  |
 | recordingsIngestion.env | list | `[]` | Additional env variables to inject into the plugin-server stack deployment. |
