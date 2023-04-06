@@ -1343,6 +1343,11 @@ pgbouncer:
 
 pgbouncerRead:
   <<: *_pgbouncer
+
+  # Specify the host to use for a read-replica. This would usually be some sort of load balancer,
+  # and otherwise all credentials would be the same
+  host: ""
+
   enabled: false
 
 ###

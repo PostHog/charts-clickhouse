@@ -96,7 +96,7 @@ spec:
         - name: POSTGRESQL_DATABASE
           value: {{ include "posthog.postgresql.database" . }}
         - name: POSTGRESQL_HOST
-          value: {{ include "posthog.postgresql.host" . }}
+          value: {{ .Values.pgbouncerRead.host }}
         - name: POSTGRESQL_PORT
           value: {{ include "posthog.postgresql.port" . | quote }}
 
