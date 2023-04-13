@@ -100,17 +100,17 @@ dependencies:
     condition: prometheus-statsd-exporter.enabled
 
 maintainers:
-  - name: mariusandra
-    email: marius@posthog.com
   - name: timgl
     email: tim@posthog.com
   - name: jams
     email: james.g@posthog.com
-  - name: macobo
-    email: karl@posthog.com
-  - name: tiina
-    email: tiina@posthog.com
-  - name: guido
-    email: guido@posthog.com
-  - name: yakko
-    email: yakko@posthog.com
+  - name: ellie
+    email: ellie@posthog.com
+  - name: frank
+    email: frank@posthog.com
+  - name: daniel
+    email: daniel@posthog.com
+  - name: xavier
+    email: xavier@posthog.com
+  - name: harry
+    email: harry@posthog.com
