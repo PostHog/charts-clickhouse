@@ -14,7 +14,7 @@
 {{/* Return the Temporal hosts as a comma separated list */}}
 {{- define "posthog.temporal.host"}}
 {{- if .Values.temporal.enabled -}}
-    {{- printf "%s:%d" (include "posthog.temporal.fullname" .) (.Values.temporal.service.port | int) }}
+    {{- printf "%s" (include "posthog.temporal.fullname" .) }}
 {{- else -}}
     {{ join "," .Values.externalTemporal.host | quote }}
 {{- end }}
@@ -23,13 +23,10 @@
 {{/* ENV used by PostHog deployments for connecting to Temporal */}}
 
 {{- define "snippet.temporal-env" }}
-
-{{- $hostsWithPrefix := list }}
-{{- $host := .Values.externalTemporal.host }}
-{{- end }}
 - name: TEMPORAL_SCHEDULER_HOST 
 {{- if .Values.temporal.enabled }}
   value: {{ ( include "posthog.temporal.host" . ) }}
 {{ else }}
   value: {{ .Values.externalTemporal.host | quote }}
+{{- end }}
 {{- end }}

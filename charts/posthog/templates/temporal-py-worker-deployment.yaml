@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "posthog.fullname" . }}-temporalPyWorker
+  name: {{ template "posthog.fullname" . }}-temporal-py-worker
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
 spec:
@@ -81,7 +81,7 @@ spec:
       securityContext: {{- omit .Values.temporalPyWorker.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}-temporalPyWorkers
+      - name: {{ .Chart.Name }}-temporal-py-workers
         image: {{ template "posthog.image.fullPath" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:

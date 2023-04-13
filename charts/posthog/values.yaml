@@ -1475,12 +1475,17 @@ externalRedis:
 temporal:
   # -- Whether to deploy Temporal scheduler and supporting services. To use an external Temporal instance set this to `false` and configure `externalTemporal` values. 
   enabled: true
+  debug: true 
   nameOverride: posthog-temporal
   fullnameOverride: ""
+  schema:
+    update:
+      enabled: false 
   server:
     # -- The number of Temporal scheduler pods
     replicaCount: 1
   cassandra:
+    enabled: true 
     config:
       # -- The number of Cassandra nodes to start for persisting Temporal scheduler tasks
       cluster_size: 1
