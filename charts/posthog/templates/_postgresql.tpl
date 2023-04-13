@@ -17,6 +17,10 @@
       key: {{ include "posthog.postgresql.secretPasswordKey" . }}
 - name: USING_PGBOUNCER
   value: 'true'
+{{ if .Values.pgbouncerRead.enabled -}}
+- name: POSTHOG_POSTGRES_READ_HOST
+  value: {{ .Values.pgbouncerRead.host -}}
+{{ end -}}
 {{- end }}
 
 {{/* ENV used by migrate job for connecting to postgresql */}}
