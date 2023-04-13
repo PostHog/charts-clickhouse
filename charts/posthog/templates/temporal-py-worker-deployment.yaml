@@ -1,8 +1,8 @@
-{{- if .Values.temporal_python_worker.enabled -}}
+{{- if .Values.temporalPyWorker.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "posthog.fullname" . }}-temporal-python-worker
+  name: {{ template "posthog.fullname" . }}-temporalPyWorker
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
 spec:
@@ -10,55 +10,58 @@ spec:
     matchLabels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: temporal-python-worker 
-  {{- if not .Values.temporal_python_worker.hpa.enabled }}
-  replicas: {{ .Values.temporal_python_worker.replicacount }}
+        role: temporalPyWorker
+  {{- if not .Values.temporalPyWorker.hpa.enabled }}
+  replicas: {{ .Values.temporalPyWorker.replicacount }}
   {{- end }}
 
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: {{ .Values.temporal_python_worker.rollout.maxSurge }}
-      maxUnavailable: {{ .Values.temporal_python_worker.rollout.maxUnavailable }}
+      maxSurge: {{ .Values.temporalPyWorker.rollout.maxSurge }}
+      maxUnavailable: {{ .Values.temporalPyWorker.rollout.maxUnavailable }}
 
   template:
     metadata:
       annotations:
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
-      {{- if .Values.temporal_python_worker.podAnnotations }}
-{{ toYaml .Values.temporal_python_worker.podAnnotations | indent 8 }}
+      {{- if .Values.temporalPyWorker.podAnnotations }}
+{{ toYaml .Values.temporalPyWorker.podAnnotations | indent 8 }}
       {{- end }}
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: temporal-python-worker
+        role: temporalPyWorker
         {{- if (eq (default .Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
-        {{- if .Values.temporal_python_worker.podLabels }}
-{{ toYaml .Values.temporal_python_worker.podLabels | indent 8 }}
+        {{- if .Values.temporalPyWorker.podLabels }}
+{{ toYaml .Values.temporalPyWorker.podLabels | indent 8 }}
         {{- end }}
     spec:
-      terminationGracePeriodSeconds: {{ include "snippet.temporal_python_worker-deployments.terminationGracePeriodSeconds" . }}
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
 
-      {{- if .Values.temporal_python_worker.affinity }}
+      {{- if .Values.temporalPyWorker.affinity }}
       affinity:
-{{ toYaml .Values.temporal_python_worker.affinity | indent 8 }}
+{{ toYaml .Values.temporalPyWorker.affinity | indent 8 }}
       {{- end }}
 
-      {{- if .Values.temporal_python_worker.nodeSelector }}
+      {{- if .Values.temporalPyWorker.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.temporal_python_worker.nodeSelector | indent 8 }}
+{{ toYaml .Values.temporalPyWorker.nodeSelector | indent 8 }}
       {{- end }}
 
-      {{- if .Values.temporal_python_worker.tolerations }}
+      {{- if .Values.temporalPyWorker.tolerations }}
       tolerations:
-{{ toYaml .Values.temporal_python_worker.tolerations | indent 8 }}
+{{ toYaml .Values.temporalPyWorker.tolerations | indent 8 }}
       {{- end }}
 
-      {{- if .Values.temporal_python_worker.schedulerName }}
-      schedulerName: "{{ .Values.temporal_python_worker.schedulerName }}"
+      {{- if .Values.temporalPyWorker.schedulerName }}
+      schedulerName: "{{ .Values.temporalPyWorker.schedulerName }}"
+      {{- end }}
+
+      {{- if .Values.temporalPyWorker.priorityClassName }}
+      priorityClassName: "{{ .Values.temporalPyWorker.priorityClassName }}"
       {{- end }}
 
       {{- if .Values.image.imagePullSecrets }}
@@ -74,41 +77,47 @@ spec:
         {{- end }}
       {{- end }}
 
-      {{- if .Values.temporal_python_worker.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.temporal_python_worker.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- if .Values.temporalPyWorker.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.temporalPyWorker.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
-
       containers:
-      - name: {{ .Chart.Name }}-temporal_python_worker
+      - name: {{ .Chart.Name }}-temporalPyWorkers
         image: {{ template "posthog.image.fullPath" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         command:
           - ./bin/temporal-django-worker
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
-        # Expose the port on which Prometheus /metrics endpoint resides
-        - containerPort: 8001
         env:
-        # Common settings 
+        # Common Configs 
+        {{- include "snippet.temporal-env" . | indent 8 }}
         {{- include "snippet.kafka-env" . | indent 8 }}
         {{- include "snippet.objectstorage-env" . | indent 8 }}
         {{- include "snippet.redis-env" . | indent 8 }}
         {{- include "snippet.statsd-env" . | indent 8 }}
+        {{- if index .Values "prometheus-pushgateway" "enabled" }}
+        - name: PROM_PUSHGATEWAY_ADDRESS
+          value: "posthog-prometheus-pushgateway:9091"
+        {{- end }}
 
-        # PostHog app settings
-        {{- include "snippet.posthog-env" . | indent 8 }}
-        {{- include "snippet.posthog-sentry-env" . | indent 8 }}
         - name: PRIMARY_DB
           value: clickhouse
+        {{- include "snippet.posthog-env" . | indent 8 }}
+        {{- include "snippet.posthog-sentry-env" . | indent 8 }}
         {{- include "snippet.postgresql-env" . | nindent 8 }}
         {{- include "snippet.clickhouse-env" . | nindent 8 }}
         {{- include "snippet.email-env" . | nindent 8 }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 8 }}
 {{- end }}
-{{- if .Values.temporal_python_worker.env }}
-{{ toYaml .Values.temporal_python_worker.env | indent 8 }}
+{{- if .Values.temporalPyWorker.env }}
+{{ toYaml .Values.temporalPyWorker.env | indent 8 }}
 {{- end }}
+        resources:
+{{ toYaml .Values.temporalPyWorker.resources | indent 12 }}
+        {{- if .Values.temporalPyWorker.securityContext.enabled }}
+        securityContext: {{- omit .Values.temporalPyWorker.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}

@@ -48,6 +48,10 @@ dependencies:
     repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
     condition: redis.enabled
 
+  - name: temporal
+    version: 0.20.1
+    condition: temporal.enabled
+
   - name: zookeeper
     version: 7.0.5
     repository: https://raw.githubusercontent.com/bitnami/charts/pre-2022/bitnami
@@ -106,11 +110,7 @@ maintainers:
     email: tim@posthog.com
   - name: jams
     email: james.g@posthog.com
-  - name: macobo
-    email: karl@posthog.com
   - name: tiina
     email: tiina@posthog.com
-  - name: guido
-    email: guido@posthog.com
   - name: yakko
     email: yakko@posthog.com
