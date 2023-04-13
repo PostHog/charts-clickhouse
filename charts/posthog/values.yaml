@@ -1480,7 +1480,7 @@ temporal:
   fullnameOverride: ""
   schema:
     update:
-      enabled: false 
+      enabled: true 
   server:
     # -- The number of Temporal scheduler pods
     replicaCount: 1
@@ -1491,7 +1491,11 @@ temporal:
       cluster_size: 1
   elasticsearch:
     # -- Whether to deploy elasticsearch to help with the Temporal admin pages 
-    enabled: true
+    enabled: false
+  grafana:
+    enabled: false
+  prometheus:
+    enabled: false 
 
 
 ###
