@@ -10,7 +10,7 @@ spec:
     matchLabels:
       app: {{ template "posthog.fullname" . }}
       release: "{{ .Release.Name }}"
-      role: pgbouncer
+      role: pgbouncer-read
   {{- if not .Values.pgbouncerRead.hpa.enabled }}
   replicas: {{ .Values.pgbouncerRead.replicacount }}
   {{- end }}
@@ -31,7 +31,7 @@ spec:
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: pgbouncer
+        role: pgbouncer-read
         {{- if .Values.pgbouncerRead.podLabels }}
         {{ toYaml .Values.pgbouncerRead.podLabels | nindent 8 }}
         {{- end }}
