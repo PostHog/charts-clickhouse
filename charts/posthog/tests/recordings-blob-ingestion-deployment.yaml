@@ -1,11 +1,11 @@
-suite: PostHog recordings ingestion deployment definition
+suite: PostHog recordings ingestion blob deployment definition
 templates:
-  - templates/recordings-ingestion-blob-deployment.yaml
+  - templates/recordings-blob-ingestion-deployment.yaml
   - templates/secrets.yaml
 
 tests:
   - it: should be empty if recordingsBlobIngestion.enabled is set to false
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: false
@@ -14,7 +14,7 @@ tests:
           count: 0
 
   - it: should have the correct apiVersion
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: true
@@ -25,7 +25,7 @@ tests:
           of: apps/v1
 
   - it: should be the correct kind
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: true
@@ -36,7 +36,7 @@ tests:
           of: Deployment
 
   - it: should have a pod securityContext
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: true
@@ -54,7 +54,7 @@ tests:
           value: 2000
 
   - it: should have a container securityContext
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: true
@@ -72,7 +72,7 @@ tests:
           value: false
 
   - it: should not have a pod securityContext
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: true
@@ -85,7 +85,7 @@ tests:
           value: 1001
 
   - it: should not have a container securityContext
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: true
@@ -97,7 +97,7 @@ tests:
           path: spec.template.spec.containers[0].securityContext
 
   - it: sets PLUGIN_SERVER_MODE
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: true
@@ -106,10 +106,10 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: PLUGIN_SERVER_MODE
-            value: recordings-ingestion-blob
+            value: recordings-blob-ingestion
 
   - it: sets SENTRY_DSN env var
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: true
@@ -123,7 +123,7 @@ tests:
             value: recordingsBlobIngestion.endpoint
 
   - it: sets SENTRY_DSN env var with default
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
       recordingsBlobIngestion.enabled: true
@@ -136,7 +136,7 @@ tests:
             value: main.endpoint
 
   - it: allows setting imagePullSecrets
-    template: templates/recordings-ingestion-blob-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local
       recordingsBlobIngestion.enabled: true
