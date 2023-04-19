@@ -1,6 +1,6 @@
 {{ if .Values.recordingsBlobIngestion.enabled }}
 {{/*
-    Ingests Recordings events, transforming them ready for playback. At the time
+    Ingests Recordings events to Object storage. At the time
     of writing this is based on the `plugins-server` and the
     `plugins-deployment` but there is no need for it to be part of plugin
     server and could be separated in the future.
@@ -27,7 +27,7 @@ spec:
   - type: kafka
     metadata:
       bootstrapServers: {{ include "posthog.kafka.brokers" . }}
-      consumerGroup: session-recordings  # TODO: pass this into the consumers as well to avoid them getting out of sync.
+      consumerGroup: session-recordings-blob  # TODO: pass this into the consumers as well to avoid them getting out of sync.
       topic: session_recording_events  # TODO: pass this into the consumers as well to avoid them getting out of sync.
       allowIdleConsumers: "false"  # Don't scale past the number of partitions
       offsetResetPolicy: earliest  # If the consumer is new, get all the recordings in the topic.
