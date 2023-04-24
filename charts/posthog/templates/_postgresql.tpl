@@ -19,7 +19,7 @@
   value: 'true'
 {{ if .Values.pgbouncerRead.enabled -}}
 - name: POSTHOG_POSTGRES_READ_HOST
-  value: {{ .Values.pgbouncerRead.host -}}
+  value: {{ template "posthog.pgbouncer-read.host" . }}
 {{ end -}}
 {{- end }}
 
