@@ -24,3 +24,17 @@ Set PgBouncer port
 {{- define "posthog.pgbouncer.port" -}}
     6543
 {{- end -}}
+
+{{/*
+Set Read PgBouncer host
+*/}}
+{{- define "posthog.pgbouncer-read.host" -}}
+    {{- template "posthog.fullname" . }}-pgbouncer-read
+{{- end -}}
+
+{{/*
+Set PgBouncer port
+*/}}
+{{- define "posthog.pgbouncer-read.port" -}}
+    6543
+{{- end -}}
