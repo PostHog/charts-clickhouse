@@ -31,6 +31,9 @@ spec:
       topic: session_recording_events  # TODO: pass this into the consumers as well to avoid them getting out of sync.
       allowIdleConsumers: "false"  # Don't scale past the number of partitions
       offsetResetPolicy: earliest  # If the consumer is new, get all the recordings in the topic.
+      {{- if (not .Values.kafka.enabled) and .Values.externalKafka.tls }}
+      tls: enable
+      {{ end }}
 {{ toYaml .Values.recordingsIngestion.keda.kafkaTrigger.metadata | indent 6 }}
   {{ end }}
 
