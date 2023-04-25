@@ -10,7 +10,7 @@ templates:
   - templates/secrets.yaml
 
 tests:
-  - it: should use internal Kafka as default
+  - it: should use internal Kafka without TLS as default
     templates: # TODO: remove once secrets.yaml will be fixed/removed
       - templates/web-deployment.yaml
       - templates/worker-deployment.yaml
@@ -29,7 +29,11 @@ tests:
           content:
             name: KAFKA_URL
             value: kafka://RELEASE-NAME-posthog-kafka:9092
-
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SECURITY_PROTOCOL
+            value: SSL
 
   - it: should use internal Kafka when `kafka.enabled` is set to `true` and `externalKafka.brokers` is configured
     templates: # TODO: remove once secrets.yaml will be fixed/removed
@@ -45,6 +49,7 @@ tests:
         brokers:
           - "broker1:port1"
           - "broker2:port2"
+        tls: true
     asserts:
       - contains:
           path: spec.template.spec.containers[0].env
@@ -56,6 +61,11 @@ tests:
           content:
             name: KAFKA_URL
             value: kafka://RELEASE-NAME-posthog-kafka:9092
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SECURITY_PROTOCOL
+            value: SSL
 
   - it: should use external Kafka when `kafka.enabled` is set to `false` and `externalKafka.brokers` is configured
     templates: # TODO: remove once secrets.yaml will be fixed/removed
@@ -81,6 +91,11 @@ tests:
           content:
             name: KAFKA_URL
             value: kafka://broker1:port1
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SECURITY_PROTOCOL
+            value: SSL
 
   - it: should use external Kafka when `kafka.enabled` is set to `false` and `externalKafka.brokers` is configured (multiple brokers)
     templates: # TODO: remove once secrets.yaml will be fixed/removed
@@ -107,3 +122,39 @@ tests:
           content:
             name: KAFKA_URL
             value: kafka://broker1:port1,kafka://broker2:port2
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SECURITY_PROTOCOL
+            value: SSL
+
+  - it: should use TLS `kafka.enabled` is set to `false` and `externalKafka.tls` is set
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalKafka:
+        brokers:
+          - broker1:port1
+        tls: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_HOSTS
+            value: "broker1:port1"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_URL
+            value: kafka://broker1:port1
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SECURITY_PROTOCOL
+            value: SSL
