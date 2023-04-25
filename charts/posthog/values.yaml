@@ -2244,15 +2244,15 @@ prometheus:
                   needs to be rolled-back.
 
             - alert: End2EndIngestionLag
-              expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 300
+              expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 600
               for: 5m
               labels:
                 rotation: common
                 severity: critical
               annotations:
-                summary: End-to-end analytics event ingestion lag exceeds 5 minutes for more than 5 minutes.
+                summary: End-to-end analytics event ingestion lag exceeds 10 minutes for more than 5 minutes.
                 description: |
-                  Our end-to-end probe measured an ingestion lag higher than 5 minutes for scenario {{ $labels.scenario }}.
+                  Our end-to-end probe measured an ingestion lag higher than 10 minutes for scenario {{ $labels.scenario }}.
                   Check the "Kafka (cluster overview)" dashboard to identify what topics and partitions are lagging and
                   follow the https://posthog.com/docs/runbook/services/plugin-server/ingestion-lag runbook for recovery
                   steps.
@@ -2348,7 +2348,7 @@ prometheus:
                 rotation: common
                 severity: critical
               annotations:
-                summary: Graphile jobs execution lag exceeds 10 minutes for more than 5 minutes.
+                summary: Graphile jobs execution lag exceeds 15 minutes for more than 5 minutes.
                 runbook_url: https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
                 description: |
                   Jobs of type {{ $labels.task_identifier }} have been sitting in the Graphile execution queue for more

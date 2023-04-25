@@ -150,7 +150,7 @@ tests:
           path: spec.template.spec.containers[0].env
           content:
             name: POSTHOG_POSTGRES_READ_HOST
-            value: beep-boop
+            value: RELEASE-NAME-posthog-pgbouncer-read
 
   - it: do not set postgres read host unless configured
     template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
