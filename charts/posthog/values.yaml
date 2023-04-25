@@ -681,8 +681,6 @@ recordingsIngestion:
     # -- KEDA trigger config for type kafka. This will be merged in with other
     # config such as consumer group id and topic which will be set
     # automatically.
-    #
-    # TODO: add support for all security protocol config.
     kafkaTrigger:
       enabled: true
 
@@ -1559,6 +1557,8 @@ kafka:
 externalKafka:
   # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
   brokers: []
+  # - Use TLS to connect to the external kafka cluster
+  tls: false
 
 ###
 ###
