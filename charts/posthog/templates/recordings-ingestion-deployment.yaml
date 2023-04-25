@@ -25,6 +25,7 @@ spec:
   triggers:
   {{ if .Values.recordingsIngestion.keda.kafkaTrigger.enabled }}
   - type: kafka
+    metricType: Value # Absolute lag target, not to be divided by deployment size
     metadata:
       bootstrapServers: {{ include "posthog.kafka.brokers" . }}
       consumerGroup: session-recordings  # TODO: pass this into the consumers as well to avoid them getting out of sync.
