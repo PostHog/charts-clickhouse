@@ -88,6 +88,7 @@ tests:
           enabled: true
           kafkaTrigger:
             enabled: true
+            metricType: Value
             metadata:
               lagThreshold: "1234"
               activationLagThreshold: "2345"
@@ -141,6 +142,7 @@ tests:
           path: spec.triggers
           content:
             type: kafka
+            metricType: Value
             metadata:
               lagThreshold: "1234"
               activationLagThreshold: "2345"
@@ -172,7 +174,42 @@ tests:
           path: spec.triggers
           content:
             type: kafka
+            metricType: Value
             metadata:
+              lagThreshold: "1000"
+              activationLagThreshold: "0"
+              excludePersistentLag: "true"
+              bootstrapServers: broker1:1234,broker2:2345
+              consumerGroup: session-recordings
+              topic: session_recording_events
+              allowIdleConsumers: "false"
+              offsetResetPolicy: earliest
+        documentIndex: 1
+
+  - it: sets ScaledObject kafka bootstrap servers correctly if using externalKafka.brokers and TLS
+    templates:
+      - templates/recordings-ingestion-deployment.yaml
+    set:
+      cloud: private
+      kafka:
+        enabled: false
+      externalKafka:
+        tls: true
+        brokers:
+          - broker1:1234
+          - broker2:2345
+      recordingsIngestion:
+        enabled: true
+        keda:
+          enabled: true
+    asserts:
+      - contains:
+          path: spec.triggers
+          content:
+            type: kafka
+            metricType: Value
+            metadata:
+              tls: enable
               lagThreshold: "1000"
               activationLagThreshold: "0"
               excludePersistentLag: "true"

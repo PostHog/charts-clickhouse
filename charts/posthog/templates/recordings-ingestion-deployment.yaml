@@ -25,12 +25,16 @@ spec:
   triggers:
   {{ if .Values.recordingsIngestion.keda.kafkaTrigger.enabled }}
   - type: kafka
+    metricType: Value # Absolute lag target, not to be divided by deployment size
     metadata:
       bootstrapServers: {{ include "posthog.kafka.brokers" . }}
       consumerGroup: session-recordings  # TODO: pass this into the consumers as well to avoid them getting out of sync.
       topic: session_recording_events  # TODO: pass this into the consumers as well to avoid them getting out of sync.
       allowIdleConsumers: "false"  # Don't scale past the number of partitions
       offsetResetPolicy: earliest  # If the consumer is new, get all the recordings in the topic.
+      {{- if and (not .Values.kafka.enabled) .Values.externalKafka.tls }}
+      tls: enable
+      {{ end }}
 {{ toYaml .Values.recordingsIngestion.keda.kafkaTrigger.metadata | indent 6 }}
   {{ end }}
 
