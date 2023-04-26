@@ -570,6 +570,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.zookeeper.enabled | bool | `false` | Switch to enable or disable the ZooKeeper helm chart. !!! Please DO NOT override this (this chart installs Zookeeper separately) !!! |
 | kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | List of external zookeeper servers to use. |
 | externalKafka.brokers | list | `[]` |  |
+| externalKafka.tls | bool | `false` |  |
 | zookeeper.enabled | bool | `true` | Whether to deploy Zookeeper as part of this release. |
 | zookeeper.nameOverride | string | `"posthog-zookeeper"` |  |
 | zookeeper.replicaCount | int | `1` | Number of ZooKeeper nodes |
