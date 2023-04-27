@@ -147,3 +147,50 @@ tests:
       - equal:
           path: spec.template.spec.imagePullSecrets
           value: [name: secret]
+
+
+  - it: mounts a volume and sets the appropriate env var
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            mountPath: "/session-buffers"
+            name: session-buffers
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: session-buffers
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: [ "ReadWriteOnce" ]
+                  storageClassName: "gp3"
+                  resources:
+                    requests:
+                      storage: 50Gi
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SESSION_RECORDING_LOCAL_DIRECTORY
+            value: /session-buffers
+
+  - it: doesn't mount a volume if not set
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+      recordingsBlobIngestion.volumes: []
+      recordingsBlobIngestion.volumeMounts: []
+    asserts:
+      - isEmpty:
+          path: spec.template.spec.containers[0].volumeMounts
+      - isEmpty:
+          path: spec.template.spec.volumes
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SESSION_RECORDING_LOCAL_DIRECTORY
