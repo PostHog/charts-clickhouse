@@ -752,6 +752,21 @@ recordingsBlobIngestion:
   # -- Count of plugin-server pods to run. This setting is ignored if `recordingsBlobIngestion.hpa.enabled` is set to `true`.
   replicacount: 1
 
+  volumeMounts:
+    - mountPath: "/session-buffers"
+      name: session-buffers
+
+  volumes:
+    - name: session-buffers
+      ephemeral:
+        volumeClaimTemplate:
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            storageClassName: "gp3"
+            resources:
+              requests:
+                storage: 50Gi
+
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
     enabled: false
