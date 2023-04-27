@@ -84,6 +84,10 @@ spec:
       {{- if .params.podSecurityContext.enabled }}
       securityContext: {{- omit .params.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
+      {{- if .params.volumes }}
+      volumes:
+        {{- toYaml .params.volumes | nindent 10 }}
+      {{- end }}      
 
       containers:
       - name: {{ .root.Chart.Name }}-{{ .name }}
@@ -96,6 +100,11 @@ spec:
         # Expose the port on which the healtchheck endpoint listens
         - containerPort: 6738
         env:
+        {{ if .params.volumeMounts }}
+        - name: SESSION_RECORDING_LOCAL_DIRECTORY
+          value: {{ (first .params.volumeMounts).mountPath }}
+        {{ end }}
+
         {{ if .mode }}
         - name: PLUGIN_SERVER_MODE
           value: {{ .mode }}
@@ -150,6 +159,10 @@ spec:
         {{- if .params.securityContext.enabled }}
         securityContext:
           {{- omit .params.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
+        {{- if .params.volumeMounts }}
+        volumeMounts:
+          {{- toYaml .params.volumeMounts | nindent 12 }}
         {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" .root | indent 8 }}
