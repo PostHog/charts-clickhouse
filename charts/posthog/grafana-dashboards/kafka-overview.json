@@ -132,7 +132,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "sum(kafka_consumergroup_lag{instance=\"$instance\",topic=~\"$topic\"}) by (consumergroup, topic) ",
+          "expr": "sum(kafka_consumergroup_lag{instance=\"$instance\",topic=~\"$topic\", consumergroup=~\"$groupId\"}) by (consumergroup, topic) ",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -320,7 +320,7 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "sum(delta(kafka_consumergroup_current_offset{instance=~'$instance',topic=~\"$topic\"}[5m])/5) by (consumergroup, topic)",
+          "expr": "sum(delta(kafka_consumergroup_current_offset{instance=~'$instance',topic=~\"$topic\", consumergroup=~\"$groupId\"}[5m])/5) by (consumergroup, topic)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{consumergroup}} (topic: {{topic}})",
@@ -446,7 +446,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(kafka_consumergroup_lag{instance=\"$instance\",topic=~\"$topic_detailed\"}) by (consumergroup, topic, partition) ",
+          "expr": "sum(kafka_consumergroup_lag{instance=\"$instance\",topic=~\"$topic_detailed\", consumergroup=~\"$groupId\"}) by (consumergroup, topic, partition) ",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -635,7 +635,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(delta(kafka_consumergroup_current_offset{instance=~'$instance',topic=~\"$topic_detailed\"}[5m])/5) by (consumergroup, topic, partition)",
+          "expr": "sum(delta(kafka_consumergroup_current_offset{instance=~'$instance',topic=~\"$topic_detailed\", consumergroup=~\"$groupId\"}[5m])/5) by (consumergroup, topic, partition)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{consumergroup}} (topic: {{topic}}:{{partition}})",
@@ -911,6 +911,30 @@
         "tagValuesQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "definition": "label_values(kafka_consumergroup_lag{instance=\"$instance\",topic=~\"$topic\"},  consumergroup)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Consumer group id",
+        "multi": true,
+        "name": "groupId",
+        "options": [],
+        "query": {
+          "query": "label_values(kafka_consumergroup_lag{instance=\"$instance\",topic=~\"$topic\"},  consumergroup)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
       }
     ]
   },
@@ -946,6 +970,6 @@
   "timezone": "browser",
   "title": "Kafka (cluster overview)",
   "uid": "kafka-overview",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
