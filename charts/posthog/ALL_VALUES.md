@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.16.0](https://img.shields.io/badge/Version-30.16.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.17.0](https://img.shields.io/badge/Version-30.17.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -254,6 +254,12 @@ The following table lists the configurable parameters of the PostHog chart and t
 | recordingsIngestion.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
 | recordingsBlobIngestion.enabled | bool | `false` | Whether to install the PostHog session recordings blob ingestion capability as an individual workload. |
 | recordingsBlobIngestion.replicacount | int | `1` | Count of plugin-server pods to run. This setting is ignored if `recordingsBlobIngestion.hpa.enabled` is set to `true`. |
+| recordingsBlobIngestion.volumeMounts[0].mountPath | string | `"/session-buffers"` |  |
+| recordingsBlobIngestion.volumeMounts[0].name | string | `"session-buffers"` |  |
+| recordingsBlobIngestion.volumes[0].name | string | `"session-buffers"` |  |
+| recordingsBlobIngestion.volumes[0].ephemeral.volumeClaimTemplate.spec.accessModes[0] | string | `"ReadWriteOnce"` |  |
+| recordingsBlobIngestion.volumes[0].ephemeral.volumeClaimTemplate.spec.storageClassName | string | `"gp3"` |  |
+| recordingsBlobIngestion.volumes[0].ephemeral.volumeClaimTemplate.spec.resources.requests.storage | string | `"50Gi"` |  |
 | recordingsBlobIngestion.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the plugin stack. |
 | recordingsBlobIngestion.hpa.cputhreshold | int | `60` | CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler. |
 | recordingsBlobIngestion.hpa.minpods | int | `1` | Min pods for the plugin-server stack HorizontalPodAutoscaler. |
