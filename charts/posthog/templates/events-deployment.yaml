@@ -172,7 +172,6 @@ spec:
         {{- if .Values.events.securityContext.enabled }}
         securityContext: {{- omit .Values.events.securityContext "enabled" | toYaml | nindent 12 }}
         {{- end }}
-      initContainers:
-      {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
-      {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
+      # No initContainers for that workload, we only need Kafka, and that one is a readiness check constraint.
+      # This should make event pods able to upscale if PG is unhealthy (and faster to come online too).
 {{- end }}
