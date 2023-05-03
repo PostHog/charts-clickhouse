@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.17.1](https://img.shields.io/badge/Version-30.17.1-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.17.2](https://img.shields.io/badge/Version-30.17.2-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -279,7 +279,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | recordingsBlobIngestion.tolerations | list | `[]` | Toleration labels for the plugin-server stack deployment. |
 | recordingsBlobIngestion.affinity | object | `{}` | Affinity settings for the plugin-server stack deployment. |
 | recordingsBlobIngestion.securityContext | object | `{"enabled":false}` | Container security context for the plugin-server stack deployment. |
-| recordingsBlobIngestion.podSecurityContext | object | `{"enabled":false}` | Pod security context for the plugin-server stack deployment. |
+| recordingsBlobIngestion.podSecurityContext | object | `{"enabled":true,"fsGroup":1000}` | Pod security context for the plugin-server stack deployment. |
 | recordingsBlobIngestion.livenessProbe.failureThreshold | int | `3` | The liveness probe failure threshold |
 | recordingsBlobIngestion.livenessProbe.initialDelaySeconds | int | `10` | The liveness probe initial delay seconds |
 | recordingsBlobIngestion.livenessProbe.periodSeconds | int | `10` | The liveness probe period seconds |
