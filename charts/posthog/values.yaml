@@ -832,7 +832,8 @@ recordingsBlobIngestion:
     enabled: false
   # -- Pod security context for the plugin-server stack deployment.
   podSecurityContext:
-    enabled: false
+    enabled: true
+    fsGroup: 1000
 
   livenessProbe:
     # -- The liveness probe failure threshold
