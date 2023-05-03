@@ -283,6 +283,55 @@ worker:
   podSecurityContext:
     enabled: false
 
+temporalPyWorker:
+  # -- Whether to install the PostHog Temporal Python worker stack or not.
+  enabled: true
+
+  # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the worker stack.
+    enabled: false
+    # -- CPU threshold percent for the worker stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the worker stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the worker stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the worker stack deployment.
+  env: []
+
+  # -- Resource limits for the worker stack deployment.
+  resources: {}
+
+  # -- Node labels for the worker stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the worker stack deployment.
+  tolerations: []
+  # -- Affinity settings for the worker stack deployment.
+  affinity: {}
+
+  # -- Container security context for the worker stack deployment.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the worker stack deployment.
+  podSecurityContext:
+    enabled: false
+
+
+
 plugins:
   # -- Whether to install the PostHog plugin-server stack or not.
   # This service handles data ingestion into ClickHouse, running apps and async
@@ -1532,6 +1581,38 @@ externalRedis:
   existingSecret: ""
   # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
+
+
+###
+###
+### ---- Temporal ----
+###
+###
+temporal:
+  # -- Whether to deploy Temporal scheduler and supporting services. To use an external Temporal instance set this to `false` and configure `externalTemporal` values. 
+  enabled: true
+  debug: true 
+  nameOverride: posthog-temporal
+  fullnameOverride: ""
+  schema:
+    update:
+      enabled: true 
+  server:
+    # -- The number of Temporal scheduler pods
+    replicaCount: 1
+  cassandra:
+    enabled: true 
+    config:
+      # -- The number of Cassandra nodes to start for persisting Temporal scheduler tasks
+      cluster_size: 1
+  elasticsearch:
+    # -- Whether to deploy elasticsearch to help with the Temporal admin pages 
+    enabled: false
+  grafana:
+    enabled: false
+  prometheus:
+    enabled: false 
+
 
 ###
 ###

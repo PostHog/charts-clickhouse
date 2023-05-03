@@ -1,0 +1,124 @@
+{{- if .Values.temporalPyWorker.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "posthog.fullname" . }}-temporal-py-worker
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: temporalPyWorker
+  {{- if not .Values.temporalPyWorker.hpa.enabled }}
+  replicas: {{ .Values.temporalPyWorker.replicacount }}
+  {{- end }}
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.temporalPyWorker.rollout.maxSurge }}
+      maxUnavailable: {{ .Values.temporalPyWorker.rollout.maxUnavailable }}
+
+  template:
+    metadata:
+      annotations:
+        checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+      {{- if .Values.temporalPyWorker.podAnnotations }}
+{{ toYaml .Values.temporalPyWorker.podAnnotations | indent 8 }}
+      {{- end }}
+      labels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: temporalPyWorker
+        {{- if (eq (default .Values.image.tag "none") "latest") }}
+        date: "{{ now | unixEpoch }}"
+        {{- end }}
+        {{- if .Values.temporalPyWorker.podLabels }}
+{{ toYaml .Values.temporalPyWorker.podLabels | indent 8 }}
+        {{- end }}
+    spec:
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+
+      {{- if .Values.temporalPyWorker.affinity }}
+      affinity:
+{{ toYaml .Values.temporalPyWorker.affinity | indent 8 }}
+      {{- end }}
+
+      {{- if .Values.temporalPyWorker.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.temporalPyWorker.nodeSelector | indent 8 }}
+      {{- end }}
+
+      {{- if .Values.temporalPyWorker.tolerations }}
+      tolerations:
+{{ toYaml .Values.temporalPyWorker.tolerations | indent 8 }}
+      {{- end }}
+
+      {{- if .Values.temporalPyWorker.schedulerName }}
+      schedulerName: "{{ .Values.temporalPyWorker.schedulerName }}"
+      {{- end }}
+
+      {{- if .Values.temporalPyWorker.priorityClassName }}
+      priorityClassName: "{{ .Values.temporalPyWorker.priorityClassName }}"
+      {{- end }}
+
+      {{- if .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+      {{- end }}
+
+      # I do not know for sure if the old one has been used anywhere, so do both :(
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+
+      {{- if .Values.temporalPyWorker.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.temporalPyWorker.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}-temporal-py-workers
+        image: {{ template "posthog.image.fullPath" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+          - ./bin/temporal-django-worker
+        ports:
+        - containerPort: {{ .Values.service.internalPort }}
+        env:
+        # Common Configs 
+        {{- include "snippet.temporal-env" . | indent 8 }}
+        {{- include "snippet.kafka-env" . | indent 8 }}
+        {{- include "snippet.objectstorage-env" . | indent 8 }}
+        {{- include "snippet.redis-env" . | indent 8 }}
+        {{- include "snippet.statsd-env" . | indent 8 }}
+        {{- if index .Values "prometheus-pushgateway" "enabled" }}
+        - name: PROM_PUSHGATEWAY_ADDRESS
+          value: "posthog-prometheus-pushgateway:9091"
+        {{- end }}
+
+        - name: PRIMARY_DB
+          value: clickhouse
+        {{- include "snippet.posthog-env" . | indent 8 }}
+        {{- include "snippet.posthog-sentry-env" . | indent 8 }}
+        {{- include "snippet.postgresql-env" . | nindent 8 }}
+        {{- include "snippet.clickhouse-env" . | nindent 8 }}
+        {{- include "snippet.email-env" . | nindent 8 }}
+{{- if .Values.env }}
+{{ toYaml .Values.env | indent 8 }}
+{{- end }}
+{{- if .Values.temporalPyWorker.env }}
+{{ toYaml .Values.temporalPyWorker.env | indent 8 }}
+{{- end }}
+        resources:
+{{ toYaml .Values.temporalPyWorker.resources | indent 12 }}
+        {{- if .Values.temporalPyWorker.securityContext.enabled }}
+        securityContext: {{- omit .Values.temporalPyWorker.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- end }}
+      initContainers:
+      {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
+      {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
+{{- end }}
