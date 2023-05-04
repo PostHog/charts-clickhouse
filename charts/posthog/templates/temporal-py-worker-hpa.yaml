@@ -8,7 +8,7 @@ spec:
   scaleTargetRef:
     kind: Deployment
     apiVersion: apps/v1
-    name: {{ template "posthog.fullname" . }}-temporalPyWorker
+    name: {{ template "posthog.fullname" . }}-temporal-py-worker
   minReplicas: {{ .Values.temporalPyWorker.hpa.minpods }}
   maxReplicas: {{ .Values.temporalPyWorker.hpa.maxpods }}
   metrics:
