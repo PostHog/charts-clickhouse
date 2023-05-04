@@ -16,17 +16,26 @@
 {{- if .Values.temporal.enabled -}}
     {{- printf "%s-frontend" (include "posthog.temporal.fullname" .) }}
 {{- else -}}
-    {{ join "," .Values.externalTemporal.host | quote }}
+    {{ .Values.externalTemporal.host | quote }}
 {{- end }}
 {{- end }}
 
 {{/* ENV used by PostHog deployments for connecting to Temporal */}}
 
 {{- define "snippet.temporal-env" }}
-- name: TEMPORAL_SCHEDULER_HOST 
 {{- if .Values.temporal.enabled }}
+- name: TEMPORAL_HOST
   value: {{ ( include "posthog.temporal.host" . ) }}
+- name: TEMPORAL_PORT
+  value: "7233"
+- name: TEMPORAL_NAMESPACE
+  value: "default"
 {{ else }}
+- name: TEMPORAL_HOST
   value: {{ .Values.externalTemporal.host | quote }}
+- name: TEMPORAL_PORT
+  value: {{ .Values.externalTemporal.port | quote }}
+- name: TEMPORAL_NAMESPACE
+  value: {{ .Values.externalTemporal.namespace | quote }}
 {{- end }}
 {{- end }}
