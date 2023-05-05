@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.17.2](https://img.shields.io/badge/Version-30.17.2-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.18.0](https://img.shields.io/badge/Version-30.18.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -372,6 +372,22 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsScheduler.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | pluginsScheduler.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | pluginsScheduler.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
+| temporalPyWorker.enabled | bool | `false` | Whether to install the PostHog Temporal Python worker stack or not. |
+| temporalPyWorker.replicacount | int | `1` | Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`. |
+| temporalPyWorker.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the worker stack. |
+| temporalPyWorker.hpa.cputhreshold | int | `60` | CPU threshold percent for the worker stack HorizontalPodAutoscaler. |
+| temporalPyWorker.hpa.minpods | int | `1` | Min pods for the worker stack HorizontalPodAutoscaler. |
+| temporalPyWorker.hpa.maxpods | int | `10` | Max pods for the worker stack HorizontalPodAutoscaler. |
+| temporalPyWorker.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| temporalPyWorker.rollout.maxSurge | string | `"25%"` |  |
+| temporalPyWorker.rollout.maxUnavailable | string | `"25%"` |  |
+| temporalPyWorker.env | list | `[]` | Additional env variables to inject into the worker stack deployment. |
+| temporalPyWorker.resources | object | `{}` | Resource limits for the worker stack deployment. |
+| temporalPyWorker.nodeSelector | object | `{}` | Node labels for the worker stack deployment. |
+| temporalPyWorker.tolerations | list | `[]` | Toleration labels for the worker stack deployment. |
+| temporalPyWorker.affinity | object | `{}` | Affinity settings for the worker stack deployment. |
+| temporalPyWorker.securityContext | object | `{"enabled":false}` | Container security context for the worker stack deployment. |
+| temporalPyWorker.podSecurityContext | object | `{"enabled":false}` | Pod security context for the worker stack deployment. |
 | email.host | string | `nil` | SMTP service host. |
 | email.port | string | `nil` | SMTP service port. |
 | email.user | string | `nil` | SMTP service user. |
@@ -577,6 +593,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | List of external zookeeper servers to use. |
 | externalKafka.brokers | list | `[]` |  |
 | externalKafka.tls | bool | `false` |  |
+| externalTemporal.host | string | `""` |  |
+| externalTemporal.port | int | `7233` |  |
+| externalTemporal.namespace | string | `""` |  |
 | zookeeper.enabled | bool | `true` | Whether to deploy Zookeeper as part of this release. |
 | zookeeper.nameOverride | string | `"posthog-zookeeper"` |  |
 | zookeeper.replicaCount | int | `1` | Number of ZooKeeper nodes |
