@@ -101,6 +101,12 @@ spec:
         # statsd env variables
         {{- include "snippet.statsd-env" . | indent 8 }}
 
+        # async migrations will be run by the migrate job
+        {{- if .Values.migrate.enabled -}}
+        - name: SKIP_ASYNC_MIGRATIONS_SETUP
+          value: 'True'
+        {{- end }}
+
         - name: DISABLE_SECURE_SSL_REDIRECT
           value: '1'
         - name: IS_BEHIND_PROXY
