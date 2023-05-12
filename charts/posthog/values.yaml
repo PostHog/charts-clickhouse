@@ -2345,7 +2345,7 @@ prometheus:
 
             - alert: ScheduledTasksConsumerDelayed
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="scheduled-tasks-runner",topic="scheduled_tasks"}))) > 300000
-              for: 5m
+              for: 10m
               labels:
                 rotation: common
                 severity: critical
@@ -2355,7 +2355,7 @@ prometheus:
 
             - alert: JobsConsumerDelayed
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="jobs-inserter",topic="jobs"}))) > 300000
-              for: 5m
+              for: 10m
               labels:
                 rotation: common
                 severity: critical
