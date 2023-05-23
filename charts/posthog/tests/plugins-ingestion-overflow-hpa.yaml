@@ -52,7 +52,7 @@ tests:
       - hasDocuments:
           count: 2
       - isAPIVersion:
-          of: autoscaling/v2beta2
+          of: autoscaling/v2
         documentIndex: 1
 
   - it: should be the correct kind

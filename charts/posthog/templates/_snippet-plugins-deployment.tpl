@@ -171,7 +171,7 @@ spec:
 ---
 
 {{ if .params.hpa.enabled }}
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "posthog.fullname" .root }}-{{ .name }}
