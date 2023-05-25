@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.21.0](https://img.shields.io/badge/Version-30.21.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.22.0](https://img.shields.io/badge/Version-30.22.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -372,6 +372,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pluginsScheduler.readinessProbe.successThreshold | int | `1` | The readiness probe success threshold |
 | pluginsScheduler.readinessProbe.timeoutSeconds | int | `5` | The readiness probe timeout seconds |
 | pluginsScheduler.sentryDSN | string | `nil` | Sentry endpoint to send errors to. Falls back to global sentryDSN |
+| toolbox.enabled | bool | `false` | Whether to install the PostHog toolbox deployment |
+| toolbox.env | list | `[]` | Additional env variables to inject into the toolbox deployment. |
+| toolbox.resources | object | `{}` | Resource limits for the toolbox deployment. |
 | temporalPyWorker.enabled | bool | `false` | Whether to install the PostHog Temporal Python worker stack or not. |
 | temporalPyWorker.replicacount | int | `1` | Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`. |
 | temporalPyWorker.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the worker stack. |
