@@ -19,8 +19,8 @@ tests:
       cloud: local
       toolbox.enabled: true
       image.repository: posthog/posthog
-      sha: ignored
-      tag: latest
+      image.sha: ignored
+      image.tag: latest
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
