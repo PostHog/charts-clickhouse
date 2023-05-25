@@ -14,7 +14,7 @@ tests:
           count: 0
 
   - it: should not use image by sha
-    template: templates/web-deployment.yaml
+    template: templates/toolbox-deployment.yaml
     set:
       cloud: local
       toolbox.enabled: true
