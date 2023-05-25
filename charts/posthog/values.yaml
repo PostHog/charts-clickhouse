@@ -1087,6 +1087,14 @@ pluginsScheduler:
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
+toolbox:
+  # -- Whether to install the PostHog toolbox deployment
+  enabled: false
+  # -- Additional env variables to inject into the toolbox deployment.
+  env: []
+  # -- Resource limits for the toolbox deployment.
+  resources: {}
+
 temporalPyWorker:
   # -- Whether to install the PostHog Temporal Python worker stack or not.
   enabled: false
