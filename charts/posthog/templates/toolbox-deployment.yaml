@@ -1,0 +1,50 @@
+{{- if .Values.toolbox.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "posthog.fullname" . }}-toolbox
+  labels: {{- include "_snippet-metadata-labels-constants" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: toolbox
+
+  template:
+    metadata:
+      labels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: toolbox
+    spec:
+      serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+      containers:
+      - name: {{ .Chart.Name }}-toolbox
+        # We are specifying the image by tag to avoid restarts on chart apply.
+        # Users will need to k delete pod to pull the newest image.
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: Always
+        command:
+          - sleep
+          - infinity
+        env:
+        {{- include "snippet.kafka-env" . | indent 8 }}
+        {{- include "snippet.objectstorage-env" . | indent 8 }}
+        {{- include "snippet.redis-env" . | indent 8 }}
+        {{- include "snippet.posthog-env" . | indent 8 }}
+        {{- include "snippet.postgresql-env" . | nindent 8 }}
+        {{- include "snippet.clickhouse-env" . | nindent 8 }}
+        {{- include "snippet.email-env" . | nindent 8 }}
+        - name: PRIMARY_DB
+          value: clickhouse
+{{- if .Values.env }}
+{{ toYaml .Values.env | indent 8 }}
+{{- end }}
+{{- if .Values.toolbox.env }}
+{{ toYaml .Values.toolbox.env | indent 8 }}
+{{- end }}
+        resources:
+{{ toYaml .Values.toolbox.resources | indent 12 }}
+{{- end }}
