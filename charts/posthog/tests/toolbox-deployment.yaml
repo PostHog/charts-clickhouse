@@ -1,0 +1,27 @@
+suite: PostHog toolbox deployment definition
+templates:
+  - templates/toolbox-deployment.yaml
+  - templates/secrets.yaml
+
+tests:
+  - it: should be empty if toolbox.enabled is set to false
+    template: templates/toolbox-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      toolbox.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should not use image by sha
+    template: templates/toolbox-deployment.yaml
+    set:
+      cloud: local
+      toolbox.enabled: true
+      image.repository: posthog/posthog
+      image.sha: ignored
+      image.tag: latest
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: posthog/posthog:latest
