@@ -2427,7 +2427,7 @@ prometheus:
 
             - alert: GraphileJobExecutionLag
               expr: (max by(task_identifier) (posthog_celery_graphile_lag_seconds{task_identifier!="bufferJob"})) > 900
-              for: 5m
+              for: 10m
               labels:
                 rotation: common
                 severity: critical
