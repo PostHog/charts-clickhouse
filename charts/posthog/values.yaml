@@ -2426,8 +2426,8 @@ prometheus:
                 description: "The `session_recording_events_dlq` topic offset has increased over the past 5 minutes."
 
             - alert: GraphileJobExecutionLag
-              expr: last_over_time((posthog_celery_graphile_lag_seconds{task_identifier!="bufferJob"}[1h])) > 1000
-              for: 5m
+              expr: (max by(task_identifier) (posthog_celery_graphile_lag_seconds{task_identifier!="bufferJob"})) > 900
+              for: 10m
               labels:
                 rotation: common
                 severity: critical
