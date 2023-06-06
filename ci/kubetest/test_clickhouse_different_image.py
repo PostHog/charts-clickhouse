@@ -8,7 +8,7 @@ cloud: "local"
 
 clickhouse:
   image:
-    tag: 23.4-alpine
+    tag: 23.4.2.11-alpine
 """
 
 
@@ -18,4 +18,4 @@ def test_clickhouse_pod_image(kube):
 
     is_posthog_healthy(kube)
     pod_spec = get_clickhouse_pod_spec(kube)
-    assert pod_spec.containers[0].image == "clickhouse/clickhouse-server:23.4-alpine"
+    assert pod_spec.containers[0].image == "clickhouse/clickhouse-server:23.4.2.11-alpine"

@@ -343,7 +343,7 @@ tests:
           count: 1
       - equal:
           path: spec.templates.podTemplates[0].spec.containers[0].image
-          value: "clickhouse/clickhouse-server:23.4"
+          value: "clickhouse/clickhouse-server:23.4.2.11"
 
   - it: allows modifying clickhouse-server version
     set:

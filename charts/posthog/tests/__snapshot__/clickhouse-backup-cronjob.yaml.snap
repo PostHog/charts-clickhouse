@@ -30,7 +30,7 @@ should match the snapshot when backup is true:
                   value: backup
                 - name: BACKUP_PASSWORD
                   value: backup_password
-                image: clickhouse/clickhouse-server:23.4
+                image: clickhouse/clickhouse-server:23.4.2.11
                 imagePullPolicy: IfNotPresent
                 name: run-backup-cron
                 volumeMounts:
