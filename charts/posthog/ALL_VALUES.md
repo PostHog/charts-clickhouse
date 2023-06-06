@@ -617,7 +617,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.secure | bool | `false` | Whether to use TLS connection connecting to ClickHouse |
 | clickhouse.verify | bool | `false` | Whether to verify TLS certificate on connection to ClickHouse |
 | clickhouse.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
-| clickhouse.image.tag | string | `"22.8.11.15"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
+| clickhouse.image.tag | string | `"23.4"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
 | clickhouse.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.image.pullSecrets | list | `[]` |  |
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
@@ -645,7 +645,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.podAnnotations | string | `nil` |  |
 | clickhouse.podDistribution | string | `nil` |  |
 | clickhouse.client.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
-| clickhouse.client.image.tag | string | `"22.8.11.15"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
+| clickhouse.client.image.tag | string | `"23.4"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
 | clickhouse.client.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.client.image.pullSecrets | list | `[]` |  |
 | clickhouse.backup.enabled | bool | `false` |  |

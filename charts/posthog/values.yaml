@@ -1720,7 +1720,7 @@ clickhouse:
     # -- ClickHouse image repository.
     repository: clickhouse/clickhouse-server
     # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-    tag: "22.8.11.15"
+    tag: "23.4"
     # -- Image pull policy
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
@@ -1845,7 +1845,7 @@ clickhouse:
       # -- ClickHouse image repository.
       repository: clickhouse/clickhouse-server
       # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-      tag: "22.8.11.15"
+      tag: "23.4"
       # -- Image pull policy
       pullPolicy: IfNotPresent
       ## Optionally specify an array of imagePullSecrets.
