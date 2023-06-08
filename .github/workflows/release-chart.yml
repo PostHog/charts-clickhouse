@@ -1,6 +1,7 @@
 name: Release Chart
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - charts/**
@@ -46,9 +47,9 @@ jobs:
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.4.1
-        if: github.repository == 'PostHog/charts-clickhouse'
+        if: github.repository == 'vector-im/charts-clickhouse'
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_SKIP_EXISTING: "true"
         with:
-          charts_repo_url: "https://posthog.github.io/charts-clickhouse/"
+          charts_repo_url: "https://vector-im.github.io/charts-clickhouse/"
