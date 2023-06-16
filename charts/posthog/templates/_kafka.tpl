@@ -47,26 +47,6 @@
 - name: SESSION_RECORDING_KAFKA_HOSTS
   value: {{ ( include "posthog.sessionRecordingKafka.brokers" . ) }}
 
-# Used by PostHog/web when running a recordings workload. There is no specific reason for the difference. Expected format: comma-separated list of "host:port"
-- name: SESSION_RECORDING_KAFKA_URL
-{{- if .Values.kafka.enabled }}
-  value: {{ printf "kafka://%s" ( include "posthog.kafka.brokers" . ) }}
-{{ else }}
-  value: {{ join "," $hostsWithPrefix | quote }}
-{{- end }}
-{{- if and (not .Values.kafka.enabled) .Values.externalKafka.tls }}
-- name: KAFKA_SECURITY_PROTOCOL
-  value: SSL
-{{- end }}
-{{- end }}
-
-# Used by PostHog/web. There is no specific reason for the difference. Expected format: comma-separated list of "kafka://host:port"
-- name: KAFKA_URL
-{{- if .Values.kafka.enabled }}
-  value: {{ printf "kafka://%s" ( include "posthog.kafka.brokers" . ) }}
-{{ else }}
-  value: {{ join "," $hostsWithPrefix | quote }}
-{{- end }}
 {{- if and (not .Values.kafka.enabled) .Values.externalKafka.tls }}
 - name: KAFKA_SECURITY_PROTOCOL
   value: SSL
