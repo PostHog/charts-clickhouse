@@ -44,4 +44,9 @@
 - name: KAFKA_SECURITY_PROTOCOL
   value: SSL
 {{- end }}
+
+{{- if and (not .Values.kafka.enabled) .Values.externalSessionRecordingKafka.tls }}
+- name: SESSION_RECORDING_KAFKA_SECURITY_PROTOCOL
+  value: SSL
+{{- end }}
 {{- end }}
