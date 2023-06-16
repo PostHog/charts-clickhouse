@@ -26,7 +26,7 @@ spec:
   {{ if .Values.recordingsBlobIngestion.keda.kafkaTrigger.enabled }}
   - type: kafka
     metadata:
-      bootstrapServers: {{ include "posthog.kafka.brokers" . }}
+      bootstrapServers: {{ include "posthog.sessionRecordingKafka.brokers" . }}
       consumerGroup: session-recordings-blob  # TODO: pass this into the consumers as well to avoid them getting out of sync.
       topic: session_recording_events  # TODO: pass this into the consumers as well to avoid them getting out of sync.
       allowIdleConsumers: "false"  # Don't scale past the number of partitions

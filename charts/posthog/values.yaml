@@ -761,7 +761,7 @@ recordingsBlobIngestion:
       ephemeral:
         volumeClaimTemplate:
           spec:
-            accessModes: [ "ReadWriteOnce" ]
+            accessModes: ["ReadWriteOnce"]
             storageClassName: "gp3"
             resources:
               requests:
@@ -1389,8 +1389,8 @@ externalPostgresql:
 ###
 ###
 
-_pgbouncer: &_pgbouncer 
-  # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
+_pgbouncer:
+  &_pgbouncer # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
   enabled: true
 
   exporter:
@@ -1627,6 +1627,12 @@ kafka:
 
 externalKafka:
   # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
+  brokers: []
+  # - Use TLS to connect to the external kafka cluster
+  tls: false
+
+externalSessionRecordingKafka:
+  # - External Kafka brokers for session recordings. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
   brokers: []
   # - Use TLS to connect to the external kafka cluster
   tls: false
