@@ -39,11 +39,11 @@
 {{- $hostsWithPrefix = append $hostsWithPrefix $hostWithPrefix }}
 {{- end }}
 
-# Used by PostHog/plugin-server. There is no specific reason for the difference. Expected format: comma-separated list of "host:port"
+# Used by PostHog/plugin-server. Expected format: comma-separated list of "host:port"
 - name: KAFKA_HOSTS
   value: {{ ( include "posthog.kafka.brokers" . ) }}
 
-# Used by PostHog/plugin-server when running a recordings workload. There is no specific reason for the difference. Expected format: comma-separated list of "host:port"
+# Used by PostHog/plugin-server when running a recordings workload. Expected format: comma-separated list of "host:port"
 - name: SESSION_RECORDING_KAFKA_HOSTS
   value: {{ ( include "posthog.sessionRecordingKafka.brokers" . ) }}
 
