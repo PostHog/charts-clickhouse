@@ -1389,8 +1389,7 @@ externalPostgresql:
 ###
 ###
 
-_pgbouncer:
-  &_pgbouncer # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
+_pgbouncer: &_pgbouncer # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
   enabled: true
 
   exporter:
