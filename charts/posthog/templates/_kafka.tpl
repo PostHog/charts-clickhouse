@@ -30,8 +30,21 @@
 {{- end }}
 
 {{/* ENV used by PostHog deployments for connecting to Kafka */}}
-
 {{- define "snippet.kafka-env" }}
+{{- $hostsWithPrefix := list }}
+{{- range $host := .Values.externalKafka.brokers }}
+{{- $hostWithPrefix := (printf "kafka://%s" $host) }}
+{{- $hostsWithPrefix = append $hostsWithPrefix $hostWithPrefix }}
+{{- end }}
+
+# NOTE: This is deprecated and KAFKA_HOSTS should be used instead but whilst the chart is still available we need to keep this for backwards compatibility
+- name: KAFKA_URL
+{{- if .Values.kafka.enabled }}
+  value: {{ printf "kafka://%s" ( include "posthog.kafka.brokers" . ) }}
+{{ else }}
+  value: {{ join "," $hostsWithPrefix | quote }}
+{{- end }}
+
 # Used by PostHog/plugin-server. Expected format: comma-separated list of "host:port"
 - name: KAFKA_HOSTS
   value: {{ ( include "posthog.kafka.brokers" . ) }}

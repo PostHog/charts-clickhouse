@@ -1,9 +1,5 @@
 cloud: k3s
 
-image:
-  # NOTE: Should we be overriding this?
-  tag: latest
-
 ingress:
   nginx:
     enabled: true
