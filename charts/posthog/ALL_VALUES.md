@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.22.1](https://img.shields.io/badge/Version-30.22.1-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.23.0](https://img.shields.io/badge/Version-30.23.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -596,6 +596,8 @@ The following table lists the configurable parameters of the PostHog chart and t
 | kafka.externalZookeeper.servers | list | `["posthog-posthog-zookeeper:2181"]` | List of external zookeeper servers to use. |
 | externalKafka.brokers | list | `[]` |  |
 | externalKafka.tls | bool | `false` |  |
+| externalSessionRecordingKafka.brokers | list | `[]` |  |
+| externalSessionRecordingKafka.tls | bool | `false` |  |
 | externalTemporal.host | string | `""` |  |
 | externalTemporal.port | int | `7233` |  |
 | externalTemporal.namespace | string | `""` |  |
