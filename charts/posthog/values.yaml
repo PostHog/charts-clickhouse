@@ -1588,6 +1588,13 @@ externalRedis:
   # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
 
+externalSessionRecordingRedis: {}
+  # -- External Redis host to use.
+  # host: ""
+  # -- External Redis port to use.
+  # port: 6379
+
+
 ###
 ###
 ### ---- KAFKA ----
