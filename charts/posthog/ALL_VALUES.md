@@ -584,6 +584,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | externalRedis.password | string | `""` | Password for the external Redis. Ignored if `externalRedis.existingSecret` is set. |
 | externalRedis.existingSecret | string | `""` | Name of an existing Kubernetes secret object containing the Redis password. |
 | externalRedis.existingSecretPasswordKey | string | `""` | Name of the key pointing to the password in your Kubernetes secret. |
+| externalSessionRecordingRedis | object | `{}` |  |
 | kafka.enabled | bool | `true` | Whether to deploy Kafka as part of this release. To use an external Kafka instance set this to `false` and configure the `externalKafka` values. |
 | kafka.nameOverride | string | `"posthog-kafka"` |  |
 | kafka.fullnameOverride | string | `""` |  |
