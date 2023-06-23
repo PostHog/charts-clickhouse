@@ -3,7 +3,7 @@ templates:
   - templates/recordings-hpa.yaml
 
 tests:
-  - it: should be empty if recordings.enabled and events.hpa.enabled are set to false
+  - it: should be empty if recordings.enabled and recordings.hpa.enabled are set to false
     set:
       recordings.enabled: false
       recordings.hpa.enabled: false
