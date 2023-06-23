@@ -88,6 +88,43 @@ events:
   podSecurityContext:
     enabled: false
 
+recordings:
+  # -- Whether to install the PostHog recordings stack or not.
+  enabled: true
+
+  # -- Count of recordings pods to run. This setting is ignored if `recordings.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the recordings stack.
+    enabled: false
+    # -- CPU threshold percent for the recordings stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the recordings stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the recordings stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the recordings stack, uses `web.env` if empty.
+  env: []
+
+  # -- Container security context for the recordings stack HorizontalPodAutoscaler.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the recordings stack HorizontalPodAutoscaler.
+  podSecurityContext:
+    enabled: false
+
 decide:
   # -- Whether to install the PostHog decide stack or not.
   enabled: false
