@@ -98,6 +98,9 @@ spec:
         # Redis env variables
         {{- include "snippet.redis-env" . | indent 8 }}
 
+        # Session Recording Redis env variables (used by real-time playback)
+        {{- include "snippet.session-recording-redis-env" . | nindent 8 }}
+
         # statsd env variables
       {{- include "snippet.statsd-env" . | indent 8 }}
 
