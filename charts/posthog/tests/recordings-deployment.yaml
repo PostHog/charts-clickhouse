@@ -17,6 +17,7 @@ tests:
     template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -27,6 +28,7 @@ tests:
     template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -37,6 +39,7 @@ tests:
     template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
       recordings.podSecurityContext.enabled: true
       recordings.podSecurityContext.runAsUser: 1001
       recordings.podSecurityContext.fsGroup: 2000
@@ -54,6 +57,7 @@ tests:
     template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
       recordings.securityContext.enabled: true
       recordings.securityContext.runAsUser: 1001
       recordings.securityContext.allowPrivilegeEscalation: false
@@ -71,6 +75,7 @@ tests:
     template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
       recordings.podSecurityContext.enabled: false
     asserts:
       - hasDocuments:
@@ -83,6 +88,7 @@ tests:
     template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
       recordings.securityContext.enabled: false
     asserts:
       - hasDocuments:
@@ -99,6 +105,7 @@ tests:
     set:
       cloud: local
       recordings:
+        enabled: true
         resources:
           limits:
             cpu: 1000m
@@ -121,6 +128,8 @@ tests:
     template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local
+      recordings:
+        enabled: true
       web:
         resources:
           limits:
@@ -145,6 +154,7 @@ tests:
     set:
       cloud: local
       recordings:
+        enabled: true
         resources:
           limits:
             cpu: 1000m
@@ -175,6 +185,7 @@ tests:
     template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
       sentryDSN: sentry.endpoint
     asserts:
       - contains:
@@ -187,6 +198,7 @@ tests:
     template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:
       cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
       env:
         - name: FIRST
           value: one
@@ -218,6 +230,7 @@ tests:
           - name: SECOND
             value: two
       recordings:
+        enabled: true
         env:
           - name: THIRD
             value: three

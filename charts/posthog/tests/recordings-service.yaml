@@ -11,11 +11,15 @@ tests:
           count: 0
 
   - it: should be not empty if recordings.enabled is set to true
+    set:
+      recordings.enabled: true
     asserts:
       - hasDocuments:
           count: 1
 
   - it: should have the correct apiVersion
+    set:
+      recordings.enabled: true
     asserts:
       - hasDocuments:
           count: 1
@@ -23,6 +27,8 @@ tests:
           of: v1
 
   - it: should be the correct kind
+    set:
+      recordings.enabled: true
     asserts:
       - hasDocuments:
           count: 1
