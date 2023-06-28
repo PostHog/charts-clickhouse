@@ -33,6 +33,28 @@ tests:
           # metadata values linked to the chart version
           path: spec
 
+  - it: the "spec" path should match the snapshot when splitting decide traffic out
+    set:
+      decide.ingressEnabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot:
+          # Unfortunately we can't match the whole manifest as there are few
+          # metadata values linked to the chart version
+          path: spec
+
+  - it: the "spec" path should match the snapshot when splitting recordings traffic out
+    set:
+      recordings.ingressEnabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - matchSnapshot:
+          # Unfortunately we can't match the whole manifest as there are few
+          # metadata values linked to the chart version
+          path: spec
+
   - it: AWS - 'metadata.annotations' should match the default values
     set:
       cloud: "aws"

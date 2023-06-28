@@ -1,3 +1,209 @@
+the "spec" path should match the snapshot when splitting decide traffic out:
+  1: |
+    rules:
+    - http:
+        paths:
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-web
+              port:
+                number: 8000
+          path: /
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /batch
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /capture/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /capture
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-decide
+              port:
+                number: 8000
+          path: /decide/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-decide
+              port:
+                number: 8000
+          path: /decide
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /e/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /e
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /engage/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /engage
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /track/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /track
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /s/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /s
+          pathType: Exact
+the "spec" path should match the snapshot when splitting recordings traffic out:
+  1: |
+    rules:
+    - http:
+        paths:
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-web
+              port:
+                number: 8000
+          path: /
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /batch
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /capture/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /capture
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /decide/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /decide
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /e/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /e
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /engage/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /engage
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /track/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-events
+              port:
+                number: 8000
+          path: /track
+          pathType: Exact
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-recordings
+              port:
+                number: 8000
+          path: /s/
+          pathType: Prefix
+        - backend:
+            service:
+              name: RELEASE-NAME-posthog-recordings
+              port:
+                number: 8000
+          path: /s
+          pathType: Exact
 the "spec" path should match the snapshot when using default values:
   1: |
     rules:
