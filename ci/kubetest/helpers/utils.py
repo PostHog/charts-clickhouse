@@ -25,6 +25,10 @@ worker:
     enabled: false
 plugins:
     enabled: false
+decide:
+    enabled: false
+recordings:
+    enabled: false
 postgresql:
     enabled: false
 redis:
