@@ -1,0 +1,81 @@
+suite: PostHog recordings HPA definition
+templates:
+  - templates/recordings-hpa.yaml
+
+tests:
+  - it: should be empty if recordings.enabled and recordings.hpa.enabled are set to false
+    set:
+      recordings.enabled: false
+      recordings.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if recordings.enabled is true and recordings.hpa.enabled is set to false
+    set:
+      recordings.enabled: true
+      recordings.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be not empty if recordings.enabled and recordings.hpa.enabled are set to true
+    set:
+      recordings.enabled: true
+      recordings.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should have the correct apiVersion
+    set:
+      recordings.enabled: true
+      recordings.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: autoscaling/v2
+
+  - it: should be the correct kind
+    set:
+      recordings.enabled: true
+      recordings.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HorizontalPodAutoscaler
+
+  - it: sets hpa spec
+    set:
+      recordings.enabled: true
+      recordings:
+        hpa:
+          enabled: true
+          minpods: 2
+          maxpods: 10
+          cputhreshold: 70
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 3600
+    asserts:
+      - equal:
+          path: spec
+          value:
+            scaleTargetRef:
+              apiVersion: apps/v1
+              kind: Deployment
+              name: RELEASE-NAME-posthog-recordings
+            minReplicas: 2
+            maxReplicas: 10
+            metrics:
+            - type: Resource
+              resource:
+                name: cpu
+                target:
+                  type: Utilization
+                  averageUtilization: 70
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 3600
