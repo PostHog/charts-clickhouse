@@ -90,7 +90,7 @@ events:
 
 recordings:
   # -- Whether to install the PostHog recordings stack or not.
-  enabled: false
+  enabled: true
 
   # -- Count of recordings pods to run. This setting is ignored if `recordings.hpa.enabled` is set to `true`.
   replicacount: 1
