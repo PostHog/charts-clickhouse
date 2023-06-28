@@ -15,3 +15,9 @@ web:
 worker:
   hpa:
     enabled: true
+decide:
+  hpa:
+    enabled: true
+recordings:
+  hpa:
+    enabled: true
