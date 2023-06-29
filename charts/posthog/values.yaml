@@ -2068,7 +2068,7 @@ grafana:
         # Comment the snippet below if you are running with `loki.enabled: false`
         - name: Loki
           type: loki
-          url: http://posthog-loki-read:3100
+          url: http://posthog-loki-read.svc.posthog:3100
           access: proxy
           isDefault: false
 
