@@ -105,7 +105,7 @@ spec:
         # prometheus pushgateway if enabled
         {{- if index .Values "prometheus-pushgateway" "enabled" }}
         - name: PROM_PUSHGATEWAY_ADDRESS
-          value: "posthog-prometheus-pushgateway:9091"
+          value: "prometheus-pushgateway:9091"
         {{- end }}
 
         - name: PRIMARY_DB
