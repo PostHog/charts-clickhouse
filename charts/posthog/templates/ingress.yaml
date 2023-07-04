@@ -139,12 +139,29 @@ spec:
             path: "/track"
             backend: *INGESTION
 
+          {{- if .Values.recordings.ingressEnabled}}
+          - pathType: Prefix
+            path: "/s/"
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-recordings
+                port:
+                  number: {{ .Values.service.externalPort }}
+          - pathType: Exact
+            path: "/s"
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-recordings
+                port:
+                  number: {{ .Values.service.externalPort }}
+          {{- else }}
           - pathType: Prefix
             path: "/s/"
             backend: *INGESTION
           - pathType: Exact
             path: "/s"
             backend: *INGESTION
+          {{- end }}
 
           {{- else }}
           - pathType: ImplementationSpecific
