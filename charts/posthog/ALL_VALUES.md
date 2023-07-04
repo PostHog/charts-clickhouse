@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.25.3](https://img.shields.io/badge/Version-30.25.3-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.26.0](https://img.shields.io/badge/Version-30.26.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -36,6 +36,19 @@ The following table lists the configurable parameters of the PostHog chart and t
 | events.env | list | `[]` | Additional env variables to inject into the events stack, uses `web.env` if empty. |
 | events.securityContext | object | `{"enabled":false}` | Container security context for the events stack HorizontalPodAutoscaler. |
 | events.podSecurityContext | object | `{"enabled":false}` | Pod security context for the events stack HorizontalPodAutoscaler. |
+| recordings.enabled | bool | `false` | Whether to install the PostHog recordings stack or not. |
+| recordings.ingressEnabled | bool | `false` | Whether to route /s traffic to the recordings stack instead of the events stack |
+| recordings.replicacount | int | `1` | Count of recordings pods to run. This setting is ignored if `recordings.hpa.enabled` is set to `true`. |
+| recordings.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the recordings stack. |
+| recordings.hpa.cputhreshold | int | `60` | CPU threshold percent for the recordings stack HorizontalPodAutoscaler. |
+| recordings.hpa.minpods | int | `1` | Min pods for the recordings stack HorizontalPodAutoscaler. |
+| recordings.hpa.maxpods | int | `10` | Max pods for the recordings stack HorizontalPodAutoscaler. |
+| recordings.hpa.behavior | string | `nil` | Set the HPA behavior. See https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/ for configuration options |
+| recordings.rollout.maxSurge | string | `"25%"` |  |
+| recordings.rollout.maxUnavailable | string | `"25%"` |  |
+| recordings.env | list | `[]` | Additional env variables to inject into the recordings stack, uses `web.env` if empty. |
+| recordings.securityContext | object | `{"enabled":false}` | Container security context for the recordings stack HorizontalPodAutoscaler. |
+| recordings.podSecurityContext | object | `{"enabled":false}` | Pod security context for the recordings stack HorizontalPodAutoscaler. |
 | decide.enabled | bool | `false` | Whether to install the PostHog decide stack or not. |
 | decide.ingressEnabled | bool | `false` |  |
 | decide.replicacount | int | `1` | Count of decide pods to run. This setting is ignored if `decide.hpa.enabled` is set to `true`. |
