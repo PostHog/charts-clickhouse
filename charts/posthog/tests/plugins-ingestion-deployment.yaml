@@ -108,6 +108,34 @@ tests:
             name: PLUGIN_SERVER_MODE
             value: ingestion
 
+  - it: sets INGESTION_OVERFLOW_ENABLED to false by default
+    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestion.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: INGESTION_OVERFLOW_ENABLED
+            value: "false"
+
+  - it: can set INGESTION_OVERFLOW_ENABLED to true
+    template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      pluginsIngestion:
+        enabled: true
+        env:
+          - name: INGESTION_OVERFLOW_ENABLED
+            value: "true"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: INGESTION_OVERFLOW_ENABLED
+            value: "true"
+
   - it: sets SENTRY_DSN env var
     template: templates/plugins-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
     set:

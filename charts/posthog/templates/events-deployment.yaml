@@ -152,10 +152,10 @@ spec:
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
         startupProbe:
           httpGet:
-            # For startup, we want to make sure that everything is in place,
-            # including postgres. This does however mean we would not be able to
-            # deploy new releases when we have a postgres outage
-            path: /_readyz
+            # Now that capture's only external dependency is Kafka, let's use the
+            # reduced readiness check as its startupProbe. This means that we can
+            # deploy new configs / versions even when Postgres and Redis are down.
+            path: /_readyz?role=events
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.startupProbe.failureThreshold }}

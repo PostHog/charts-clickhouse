@@ -1,0 +1,58 @@
+should match snapshot data:
+  1: |
+    containers:
+    - env:
+      - name: POSTGRESQL_USERNAME
+        value: postgres
+      - name: POSTGRESQL_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            key: postgresql-password
+            name: RELEASE-NAME-posthog-postgresql
+      - name: POSTGRESQL_DATABASE
+        value: posthog
+      - name: POSTGRESQL_HOST
+        value: null
+      - name: POSTGRESQL_PORT
+        value: "5432"
+      - name: PGBOUNCER_DATABASE
+        value: posthog
+      - name: PGBOUNCER_PORT
+        value: "6543"
+      - name: PGBOUNCER_MAX_CLIENT_CONN
+        value: "1000"
+      - name: PGBOUNCER_POOL_MODE
+        value: transaction
+      - name: PGBOUNCER_IGNORE_STARTUP_PARAMETERS
+        value: extra_float_digits
+      image: bitnami/pgbouncer:1.18.0
+      imagePullPolicy: IfNotPresent
+      lifecycle:
+        preStop:
+          exec:
+            command:
+            - sh
+            - -c
+            - sleep 30 && kill -INT 1 && sleep 31
+      livenessProbe:
+        failureThreshold: 3
+        initialDelaySeconds: 60
+        periodSeconds: 10
+        successThreshold: 1
+        tcpSocket:
+          port: 6543
+        timeoutSeconds: 2
+      name: posthog-pgbouncer-read
+      ports:
+      - containerPort: 6543
+        name: pgbouncer
+      readinessProbe:
+        failureThreshold: 3
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        successThreshold: 1
+        tcpSocket:
+          port: 6543
+        timeoutSeconds: 2
+    serviceAccountName: RELEASE-NAME-posthog
+    terminationGracePeriodSeconds: 65

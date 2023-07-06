@@ -2,7 +2,7 @@ apiVersion: v2
 name: posthog
 description: 🦔 PostHog is developer-friendly, open-source product analytics.
 icon: https://camo.githubusercontent.com/11f72f57f33d7d34807bafc1314844f7a91bcdea/68747470733a2f2f706f7374686f672d7374617469632d66696c65732e73332e75732d656173742d322e616d617a6f6e6177732e636f6d2f576562736974652d4173736574732f6769746875622d636f7665722e706e67
-kubeVersion: ">= 1.23-0 <= 1.25-0"
+kubeVersion: ">= 1.24-0 <= 1.27-0"
 home: https://posthog.com
 sources:
   - https://github.com/PostHog/charts-clickhouse
@@ -11,7 +11,7 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 30.3.4
+version: 30.26.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
@@ -55,7 +55,7 @@ dependencies:
 
   # Monitoring & observability
   - name: grafana
-    version: 6.40.0
+    version: 6.57.3
     repository: https://grafana.github.io/helm-charts
     condition: grafana.enabled
 
@@ -73,6 +73,11 @@ dependencies:
     version: 15.10.4
     repository: https://prometheus-community.github.io/helm-charts
     condition: prometheus.enabled
+
+  - name: prometheus-pushgateway
+    version: 2.1.1
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: prometheus-pushgateway.enabled
 
   - name: prometheus-kafka-exporter
     version: 1.6.0
@@ -95,17 +100,17 @@ dependencies:
     condition: prometheus-statsd-exporter.enabled
 
 maintainers:
-  - name: mariusandra
-    email: marius@posthog.com
   - name: timgl
     email: tim@posthog.com
   - name: jams
     email: james.g@posthog.com
-  - name: macobo
-    email: karl@posthog.com
-  - name: tiina
-    email: tiina@posthog.com
-  - name: guido
-    email: guido@posthog.com
-  - name: yakko
-    email: yakko@posthog.com
+  - name: ellie
+    email: ellie@posthog.com
+  - name: frank
+    email: frank@posthog.com
+  - name: daniel
+    email: daniel@posthog.com
+  - name: xavier
+    email: xavier@posthog.com
+  - name: harry
+    email: harry@posthog.com

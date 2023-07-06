@@ -1,0 +1,103 @@
+suite: PostHog recordings ingestion HPA definition
+templates:
+  - templates/recordings-ingestion-deployment.yaml
+  - templates/secrets.yaml
+
+tests:
+  - it: should be empty if recordingsIngestion.enabled and recordingsIngestion.hpa.enabled are set to false
+    templates:
+      - templates/recordings-ingestion-deployment.yaml
+    set:
+      cloud: private
+      recordingsIngestion.enabled: false
+      recordingsIngestion.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if recordingsIngestion.enabled is true and recordingsIngestion.hpa.enabled is set to false
+    templates:
+      - templates/recordings-ingestion-deployment.yaml
+    set:
+      cloud: private
+      recordingsIngestion.enabled: true
+      recordingsIngestion.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should be not empty if recordingsIngestion.enabled and recordingsIngestion.hpa.enabled are set to true
+    templates:
+      - templates/recordings-ingestion-deployment.yaml
+    set:
+      cloud: private
+      recordingsIngestion.enabled: true
+      recordingsIngestion.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 2
+
+  - it: should have the correct apiVersion
+    templates:
+      - templates/recordings-ingestion-deployment.yaml
+    set:
+      cloud: private
+      recordingsIngestion.enabled: true
+      recordingsIngestion.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isAPIVersion:
+          of: autoscaling/v2
+        documentIndex: 1
+
+  - it: should be the correct kind
+    templates:
+      - templates/recordings-ingestion-deployment.yaml
+    set:
+      cloud: private
+      recordingsIngestion.enabled: true
+      recordingsIngestion.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 2
+      - isKind:
+          of: HorizontalPodAutoscaler
+        documentIndex: 1
+
+  - it: sets hpa spec
+    templates:
+      - templates/recordings-ingestion-deployment.yaml
+    set:
+      cloud: private
+      recordingsIngestion.enabled: true
+      recordingsIngestion:
+        hpa:
+          enabled: true
+          minpods: 2
+          maxpods: 10
+          cputhreshold: 70
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 3600
+    asserts:
+      - equal:
+          path: spec
+          value:
+            scaleTargetRef:
+              apiVersion: apps/v1
+              kind: Deployment
+              name: RELEASE-NAME-posthog-recordings-ingestion
+            minReplicas: 2
+            maxReplicas: 10
+            metrics:
+            - type: Resource
+              resource:
+                name: cpu
+                target:
+                  type: Utilization
+                  averageUtilization: 70
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 3600
+        documentIndex: 1

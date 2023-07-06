@@ -1,0 +1,42 @@
+{{ if .Values.recordingsIngestion.enabled }}
+{{/*
+    Ingests Recordings events, transforming them ready for playback. At the time
+    of writing this is based on the `plugins-server` and the
+    `plugins-deployment` but there is no need for it to be part of plugin
+    server and could be separated in the future.
+ */}}
+{{ include "plugins-deployment" ( dict "root" . "params" .Values.recordingsIngestion "name" "recordings-ingestion" "mode" "recordings-ingestion" ) }}
+
+{{ if .Values.recordingsIngestion.keda.enabled }}
+  {{ if .Values.recordingsIngestion.hpa.enabled }}
+    {{ required "recordingsIngestion.hpa.enabled should be disabled if recordingsIngestion.keda.enabled enabled" nil | quote }}
+  {{ end }}
+
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ template "posthog.fullname" . }}-recordings-ingestion
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    name: {{ template "posthog.fullname" . }}-recordings-ingestion
+{{ toYaml .Values.recordingsIngestion.keda.config | indent 2 }}
+  triggers:
+  {{ if .Values.recordingsIngestion.keda.kafkaTrigger.enabled }}
+  - type: kafka
+    metricType: Value # Absolute lag target, not to be divided by deployment size
+    metadata:
+      bootstrapServers: {{ include "posthog.kafka.brokers" . }}
+      consumerGroup: session-recordings  # TODO: pass this into the consumers as well to avoid them getting out of sync.
+      topic: session_recording_events  # TODO: pass this into the consumers as well to avoid them getting out of sync.
+      allowIdleConsumers: "false"  # Don't scale past the number of partitions
+      offsetResetPolicy: earliest  # If the consumer is new, get all the recordings in the topic.
+      {{- if and (not .Values.kafka.enabled) .Values.externalKafka.tls }}
+      tls: enable
+      {{ end }}
+{{ toYaml .Values.recordingsIngestion.keda.kafkaTrigger.metadata | indent 6 }}
+  {{ end }}
+
+{{ end }}
+{{ end }}

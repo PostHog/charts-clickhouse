@@ -1,0 +1,14 @@
+{{- if and .Values.decide.enabled .Values.decide.pdb.enabled -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "posthog.fullname" . }}-decide
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+spec:
+  maxUnavailable: {{ .Values.decide.pdb.maxUnavailable }}
+  selector:
+    matchLabels:
+      app: {{ template "posthog.fullname" . }}
+      release: "{{ .Release.Name }}"
+      role: decide
+{{- end }}

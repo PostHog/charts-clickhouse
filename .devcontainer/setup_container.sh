@@ -3,7 +3,7 @@
 set -e -o pipefail
 
 # Install k3s
-curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=v1.23 INSTALL_K3S_SKIP_ENABLE=true INSTALL_K3S_SKIP_ENABLE=true sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=v1.24 INSTALL_K3S_SKIP_ENABLE=true INSTALL_K3S_SKIP_ENABLE=true sh -
 
 # Install k9s for easy debugging https://k9scli.io/
 curl -sS https://webinstall.dev/k9s | bash

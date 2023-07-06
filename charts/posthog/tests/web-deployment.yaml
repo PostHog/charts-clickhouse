@@ -134,3 +134,36 @@ tests:
       - equal:
           path: spec.template.spec.imagePullSecrets
           value: [name: secret]
+
+  - it: allows setting pgbouncer read env
+    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      image.pullSecrets: [secret]
+      pgbouncerRead:
+        enabled: true
+        host: beep-boop
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTHOG_POSTGRES_READ_HOST
+            value: RELEASE-NAME-posthog-pgbouncer-read
+
+  - it: do not set postgres read host unless configured
+    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      image.pullSecrets: [secret]
+      pgbouncerRead:
+        host: beep-boop
+    asserts:
+      - hasDocuments:
+          count: 1
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTHOG_POSTGRES_READ_HOST
+            value: beep-boop

@@ -1,0 +1,265 @@
+suite: PostHog recordings deployment definition
+templates:
+  - templates/recordings-deployment.yaml
+  - templates/secrets.yaml
+
+tests:
+  - it: should be empty if recordings.enabled is set to false
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should have the correct apiVersion
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: apps/v1
+
+  - it: should be the correct kind
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Deployment
+
+  - it: should have a pod securityContext
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
+      recordings.podSecurityContext.enabled: true
+      recordings.podSecurityContext.runAsUser: 1001
+      recordings.podSecurityContext.fsGroup: 2000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+
+  - it: should have a container securityContext
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
+      recordings.securityContext.enabled: true
+      recordings.securityContext.runAsUser: 1001
+      recordings.securityContext.allowPrivilegeEscalation: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+
+  - it: should not have a pod securityContext
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
+      recordings.podSecurityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.securityContext
+          value: 1001
+
+  - it: should not have a container securityContext
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
+      recordings.securityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.containers[0].securityContext
+
+  # NOTE: historically we have had the events pod use any resources specified
+  # for web. However, we would like to separate the connection and allow them to
+  # be set independently, while maintaining backwards compat. for installs that
+  # are setting the web resources.
+  - it: should set resources when specified
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      recordings:
+        enabled: true
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 16Gi
+          requests:
+            cpu: 4000m
+            memory: 16Gi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 1000m
+              memory: 16Gi
+            requests:
+              cpu: 4000m
+              memory: 16Gi
+
+  - it: for backwards compat. should use the web resources if specified
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      recordings:
+        enabled: true
+      web:
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 16Gi
+          requests:
+            cpu: 4000m
+            memory: 16Gi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 1000m
+              memory: 16Gi
+            requests:
+              cpu: 4000m
+              memory: 16Gi
+
+  - it: should set resources when specified and override web resource settings
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      recordings:
+        enabled: true
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 16Gi
+          requests:
+            cpu: 4000m
+            memory: 16Gi
+      web:
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 6Gi
+          requests:
+            cpu: 2000m
+            memory: 6Gi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 1000m
+              memory: 16Gi
+            requests:
+              cpu: 4000m
+              memory: 16Gi
+
+  - it: sets SENTRY_DSN env var
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
+      sentryDSN: sentry.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: sentry.endpoint
+
+  - it: uses web.env if recordings.env is empty
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordings.enabled: true
+      env:
+        - name: FIRST
+          value: one
+      web:
+        env:
+          - name: SECOND
+            value: two
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FIRST
+            value: one
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SECOND
+            value: two
+
+  - it: ignores web.env if recordings.env is set
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      env:
+        - name: FIRST
+          value: one
+      web:
+        env:
+          - name: SECOND
+            value: two
+      recordings:
+        enabled: true
+        env:
+          - name: THIRD
+            value: three
+    asserts:
+    - contains:
+        path: spec.template.spec.containers[0].env
+        content:
+          name: FIRST
+          value: one
+    - contains:
+        path: spec.template.spec.containers[0].env
+        content:
+          name: THIRD
+          value: three
+    - notContains:
+        path: spec.template.spec.containers[0].env
+        content:
+          name: SECOND
+          value: two
+
+  - it: allows setting imagePullSecrets
+    template: templates/recordings-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      image.pullSecrets: [secret]
+      recordings.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: secret]

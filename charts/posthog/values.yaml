@@ -47,11 +47,9 @@ env: []
 #   - name: FOO
 #     value: bar
 
-
 migrate:
   # -- Whether to install the PostHog migrate job or not.
   enabled: true
-
 
 events:
   # -- Whether to install the PostHog events stack or not.
@@ -90,6 +88,89 @@ events:
   podSecurityContext:
     enabled: false
 
+recordings:
+  # -- Whether to install the PostHog recordings stack or not.
+  enabled: false
+  # -- Whether to route /s traffic to the recordings stack instead of the events stack
+  ingressEnabled: false
+
+  # -- Count of recordings pods to run. This setting is ignored if `recordings.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the recordings stack.
+    enabled: false
+    # -- CPU threshold percent for the recordings stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the recordings stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the recordings stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the recordings stack, uses `web.env` if empty.
+  env: []
+
+  # -- Container security context for the recordings stack HorizontalPodAutoscaler.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the recordings stack HorizontalPodAutoscaler.
+  podSecurityContext:
+    enabled: false
+
+decide:
+  # -- Whether to install the PostHog decide stack or not.
+  enabled: false
+  ingressEnabled: false
+
+  # -- Count of decide pods to run. This setting is ignored if `decide.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the decide stack.
+    enabled: false
+    # -- CPU threshold percent for the decide stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the decide stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the decide stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  pdb:
+    # -- Whether to create a PodDisruptionBudget for the decide stack.
+    enabled: true
+    # -- Maximum number of decide pods that can be unavailable at any time
+    maxUnavailable: 1
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the decide stack, uses `web.env` if empty.
+  env: []
+
+  # -- Container security context for the decide stack HorizontalPodAutoscaler.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the decide stack HorizontalPodAutoscaler.
+  podSecurityContext:
+    enabled: false
+
 web:
   # -- Whether to install the PostHog web stack or not.
   enabled: true
@@ -124,8 +205,7 @@ web:
     maxUnavailable: 25%
 
   # -- Resource limits for web service.
-  resources:
-    {}
+  resources: {}
 
   # -- Additional env variables to inject into the web stack deployment.
   env:
@@ -226,8 +306,7 @@ worker:
   env: []
 
   # -- Resource limits for the worker stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the worker stack deployment.
   nodeSelector: {}
@@ -278,8 +357,7 @@ plugins:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -321,7 +399,6 @@ plugins:
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
-
 
 pluginsAsync:
   # -- Whether to install the PostHog plugin-server async stack or not.
@@ -356,8 +433,7 @@ pluginsAsync:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -399,7 +475,6 @@ pluginsAsync:
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
-
 
 # -- A deconstructed plugin-server that handles the various workloads of the
 # pipeline separately. For most workloads this will not be needed, rather you
@@ -436,11 +511,18 @@ pluginsIngestion:
     maxUnavailable: 25%
 
   # -- Additional env variables to inject into the plugin-server stack deployment.
-  env: []
+  env:
+    - name: INGESTION_OVERFLOW_ENABLED
+      # -- Whether or not to send events to a "slow-lane" to be consumed
+      # separately by the pluginsIngestionOverflow deployment. When setting this
+      # to true, you must set pluginsIngestionOverflow.enabled to `true``
+      # otherwise some events will not be processed in cases of overflow. This
+      # behaviour is triggered for instance if there are too many events to be
+      # processed in near real time from a single device.
+      value: "false"
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -483,6 +565,341 @@ pluginsIngestion:
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
+pluginsAnalyticsIngestion:
+  # -- Whether to install the PostHog plugin-server analytics ingestion
+  # capability as an individual workload. Note that this is different from the
+  # `pluginsIngestion` setting above specifically in that the deployment
+  # controlled by these settings does not handle session recordings. This
+  # deployment is intended to be a replacement for `pluginsIngestion` and is
+  # intended to be used along side the `recordingsIngestion` deployment.
+  #
+  # The reason these values were added is to be able to scale analytics and
+  # session recordings events indepentently, and to be able to roll this out in
+  # a backwards compatible way.
+  enabled: false
+
+  # -- Count of plugin-server pods to run. This setting is ignored if
+  # `pluginsAnalyticsIngestion.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the plugin-server stack deployment.
+  env:
+    - name: INGESTION_OVERFLOW_ENABLED
+      # -- Whether or not to send events to a "slow-lane" to be consumed
+      # separately by the pluginsIngestionOverflow deployment. When setting this
+      # to true, you must set pluginsIngestionOverflow.enabled to `true``
+      # otherwise some events will not be processed in cases of overflow. This
+      # behaviour is triggered for instance if there are too many events to be
+      # processed in near real time from a single device.
+      value: "false"
+
+  # -- Resource limits for the plugin-server stack deployment.
+  resources: {}
+
+  # -- Node labels for the plugin-server stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations: []
+  # -- Affinity settings for the plugin-server stack deployment.
+  affinity: {}
+
+  # -- Container security context for the plugin-server stack deployment.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the plugin-server stack deployment.
+  podSecurityContext:
+    enabled: false
+
+  livenessProbe:
+    # -- The liveness probe failure threshold
+    failureThreshold: 3
+    # -- The liveness probe initial delay seconds
+    initialDelaySeconds: 10
+    # -- The liveness probe period seconds
+    periodSeconds: 10
+    # -- The liveness probe success threshold
+    successThreshold: 1
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 2
+
+  readinessProbe:
+    # -- The readiness probe failure threshold
+    failureThreshold: 3
+    # -- The readiness probe initial delay seconds
+    initialDelaySeconds: 50
+    # -- The readiness probe period seconds
+    periodSeconds: 30
+    # -- The readiness probe success threshold
+    successThreshold: 1
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
+
+pluginsIngestionOverflow:
+  # -- Whether to install the PostHog plugin-server ingestion overflow
+  # capability as an individual workload.
+  enabled: false
+
+  # -- Count of plugin-server overflow pods to run. This setting is ignored if
+  # `pluginsIngestionOverflow.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
+
+recordingsIngestion:
+  # -- Whether to install the PostHog session recordings ingestion capability as
+  # an individual workload.
+  enabled: false
+
+  # -- Count of plugin-server pods to run. This setting is ignored if `recordingsIngestion.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  keda:
+    # -- Whether to create a ScaleObject to handle scaling of the consumer group
+    # deployment using KEDA. `hpa.enabled` must be false to use this. We will
+    # use the same configuration to connect to Kafka as either the ones
+    # generated by the chart if using `kafka.enabled=true` or the config from
+    # `externalKafka` otherwise.
+    enabled: false
+
+    # -- Config added to spec at the top level of the `ScaledObject`.
+    config:
+      pollingInterval: 30
+
+    # -- KEDA trigger config for type kafka. This will be merged in with other
+    # config such as consumer group id and topic which will be set
+    # automatically.
+    kafkaTrigger:
+      enabled: true
+
+      metadata:
+        # -- At what lag value should KEDA scaling start.
+        lagThreshold: "1000"
+        # -- At what lag value should KEDA scale from 0 replicas.
+        activationLagThreshold: "0"
+        excludePersistentLag: "true" # Don't include stuck partitions in autoscaling decisions.
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the plugin-server stack deployment.
+  env: []
+
+  # -- Resource limits for the plugin-server stack deployment.
+  resources: {}
+
+  # -- Node labels for the plugin-server stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations: []
+  # -- Affinity settings for the plugin-server stack deployment.
+  affinity: {}
+
+  # -- Container security context for the plugin-server stack deployment.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the plugin-server stack deployment.
+  podSecurityContext:
+    enabled: false
+
+  livenessProbe:
+    # -- The liveness probe failure threshold
+    failureThreshold: 3
+    # -- The liveness probe initial delay seconds
+    initialDelaySeconds: 10
+    # -- The liveness probe period seconds
+    periodSeconds: 10
+    # -- The liveness probe success threshold
+    successThreshold: 1
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 2
+
+  readinessProbe:
+    # -- The readiness probe failure threshold
+    failureThreshold: 3
+    # -- The readiness probe initial delay seconds
+    initialDelaySeconds: 50
+    # -- The readiness probe period seconds
+    periodSeconds: 30
+    # -- The readiness probe success threshold
+    successThreshold: 1
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
+
+recordingsBlobIngestion:
+  # -- Whether to install the PostHog session recordings blob ingestion capability as
+  # an individual workload.
+  enabled: false
+
+  # -- Count of plugin-server pods to run. This setting is ignored if `recordingsBlobIngestion.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  volumeMounts:
+    - mountPath: "/session-buffers"
+      name: session-buffers
+
+  volumes:
+    - name: session-buffers
+      ephemeral:
+        volumeClaimTemplate:
+          spec:
+            accessModes: ["ReadWriteOnce"]
+            storageClassName: "gp3"
+            resources:
+              requests:
+                storage: 50Gi
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.
+    enabled: false
+    # -- CPU threshold percent for the plugin-server stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the plugin-server stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the plugin-server stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  keda:
+    # -- Whether to create a ScaleObject to handle scaling of the consumer group
+    # deployment using KEDA. `hpa.enabled` must be false to use this. We will
+    # use the same configuration to connect to Kafka as either the ones
+    # generated by the chart if using `kafka.enabled=true` or the config from
+    # `externalKafka` otherwise.
+    enabled: false
+
+    # -- Config added to spec at the top level of the `ScaledObject`.
+    config:
+      pollingInterval: 30
+
+    # -- KEDA trigger config for type kafka. This will be merged in with other
+    # config such as consumer group id and topic which will be set
+    # automatically.
+    #
+    # TODO: add support for all security protocol config.
+    kafkaTrigger:
+      enabled: true
+
+      metadata:
+        # -- At what lag value should KEDA scaling start.
+        lagThreshold: "1000"
+        # -- At what lag value should KEDA scale from 0 replicas.
+        activationLagThreshold: "0"
+        excludePersistentLag: "true" # Don't include stuck partitions in autoscaling decisions.
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the plugin-server stack deployment.
+  env: []
+
+  # -- Resource limits for the plugin-server stack deployment.
+  resources: {}
+
+  # -- Node labels for the plugin-server stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations: []
+  # -- Affinity settings for the plugin-server stack deployment.
+  affinity: {}
+
+  # -- Container security context for the plugin-server stack deployment.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the plugin-server stack deployment.
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1000
+
+  livenessProbe:
+    # -- The liveness probe failure threshold
+    failureThreshold: 3
+    # -- The liveness probe initial delay seconds
+    initialDelaySeconds: 10
+    # -- The liveness probe period seconds
+    periodSeconds: 10
+    # -- The liveness probe success threshold
+    successThreshold: 1
+    # -- The liveness probe timeout seconds
+    timeoutSeconds: 2
+
+  readinessProbe:
+    # -- The readiness probe failure threshold
+    failureThreshold: 3
+    # -- The readiness probe initial delay seconds
+    initialDelaySeconds: 50
+    # -- The readiness probe period seconds
+    periodSeconds: 30
+    # -- The readiness probe success threshold
+    successThreshold: 1
+    # -- The readiness probe timeout seconds
+    timeoutSeconds: 5
+
+  # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
+  sentryDSN:
 
 pluginsExports:
   # -- Whether to install the PostHog plugin-server exports capability as an
@@ -516,8 +933,7 @@ pluginsExports:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -560,7 +976,6 @@ pluginsExports:
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
-
 pluginsJobs:
   # -- Whether to install the PostHog plugin-server jobs capability as an
   # individual workload.
@@ -593,8 +1008,7 @@ pluginsJobs:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -669,8 +1083,7 @@ pluginsScheduler:
   env: []
 
   # -- Resource limits for the plugin-server stack deployment.
-  resources:
-    {}
+  resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector: {}
@@ -713,6 +1126,60 @@ pluginsScheduler:
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
 
+toolbox:
+  # -- Whether to install the PostHog toolbox deployment
+  enabled: false
+  # -- Additional env variables to inject into the toolbox deployment.
+  env: []
+  # -- Resource limits for the toolbox deployment.
+  resources: {}
+
+temporalPyWorker:
+  # -- Whether to install the PostHog Temporal Python worker stack or not.
+  enabled: false
+
+  # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the worker stack.
+    enabled: false
+    # -- CPU threshold percent for the worker stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the worker stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the worker stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the worker stack deployment.
+  env: []
+
+  # -- Resource limits for the worker stack deployment.
+  resources: {}
+
+  # -- Node labels for the worker stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for the worker stack deployment.
+  tolerations: []
+  # -- Affinity settings for the worker stack deployment.
+  affinity: {}
+
+  # -- Container security context for the worker stack deployment.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the worker stack deployment.
+  podSecurityContext:
+    enabled: false
 
 email:
   # -- SMTP service host.
@@ -733,7 +1200,6 @@ email:
   use_ssl:
   # -- Outbound email sender to use.
   from_email:
-
 
 saml:
   # -- Whether password-based login is disabled and users automatically redirected to SAML login. Requires SAML to be properly configured.
@@ -783,7 +1249,6 @@ saml:
   # attr_email: "email"
   attr_email:
 
-
 service:
   # -- PostHog service name.
   name: posthog
@@ -794,7 +1259,6 @@ service:
 
   # -- PostHog service annotations.
   annotations: {}
-
 
 ###
 ###
@@ -831,7 +1295,6 @@ cert-manager:
       - 1.1.1.1
       - 208.67.222.222
 
-
 ###
 ###
 ### ---- INGRESS ----
@@ -863,7 +1326,6 @@ ingress:
   # -- TLS secret to be used by the ingress.
   secretName:
 
-
 ingress-nginx:
   controller:
     config:
@@ -886,24 +1348,24 @@ ingress-nginx:
       #
       log-format-escape-json: "true"
       log-format-upstream: '{
-          "time": "$time_iso8601",
-          "remote_addr": "$proxy_protocol_addr",
-          "request_id": "$request_id",
-          "correlation_id": "$request_id",
-          "remote_user": "$remote_user",
-          "bytes_sent": $bytes_sent,
-          "request_time": $request_time,
-          "status": $status,
-          "host": "$host",
-          "request_proto": "$server_protocol",
-          "uri": "$uri",
-          "request_query": "$args",
-          "request_length": $request_length,
-          "duration": $request_time,
-          "method": "$request_method",
-          "http_referrer": "$http_referer",
-          "http_user_agent": "$http_user_agent",
-          "http_x_forwarded_for": "$http_x_forwarded_for"
+        "time": "$time_iso8601",
+        "remote_addr": "$proxy_protocol_addr",
+        "request_id": "$request_id",
+        "correlation_id": "$request_id",
+        "remote_user": "$remote_user",
+        "bytes_sent": $bytes_sent,
+        "request_time": $request_time,
+        "status": $status,
+        "host": "$host",
+        "request_proto": "$server_protocol",
+        "uri": "$uri",
+        "request_query": "$args",
+        "request_length": $request_length,
+        "duration": $request_time,
+        "method": "$request_method",
+        "http_referrer": "$http_referer",
+        "http_user_agent": "$http_user_agent",
+        "http_x_forwarded_for": "$http_x_forwarded_for"
         }'
 
     # Pass NGINX generated $request_id as X-Correlation-ID such that downstreams can use it
@@ -923,7 +1385,6 @@ ingress-nginx:
     #     annotations:
     #       prometheus.io/port: "10254"
     #       prometheus.io/scrape: "true"
-
 
 ###
 ###
@@ -965,14 +1426,14 @@ externalPostgresql:
   # -- The PostgreSQL SSL mode to use. See https://www.postgresql.org/docs/current/libpq-ssl.html for more information.
   mode: ""
 
-
 ###
 ###
 ### ---- PGBOUNCER ----
 ###
 ###
-pgbouncer:
-  # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
+
+_pgbouncer: &_pgbouncer 
+# -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
   enabled: true
 
   exporter:
@@ -1073,7 +1534,7 @@ pgbouncer:
 
   image:
     repository: bitnami/pgbouncer
-    tag: 1.17.0
+    tag: 1.18.0
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -1091,6 +1552,17 @@ pgbouncer:
   ## -- PgBouncer pod(s) annotation.
   podAnnotations: {}
 
+pgbouncer:
+  <<: *_pgbouncer
+
+pgbouncerRead:
+  <<: *_pgbouncer
+
+  # Specify the host to use for a read-replica. This would usually be some sort of load balancer,
+  # and otherwise all credentials would be the same
+  host: ""
+
+  enabled: false
 
 ###
 ###
@@ -1159,6 +1631,12 @@ externalRedis:
   # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
 
+externalSessionRecordingRedis: {}
+  # -- External Redis host to use.
+  # host: ""
+  # -- External Redis port to use.
+  # port: 6379
+
 
 ###
 ###
@@ -1200,7 +1678,27 @@ kafka:
 externalKafka:
   # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
   brokers: []
+  # - Use TLS to connect to the external kafka cluster
+  tls: false
 
+externalSessionRecordingKafka:
+  # - External Kafka brokers for session recordings. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
+  brokers: []
+  # - Use TLS to connect to the external kafka cluster
+  tls: false
+
+###
+###
+### ---- TEMPORAL SCHEDULER ----
+### TODO: add support for a self-hosted scheduler in another PR.
+###
+externalTemporal:
+  # - External Temporal scheduler's hostname
+  host: ""
+  # - External Temporal scheduler's port
+  port: 7233
+  # - Namespace to register into
+  namespace: ""
 
 ###
 ###
@@ -1225,9 +1723,10 @@ zookeeper:
     enabled: false
     service:
       annotations:
-        "prometheus.io/scrape": "false" # let's make Prometheus skip the scraping of the
-                                        # service as we already scrape the pods (see below
-                                        # and https://github.com/bitnami/charts/issues/10101)
+        "prometheus.io/scrape":
+          "false" # let's make Prometheus skip the scraping of the
+          # service as we already scrape the pods (see below
+          # and https://github.com/bitnami/charts/issues/10101)
 
   ## -- Zookeeper pod(s) annotation.
   podAnnotations:
@@ -1235,7 +1734,6 @@ zookeeper:
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9141"
-
 
 ###
 ###
@@ -1354,7 +1852,6 @@ clickhouse:
     default/allow_experimental_window_functions: "1"
     default/allow_nondeterministic_mutations: "1"
 
-
   ## -- Clickhouse cluster layout. (Experimental, use at own risk)
   ## For a full list of options, see https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md
   ## section on clusters and layouts.
@@ -1366,7 +1863,8 @@ clickhouse:
   ## You can use this to override settings, for example `prometheus/port: 9363`
   ## For the full list of settings, see:
   ## - https://clickhouse.com/docs/en/operations/settings/settings/
-  settings: {}
+  settings:
+    {}
     # Uncomment those lines if you want to enable the built-in Prometheus HTTP endpoint in ClickHouse.
     # prometheus/endpoint: /metrics
     # prometheus/port: 9363
@@ -1461,7 +1959,6 @@ clickhouse:
         value: "0"
       # Add settings for remote backup storage.
 
-
 ## External clickhouse configuration
 ##
 externalClickhouse:
@@ -1484,7 +1981,6 @@ externalClickhouse:
   # -- Whether to verify TLS connection connecting to ClickHouse
   verify: false
 
-
 cloudwatch:
   # -- Enable cloudwatch container insights to get logs and metrics on AWS
   enabled: false
@@ -1498,7 +1994,6 @@ cloudwatch:
     port: 2020
     readHead: "On"
     readTail: "Off"
-
 
 # Provide affinity for hooks if needed
 hooks:
@@ -1514,7 +2009,6 @@ hooks:
     # -- Hook job resource limits/requests
     resources: {}
 
-
 serviceAccount:
   # -- Configures if a ServiceAccount with this name should be created
   create: true
@@ -1525,7 +2019,6 @@ serviceAccount:
   name:
   # -- Configures annotation for the ServiceAccount
   annotations: {}
-
 
 ###
 ###
@@ -1576,6 +2069,8 @@ externalObjectStorage:
   port:
   # -- Bucket name to use.
   bucket:
+  # -- Region of the bucket (for AWS).
+  region:
   # -- Name of an existing Kubernetes secret object containing the `access_key_id` and `secret_access_key`. The secret has to contain the keys `root-user` and `root-password`).
   existingSecret:
 
@@ -1602,32 +2097,32 @@ grafana:
     datasources.yaml:
       apiVersion: 1
       datasources:
+        # Comment the snippet below if you are running with `prometheus.enabled: false`
+        - name: Prometheus
+          type: prometheus
+          url: http://posthog-prometheus-server
+          access: proxy
+          isDefault: true
+          jsonData:
+            timeInterval:
+              60s # pass this explicitly so it can be used by '$__rate_interval'
+              # https://grafana.com/blog/2020/09/28/new-in-grafana-7.2-__rate_interval-for-prometheus-rate-queries-that-just-work/
 
-      # Comment the snippet below if you are running with `prometheus.enabled: false`
-      - name: Prometheus
-        type: prometheus
-        url: http://posthog-prometheus-server
-        access: proxy
-        isDefault: true
-        jsonData:
-          timeInterval: 60s # pass this explicitly so it can be used by '$__rate_interval'
-                            # https://grafana.com/blog/2020/09/28/new-in-grafana-7.2-__rate_interval-for-prometheus-rate-queries-that-just-work/
+        # Comment the snippet below if you are running with `loki.enabled: false`
+        - name: Loki
+          type: loki
+          url: http://posthog-loki-read:3100
+          access: proxy
+          isDefault: false
 
-      # Comment the snippet below if you are running with `loki.enabled: false`
-      - name: Loki
-        type: loki
-        url: http://posthog-loki-read:3100
-        access: proxy
-        isDefault: false
-
-      # Comment the snippet below if you are running with `prometheus.alertmanager.enabled: false`
-      - name: Alertmanager
-        type: alertmanager
-        url: http://posthog-prometheus-alertmanager
-        access: proxy
-        isDefault: false
-        jsonData:
-          implementation: prometheus
+        # Comment the snippet below if you are running with `prometheus.alertmanager.enabled: false`
+        - name: Alertmanager
+          type: alertmanager
+          url: http://posthog-prometheus-alertmanager
+          access: proxy
+          isDefault: false
+          jsonData:
+            implementation: prometheus
 
 ###
 ###
@@ -1650,7 +2145,8 @@ loki:
       replication_factor: 1
 
     ## -- Pod annotations.
-    podAnnotations: {}
+    podAnnotations:
+      {}
       # Uncomment those lines if you want Prometheus server to scrape metrics.
       # prometheus.io/scrape: "true"
       # prometheus.io/path: /metrics
@@ -1778,7 +2274,8 @@ promtail:
                   format: RFC3339Nano
 
   ## -- Pod annotations.
-  podAnnotations: {}
+  podAnnotations:
+    {}
     # Uncomment those lines if you want Prometheus server to scrape metrics.
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
@@ -1796,7 +2293,8 @@ prometheus:
   alertmanager:
     # -- Whether to install Prometheus AlertManager or not.
     enabled: false
-    podAnnotations: {}
+    podAnnotations:
+      {}
       # Uncomment those lines if you want Prometheus server to scrape metrics.
       # prometheus.io/scrape: "true"
       # prometheus.io/path: /metrics
@@ -1823,10 +2321,87 @@ prometheus:
       groups:
         - name: PostHog
           rules:
+            - alert: IngestionOverflowProduction
+              expr: |
+                sum(
+                  delta(
+                    kafka_topic_partition_current_offset{
+                      topic="events_plugin_ingestion_overflow"
+                    }[1m]
+                  )
+                ) > 0
+              for: 10m
+              labels:
+                rotation: common
+                severity: warning
+              annotations:
+                summary: |
+                  Ingestion has pushed events to the overflow topic for
+                  10 minutes.
+                description: Due to some scenario such as many events from a
+                  single distinct_id, we have pushed some events to the
+                  ingestion overflow topic so we can keed up with events from
+                  other users. Check partition stats for how many events we've
+                  received for each distinct_id or team_id, or look in
+                  ClickHouse for any recent trends for distinct_ids.
+
+            - alert: IngestionOverflowConsumerLag
+              expr: |
+                sum(
+                  delta(
+                    kafka_consumergroup_lag{
+                      topic='events_plugin_ingestion_overflow', consumergroup="clickhouse-ingestion-overflow"
+                    }[2m]
+                  )
+                ) > 0
+              for: 10m
+              labels:
+                rotation: common
+                severity: warning
+              annotations:
+                summary: |
+                  Ingestion lag on the Overflow topic has been increasing over the past 10 minutes.
+                description: |
+                  Lag on the ingestion topic is increasing. Check that the
+                  consumer for the topic is running. Also check the production
+                  rate to the topic to see if there is an unusually high volume
+                  going to it.
+
+            - alert: DjangoErrorRate
+              expr: |
+                sum by (role) (increase(django_http_responses_total_by_status_view_method_total{status=~"^5.*"}[5m])) /
+                sum by (role) (increase(django_http_responses_total_by_status_view_method_total[5m])) > 0.02
+              for: 5m
+              labels:
+                rotation: common
+                severity: critical
+              annotations:
+                summary: Django error rate exceeds 2% on role {{ $labels.role }}
+                description: |
+                  Django reports a high error rate (5xx status codes) on role {{ $labels.role }}.
+                  Check the "Exceptions" widget in the "HTTP by application endpoint" dashboard and the pod logs to
+                  identify the issue. Either a dependency is unhealthy, or a recent code change triggered a bug and
+                  needs to be rolled-back.
+
+            - alert: End2EndIngestionLag
+              expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 1200
+              for: 5m
+              labels:
+                rotation: common
+                severity: critical
+              annotations:
+                summary: End-to-end analytics event ingestion lag exceeds 20 minutes for more than 5 minutes.
+                description: |
+                  Our end-to-end probe measured an ingestion lag higher than 20 minutes for scenario {{ $labels.scenario }}.
+                  Check the "Kafka (cluster overview)" dashboard to identify what topics and partitions are lagging and
+                  follow the https://posthog.com/docs/runbook/services/plugin-server/ingestion-lag runbook for recovery
+                  steps.
+
             - alert: ExportsConsumerDelayed
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="async_handlers",topic="clickhouse_events_json"}))) > 300000
               for: 5m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Exports and WebHooks have delayed by more than 5 minutes for more than 5 minutes.
@@ -1834,8 +2409,9 @@ prometheus:
 
             - alert: ScheduledTasksConsumerDelayed
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="scheduled-tasks-runner",topic="scheduled_tasks"}))) > 300000
-              for: 5m
+              for: 10m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: RunEveryX tasks have been delayed by more than 5 minutes for more than 5 minutes.
@@ -1843,17 +2419,23 @@ prometheus:
 
             - alert: JobsConsumerDelayed
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="jobs-inserter",topic="jobs"}))) > 300000
-              for: 5m
+              for: 10m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Jobs scheduled via Apps jobs have been delayed by more than 5 minutes for more than 5 minutes.
-                description: "Latest timestamp registered as processed on topic 'jobs', consumer group 'jobs-inserter' more then 5 minutes old"
+                runbook_url: https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
+                description: |
+                  Latest timestamp registered as processed on topic 'jobs', consumer group 'jobs-inserter' more then 5 minutes old.
+                  Check https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
+                  for more context and steps to recovery.
 
             - alert: IngestionConsumerDelayed
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="ingestion",topic="events_plugin_ingestion"}))) > 300000
               for: 5m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Ingestion for analytics events has been delayed by more than 5 minutes for more than 5 minutes.
@@ -1883,6 +2465,7 @@ prometheus:
               expr: (time() * 1000 - (max(latest_processed_timestamp_ms{groupId="session-recordings",topic="session_recording_events"}))) > 300000
               for: 5m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Ingestion for session recording and web performance events has been delayed by more than 5 minutes for more than 5 minutes.
@@ -1892,10 +2475,67 @@ prometheus:
               expr: sum(delta(kafka_topic_partition_current_offset{topic="session_recording_events_dlq"}[5m])) > 0
               for: 1m
               labels:
+                rotation: common
                 severity: critical
               annotations:
                 summary: Failed to process some session recording events and have been sent to the dead letter queue for review.
                 description: "The `session_recording_events_dlq` topic offset has increased over the past 5 minutes."
+
+            - alert: GraphileJobExecutionLag
+              expr: (max by(task_identifier) (posthog_celery_graphile_lag_seconds{task_identifier!="bufferJob"})) > 900
+              for: 5m
+              labels:
+                rotation: common
+                severity: critical
+              annotations:
+                summary: Graphile jobs execution lag exceeds 15 minutes for more than 5 minutes.
+                runbook_url: https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
+                description: |
+                  Jobs of type {{ $labels.task_identifier }} have been sitting in the Graphile execution queue for more
+                  than 5 minutes, possibly delaying apps and/or exports.
+                  Check https://github.com/PostHog/product-internal/blob/main/infrastructure/runbooks/pipeline/graphile.md
+                  for more context and steps to recovery.
+
+            - alert: CeleryQueueDepth
+              expr: (max (posthog_celery_queue_depth)) > 1000
+              for: 10m
+              labels:
+                rotation: common
+                severity: critical
+              annotations:
+                summary: Celery job execution delayed for more than 10 minutes.
+                description: |
+                  The Celery jobs queue (stored in Redis) is filling up faster than it is consumed. This impacts our
+                  monitoring, as some paging monitors depend on metrics exported by Celery jobs.
+                    - make sure posthog-worker pods are healthy and check their logs
+                    - look for recent code changes to posthog/celery.py and rollback if needed
+                    - check the health of Postgres and Clickhouse, many jobs query them and could hang if these
+                      stores get slow
+
+            - alert: KafkaDiskCritical
+              expr: min by (instance) (aws_msk_node_filesystem_free_bytes{mountpoint="/kafka/datalogs"}) < 536870912000
+              for: 2m
+              labels:
+                severity: critical
+                rotation: common
+              annotations:
+                summary: Less than 500GB free on Kafka broker(s)
+                description: |
+                  Kafka disks are getting full and should be upscaled before we lose new events.
+                  We should upscale the disks, or (as a last-ditch option) lower the data retention
+                  to free up disk space.
+
+            - alert: KafkaDiskCapacityPlanning
+              expr: min by (instance) (aws_msk_node_filesystem_free_bytes{mountpoint="/kafka/datalogs"}) < 1036870912000
+              for: 2m
+              labels:
+                severity: warning
+                rotation: infra
+              annotations:
+                summary: Less than 1TB free on Kafka broker(s)
+                description: |
+                  Kafka disks are getting full and should be upscaled before we lose new events.
+                  If not handled, the KafkaDiskCritical will page the common rotation at 500GB.
 
         - name: Kubernetes # via kube-state-metrics
           rules:
@@ -2202,7 +2842,6 @@ prometheus:
                 summary: Kubernetes API server latency (instance {{ $labels.instance }})
                 description: "Kubernetes API server has a 99th percentile latency of {{ $value }} seconds for {{ $labels.verb }} {{ $labels.resource }}."
 
-
         - name: Loki # via embedded exporter
           rules:
             - alert: LokiProcessTooManyRestarts
@@ -2230,7 +2869,7 @@ prometheus:
                 severity: warning
               annotations:
                 summary: Loki request panic (instance {{ $labels.instance }})
-                description: "The {{ $labels.job }} is experiencing {{ printf \"%.2f\" $value }}% increase of panics"
+                description: 'The {{ $labels.job }} is experiencing {{ printf "%.2f" $value }}% increase of panics'
 
             - alert: LokiRequestLatency
               expr: (histogram_quantile(0.99, sum(rate(loki_request_duration_seconds_bucket{route!~"(?i).*tail.*"}[5m])) by (le))) > 3
@@ -2239,8 +2878,7 @@ prometheus:
                 severity: warning
               annotations:
                 summary: Loki request latency (instance {{ $labels.instance }})
-                description: "The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf \"%.2f\" $value }}s 99th percentile latency"
-
+                description: 'The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}s 99th percentile latency'
 
         - name: Promtail # via embedded exporter
           rules:
@@ -2251,7 +2889,7 @@ prometheus:
                 severity: critical
               annotations:
                 summary: Promtail request errors (instance {{ $labels.instance }})
-                description: "The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf \"%.2f\" $value }}% errors."
+                description: 'The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}% errors.'
 
             - alert: PromtailRequestLatency
               expr: histogram_quantile(0.99, sum(rate(promtail_request_duration_seconds_bucket[5m])) by (le)) > 1
@@ -2260,8 +2898,7 @@ prometheus:
                 severity: critical
               annotations:
                 summary: Promtail request latency (instance {{ $labels.instance }})
-                description: "The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf \"%.2f\" $value }}s 99th percentile latency."
-
+                description: 'The {{ $labels.job }} {{ $labels.route }} is experiencing {{ printf "%.2f" $value }}s 99th percentile latency.'
 
         - name: Prometheus # via embedded exporter
           rules:
@@ -2610,6 +3247,19 @@ prometheus:
                 summary: Redis rejected connections (instance {{ $labels.instance }})
                 description: "Some connections to Redis has been rejected"
 
+###
+###
+### ---- prometheus-pushgateway ----
+###
+###
+prometheus-pushgateway:
+  # -- Whether to install the `prometheus-pushgateway` or not.
+  enabled: false
+  # -- Map of annotations to add to the pods.
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9091"
 
 ###
 ###
@@ -2631,7 +3281,6 @@ externalStatsd:
   # -- External Statsd port to use.
   port:
 
-
 ###
 ###
 ### ---- prometheus-kafka-exporter ----
@@ -2650,7 +3299,6 @@ prometheus-kafka-exporter:
   # -- Specify the target Kafka brokers to monitor.
   kafkaServer:
     - posthog-posthog-kafka:9092
-
 
 ###
 ###
@@ -2676,7 +3324,6 @@ prometheus-postgres-exporter:
         name: posthog-posthog-postgresql
         key: postgresql-password
 
-
 ###
 ###
 ### ---- prometheus-redis-exporter ----
@@ -2694,7 +3341,6 @@ prometheus-redis-exporter:
 
   # -- Specify the target Redis instance to monitor.
   redisAddress: redis://posthog-posthog-redis-master:6379
-
 
 ###
 ###
@@ -2716,7 +3362,6 @@ busybox:
   ##   - myRegistryKeySecretName
   ##
   pullSecrets: []
-
 
 # -- Kubernetes cluster domain name
 clusterDomain: cluster.local

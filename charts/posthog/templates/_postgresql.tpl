@@ -29,6 +29,10 @@
 - name: POSTHOG_POSTGRES_SSL_MODE
   value: {{ .Values.externalPostgresql.mode | quote }}
 {{- end }}
+{{ if .Values.pgbouncerRead.enabled -}}
+- name: POSTHOG_POSTGRES_READ_HOST
+  value: {{ template "posthog.pgbouncer-read.host" . }}
+{{ end -}}
 {{- end }}
 
 {{/* ENV used by migrate job for connecting to postgresql */}}

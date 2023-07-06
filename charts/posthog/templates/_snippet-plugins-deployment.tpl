@@ -84,6 +84,10 @@ spec:
       {{- if .params.podSecurityContext.enabled }}
       securityContext: {{- omit .params.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
+      {{- if .params.volumes }}
+      volumes:
+        {{- toYaml .params.volumes | nindent 10 }}
+      {{- end }}      
 
       containers:
       - name: {{ .root.Chart.Name }}-{{ .name }}
@@ -96,6 +100,11 @@ spec:
         # Expose the port on which the healtchheck endpoint listens
         - containerPort: 6738
         env:
+        {{ if .params.volumeMounts }}
+        - name: SESSION_RECORDING_LOCAL_DIRECTORY
+          value: {{ (first .params.volumeMounts).mountPath }}
+        {{ end }}
+
         {{ if .mode }}
         - name: PLUGIN_SERVER_MODE
           value: {{ .mode }}
@@ -112,6 +121,9 @@ spec:
 
         # Redis env variables
         {{- include "snippet.redis-env" .root | nindent 8 }}
+
+        # Session Recording Redis env variables
+        {{- include "snippet.session-recording-redis-env" .root | nindent 8 }}
 
         # statsd env variables
         {{- include "snippet.statsd-env" .root | nindent 8 }}
@@ -151,6 +163,10 @@ spec:
         securityContext:
           {{- omit .params.securityContext "enabled" | toYaml | nindent 12 }}
         {{- end }}
+        {{- if .params.volumeMounts }}
+        volumeMounts:
+          {{- toYaml .params.volumeMounts | nindent 12 }}
+        {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" .root | indent 8 }}
       {{- include "_snippet-initContainers-wait-for-migrations" .root | indent 8 }}
@@ -158,7 +174,7 @@ spec:
 ---
 
 {{ if .params.hpa.enabled }}
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "posthog.fullname" .root }}-{{ .name }}

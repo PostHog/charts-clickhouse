@@ -1,0 +1,25 @@
+{{- if and .Values.temporalPyWorker.enabled .Values.temporalPyWorker.hpa.enabled -}}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "posthog.fullname" . }}-worker
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    apiVersion: apps/v1
+    name: {{ template "posthog.fullname" . }}-temporal-py-worker
+  minReplicas: {{ .Values.temporalPyWorker.hpa.minpods }}
+  maxReplicas: {{ .Values.temporalPyWorker.hpa.maxpods }}
+  metrics:
+  {{- with .Values.temporalPyWorker.hpa.cputhreshold }}
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ . }}
+  {{- end }}
+  behavior: 
+    {{ toYaml .Values.temporalPyWorker.hpa.behavior | nindent 4 }}
+{{- end }}

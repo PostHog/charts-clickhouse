@@ -14,5 +14,12 @@
       name: {{ include "posthog.redis.secretName" . }}
       key: {{ include "posthog.redis.secretPasswordKey" . }}
 {{- end }}
+{{- end }}
 
+{{- define "snippet.session-recording-redis-env" }}
+- name: POSTHOG_SESSION_RECORDING_REDIS_HOST
+  value: {{ include "posthog.sessionRecordingRedis.host" . }}
+
+- name: POSTHOG_SESSION_RECORDING_REDIS_PORT
+  value: {{ include "posthog.sessionRecordingRedis.port" . }}
 {{- end }}

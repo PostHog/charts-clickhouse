@@ -22,6 +22,6 @@ jobs:
         uses: EndBug/add-and-commit@v7
         with:
             author_name: Max Hedgehog
-            author_email: max.hedgehog@posthog.com
+            author_email: 127861667+max-hedgehog[bot]@users.noreply.github.com
             branch: ${{ github.event.pull_request.base.ref }}
             message: 'Regenerate chart ALL_VALUES.md'

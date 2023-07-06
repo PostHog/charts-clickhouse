@@ -1,0 +1,78 @@
+suite: PostHog pgbouncer HPA definition
+templates:
+  - templates/pgbouncer-read-hpa.yaml
+
+tests:
+  - it: should be empty by default
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be empty if pgbouncerRead.enabled is true and pgbouncerRead.hpa.enabled is set to false
+    set:
+      pgbouncerRead.enabled: true
+      pgbouncerRead.hpa.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should be not empty if pgbouncerRead.enabled and pgbouncerRead.hpa.enabled are set to true
+    set:
+      pgbouncerRead.enabled: true
+      pgbouncerRead.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should have the correct apiVersion
+    set:
+      pgbouncerRead.enabled: true
+      pgbouncerRead.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: autoscaling/v2
+
+  - it: should be the correct kind
+    set:
+      pgbouncerRead.enabled: true
+      pgbouncerRead.hpa.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: HorizontalPodAutoscaler
+
+  - it: sets hpa spec
+    set:
+      pgbouncerRead:
+        enabled: true
+        hpa:
+          enabled: true
+          minpods: 2
+          maxpods: 10
+          cputhreshold: 70
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 3600
+    asserts:
+      - equal:
+          path: spec
+          value:
+            scaleTargetRef:
+              apiVersion: apps/v1
+              kind: Deployment
+              name: RELEASE-NAME-posthog-pgbouncer-read
+            minReplicas: 2
+            maxReplicas: 10
+            metrics:
+            - type: Resource
+              resource:
+                name: cpu
+                target:
+                  type: Utilization
+                  averageUtilization: 70
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 3600

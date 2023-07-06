@@ -1,0 +1,242 @@
+suite: PostHog recordings ingestion blob deployment definition
+templates:
+  - templates/recordings-blob-ingestion-deployment.yaml
+  - templates/secrets.yaml
+
+tests:
+  - it: should be empty if recordingsBlobIngestion.enabled is set to false
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  - it: should have the correct apiVersion
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isAPIVersion:
+          of: apps/v1
+
+  - it: should be the correct kind
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isKind:
+          of: Deployment
+
+  - it: should have a pod securityContext
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+      recordingsBlobIngestion.podSecurityContext.enabled: true
+      recordingsBlobIngestion.podSecurityContext.runAsUser: 1001
+      recordingsBlobIngestion.podSecurityContext.fsGroup: 2000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+
+  - it: should have a container securityContext
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+      recordingsBlobIngestion.securityContext.enabled: true
+      recordingsBlobIngestion.securityContext.runAsUser: 1001
+      recordingsBlobIngestion.securityContext.allowPrivilegeEscalation: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 1001
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation
+          value: false
+
+  - it: should not have a pod securityContext
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+      recordingsBlobIngestion.podSecurityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.securityContext
+          value: 1001
+
+  - it: should not have a container securityContext
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+      recordingsBlobIngestion.securityContext.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.containers[0].securityContext
+
+  - it: sets PLUGIN_SERVER_MODE
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: PLUGIN_SERVER_MODE
+            value: recordings-blob-ingestion
+
+  - it: sets SENTRY_DSN env var
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+      sentryDSN: main.endpoint
+      recordingsBlobIngestion.sentryDSN: recordingsBlobIngestion.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: recordingsBlobIngestion.endpoint
+
+  - it: sets SENTRY_DSN env var with default
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+      sentryDSN: main.endpoint
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SENTRY_DSN
+            value: main.endpoint
+
+  - it: allows setting imagePullSecrets
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      recordingsBlobIngestion.enabled: true
+      image.pullSecrets: [secret]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value: [name: secret]
+
+
+  - it: mounts a volume and sets the appropriate env var
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].volumeMounts
+          content:
+            mountPath: "/session-buffers"
+            name: session-buffers
+      - contains:
+          path: spec.template.spec.volumes
+          content:
+            name: session-buffers
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: [ "ReadWriteOnce" ]
+                  storageClassName: "gp3"
+                  resources:
+                    requests:
+                      storage: 50Gi
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SESSION_RECORDING_LOCAL_DIRECTORY
+            value: /session-buffers
+
+  - it: doesn't mount a volume if not set
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+      recordingsBlobIngestion.volumes: []
+      recordingsBlobIngestion.volumeMounts: []
+    asserts:
+      - isEmpty:
+          path: spec.template.spec.containers[0].volumeMounts
+      - isEmpty:
+          path: spec.template.spec.volumes
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SESSION_RECORDING_LOCAL_DIRECTORY
+
+  - it: sets dedicated external redis if set
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+      externalSessionRecordingRedis.host: "dedicated-redis-host.com"
+      externalSessionRecordingRedis.port: 1234
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTHOG_SESSION_RECORDING_REDIS_HOST
+            value: "dedicated-redis-host.com"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTHOG_SESSION_RECORDING_REDIS_PORT
+            value: "1234"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTHOG_REDIS_HOST
+            value: RELEASE-NAME-posthog-redis-master
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTHOG_REDIS_PORT
+            value: "6379"
+      
+  - it: uses default redis if not set
+    template: templates/recordings-blob-ingestion-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local # TODO: remove once secrets.yaml will be fixed/removed
+      recordingsBlobIngestion.enabled: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTHOG_SESSION_RECORDING_REDIS_HOST
+            value: RELEASE-NAME-posthog-redis-master
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: POSTHOG_SESSION_RECORDING_REDIS_PORT
+            value: "6379"

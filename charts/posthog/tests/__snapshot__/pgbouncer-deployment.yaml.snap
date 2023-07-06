@@ -25,7 +25,7 @@ should match snapshot data:
         value: transaction
       - name: PGBOUNCER_IGNORE_STARTUP_PARAMETERS
         value: extra_float_digits
-      image: bitnami/pgbouncer:1.17.0
+      image: bitnami/pgbouncer:1.18.0
       imagePullPolicy: IfNotPresent
       lifecycle:
         preStop:

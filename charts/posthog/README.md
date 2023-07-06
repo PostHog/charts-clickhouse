@@ -20,7 +20,7 @@ This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [
 
 
 ## Prerequisites
-- Kubernetes >=1.23 <= 1.25
+- Kubernetes >=1.24 <= 1.26
 - Helm >= 3.7.0
 
 ## Installation
@@ -40,7 +40,7 @@ This repo uses several types of test suite targeting different goals:
 - **integration tests**: to verify if applying the rendered Helm templates against a Kubernetes target cluster gives us the stack and PostHog installation we expect
 
 #### Lint tests
-We use `helm lint` that can be invoked via: `helm lint --strict --set “cloud=local” charts/posthog`
+We use `helm lint` that can be invoked via: `helm lint --strict --set "cloud=local" charts/posthog`
 
 #### Unit tests
 In order to run the test suite, you need to install the `helm-unittest` plugin. You can do that by running: `helm plugin install https://github.com/quintush/helm-unittest --version 0.2.8`
