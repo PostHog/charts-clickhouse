@@ -2,7 +2,7 @@
 
 **As of May 2023, [PostHog no longer support Kubernetes deployments](https://posthog.com/blog/sunsetting-helm-support-posthog).** This decision doesn't impact open source ("Hobby") users on [Docker Compose deployments](https://posthog.com/docs/self-host). 
 
-### What's next?
+## What's next?
 
 To continue using PostHog, you have two options:
 
