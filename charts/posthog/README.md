@@ -1,8 +1,22 @@
-# ⚠️ Follow [these instructions](https://posthog.com/docs/self-host) instead of modifying or running this chart
+# ⚠️ PostHog no longer supports Kubernetes deployments. ⚠️ 
 
-If you make changes to these helm charts, however simple, we won't be able to support you. Most people who modify or use a non-standard way of running this chart run into issues. We **strongly recommend** following the [official instructions](https://posthog.com/docs/self-host) to deploy PostHog.
+**As of May 2023, [PostHog no longer support Kubernetes deployments](https://posthog.com/blog/sunsetting-helm-support-posthog).** This decision doesn't impact open source ("Hobby") users on [Docker Compose deployments](https://posthog.com/docs/self-host). 
 
-If there are changes you need, please raise a PR or [reach out on Slack](https://posthog.com/slack) so we can help you.
+## What's next?
+
+To continue using PostHog, you have two options:
+
+### Using PostHog Cloud (Recommended)
+We strongly encourage users to move to PostHog Cloud wherever possible so that they always have the latest features and the full benefit of official support. It usually works out much cheaper, too. 
+
+PostHog Cloud is SOC 2 compliant and available with either EU or US hosting options. If you already have a self-hosted instance, you can [migrate to PostHog Cloud](https://posthog.com/docs/migrate/migrate-between-posthog-instances). Alternatively, you can choose to [migrate to a open source deployment](https://posthog.com/docs/self-host/open-source/deployment) instead. 
+
+### Self-hosting PostHog
+If you want to continue using a self-hosted PostHog deployment then you do so without support. 
+
+We **strongly recommend** following the [official instructions](https://posthog.com/docs/self-host) to deploy PostHog if you must self-host. Most people who modify or use a non-standard way of running this chart run into issues, which we are unable to help with. 
+
+Security updates will continue until May 2024.
 
 # PostHog Helm Chart
 
@@ -17,8 +31,6 @@ If there are changes you need, please raise a PR or [reach out on Slack](https:/
 
 This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
-
-
 ## Prerequisites
 - Kubernetes >=1.24 <= 1.26
 - Helm >= 3.7.0
@@ -27,10 +39,10 @@ This Helm chart bootstraps a [PostHog](https://posthog.com/) installation on a [
 Deployment instructions for the major cloud service providers and on-premise deploys are available [here](https://posthog.com/docs/self-host).
 
 ## Changelog
-We document detailed changes for each major release in the [upgrade notes](https://posthog.com/docs/self-host/deploy/upgrade-notes).
+We documented detailed changes for each major release in our [upgrade notes](https://posthog.com/docs/self-host/deploy/upgrade-notes).
 
 ## Development
-The main purpose of this repository is to continue evolving our Helm chart, making it faster and easier to use. We welcome all contributions to the community and are excited to welcome you aboard.
+We welcome all contributions to the community, but no longer offer any support. 
 
 ### Testing
 This repo uses several types of test suite targeting different goals:
