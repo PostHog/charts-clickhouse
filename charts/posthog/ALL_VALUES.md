@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.26.0](https://img.shields.io/badge/Version-30.26.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.27.0](https://img.shields.io/badge/Version-30.27.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -390,6 +390,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | toolbox.resources | object | `{}` | Resource limits for the toolbox deployment. |
 | temporalPyWorker.enabled | bool | `false` | Whether to install the PostHog Temporal Python worker stack or not. |
 | temporalPyWorker.replicacount | int | `1` | Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`. |
+| temporalPyWorker.terminationGracePeriodSeconds | int | `310` | The grace period for the worker pods. This is slightly larger than the default 5 minutes of the worker by default. |
 | temporalPyWorker.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the worker stack. |
 | temporalPyWorker.hpa.cputhreshold | int | `60` | CPU threshold percent for the worker stack HorizontalPodAutoscaler. |
 | temporalPyWorker.hpa.minpods | int | `1` | Min pods for the worker stack HorizontalPodAutoscaler. |
