@@ -33,6 +33,7 @@ spec:
 {{ toYaml .Values.temporalPyWorker.podLabels | indent 8 }}
         {{- end }}
     spec:
+      terminationGracePeriodSeconds: {{ .Values.temporalPyWorker.terminationGracePeriodSeconds }}
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
 
       {{- if .Values.temporalPyWorker.affinity }}
