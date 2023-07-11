@@ -16,10 +16,6 @@ spec:
   {{- end }}
 
   template:
-    # We set the temporal worker grace period to 5 minutes, so we give a little
-    # more here
-    terminationGracePeriodSeconds: {{ .Values.temporalPyWorker.terminationGracePeriodSeconds }}
-
     metadata:
       annotations:
         checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
@@ -37,6 +33,7 @@ spec:
 {{ toYaml .Values.temporalPyWorker.podLabels | indent 8 }}
         {{- end }}
     spec:
+      terminationGracePeriodSeconds: {{ .Values.temporalPyWorker.terminationGracePeriodSeconds }}
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
 
       {{- if .Values.temporalPyWorker.affinity }}
