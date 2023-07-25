@@ -16,6 +16,8 @@ spec:
           labels:
             job: clickhouse-backup
         spec:
+          serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+          
           {{- if or .Values.busybox.pullSecrets .Values.clickhouse.backup.image.pullSecrets }}
           imagePullSecrets:
             {{- if .Values.busybox.pullSecrets }}
