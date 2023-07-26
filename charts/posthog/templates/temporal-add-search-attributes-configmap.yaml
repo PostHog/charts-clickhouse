@@ -1,0 +1,8 @@
+{{- if .Values.temporalAddSearchAttributes.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: temporal-add-search-attributes-script
+data:
+{{ (.Files.Glob "scripts/temporal_add_search_attributes.sh").AsConfig | indent 2 }}
+{{- end }}

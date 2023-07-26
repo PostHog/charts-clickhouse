@@ -1185,6 +1185,19 @@ temporalPyWorker:
   podSecurityContext:
     enabled: false
 
+temporalAddSearchAttributes:
+  # -- Whether to install the Temporal Add Search Attributes job or not
+  enabled: false
+
+image:
+    # -- Temporal Admin Tools image repository.
+    repository: temporalio/admin-tools
+    # -- Temporal Admin Tools image tag.
+    tag: "1.20.0"
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+
 email:
   # -- SMTP service host.
   host:
@@ -1432,7 +1445,7 @@ externalPostgresql:
 ###
 ###
 
-_pgbouncer: &_pgbouncer 
+_pgbouncer: &_pgbouncer
 # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
   enabled: true
 

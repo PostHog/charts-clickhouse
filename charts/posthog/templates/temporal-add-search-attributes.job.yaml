@@ -1,0 +1,88 @@
+{{- if .Values.temporalAddSearchAttributes.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-temporal-add-search-attributes-%s" .Release.Name (now | date "2006-01-02-15-04-05") }}
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      name: {{ printf "%s-temporal-add-search-attributes-%s" .Release.Name (now | date "2006-01-02-15-04-05") }}
+      annotations:
+        checksum/secrets.yaml: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+      labels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        {{- if (eq (default .Values.image.tag "none") "latest") }}
+        date: "{{ now | unixEpoch }}"
+        {{- end }}
+        {{- if .Values.temporalAddSearchAttributes.podLabels }}
+{{ toYaml .Values.temporalAddSearchAttributes.podLabels | indent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.hooks.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+
+      {{- with .Values.hooks.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+
+      {{- with .Values.hooks.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+
+      restartPolicy: Never
+
+      {{- if .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.imagePullSecrets | indent 8 }}
+      {{- end }}
+
+      containers:
+      - name: temporal-add-search-attributes-job
+        image: {{ .Values.temporalAddSearchAttributes.image.pullPolicy }}
+        imagePullPolicy: {{ .Values.temporalAddSearchAttributes.pullPolicy }}
+        command: ["/bin/bash", "-c", "/scripts/temporal_add_search_attributes.sh"]
+        volumeMounts:
+        - name: temporal-add-search-attributes-script
+          mountPath: /scripts/temporal_add_search_attributes.sh
+          subPath: temporal_add_search_attributes.sh
+        env:
+        # Common Configs
+        {{- include "snippet.temporal-env" . | indent 8 }}
+        {{- include "snippet.kafka-env" . | indent 8 }}
+        {{- include "snippet.objectstorage-env" . | indent 8 }}
+        {{- include "snippet.redis-env" . | indent 8 }}
+        {{- include "snippet.statsd-env" . | indent 8 }}
+        {{- if index .Values "prometheus-pushgateway" "enabled" }}
+        - name: PROM_PUSHGATEWAY_ADDRESS
+          value: "posthog-prometheus-pushgateway:9091"
+        {{- end }}
+
+        - name: PRIMARY_DB
+          value: clickhouse
+        {{- include "snippet.posthog-env" . | indent 8 }}
+        {{- include "snippet.posthog-sentry-env" . | indent 8 }}
+        {{- include "snippet.postgresql-env" . | nindent 8 }}
+        {{- include "snippet.clickhouse-env" . | nindent 8 }}
+        {{- include "snippet.email-env" . | nindent 8 }}
+
+{{- if .Values.env }}
+{{ toYaml .Values.env | indent 8 }}
+{{- end }}
+{{- if .Values.temporalAddSearchAttributes.env }}
+{{ toYaml .Values.temporalAddSearchAttributes.env | indent 8 }}
+{{- end }}
+{{- if .Values.hooks.temporalAddSearchAttributes.env }}
+{{ toYaml .Values.hooks.temporalAddSearchAttributes.env | indent 8 }}
+{{- end }}
+        resources:
+{{ toYaml .Values.hooks.temporalAddSearchAttributes.resources | indent 10 }}
+      initContainers:
+      {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
+{{- end }}
