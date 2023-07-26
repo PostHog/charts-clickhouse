@@ -3263,6 +3263,17 @@ prometheus-pushgateway:
 
 ###
 ###
+### ---- external-prometheus-pushgateway ----
+###
+###
+external-prometheus-pushgateway:
+  # -- Whether to enable the external `prometheus-pushgateway` or not.
+  enabled: false
+  # -- Address to the external `prometheus-pushgateway`
+  address: prometheus-pushgateway:9091
+
+###
+###
 ### ---- prometheus-statsd-exporter ----
 ###
 ###
