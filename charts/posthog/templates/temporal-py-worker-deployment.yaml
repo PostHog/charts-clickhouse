@@ -88,9 +88,16 @@ spec:
         {{- include "snippet.objectstorage-env" . | indent 8 }}
         {{- include "snippet.redis-env" . | indent 8 }}
         {{- include "snippet.statsd-env" . | indent 8 }}
+
         {{- if index .Values "prometheus-pushgateway" "enabled" }}
         - name: PROM_PUSHGATEWAY_ADDRESS
           value: "posthog-prometheus-pushgateway:9091"
+        {{- end }}
+
+        # prometheus pushgateway if enabled externally
+        {{- if index .Values "external-prometheus-pushgateway" "enabled" }}
+        - name: PROM_PUSHGATEWAY_ADDRESS
+          value: {{ .Values.external-prometheus-pushgateway.address }}
         {{- end }}
 
         - name: PRIMARY_DB
