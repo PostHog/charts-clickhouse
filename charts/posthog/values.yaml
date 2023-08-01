@@ -1555,12 +1555,15 @@ _pgbouncer: &_pgbouncer
 pgbouncer:
   <<: *_pgbouncer
 
+  fqdn: "posthog-pgbouncer.posthog.svc.cluster.local."
+
 pgbouncerRead:
   <<: *_pgbouncer
 
   # Specify the host to use for a read-replica. This would usually be some sort of load balancer,
   # and otherwise all credentials would be the same
   host: ""
+  fqdn: "posthog-pgbouncer-read.posthog.svc.cluster.local."
 
   enabled: false
 
