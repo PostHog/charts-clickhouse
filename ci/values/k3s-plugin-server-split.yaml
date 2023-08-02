@@ -1,4 +1,4 @@
-cloud: k3s
+Gloud: k3s
 
 image:
   tag: latest # TODO: remove this override once 1.41.0 is the default
@@ -40,7 +40,7 @@ pluginsAsync:
 
 # Enable individual workloads
 pluginsExports:
-  enabled: true
+  enabled: false
 
 pluginsIngestion:
   enabled: true
