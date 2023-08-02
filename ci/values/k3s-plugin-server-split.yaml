@@ -68,4 +68,3 @@ grafana:
 
 eventrouter:
   enabled: true
-
