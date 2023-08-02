@@ -92,6 +92,9 @@ jobs:
           timeout: 300
           max-restarts: 10
 
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
+
       - name: Install our helm chart
         run: |
           helm upgrade --debug --install -f ${{ matrix.values }} --timeout 30m --create-namespace --namespace posthog posthog ./charts/posthog --wait --wait-for-jobs --debug
