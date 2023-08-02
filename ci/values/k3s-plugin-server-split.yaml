@@ -40,7 +40,7 @@ pluginsAsync:
 
 # Enable individual workloads
 pluginsExports:
-  enabled: false
+  enabled: true
 
 pluginsIngestion:
   enabled: true
