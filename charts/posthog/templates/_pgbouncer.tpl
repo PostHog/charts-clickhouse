@@ -15,7 +15,7 @@ Set PgBouncer FQDN
 Set PgBouncer host
 */}}
 {{- define "posthog.pgbouncer.host" -}}
-    {{- template "posthog.fullname" . }}-pgbouncer
+    {{- default (printf "%s-pgbouncer" (include "posthog.fullname" .)) .Values.pgbouncer.fqdn -}}
 {{- end -}}
 
 {{/*
@@ -29,7 +29,7 @@ Set PgBouncer port
 Set Read PgBouncer host
 */}}
 {{- define "posthog.pgbouncer-read.host" -}}
-    {{- template "posthog.fullname" . }}-pgbouncer-read
+    {{- default (printf "%s-pgbouncer-read" (include "posthog.fullname" .)) .Values.pgbouncerRead.fqdn -}}
 {{- end -}}
 
 {{/*
