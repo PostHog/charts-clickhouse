@@ -541,6 +541,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pgbouncer.<<.service.type | string | `"ClusterIP"` |  |
 | pgbouncer.<<.service.annotations | object | `{}` |  |
 | pgbouncer.<<.podAnnotations | object | `{}` |  |
+| pgbouncer.fqdn | string | `""` |  |
 | pgbouncerRead.<<.enabled | bool | `true` | Whether to deploy a PgBouncer service to satisfy the applications requirements. |
 | pgbouncerRead.<<.exporter.enabled | bool | `false` | Whether to install a Prometheus export as a sidecar |
 | pgbouncerRead.<<.exporter.port | int | `9127` |  |
@@ -581,6 +582,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | pgbouncerRead.<<.service.annotations | object | `{}` |  |
 | pgbouncerRead.<<.podAnnotations | object | `{}` |  |
 | pgbouncerRead.host | string | `""` |  |
+| pgbouncerRead.fqdn | string | `""` |  |
 | pgbouncerRead.enabled | bool | `false` |  |
 | redis.enabled | bool | `true` | Whether to deploy a Redis server to satisfy the applications requirements. To use an external redis instance set this to `false` and configure the `externalRedis` parameters. |
 | redis.nameOverride | string | `"posthog-redis"` |  |
