@@ -76,9 +76,11 @@ spec:
       securityContext: {{- omit .Values.temporalPyWorker.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}-temporal-py-workers
+      - name: {{ .Chart.Name }}-temporal-py-worker
         image: {{ template "posthog.image.fullPath" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8596
         command:
         - ./bin/temporal-django-worker
         env:
