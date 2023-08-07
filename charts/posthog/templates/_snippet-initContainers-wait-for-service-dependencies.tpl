@@ -22,7 +22,7 @@
         done
         {{ end }}
 
-        until (nc -vz "{{ include "posthog.pgbouncer.fqdn" . }}" {{ include "posthog.pgbouncer.port" . }});
+        until (nc -vz "{{- default (printf "%s-pgbouncer" (include "posthog.fullname" .)) .Values.pgbouncer.fqdn -}}" {{ include "posthog.pgbouncer.port" . }});
         do
             echo "waiting for PgBouncer"; sleep 1;
         done
