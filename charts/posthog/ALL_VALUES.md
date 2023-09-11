@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.27.4](https://img.shields.io/badge/Version-30.27.4-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.27.5](https://img.shields.io/badge/Version-30.27.5-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -49,6 +49,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | recordings.env | list | `[]` | Additional env variables to inject into the recordings stack, uses `web.env` if empty. |
 | recordings.securityContext | object | `{"enabled":false}` | Container security context for the recordings stack HorizontalPodAutoscaler. |
 | recordings.podSecurityContext | object | `{"enabled":false}` | Pod security context for the recordings stack HorizontalPodAutoscaler. |
+| capture.ingress.enabled | bool | `false` |  |
+| capture.ingress.service.name | string | `"capture"` |  |
+| capture.ingress.service.port | int | `3000` |  |
 | decide.enabled | bool | `false` | Whether to install the PostHog decide stack or not. |
 | decide.ingressEnabled | bool | `false` |  |
 | decide.replicacount | int | `1` | Count of decide pods to run. This setting is ignored if `decide.hpa.enabled` is set to `true`. |
