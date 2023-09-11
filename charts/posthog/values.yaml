@@ -127,6 +127,14 @@ recordings:
   podSecurityContext:
     enabled: false
 
+# The majority of the capture config + chart resides in posthog/charts
+capture:
+  ingress:
+    enabled: false
+    service: 
+      name: capture
+      port: 3000
+
 decide:
   # -- Whether to install the PostHog decide stack or not.
   enabled: false
