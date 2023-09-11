@@ -94,6 +94,16 @@ spec:
             path: "/capture"
             backend: *INGESTION
 
+          {{- if .Values.capture.ingress.enabled}}
+          - pathType: Prefix
+            path: "/i/"
+            backend:
+              service:
+                name: {{ .Values.capture.ingress.service.name }}
+                port:
+                  number: {{ .Values.capture.ingress.service.port }}
+          {{- end }}
+
           {{- if .Values.decide.ingressEnabled}}
           - pathType: Prefix
             path: "/decide/"
