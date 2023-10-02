@@ -167,3 +167,31 @@ tests:
           content:
             name: POSTHOG_POSTGRES_READ_HOST
             value: beep-boop
+
+  - it: allows setting readinessGates
+    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      image.pullSecrets: [secret]
+      web.enabled: true
+      web:
+        readinessGates:
+          - conditionType: target-health.alb.ingress.k8s.aws/posthog_ingress_posthog_web_8000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.readinessGates[0].conditionType
+          value: target-health.alb.ingress.k8s.aws/posthog_ingress_posthog_web_8000
+
+  - it: has no default readinessGates
+    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      image.pullSecrets: [secret]
+      web.enabled: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.readinessGates
