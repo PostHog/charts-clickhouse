@@ -61,6 +61,11 @@ spec:
       schedulerName: "{{ .Values.web.schedulerName }}"
       {{- end }}
 
+      {{- if .Values.recordings.readinessGates }}
+      readinessGates:
+{{ toYaml .Values.recordings.readinessGates | indent 8}}
+      {{- end }}
+
       {{- if .Values.image.imagePullSecrets }}
       imagePullSecrets:
 {{ toYaml .Values.image.imagePullSecrets | indent 8 }}
