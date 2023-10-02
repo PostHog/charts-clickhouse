@@ -251,5 +251,21 @@ tests:
           path: spec.template.spec.imagePullSecrets
           value: [name: secret]
 
+  - it: allows setting readinessGates
+    template: templates/events-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      image.pullSecrets: [secret]
+      events.enabled: true
+      events:
+        readinessGates:
+          - conditionType: target-health.alb.ingress.k8s.aws/posthog_ingress_posthog_events_8000
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.readinessGates[0].conditionType
+          value: target-health.alb.ingress.k8s.aws/posthog_ingress_posthog_events_8000
+
 
 
