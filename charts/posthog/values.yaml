@@ -72,6 +72,9 @@ events:
     # for configuration options
     behavior:
 
+  pdb:
+    enabled: false
+
   rollout:
     # The max surge in pods during a rollout
     maxSurge: 25%
@@ -110,6 +113,9 @@ recordings:
     # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
     # for configuration options
     behavior:
+
+  pdb:
+    enabled: false
 
   rollout:
     # The max surge in pods during a rollout
@@ -205,6 +211,9 @@ web:
     # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
     # for configuration options
     behavior:
+
+  pdb:
+    enabled: false
 
   rollout:
     # The max surge in pods during a rollout
@@ -582,7 +591,7 @@ pluginsAnalyticsIngestion:
   # intended to be used along side the `recordingsIngestion` deployment.
   #
   # The reason these values were added is to be able to scale analytics and
-  # session recordings events indepentently, and to be able to roll this out in
+  # session recordings events independently, and to be able to roll this out in
   # a backwards compatible way.
   enabled: false
 
