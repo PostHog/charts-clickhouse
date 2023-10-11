@@ -22,18 +22,18 @@ lifecycle:
         exec:
             command: [
                 "sh", "-c",
-                "(echo '{\"event\": \"preStop_started\"}'; sleep 10; echo '{\"event\": \"preStop_ended\"}') > /proc/1/fd/1"
+                "(echo '{\"event\": \"preStop_started\"}'; touch /tmp/posthog_prestop || true; sleep 20; echo '{\"event\": \"preStop_ended\"}') > /proc/1/fd/1"
             ]
 {{- end -}}
 
 
 {{/*
 
-    Set a grace period that is 10 seconds delay (from
+    Set a grace period that is 20 seconds delay (from
     lifecycle.exec.preStop) + 30 seconds for Gunicorn to gracefully shutdown
     + 5 seconds leeway
 
 */}}
 {{- define "snippet.web-deployments.terminationGracePeriodSeconds" -}}
-45
+55
 {{- end -}}
