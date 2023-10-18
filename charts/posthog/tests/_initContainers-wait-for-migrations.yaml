@@ -1,6 +1,5 @@
 suite: _initContainers-wait-for-migrations
 templates:
-  - templates/events-deployment.yaml
   - templates/plugins-deployment.yaml
   - templates/web-deployment.yaml
   - templates/worker-deployment.yaml
