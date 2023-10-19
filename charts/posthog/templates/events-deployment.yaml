@@ -82,7 +82,10 @@ spec:
       - name: {{ .Chart.Name }}-events
         image: {{ template "posthog.image.fullPath" . }}
         command:
-          - ./bin/docker-server
+          - echo premigrate
+          - env POSTHOG_SKIP_MIGRATION_CHECKS=true ./bin/migrate-check
+          - echo postmigrate
+          - env POSTHOG_SKIP_MIGRATION_CHECKS=true ./bin/docker-server
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
