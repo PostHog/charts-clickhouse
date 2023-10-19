@@ -82,7 +82,12 @@ spec:
       - name: {{ .Chart.Name }}-events
         image: {{ template "posthog.image.fullPath" . }}
         command:
-          - ./bin/docker-server
+          - bash
+          - -c
+        args:
+          - |
+            env
+            ./bin/docker-server
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
