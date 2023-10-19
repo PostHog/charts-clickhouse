@@ -105,6 +105,8 @@ spec:
           value: '1'
         - name: IS_BEHIND_PROXY
           value: '1'
+        - name: POSTHOG_SKIP_MIGRATION_CHECKS
+          value: 'true'
       {{- if eq .Values.web.secureCookies false }}
         - name: SECURE_COOKIES
           value: '0'
