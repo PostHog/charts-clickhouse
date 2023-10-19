@@ -105,6 +105,10 @@ spec:
           value: '1'
         - name: IS_BEHIND_PROXY
           value: '1'
+        - name: DEBUG
+          value: 'true'
+        - name: POSTHOG_SKIP_MIGRATION_CHECKS
+          value: 'true'
       {{- if eq .Values.web.secureCookies false }}
         - name: SECURE_COOKIES
           value: '0'
@@ -174,5 +178,4 @@ spec:
         {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
-      {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
 {{- end }}
