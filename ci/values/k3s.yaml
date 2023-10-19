@@ -10,6 +10,10 @@ ingress:
 web:
   secureCookies: false
 
+env:
+  - name: POSTHOG_SKIP_MIGRATION_CHECKS
+    value: "true"
+
 events:
   env:
     - name: POSTHOG_SKIP_MIGRATION_CHECKS
