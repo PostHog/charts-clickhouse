@@ -10,6 +10,16 @@ ingress:
 web:
   secureCookies: false
 
+events:
+  env:
+    - name: POSTHOG_SKIP_MIGRATION_CHECKS
+      value: "true"
+
+recordings:
+  env:
+    - name: POSTHOG_SKIP_MIGRATION_CHECKS
+      value: "true"
+
 # Use small PVC in CI
 clickhouse:
   persistence:
