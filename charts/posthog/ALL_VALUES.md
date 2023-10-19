@@ -16,7 +16,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.repository | string | `"posthog/posthog"` | PostHog image repository to use. |
 | image.sha | string | `nil` | PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`). |
 | image.tag | string | `nil` | PostHog image tag to use (example: `release-1.43.0`). |
-| image.default | string | `":release-1.43.0"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
+| image.default | string | `":latest"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
 | image.pullPolicy | string | `"IfNotPresent"` | PostHog image pull policy. |
 | image.pullSecrets | list | `[]` |  |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to. |
