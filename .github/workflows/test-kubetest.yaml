@@ -64,7 +64,8 @@ jobs:
           export PYTHONUNBUFFERED=1
           python -m pytest ${{ matrix.test-file }} \
             -s \
-            --maxfail=1
+            --maxfail=1 \
+            --kube-log-level=info
 
       - name: Emit namespace report
         uses: jupyterhub/action-k8s-namespace-report@v1
