@@ -82,7 +82,15 @@ spec:
       - name: {{ .Chart.Name }}-events
         image: {{ template "posthog.image.fullPath" . }}
         command:
-          - ./bin/docker-server
+        - bash
+        - -c
+        args:
+        - |
+          cat bin/migrate-check
+          echo premigrate
+          env POSTHOG_SKIP_MIGRATION_CHECKS=true ./bin/migrate-check
+          echo postmigrate
+          env POSTHOG_SKIP_MIGRATION_CHECKS=true ./bin/docker-server
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
@@ -105,6 +113,10 @@ spec:
           value: '1'
         - name: IS_BEHIND_PROXY
           value: '1'
+        - name: DEBUG
+          value: 'true'
+        - name: POSTHOG_SKIP_MIGRATION_CHECKS
+          value: 'true'
       {{- if eq .Values.web.secureCookies false }}
         - name: SECURE_COOKIES
           value: '0'
@@ -174,5 +186,4 @@ spec:
         {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
-      {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
 {{- end }}
