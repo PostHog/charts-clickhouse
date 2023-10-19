@@ -86,6 +86,7 @@ spec:
         - -c
         args:
         - |
+          cat bin/migrate-check
           echo premigrate
           env POSTHOG_SKIP_MIGRATION_CHECKS=true ./bin/migrate-check
           echo postmigrate
