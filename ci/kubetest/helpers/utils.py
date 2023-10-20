@@ -117,6 +117,12 @@ def wait_for_pods_to_be_ready(kube, labels=None, expected_count=None, namespace=
         job_pods = [pod for pod in pods.values() if "job-name" in pod.obj.metadata.labels]
 
         for job_pod in job_pods:
+            print("job logs")
+            try:
+                print([c.get_logs() for c in job_pod.get_containers()])
+            except Exception:
+                pass
+            print("job logs2")
             assert job_pod.status().phase != "Failed", f"Detected failed job {job_pod.obj.metadata.name}"
 
         if len(pods) > 0 and all(is_pod_ready(pod) for pod in non_job_pods):
