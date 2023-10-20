@@ -16,7 +16,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | image.repository | string | `"posthog/posthog"` | PostHog image repository to use. |
 | image.sha | string | `nil` | PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`). |
 | image.tag | string | `nil` | PostHog image tag to use (example: `release-1.43.0`). |
-| image.default | string | `":release-1.43.0"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
+| image.default | string | `":latest"` | PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead. |
 | image.pullPolicy | string | `"IfNotPresent"` | PostHog image pull policy. |
 | image.pullSecrets | list | `[]` |  |
 | sentryDSN | string | `nil` | Sentry endpoint to send errors to. |
@@ -642,7 +642,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.secure | bool | `false` | Whether to use TLS connection connecting to ClickHouse |
 | clickhouse.verify | bool | `false` | Whether to verify TLS certificate on connection to ClickHouse |
 | clickhouse.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
-| clickhouse.image.tag | string | `"22.8.11.15"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
+| clickhouse.image.tag | string | `"23.9.2.56"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
 | clickhouse.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.image.pullSecrets | list | `[]` |  |
 | clickhouse.tolerations | list | `[]` | Toleration labels for clickhouse pod assignment |
@@ -670,7 +670,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | clickhouse.podAnnotations | string | `nil` |  |
 | clickhouse.podDistribution | string | `nil` |  |
 | clickhouse.client.image.repository | string | `"clickhouse/clickhouse-server"` | ClickHouse image repository. |
-| clickhouse.client.image.tag | string | `"22.8.11.15"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
+| clickhouse.client.image.tag | string | `"23.9.2.56"` | ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing. |
 | clickhouse.client.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | clickhouse.client.image.pullSecrets | list | `[]` |  |
 | clickhouse.backup.enabled | bool | `false` |  |
