@@ -16,9 +16,9 @@ image:
   # -- PostHog image tag to use (example: `release-1.43.0`).
   tag:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
-  default: ":release-1.43.0"
+  default: ":latest"
   # -- PostHog image pull policy.
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -1796,7 +1796,7 @@ clickhouse:
     # -- ClickHouse image repository.
     repository: clickhouse/clickhouse-server
     # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-    tag: "22.8.11.15"
+    tag: "23.9.2.56"
     # -- Image pull policy
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
@@ -1921,7 +1921,7 @@ clickhouse:
       # -- ClickHouse image repository.
       repository: clickhouse/clickhouse-server
       # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-      tag: "22.8.11.15"
+      tag: "23.9.2.56"
       # -- Image pull policy
       pullPolicy: IfNotPresent
       ## Optionally specify an array of imagePullSecrets.
