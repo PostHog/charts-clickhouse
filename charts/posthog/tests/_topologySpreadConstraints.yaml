@@ -3,7 +3,8 @@ templates:
   - templates/plugins-deployment.yaml
   - templates/web-deployment.yaml
   - templates/worker-deployment.yaml
-
+  # NOTE: we need to include this as it is required by the other templates
+  - templates/secrets.yaml
 tests:
   - it: spec.template.spec.topologySpreadConstraints should be empty by default
     templates:
