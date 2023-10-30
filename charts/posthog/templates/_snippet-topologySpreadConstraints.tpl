@@ -19,7 +19,7 @@ matchLabelKeys:
 - app.kubernetes.io/instance
 {{- end }}
 {{- define "_snippet-topologySpreadConstraints" }}
-{{- if .Values.includeDefaultTopologySpreadConstraints }}
+{{- if (.Values.includeDefaultTopologySpreadConstraints | default false) }}
 topologySpreadConstraints:
 - maxSkew: 1
   minDomains: 3
