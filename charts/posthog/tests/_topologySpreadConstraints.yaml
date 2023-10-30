@@ -37,7 +37,7 @@ tests:
           value: 1
       - equal:
           path: spec.template.spec.topologySpreadConstraints[0].whenUnsatisfiable
-          value: DoNotSchedule
+          value: ScheduleAnyway
       - equal:
           path: spec.template.spec.topologySpreadConstraints[1].topologyKey
           value: kubernetes.io/hostname

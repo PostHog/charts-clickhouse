@@ -22,9 +22,8 @@ matchLabelKeys:
 {{- if (.Values.includeDefaultTopologySpreadConstraints | default false) }}
 topologySpreadConstraints:
 - maxSkew: 1
-  minDomains: 3
   topologyKey: topology.kubernetes.io/zone
-  whenUnsatisfiable: DoNotSchedule
+  whenUnsatisfiable: ScheduleAnyway
   nodeTaintsPolicy: Honor
   {{- include "_snippet-selectors" . | nindent 2 }}
 - maxSkew: 3
