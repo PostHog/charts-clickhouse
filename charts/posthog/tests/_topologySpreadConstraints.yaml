@@ -31,13 +31,15 @@ tests:
           count: 1
       - contains:
           path: spec.template.spec.topologySpreadConstraints[0]
-          content:
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0]
+          value:
             topologyKey: topology.kubernetes.io/zone
             maxSkew: 1
             whenUnsatisfiable: DoNotSchedule
-      - contains:
+      - equal:
           path: spec.template.spec.topologySpreadConstraints[1]
-          content:
+          value:
             topologyKey: topology.kubernetes.io/hostname
             maxSkew: 3
             whenUnsatisfiable: ScheduleAnyway
