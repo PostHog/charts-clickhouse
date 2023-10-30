@@ -44,6 +44,7 @@ spec:
         {{- end }}
     spec:
       serviceAccountName: {{ template "posthog.serviceAccountName" .root }}
+      {{- include "_snippet-topologySpreadConstraints" . | nindent 6 }}
 
       {{- if .params.affinity }}
       affinity:
