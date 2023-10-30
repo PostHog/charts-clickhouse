@@ -41,6 +41,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ include "snippet.web-deployments.terminationGracePeriodSeconds" . }}
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+      {{- include "_snippet-topologySpreadConstraints" . | nindent 6 }}
 
       {{- if .Values.web.affinity }}
       affinity:
