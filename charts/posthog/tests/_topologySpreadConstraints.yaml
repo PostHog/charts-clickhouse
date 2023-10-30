@@ -1,0 +1,42 @@
+suite: _topologySpreadConstraints
+templates:
+  - templates/plugins-deployment.yaml
+  - templates/web-deployment.yaml
+  - templates/worker-deployment.yaml
+
+tests:
+  - it: spec.template.spec.topologySpreadConstraints should be empty by default
+    templates:
+      - templates/plugins-deployment.yaml
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+    set:
+      cloud: local
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.topologySpreadConstraints
+  - it: spec.template.spec.topologySpreadConstraints should exist if includeDefaultTopologySpreadConstraints is set
+    templates:
+      - templates/plugins-deployment.yaml
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+    set:
+      cloud: local
+      includeDefaultTopologySpreadConstraints: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.topologySpreadConstraints[0]
+          content:
+            topologyKey: topology.kubernetes.io/zone
+            maxSkew: 1
+            whenUnsatisfiable: DoNotSchedule
+      - contains:
+          path: spec.template.spec.topologySpreadConstraints[1]
+          content:
+            topologyKey: topology.kubernetes.io/hostname
+            maxSkew: 3
+            whenUnsatisfiable: ScheduleAnyway
