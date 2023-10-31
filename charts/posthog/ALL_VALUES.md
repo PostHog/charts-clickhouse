@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.32.0](https://img.shields.io/badge/Version-30.32.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.33.0](https://img.shields.io/badge/Version-30.33.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -810,6 +810,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | busybox.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | busybox.pullSecrets | list | `[]` |  |
 | clusterDomain | string | `"cluster.local"` | Kubernetes cluster domain name |
+| includeDefaultTopologySpreadConstraints | bool | `false` |  |
 
 Dependent charts can also have values overwritten. For more info see our [docs](https://posthog.com/docs/self-host/deploy/configuration).
 
