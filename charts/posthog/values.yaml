@@ -3396,3 +3396,7 @@ busybox:
 
 # -- Kubernetes cluster domain name
 clusterDomain: cluster.local
+
+# Whether to set a topologySpreadConstraint on all deployments
+# to balance pods between availability zones and nodes
+includeDefaultTopologySpreadConstraints: false
