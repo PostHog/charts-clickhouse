@@ -21,12 +21,12 @@ matchLabelKeys:
 {{- define "_snippet-topologySpreadConstraints" }}
 {{- if (.Values.includeDefaultTopologySpreadConstraints | default false) }}
 topologySpreadConstraints:
-- maxSkew: 1
+- maxSkew: 2
   topologyKey: topology.kubernetes.io/zone
   whenUnsatisfiable: ScheduleAnyway
   nodeTaintsPolicy: Honor
   {{- include "_snippet-selectors" . | nindent 2 }}
-- maxSkew: 3
+- maxSkew: 5
   topologyKey: kubernetes.io/hostname
   whenUnsatisfiable: ScheduleAnyway
   nodeTaintsPolicy: Honor

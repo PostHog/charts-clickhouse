@@ -34,7 +34,7 @@ tests:
           value: topology.kubernetes.io/zone
       - equal:
           path: spec.template.spec.topologySpreadConstraints[0].maxSkew
-          value: 1
+          value: 2
       - equal:
           path: spec.template.spec.topologySpreadConstraints[0].whenUnsatisfiable
           value: ScheduleAnyway
@@ -43,7 +43,7 @@ tests:
           value: kubernetes.io/hostname
       - equal:
           path: spec.template.spec.topologySpreadConstraints[1].maxSkew
-          value: 3
+          value: 5
       - equal:
           path: spec.template.spec.topologySpreadConstraints[1].whenUnsatisfiable
           value: ScheduleAnyway
