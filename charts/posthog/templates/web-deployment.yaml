@@ -81,9 +81,16 @@ spec:
 
       containers:
       - name: {{ .Chart.Name }}-web
-        image: {{ template "posthog.image.fullPath" . }}
+        image: {{ template "posthog.web.image.fullPath" . }}
+        {{ if .Values.web.image.command -}}
+        command:
+        {{- range .Values.web.image.command }}
+        - {{ . }}
+        {{- end }}
+        {{ else }}
         command:
           - ./bin/docker-server
+        {{ end }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
