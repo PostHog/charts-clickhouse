@@ -169,7 +169,7 @@ tests:
             value: beep-boop
 
   - it: should be able to have web.image set
-    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    template: templates/web-deployment.yaml
     set:
       cloud: local
       web.image.sha: sha256:2a16a47578d0193480dd02bcda7952f09acb34eacdf764315123f2271f72838d
@@ -181,12 +181,11 @@ tests:
           path: spec.template.spec.containers[0].image
           value: webimage@sha256:2a16a47578d0193480dd02bcda7952f09acb34eacdf764315123f2271f72838d
 
-  - it: should be able to have customer web.image.command set
-    template: templates/web-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+  - it: should be able to have custom web.image.command set
+    template: templates/web-deployment.yaml
     set:
       cloud: local
-      web.image.command:
-      - ./bin/run
+      web.image.command: [./bin/run]
     asserts:
       - hasDocuments:
           count: 1
