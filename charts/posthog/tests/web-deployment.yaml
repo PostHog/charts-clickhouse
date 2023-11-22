@@ -167,3 +167,29 @@ tests:
           content:
             name: POSTHOG_POSTGRES_READ_HOST
             value: beep-boop
+
+  - it: should be able to have web.image set
+    template: templates/web-deployment.yaml
+    set:
+      cloud: local
+      web.image.sha: sha256:2a16a47578d0193480dd02bcda7952f09acb34eacdf764315123f2271f72838d
+      web.image.repository: webimage
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: webimage@sha256:2a16a47578d0193480dd02bcda7952f09acb34eacdf764315123f2271f72838d
+
+  - it: should be able to have custom web.image.command set
+    template: templates/web-deployment.yaml
+    set:
+      cloud: local
+      web.image.command: [./bin/run]
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.containers[0].command
+          value:
+          - ./bin/run
