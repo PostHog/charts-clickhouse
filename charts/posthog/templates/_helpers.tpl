@@ -50,6 +50,19 @@ Set the posthog image
 {{- end -}}
 
 {{/*
+Set the posthog web image
+*/}}
+{{- define "posthog.web.image.fullPath" -}}
+{{ if .Values.web.image.sha -}}
+"{{ .Values.web.image.repository }}@{{ .Values.web.image.sha }}"
+{{- else if .Values.web.image.tag -}}
+"{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
+{{- else -}}
+"{{ include "posthog.image.fullPath" . }}"
+{{- end -}}
+{{- end -}}
+
+{{/*
 Set zookeeper host
 */}}
 {{- define "posthog.zookeeper.host" -}}
