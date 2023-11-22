@@ -84,7 +84,9 @@ spec:
         image: {{ template "posthog.web.image.fullPath" . }}
         {{ if .Values.web.image.command -}}
         command:
-        {{- toYaml .Values.web.image.command | indent 8 }}
+        {{- range .Values.web.image.command }}
+        - {{ . }}
+        {{- end }}
         {{ else }}
         command:
           - ./bin/docker-server
