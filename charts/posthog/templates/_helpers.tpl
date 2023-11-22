@@ -58,7 +58,7 @@ Set the posthog web image
 {{- else if .Values.web.image.tag -}}
 "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
 {{- else -}}
-"{{ include "posthog.image.fullPath" . }}"
+{{ include "posthog.image.fullPath" . }}
 {{- end -}}
 {{- end -}}
 
