@@ -189,6 +189,8 @@ web:
   # -- Whether to install the PostHog web stack or not.
   enabled: true
 
+  image: {}
+
   podAnnotations:
     # Uncomment these lines if you want Prometheus server to scrape metrics.
     # prometheus.io/scrape: "true"
