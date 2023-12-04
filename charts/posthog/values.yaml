@@ -301,6 +301,22 @@ worker:
   # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1
 
+  workers:
+    - name: priority
+      queues:
+        - priority
+        - email
+    - name: default
+      queues:
+        - celery # default queue for Celery
+        - email
+        - insight
+    - name: slow
+      pool: gevent
+      concurrency: 100
+      queues:
+        - queries
+
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the worker stack.
     enabled: false
