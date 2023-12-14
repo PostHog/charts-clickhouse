@@ -301,7 +301,7 @@ worker:
   # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1
 
-  workers:
+  consumers:
     - name: default
 
   hpa:
