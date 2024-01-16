@@ -110,6 +110,7 @@ The following table lists the configurable parameters of the PostHog chart and t
 | web.podSecurityContext | object | `{"enabled":false}` | Pod security context for web stack deployment. |
 | worker.enabled | bool | `true` | Whether to install the PostHog worker stack or not. |
 | worker.replicacount | int | `1` | Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`. |
+| worker.consumers[0].name | string | `"default"` |  |
 | worker.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the worker stack. |
 | worker.hpa.cputhreshold | int | `60` | CPU threshold percent for the worker stack HorizontalPodAutoscaler. |
 | worker.hpa.minpods | int | `1` | Min pods for the worker stack HorizontalPodAutoscaler. |
