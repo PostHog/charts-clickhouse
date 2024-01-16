@@ -127,7 +127,7 @@ spec:
         {{- include "snippet.email-env" $ | nindent 8 }}
         {{- if .queues }}
         - name: CELERY_WORKER_QUEUES
-          value: "{{ .queues | join ',' }}"
+          value: "{{ .queues | join "," }}"
         {{- end }}
         {{- if .concurrency }}
         - name: CELERY_WORKER_CONCURRENCY
