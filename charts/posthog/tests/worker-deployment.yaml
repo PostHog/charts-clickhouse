@@ -125,3 +125,30 @@ tests:
       - equal:
           path: spec.template.spec.imagePullSecrets
           value: [name: secret]
+  - it: set consumer config correctly
+    template: templates/worker-deployment.yaml # TODO: remove once secrets.yaml will be fixed/removed
+    set:
+      cloud: local
+      worker.consumers:
+        - name: gevent
+          pool: gevent
+          concurrency: 50
+          queues:
+            - analytics_queries
+            - other
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CELERY_WORKER_QUEUES
+            value: analytics_queries,other
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CELERY_WORKER_CONCURRENCY
+            value: "50"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CELERY_WORKER_POOL
+            value: gevent
