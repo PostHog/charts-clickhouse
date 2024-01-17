@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "posthog.fullname" $ }}-{{ .name }}-worker
+  name: {{ template "posthog.fullname" $ }}-worker-{{ .name }}
   labels: {{- include "_snippet-metadata-labels-common" $ | nindent 4 }}
   annotations: {{- include "_snippet-metadata-annotations-common" $ | nindent 4 }}
 spec:
@@ -11,7 +11,7 @@ spec:
     matchLabels:
         app: {{ template "posthog.fullname" $ }}
         release: "{{ $.Release.Name }}"
-        role: worker
+        role: worker-{{ .name }}
   {{- if not $.Values.worker.hpa.enabled }}
   replicas: {{ $.Values.worker.replicacount }}
   {{- end }}
@@ -32,7 +32,7 @@ spec:
       labels:
         app: {{ template "posthog.fullname" $ }}
         release: "{{ $.Release.Name }}"
-        role: worker
+        role: worker-{{ .name }}
         {{- if (eq (default $.Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
