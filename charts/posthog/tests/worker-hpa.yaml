@@ -7,6 +7,7 @@ tests:
     set:
       worker.enabled: false
       worker.hpa.enabled: false
+      worker.consumers: [{name: "default"}]
     asserts:
       - hasDocuments:
           count: 0
@@ -15,6 +16,7 @@ tests:
     set:
       worker.enabled: true
       worker.hpa.enabled: false
+      worker.consumers: [{name: "default"}]
     asserts:
       - hasDocuments:
           count: 0
@@ -23,6 +25,7 @@ tests:
     set:
       worker.enabled: true
       worker.hpa.enabled: true
+      worker.consumers: [{name: "default"}]
     asserts:
       - hasDocuments:
           count: 1
@@ -31,6 +34,7 @@ tests:
     set:
       worker.enabled: true
       worker.hpa.enabled: true
+      worker.consumers: [{name: "default"}]
     asserts:
       - hasDocuments:
           count: 1
@@ -41,6 +45,7 @@ tests:
     set:
       worker.enabled: true
       worker.hpa.enabled: true
+      worker.consumers: [{name: "default"}]
     asserts:
       - hasDocuments:
           count: 1
@@ -50,6 +55,7 @@ tests:
   - it: sets hpa spec
     set:
       worker.enabled: true
+      worker.consumers: [{name: "default"}]
       worker:
         hpa:
           enabled: true
@@ -66,7 +72,7 @@ tests:
             scaleTargetRef:
               apiVersion: apps/v1
               kind: Deployment
-              name: RELEASE-NAME-posthog-worker
+              name: RELEASE-NAME-posthog-default-worker
             minReplicas: 2
             maxReplicas: 10
             metrics:
