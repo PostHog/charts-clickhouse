@@ -1,5 +1,6 @@
 {{- if and .Values.worker.enabled .Values.worker.hpa.enabled -}}
 {{- range .Values.worker.consumers }}
+---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
