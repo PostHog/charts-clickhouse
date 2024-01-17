@@ -1,14 +1,15 @@
 {{- if and .Values.worker.enabled .Values.worker.hpa.enabled -}}
+{{- range .Values.worker.consumers }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ template "posthog.fullname" . }}-worker
+  name: {{ template "posthog.fullname" . }}-{{ .name }}-worker
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
 spec:
   scaleTargetRef:
     kind: Deployment
     apiVersion: apps/v1
-    name: {{ template "posthog.fullname" . }}-worker
+    name: {{ template "posthog.fullname" . }}-{{ .name }}-worker
   minReplicas: {{ .Values.worker.hpa.minpods }}
   maxReplicas: {{ .Values.worker.hpa.maxpods }}
   metrics:
@@ -22,4 +23,5 @@ spec:
   {{- end }}
   behavior: 
     {{ toYaml .Values.worker.hpa.behavior | nindent 4 }}
+{{- end }}
 {{- end }}
