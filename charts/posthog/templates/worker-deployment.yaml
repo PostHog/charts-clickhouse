@@ -1,5 +1,6 @@
 {{- if .Values.worker.enabled -}}
 {{- range .Values.worker.consumers }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
