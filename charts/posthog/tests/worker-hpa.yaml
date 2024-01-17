@@ -66,7 +66,7 @@ tests:
             scaleTargetRef:
               apiVersion: apps/v1
               kind: Deployment
-              name: RELEASE-NAME-posthog-worker
+              name: RELEASE-NAME-posthog-worker-default
             minReplicas: 2
             maxReplicas: 10
             metrics:
