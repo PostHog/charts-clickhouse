@@ -11,8 +11,8 @@ spec:
     kind: Deployment
     apiVersion: apps/v1
     name: {{ template "posthog.fullname" $ }}-worker-{{ .name }}
-  minReplicas: {{ $.Values.worker.hpa.minpods }}
-  maxReplicas: {{ $.Values.worker.hpa.maxpods }}
+  minReplicas: {{ ( .hpa | default dict ).minpods | default $.Values.worker.hpa.minpods  }}
+  maxReplicas: {{ ( .hpa | default dict ).maxpods | default $.Values.worker.hpa.maxpods  }}
   metrics:
   {{- with $.Values.worker.hpa.cputhreshold }}
   - type: Resource
