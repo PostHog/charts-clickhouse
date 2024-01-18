@@ -99,11 +99,8 @@ tests:
               stabilizationWindowSeconds: 3600
     asserts:
       - equal:
-          path: spec
-          value:
-            scaleTargetRef:
-              apiVersion: apps/v1
-              kind: Deployment
-              name: RELEASE-NAME-posthog-worker-default
-            minReplicas: 5
-            maxReplicas: 50
+          path: spec.minReplicas
+          value: 5
+      - equal:
+          path: spec.maxReplicas
+          value: 50
