@@ -79,3 +79,28 @@ tests:
             behavior:
               scaleDown:
                 stabilizationWindowSeconds: 3600
+
+  - it: respects consumer overrides
+    set:
+      worker.enabled: true
+      worker:
+        consumers:
+          - name: default
+            hpa:
+              minpods: 5
+              maxpods: 50
+        hpa:
+          enabled: true
+          minpods: 2
+          maxpods: 10
+          cputhreshold: 70
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 3600
+    asserts:
+      - equal:
+          path: spec.minReplicas
+          value: 5
+      - equal:
+          path: spec.maxReplicas
+          value: 50
