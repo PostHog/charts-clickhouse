@@ -21,12 +21,14 @@
             echo "waiting for all ClickHouse nodes to be available"; sleep 1;
         done
         {{ end }}
-
+        
+        {{ if .Values._pgbouncer.enabled }}
         until (nc -vz "{{- default (printf "%s-pgbouncer" (include "posthog.fullname" .)) .Values.pgbouncer.fqdn -}}" {{ include "posthog.pgbouncer.port" . }});
         do
             echo "waiting for PgBouncer"; sleep 1;
         done
-
+        {{ end }}
+        
         {{ if .Values.postgresql.enabled }}
         until (nc -vz "{{ include "posthog.postgresql.host" . }}.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local" {{ include "posthog.postgresql.port" . }});
         do
