@@ -1,6 +1,6 @@
 # PostHog Helm chart configuration
 
-![Version: 30.41.0](https://img.shields.io/badge/Version-30.41.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
+![Version: 30.42.0](https://img.shields.io/badge/Version-30.42.0-informational?style=flat-square) ![AppVersion: 1.43.0](https://img.shields.io/badge/AppVersion-1.43.0-informational?style=flat-square)
 
 ## Configuration
 
@@ -71,6 +71,9 @@ The following table lists the configurable parameters of the PostHog chart and t
 | decide.podSecurityContext | object | `{"enabled":false}` | Pod security context for the decide stack HorizontalPodAutoscaler. |
 | web.enabled | bool | `true` | Whether to install the PostHog web stack or not. |
 | web.image | object | `{}` |  |
+| web.deployment.apiVersion | string | `"apps/v1"` |  |
+| web.deployment.kind | string | `"Deployment"` |  |
+| web.deployment.strategy | string | `"rollingUpdate"` |  |
 | web.podAnnotations | string | `nil` |  |
 | web.replicacount | int | `1` | Count of web pods to run. This setting is ignored if `web.hpa.enabled` is set to `true`. |
 | web.hpa.enabled | bool | `false` | Whether to create a HorizontalPodAutoscaler for the web stack. |
