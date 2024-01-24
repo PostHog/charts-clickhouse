@@ -16,12 +16,12 @@ spec:
   {{- end }}
 
   strategy:
-    {{- if .Values.web.deployment.strategy == "rollingUpdate" }}
+    {{- if eq .Values.web.deployment.strategy "rollingUpdate" }}
     type: RollingUpdate
     rollingUpdate:
       maxSurge: {{ .Values.web.rollout.maxSurge }}
       maxUnavailable: {{ .Values.web.rollout.maxUnavailable }}
-    {{- else if .Values.web.deployment.strategy == "canary" }}
+    {{- else if eq .Values.web.deployment.strategy "canary" }}
     canary:
       steps:
       - setWeight: 1
