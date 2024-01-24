@@ -1,6 +1,6 @@
 {{- if .Values.web.enabled -}}
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: {{ .Values.web.deployment.apiVersion }}
+kind: {{ .Values.web.deployment.kind }}
 metadata:
   name: {{ template "posthog.fullname" . }}-web
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
@@ -16,10 +16,22 @@ spec:
   {{- end }}
 
   strategy:
+    {{- if .Values.web.deployment.strategy == "rollingUpdate" }}
     type: RollingUpdate
     rollingUpdate:
       maxSurge: {{ .Values.web.rollout.maxSurge }}
       maxUnavailable: {{ .Values.web.rollout.maxUnavailable }}
+    {{- else if .Values.web.deployment.strategy == "canary" }}
+    canary:
+      steps:
+      - setWeight: 1
+      - pause: {duration: 60s}
+      - setWeight: 10
+      - pause: {duration: 60s}
+      - setWeight: 50
+      - pause: {duration: 60s}
+      - setWeight: 100
+    {{- end }}
 
   template:
     metadata:
