@@ -191,6 +191,11 @@ web:
 
   image: {}
 
+  deployment:
+    apiVersion: apps/v1
+    kind: Deployment
+    strategy: rollingUpdate
+
   podAnnotations:
     # Uncomment these lines if you want Prometheus server to scrape metrics.
     # prometheus.io/scrape: "true"
