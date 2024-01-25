@@ -23,11 +23,12 @@ spec:
       maxUnavailable: {{ .Values.web.rollout.maxUnavailable }}
     {{- else if eq .Values.web.deployment.strategy "canary" }}
     canary:
-      plugins:
-        argoproj-labs/contour:
-          httpProxies:
-          - proxy
-          - proxy-direct
+      trafficRouting:
+        plugins:
+          argoproj-labs/contour:
+            httpProxies:
+            - proxy
+            - proxy-direct
       steps:
       - setWeight: 1
       - pause: {duration: 60s}
