@@ -23,6 +23,8 @@ spec:
       maxUnavailable: {{ .Values.web.rollout.maxUnavailable }}
     {{- else if eq .Values.web.deployment.strategy "canary" }}
     canary:
+      canaryService: {{ template "posthog.fullname" . }}-web-canary
+      stableService: {{ template "posthog.fullname" . }}-web
       trafficRouting:
         plugins:
           argoproj-labs/contour:
