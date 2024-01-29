@@ -22,6 +22,9 @@ spec:
       maxSurge: {{ .Values.web.rollout.maxSurge }}
       maxUnavailable: {{ .Values.web.rollout.maxUnavailable }}
     {{- else if eq .Values.web.deployment.strategy "canary" }}
+    revisionHistoryLimit: 10
+    rollbackWindow:
+      revisions: 10
     canary:
       canaryService: {{ template "posthog.fullname" . }}-web-canary
       stableService: {{ template "posthog.fullname" . }}-web
