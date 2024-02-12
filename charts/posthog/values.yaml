@@ -2528,12 +2528,12 @@ prometheus:
 
             - alert: CeleryQueueDepth
               expr: (max (posthog_celery_queue_depth)) > 1000
-              for: 10m
+              for: 60m
               labels:
                 rotation: common
                 severity: critical
               annotations:
-                summary: Celery job execution delayed for more than 10 minutes.
+                summary: Celery job execution delayed for more than 60 minutes.
                 description: |
                   The Celery jobs queue (stored in Redis) is filling up faster than it is consumed. This impacts our
                   monitoring, as some paging monitors depend on metrics exported by Celery jobs.
