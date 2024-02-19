@@ -1,6 +1,6 @@
-suite: ClickHouse cluster role binding definition
+suite: ClickHouse role binding definition
 templates:
-  - templates/clickhouse-operator/clusterrolebinding.yaml
+  - templates/clickhouse-operator/rolebinding.yaml
 
 tests:
   - it: should be empty if clickhouse.enabled is set to false
@@ -16,7 +16,7 @@ tests:
           count: 1
       - matchSnapshot: {}
 
-  - it: ClusterRoleBinding/clickhouse-operator-posthog metadata.namespace override via clickhouse.namespace should work
+  - it: RoleBinding/clickhouse-operator-posthog metadata.namespace override via clickhouse.namespace should work
     set:
       clickhouse.namespace: "custom-namespace"
     documentIndex: 0
@@ -27,7 +27,7 @@ tests:
           path: metadata.namespace
           value: custom-namespace
 
-  - it: ClusterRoleBinding/clickhouse-operator-posthog metadata.namespace override via Release.Namespace should work
+  - it: RoleBinding/clickhouse-operator-posthog metadata.namespace override via Release.Namespace should work
     release:
       namespace: custom-namespace-from-release
     documentIndex: 0
@@ -38,7 +38,7 @@ tests:
           path: metadata.namespace
           value: custom-namespace-from-release
 
-  - it: ClusterRoleBinding/clickhouse-operator-posthog subjects[0].namespace override via clickhouse.namespace should work
+  - it: RoleBinding/clickhouse-operator-posthog subjects[0].namespace override via clickhouse.namespace should work
     set:
       clickhouse.namespace: "custom-namespace"
     documentIndex: 0
@@ -49,7 +49,7 @@ tests:
           path: subjects[0].namespace
           value: custom-namespace
 
-  - it: ClusterRoleBinding/clickhouse-operator-posthog subjects[0].namespace override via Release.Namespace should work
+  - it: RoleBinding/clickhouse-operator-posthog subjects[0].namespace override via Release.Namespace should work
     release:
       namespace: custom-namespace-from-release
     documentIndex: 0
