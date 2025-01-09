@@ -29,4 +29,37 @@ spec:
   loadBalancerSourceRanges:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+{{- if eq .Values.web.deployment.strategy "canary" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "posthog.fullname" . }}-web-canary
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+  {{- if .Values.service.annotations }}
+  {{ toYaml .Values.service.annotations | indent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - port: {{ .Values.service.externalPort }}
+    targetPort: {{ .Values.service.internalPort }}
+    protocol: TCP
+    name: {{ .Values.service.name }}
+{{- if and (.Values.service.nodePort) (eq .Values.service.type "NodePort") }}
+    nodePort: {{ .Values.service.nodePort }}
+{{- end }}
+{{- if .Values.service.externalIPs }}
+  externalIPs:
+{{ toYaml .Values.service.externalIPs | indent 4 }}
+{{- end }}
+  selector:
+    app: {{ template "posthog.fullname" . }}
+    role: web
+  {{- with .Values.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
 {{- end }}

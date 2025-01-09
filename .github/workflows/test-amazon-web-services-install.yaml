@@ -75,7 +75,7 @@ jobs:
           --zones="us-east-1a,us-east-1b,us-east-1c,us-east-1d,us-east-1f" \
           --instance-types="m6i.xlarge" \
           --tags="provisioned_by=github_action" \
-          --version 1.23 \
+          --version 1.24 \
           --nodes 3
 
         # EKS clusters use IAM users and roles to control access to the cluster.

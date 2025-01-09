@@ -1,6 +1,5 @@
 suite: _initContainers-wait-for-migrations
 templates:
-  - templates/events-deployment.yaml
   - templates/plugins-deployment.yaml
   - templates/web-deployment.yaml
   - templates/worker-deployment.yaml
@@ -10,7 +9,6 @@ templates:
 tests:
   - it: spec.template.spec.initContainers[1].env override via 'env' should work
     templates: # TODO: remove once secrets.yaml will be fixed/removed
-      - templates/events-deployment.yaml
       - templates/plugins-deployment.yaml
       - templates/web-deployment.yaml
       - templates/worker-deployment.yaml

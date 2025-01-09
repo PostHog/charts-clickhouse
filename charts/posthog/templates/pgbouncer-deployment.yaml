@@ -42,6 +42,7 @@ spec:
       terminationGracePeriodSeconds: 65
 
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+      {{- include "_snippet-topologySpreadConstraints" . | nindent 6 }}
 
       {{- if .Values.pgbouncer.affinity }}
       affinity: {{ toYaml .Values.pgbouncer.affinity | nindent 8 }}

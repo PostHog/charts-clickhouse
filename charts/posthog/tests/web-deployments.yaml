@@ -14,6 +14,6 @@ tests:
     asserts:
       - equal:
           path: spec.template.spec.terminationGracePeriodSeconds
-          value: 45
+          value: 55
       - isNotNull:
           path: spec.template.spec.containers[0].lifecycle

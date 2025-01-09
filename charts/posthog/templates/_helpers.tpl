@@ -50,6 +50,19 @@ Set the posthog image
 {{- end -}}
 
 {{/*
+Set the posthog web image
+*/}}
+{{- define "posthog.web.image.fullPath" -}}
+{{ if .Values.web.image.sha -}}
+"{{ .Values.web.image.repository }}@{{ .Values.web.image.sha }}"
+{{- else if .Values.web.image.tag -}}
+"{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
+{{- else -}}
+{{ include "posthog.image.fullPath" . }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Set zookeeper host
 */}}
 {{- define "posthog.zookeeper.host" -}}
@@ -92,6 +105,18 @@ Return the Redis host
 {{- end -}}
 
 {{/*
+Return the Session Recording Redis host
+*/}}
+{{- define "posthog.sessionRecordingRedis.host" -}}
+{{- if .Values.externalSessionRecordingRedis.host }}
+    {{- printf "%s" .Values.externalSessionRecordingRedis.host -}}
+{{- else -}}
+    {{ include "posthog.redis.host" . }}
+{{- end -}}
+{{- end -}}
+
+
+{{/*
 Return the Redis port
 */}}
 {{- define "posthog.redis.port" -}}
@@ -101,6 +126,20 @@ Return the Redis port
     {{- .Values.externalRedis.port | quote -}}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Return the Session Recording Redis port
+*/}}
+{{- define "posthog.sessionRecordingRedis.port" -}}
+{{- if .Values.externalSessionRecordingRedis.port }}
+    {{- .Values.externalSessionRecordingRedis.port | quote -}}
+{{- else -}}
+    {{ include "posthog.redis.port" . }}
+{{- end -}}
+{{- end -}}
+
+
 
 {{/*
 Return true if a secret object for Redis should be created

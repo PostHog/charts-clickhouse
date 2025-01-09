@@ -1,6 +1,6 @@
 {{- if .Values.web.enabled -}}
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: {{ .Values.web.deployment.apiVersion }}
+kind: {{ .Values.web.deployment.kind }}
 metadata:
   name: {{ template "posthog.fullname" . }}-web
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
@@ -16,10 +16,33 @@ spec:
   {{- end }}
 
   strategy:
+    {{- if eq .Values.web.deployment.strategy "rollingUpdate" }}
     type: RollingUpdate
     rollingUpdate:
       maxSurge: {{ .Values.web.rollout.maxSurge }}
       maxUnavailable: {{ .Values.web.rollout.maxUnavailable }}
+    {{- else if eq .Values.web.deployment.strategy "canary" }}
+    revisionHistoryLimit: 10
+    rollbackWindow:
+      revisions: 10
+    canary:
+      canaryService: {{ template "posthog.fullname" . }}-web-canary
+      stableService: {{ template "posthog.fullname" . }}-web
+      trafficRouting:
+        plugins:
+          argoproj-labs/contour:
+            httpProxies:
+            - proxy
+            - proxy-direct
+      steps:
+      - setWeight: 1
+      - pause: {duration: 60s}
+      - setWeight: 10
+      - pause: {duration: 60s}
+      - setWeight: 50
+      - pause: {duration: 60s}
+      - setWeight: 100
+    {{- end }}
 
   template:
     metadata:
@@ -41,6 +64,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: {{ include "snippet.web-deployments.terminationGracePeriodSeconds" . }}
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
+      {{- include "_snippet-topologySpreadConstraints" . | nindent 6 }}
 
       {{- if .Values.web.affinity }}
       affinity:
@@ -80,9 +104,16 @@ spec:
 
       containers:
       - name: {{ .Chart.Name }}-web
-        image: {{ template "posthog.image.fullPath" . }}
+        image: {{ template "posthog.web.image.fullPath" . }}
+        {{ if .Values.web.image.command -}}
+        command:
+        {{- range .Values.web.image.command }}
+        - {{ . }}
+        {{- end }}
+        {{ else }}
         command:
           - ./bin/docker-server
+        {{ end }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.internalPort }}
@@ -97,6 +128,9 @@ spec:
 
         # Redis env variables
         {{- include "snippet.redis-env" . | indent 8 }}
+
+        # Session Recording Redis env variables (used by real-time playback)
+        {{- include "snippet.session-recording-redis-env" . | nindent 8 }}
 
         # statsd env variables
       {{- include "snippet.statsd-env" . | indent 8 }}

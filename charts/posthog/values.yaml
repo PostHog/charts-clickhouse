@@ -16,9 +16,9 @@ image:
   # -- PostHog image tag to use (example: `release-1.43.0`).
   tag:
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
-  default: ":release-1.43.0"
+  default: ":latest"
   # -- PostHog image pull policy.
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -72,6 +72,9 @@ events:
     # for configuration options
     behavior:
 
+  pdb:
+    enabled: false
+
   rollout:
     # The max surge in pods during a rollout
     maxSurge: 25%
@@ -87,6 +90,56 @@ events:
   # -- Pod security context for the events stack HorizontalPodAutoscaler.
   podSecurityContext:
     enabled: false
+
+recordings:
+  # -- Whether to install the PostHog recordings stack or not.
+  enabled: false
+  # -- Whether to route /s traffic to the recordings stack instead of the events stack
+  ingressEnabled: false
+
+  # -- Count of recordings pods to run. This setting is ignored if `recordings.hpa.enabled` is set to `true`.
+  replicacount: 1
+
+  hpa:
+    # -- Whether to create a HorizontalPodAutoscaler for the recordings stack.
+    enabled: false
+    # -- CPU threshold percent for the recordings stack HorizontalPodAutoscaler.
+    cputhreshold: 60
+    # -- Min pods for the recordings stack HorizontalPodAutoscaler.
+    minpods: 1
+    # -- Max pods for the recordings stack HorizontalPodAutoscaler.
+    maxpods: 10
+    # -- Set the HPA behavior. See
+    # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    # for configuration options
+    behavior:
+
+  pdb:
+    enabled: false
+
+  rollout:
+    # The max surge in pods during a rollout
+    maxSurge: 25%
+    # The max unavailable during a rollout
+    maxUnavailable: 25%
+
+  # -- Additional env variables to inject into the recordings stack, uses `web.env` if empty.
+  env: []
+
+  # -- Container security context for the recordings stack HorizontalPodAutoscaler.
+  securityContext:
+    enabled: false
+  # -- Pod security context for the recordings stack HorizontalPodAutoscaler.
+  podSecurityContext:
+    enabled: false
+
+# The majority of the capture config + chart resides in posthog/charts
+capture:
+  ingress:
+    enabled: false
+    service: 
+      name: capture
+      port: 3000
 
 decide:
   # -- Whether to install the PostHog decide stack or not.
@@ -136,6 +189,13 @@ web:
   # -- Whether to install the PostHog web stack or not.
   enabled: true
 
+  image: {}
+
+  deployment:
+    apiVersion: apps/v1
+    kind: Deployment
+    strategy: rollingUpdate
+
   podAnnotations:
     # Uncomment these lines if you want Prometheus server to scrape metrics.
     # prometheus.io/scrape: "true"
@@ -158,6 +218,9 @@ web:
     # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
     # for configuration options
     behavior:
+
+  pdb:
+    enabled: false
 
   rollout:
     # The max surge in pods during a rollout
@@ -242,6 +305,9 @@ worker:
 
   # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1
+
+  consumers:
+    - name: default
 
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the worker stack.
@@ -535,7 +601,7 @@ pluginsAnalyticsIngestion:
   # intended to be used along side the `recordingsIngestion` deployment.
   #
   # The reason these values were added is to be able to scale analytics and
-  # session recordings events indepentently, and to be able to roll this out in
+  # session recordings events independently, and to be able to roll this out in
   # a backwards compatible way.
   enabled: false
 
@@ -761,7 +827,7 @@ recordingsBlobIngestion:
       ephemeral:
         volumeClaimTemplate:
           spec:
-            accessModes: [ "ReadWriteOnce" ]
+            accessModes: ["ReadWriteOnce"]
             storageClassName: "gp3"
             resources:
               requests:
@@ -1102,6 +1168,10 @@ temporalPyWorker:
   # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1
 
+  # -- The grace period for the worker pods. This is slightly larger than the
+  # default 5 minutes of the worker by default.
+  terminationGracePeriodSeconds: 310
+
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the worker stack.
     enabled: false
@@ -1390,7 +1460,7 @@ externalPostgresql:
 ###
 
 _pgbouncer: &_pgbouncer 
-  # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
+# -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
   enabled: true
 
   exporter:
@@ -1512,12 +1582,15 @@ _pgbouncer: &_pgbouncer
 pgbouncer:
   <<: *_pgbouncer
 
+  fqdn: ""
+
 pgbouncerRead:
   <<: *_pgbouncer
 
   # Specify the host to use for a read-replica. This would usually be some sort of load balancer,
   # and otherwise all credentials would be the same
   host: ""
+  fqdn: ""
 
   enabled: false
 
@@ -1588,6 +1661,13 @@ externalRedis:
   # -- Name of the key pointing to the password in your Kubernetes secret.
   existingSecretPasswordKey: ""
 
+externalSessionRecordingRedis: {}
+  # -- External Redis host to use.
+  # host: ""
+  # -- External Redis port to use.
+  # port: 6379
+
+
 ###
 ###
 ### ---- KAFKA ----
@@ -1627,6 +1707,12 @@ kafka:
 
 externalKafka:
   # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
+  brokers: []
+  # - Use TLS to connect to the external kafka cluster
+  tls: false
+
+externalSessionRecordingKafka:
+  # - External Kafka brokers for session recordings. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.
   brokers: []
   # - Use TLS to connect to the external kafka cluster
   tls: false
@@ -1720,7 +1806,7 @@ clickhouse:
     # -- ClickHouse image repository.
     repository: clickhouse/clickhouse-server
     # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-    tag: "22.8.11.15"
+    tag: "23.9.2.56"
     # -- Image pull policy
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
@@ -1845,7 +1931,7 @@ clickhouse:
       # -- ClickHouse image repository.
       repository: clickhouse/clickhouse-server
       # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-      tag: "22.8.11.15"
+      tag: "23.9.2.56"
       # -- Image pull policy
       pullPolicy: IfNotPresent
       ## Optionally specify an array of imagePullSecrets.
@@ -2328,15 +2414,15 @@ prometheus:
                   needs to be rolled-back.
 
             - alert: End2EndIngestionLag
-              expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 600
+              expr: (max by(scenario) (posthog_celery_observed_ingestion_lag_seconds{scenario=~"ingestion_api|ingestion"})) > 1200
               for: 5m
               labels:
                 rotation: common
                 severity: critical
               annotations:
-                summary: End-to-end analytics event ingestion lag exceeds 10 minutes for more than 5 minutes.
+                summary: End-to-end analytics event ingestion lag exceeds 20 minutes for more than 5 minutes.
                 description: |
-                  Our end-to-end probe measured an ingestion lag higher than 10 minutes for scenario {{ $labels.scenario }}.
+                  Our end-to-end probe measured an ingestion lag higher than 20 minutes for scenario {{ $labels.scenario }}.
                   Check the "Kafka (cluster overview)" dashboard to identify what topics and partitions are lagging and
                   follow the https://posthog.com/docs/runbook/services/plugin-server/ingestion-lag runbook for recovery
                   steps.
@@ -2442,12 +2528,12 @@ prometheus:
 
             - alert: CeleryQueueDepth
               expr: (max (posthog_celery_queue_depth)) > 1000
-              for: 10m
+              for: 60m
               labels:
                 rotation: common
                 severity: critical
               annotations:
-                summary: Celery job execution delayed for more than 10 minutes.
+                summary: Celery job execution delayed for more than 60 minutes.
                 description: |
                   The Celery jobs queue (stored in Redis) is filling up faster than it is consumed. This impacts our
                   monitoring, as some paging monitors depend on metrics exported by Celery jobs.
@@ -3207,6 +3293,17 @@ prometheus-pushgateway:
 
 ###
 ###
+### ---- external-prometheus-pushgateway ----
+###
+###
+external-prometheus-pushgateway:
+  # -- Whether to enable the external `prometheus-pushgateway` or not.
+  enabled: false
+  # -- Address to the external `prometheus-pushgateway`
+  address: prometheus-pushgateway:9091
+
+###
+###
 ### ---- prometheus-statsd-exporter ----
 ###
 ###
@@ -3309,3 +3406,7 @@ busybox:
 
 # -- Kubernetes cluster domain name
 clusterDomain: cluster.local
+
+# Whether to set a topologySpreadConstraint on all deployments
+# to balance pods between availability zones and nodes
+includeDefaultTopologySpreadConstraints: false

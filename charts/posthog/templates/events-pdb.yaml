@@ -1,0 +1,16 @@
+{{- if and .Values.events.enabled .Values.events.pdb.enabled -}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "posthog.fullname" . }}-events
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+spec:
+  maxUnavailable: {{ .Values.events.pdb.maxUnavailable }}
+  selector:
+    matchLabels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: events
+{{- end }}

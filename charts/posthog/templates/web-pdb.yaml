@@ -1,0 +1,16 @@
+{{- if and .Values.web.enabled .Values.web.pdb.enabled -}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "posthog.fullname" . }}-web
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+spec:
+  maxUnavailable: {{ .Values.web.pdb.maxUnavailable }}
+  selector:
+    matchLabels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: web
+{{- end }}

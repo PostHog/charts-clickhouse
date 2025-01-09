@@ -1,8 +1,8 @@
-{{- if .Values.decide.enabled -}}
+{{- if .Values.recordings.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "posthog.fullname" . }}-decide
+  name: {{ template "posthog.fullname" . }}-recordings
   labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
 spec:
@@ -10,16 +10,16 @@ spec:
     matchLabels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: decide
-  {{- if not .Values.decide.hpa.enabled }}
-  replicas: {{ .Values.decide.replicacount }}
+        role: recordings
+  {{- if not .Values.recordings.hpa.enabled }}
+  replicas: {{ .Values.recordings.replicacount }}
   {{- end }}
 
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: {{ .Values.decide.rollout.maxSurge }}
-      maxUnavailable: {{ .Values.decide.rollout.maxUnavailable }}
+      maxSurge: {{ .Values.recordings.rollout.maxSurge }}
+      maxUnavailable: {{ .Values.recordings.rollout.maxUnavailable }}
 
   template:
     metadata:
@@ -31,7 +31,7 @@ spec:
       labels:
         app: {{ template "posthog.fullname" . }}
         release: "{{ .Release.Name }}"
-        role: decide
+        role: recordings
         {{- if (eq (default .Values.image.tag "none") "latest") }}
         date: "{{ now | unixEpoch }}"
         {{- end }}
@@ -75,12 +75,12 @@ spec:
         {{- end }}
       {{- end }}
 
-      {{- if .Values.decide.podSecurityContext.enabled }}
-      securityContext: {{- omit .Values.decide.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- if .Values.recordings.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.recordings.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
 
       containers:
-      - name: {{ .Chart.Name }}-decide
+      - name: {{ .Chart.Name }}-recordings
         image: {{ template "posthog.image.fullPath" . }}
         command:
           - ./bin/docker-server
@@ -106,6 +106,8 @@ spec:
           value: '1'
         - name: IS_BEHIND_PROXY
           value: '1'
+        - name: POSTHOG_SKIP_MIGRATION_CHECKS
+          value: 'true'
       {{- if eq .Values.web.secureCookies false }}
         - name: SECURE_COOKIES
           value: '0'
@@ -121,8 +123,8 @@ spec:
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 8 }}
 {{- end }}
-{{- if .Values.decide.env }}
-{{ toYaml .Values.decide.env | indent 8 }}
+{{- if .Values.recordings.env }}
+{{ toYaml .Values.recordings.env | indent 8 }}
 {{- else if .Values.web.env }}
 {{ toYaml .Values.web.env | indent 8 }}
 {{- end }}
@@ -141,9 +143,9 @@ spec:
           timeoutSeconds: {{ .Values.web.livenessProbe.timeoutSeconds }}
         readinessProbe:
           httpGet:
-            # For readiness, we want to use the checks specific to the decide
+            # For readiness, we want to use the checks specific to the events
             # role, which may be a subset of all the apps dependencies
-            path: /_readyz?role=decide
+            path: /_readyz?role=events
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.readinessProbe.failureThreshold }}
@@ -153,7 +155,10 @@ spec:
           timeoutSeconds: {{ .Values.web.readinessProbe.timeoutSeconds }}
         startupProbe:
           httpGet:
-            path: /_readyz?role=decide
+            # Now that capture's only external dependency is Kafka, let's use the
+            # reduced readiness check as its startupProbe. This means that we can
+            # deploy new configs / versions even when Postgres and Redis are down.
+            path: /_readyz?role=events
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.startupProbe.failureThreshold }}
@@ -162,15 +167,14 @@ spec:
           successThreshold: {{ .Values.web.startupProbe.successThreshold }}
           timeoutSeconds: {{ .Values.web.startupProbe.timeoutSeconds }}
         resources:
-        {{ if not .Values.decide.resources }}
+        {{ if not .Values.recordings.resources }}
 {{ toYaml .Values.web.resources | indent 12 }}
         {{ else }}
-{{ toYaml .Values.decide.resources | indent 12 }}
+{{ toYaml .Values.recordings.resources | indent 12 }}
         {{ end }}
-        {{- if .Values.decide.securityContext.enabled }}
-        securityContext: {{- omit .Values.decide.securityContext "enabled" | toYaml | nindent 12 }}
+        {{- if .Values.recordings.securityContext.enabled }}
+        securityContext: {{- omit .Values.recordings.securityContext "enabled" | toYaml | nindent 12 }}
         {{- end }}
       initContainers:
       {{- include "_snippet-initContainers-wait-for-service-dependencies" . | indent 8 }}
-      {{- include "_snippet-initContainers-wait-for-migrations" . | indent 8 }}
 {{- end }}

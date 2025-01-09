@@ -24,11 +24,6 @@ tests:
           content:
             name: KAFKA_HOSTS
             value: RELEASE-NAME-posthog-kafka:9092
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: KAFKA_URL
-            value: kafka://RELEASE-NAME-posthog-kafka:9092
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
@@ -56,11 +51,6 @@ tests:
           content:
             name: KAFKA_HOSTS
             value: RELEASE-NAME-posthog-kafka:9092
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: KAFKA_URL
-            value: kafka://RELEASE-NAME-posthog-kafka:9092
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
@@ -86,11 +76,6 @@ tests:
           content:
             name: KAFKA_HOSTS
             value: "broker1:port1"
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: KAFKA_URL
-            value: kafka://broker1:port1
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
@@ -117,11 +102,6 @@ tests:
           content:
             name: KAFKA_HOSTS
             value: "broker1:port1,broker2:port2"
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: KAFKA_URL
-            value: kafka://broker1:port1,kafka://broker2:port2
       - notContains:
           path: spec.template.spec.containers[0].env
           content:
@@ -151,10 +131,66 @@ tests:
       - contains:
           path: spec.template.spec.containers[0].env
           content:
-            name: KAFKA_URL
-            value: kafka://broker1:port1
+            name: KAFKA_SECURITY_PROTOCOL
+            value: SSL
+
+  - it: should allow both externalKafka and externalSessionRecordingKafka to be configured
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalKafka:
+        brokers:
+          - broker1:port1, broker2:port1
+        tls: true
+      externalSessionRecordingKafka:
+        brokers:
+          - broker2:port2, broker3:port3
+        tls: true
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_HOSTS
+            value: "broker1:port1, broker2:port1"
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SESSION_RECORDING_KAFKA_HOSTS
+            value: "broker2:port2, broker3:port3"
       - contains:
           path: spec.template.spec.containers[0].env
           content:
             name: KAFKA_SECURITY_PROTOCOL
+            value: SSL
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SESSION_RECORDING_KAFKA_SECURITY_PROTOCOL
+            value: SSL
+
+  - it: should allow no TLS on externalSessionRecordingKafka
+    templates: # TODO: remove once secrets.yaml will be fixed/removed
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+      - templates/events-deployment.yaml
+      - templates/migrate.job.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalSessionRecordingKafka:
+        brokers:
+          - broker2:port2, broker3:port3
+        tls: false
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SESSION_RECORDING_KAFKA_SECURITY_PROTOCOL
             value: SSL

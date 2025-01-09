@@ -1,4 +1,4 @@
 contact_links:
   - name: "\U0001F914 All other questions, including if you're not sure what to do."
-    url: https://posthog.com/slack
-    about: Search on our community Slack group for similar questions or ask for help there.
+    url: https://posthog.com/questions
+    about: Search on our community for similar questions or ask for help there.

@@ -1,0 +1,49 @@
+suite: _topologySpreadConstraints
+templates:
+  - templates/plugins-deployment.yaml
+  - templates/web-deployment.yaml
+  - templates/worker-deployment.yaml
+  # NOTE: we need to include this as it is required by the other templates
+  - templates/secrets.yaml
+tests:
+  - it: spec.template.spec.topologySpreadConstraints should be empty by default
+    templates:
+      - templates/plugins-deployment.yaml
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+    set:
+      cloud: local
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isEmpty:
+          path: spec.template.spec.topologySpreadConstraints
+  - it: spec.template.spec.topologySpreadConstraints should exist if includeDefaultTopologySpreadConstraints is set
+    templates:
+      - templates/plugins-deployment.yaml
+      - templates/web-deployment.yaml
+      - templates/worker-deployment.yaml
+    set:
+      cloud: local
+      includeDefaultTopologySpreadConstraints: true
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].topologyKey
+          value: topology.kubernetes.io/zone
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].maxSkew
+          value: 2
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[0].whenUnsatisfiable
+          value: ScheduleAnyway
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[1].topologyKey
+          value: kubernetes.io/hostname
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[1].maxSkew
+          value: 5
+      - equal:
+          path: spec.template.spec.topologySpreadConstraints[1].whenUnsatisfiable
+          value: ScheduleAnyway

@@ -1,0 +1,16 @@
+{{- if and .Values.recordings.enabled .Values.recordings.pdb.enabled -}}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "posthog.fullname" . }}-recordings
+  labels: {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
+  annotations: {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+spec:
+  maxUnavailable: {{ .Values.recordings.pdb.maxUnavailable }}
+  selector:
+    matchLabels:
+        app: {{ template "posthog.fullname" . }}
+        release: "{{ .Release.Name }}"
+        role: recordings
+{{- end }}
