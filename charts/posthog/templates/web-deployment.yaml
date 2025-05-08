@@ -150,7 +150,7 @@ spec:
 
         livenessProbe:
           httpGet:
-            path: /_livez
+            path: /_livez?role=web
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
@@ -175,7 +175,7 @@ spec:
             # For startup, we want to make sure that everything is in place,
             # including postgres. This does however mean we would not be able to
             # deploy new releases when we have a postgres outage
-            path: /_readyz
+            path: /_readyz?role=web
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.startupProbe.failureThreshold }}
