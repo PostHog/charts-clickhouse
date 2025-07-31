@@ -1469,7 +1469,7 @@ _pgbouncer: &_pgbouncer
     port: 9127
     image:
       repository: prometheuscommunity/pgbouncer-exporter
-      tag: v0.4.1
+      tag: v0.11.0
       pullPolicy: IfNotPresent
       ## Optionally specify an array of imagePullSecrets.
       ## Secrets must be manually created in the namespace.
@@ -1561,7 +1561,7 @@ _pgbouncer: &_pgbouncer
 
   image:
     repository: bitnami/pgbouncer
-    tag: 1.18.0
+    tag: 1.24.1
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -1806,7 +1806,7 @@ clickhouse:
     # -- ClickHouse image repository.
     repository: clickhouse/clickhouse-server
     # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-    tag: "23.9.2.56"
+    tag: "25.7.1.3997"
     # -- Image pull policy
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
@@ -1931,7 +1931,7 @@ clickhouse:
       # -- ClickHouse image repository.
       repository: clickhouse/clickhouse-server
       # -- ClickHouse image tag. Note: PostHog does not support all versions of ClickHouse. Please override the default only if you know what you are doing.
-      tag: "23.9.2.56"
+      tag: "25.7.1.3997"
       # -- Image pull policy
       pullPolicy: IfNotPresent
       ## Optionally specify an array of imagePullSecrets.
@@ -1951,7 +1951,7 @@ clickhouse:
       # -- Clickhouse backup image repository.
       repository: altinity/clickhouse-backup
       # -- ClickHouse backup image tag.
-      tag: "1.5.0"
+      tag: "2.6.30"
       # -- Image pull policy
       pullPolicy: IfNotPresent
       ## Optionally specify an array of imagePullSecrets.
