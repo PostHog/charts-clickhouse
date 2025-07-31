@@ -184,7 +184,7 @@ spec:
 
         livenessProbe:
           httpGet:
-            path: /_livez
+            path: /_livez?role=web
             port: {{ .Values.service.internalPort }}
             scheme: HTTP
           failureThreshold: {{ .Values.web.livenessProbe.failureThreshold }}
