@@ -43,19 +43,19 @@ spec:
       serviceAccountName: {{ template "posthog.serviceAccountName" . }}
       {{- include "_snippet-topologySpreadConstraints" . | nindent 6 }}
 
-      {{- if .Values.web.affinity }}
+      {{- if .Values.events.affinity }}
       affinity:
-{{ toYaml .Values.web.affinity | indent 8 }}
+{{ toYaml .Values.events.affinity | indent 8 }}
       {{- end }}
 
-      {{- if .Values.web.nodeSelector }}
+      {{- if .Values.events.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.web.nodeSelector | indent 8 }}
+{{ toYaml .Values.events.nodeSelector | indent 8 }}
       {{- end }}
 
-      {{- if .Values.web.tolerations }}
+      {{- if .Values.events.tolerations }}
       tolerations:
-{{ toYaml .Values.web.tolerations | indent 8 }}
+{{ toYaml .Values.events.tolerations | indent 8 }}
       {{- end }}
 
       {{- if .Values.web.schedulerName }}
