@@ -175,3 +175,20 @@ tests:
             labels:
               app: clickhouse-operator
               clickhouse.altinity.com/chop: 0.18.4
+
+  # Tests for Issue #640: ClickHouse log level configuration
+  - it: should use default log level (information) when not specified
+    documentIndex: 2
+    asserts:
+      - matchRegex:
+          path: data["01-clickhouse-02-logger.xml"]
+          pattern: "<level>information</level>"
+
+  - it: should allow configuring clickhouse log level
+    set:
+      clickhouse.logLevel: "warning"
+    documentIndex: 2
+    asserts:
+      - matchRegex:
+          path: data["01-clickhouse-02-logger.xml"]
+          pattern: "<level>warning</level>"
