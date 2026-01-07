@@ -1710,6 +1710,18 @@ externalKafka:
   brokers: []
   # - Use TLS to connect to the external kafka cluster
   tls: false
+  # -- Kafka security protocol. Options: PLAINTEXT, SSL, SASL_PLAINTEXT, SASL_SSL
+  securityProtocol: ""
+  # -- SASL mechanism for authentication. Options: PLAIN, SCRAM-SHA-256, SCRAM-SHA-512
+  saslMechanism: ""
+  # -- SASL username for authentication
+  saslUser: ""
+  # -- SASL password for authentication. Either this or `externalKafka.existingSecret` must be set.
+  saslPassword: ""
+  # -- Name of an existing Kubernetes secret containing the SASL password
+  existingSecret: ""
+  # -- Key in the existing secret that contains the SASL password
+  existingSecretPasswordKey: "password"
 
 externalSessionRecordingKafka:
   # - External Kafka brokers for session recordings. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.

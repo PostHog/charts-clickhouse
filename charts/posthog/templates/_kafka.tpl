@@ -53,9 +53,36 @@
 - name: SESSION_RECORDING_KAFKA_HOSTS
   value: {{ ( include "posthog.sessionRecordingKafka.brokers" . ) }}
 
-{{- if and (not .Values.kafka.enabled) .Values.externalKafka.tls }}
+{{- if and (not .Values.kafka.enabled) .Values.externalKafka.tls (not .Values.externalKafka.securityProtocol) }}
 - name: KAFKA_SECURITY_PROTOCOL
   value: SSL
+{{- end }}
+
+{{- if and (not .Values.kafka.enabled) .Values.externalKafka.securityProtocol }}
+- name: KAFKA_SECURITY_PROTOCOL
+  value: {{ .Values.externalKafka.securityProtocol | quote }}
+{{- end }}
+
+{{- if and (not .Values.kafka.enabled) .Values.externalKafka.saslMechanism }}
+- name: KAFKA_SASL_MECHANISM
+  value: {{ .Values.externalKafka.saslMechanism | quote }}
+{{- end }}
+
+{{- if and (not .Values.kafka.enabled) .Values.externalKafka.saslUser }}
+- name: KAFKA_SASL_USER
+  value: {{ .Values.externalKafka.saslUser | quote }}
+{{- end }}
+
+{{- if and (not .Values.kafka.enabled) (or .Values.externalKafka.saslPassword .Values.externalKafka.existingSecret) }}
+- name: KAFKA_SASL_PASSWORD
+{{- if .Values.externalKafka.existingSecret }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.externalKafka.existingSecret }}
+      key: {{ .Values.externalKafka.existingSecretPasswordKey | default "password" }}
+{{- else }}
+  value: {{ .Values.externalKafka.saslPassword | quote }}
+{{- end }}
 {{- end }}
 
 {{- if and (not .Values.kafka.enabled) .Values.externalSessionRecordingKafka.tls }}
