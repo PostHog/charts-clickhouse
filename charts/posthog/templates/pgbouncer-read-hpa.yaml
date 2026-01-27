@@ -9,10 +9,10 @@ spec:
     kind: Deployment
     apiVersion: apps/v1
     name: {{ template "posthog.fullname" . }}-pgbouncer-read
-  minReplicas: {{ .Values.pgbouncerRead.hpa.minpods }}
-  maxReplicas: {{ .Values.pgbouncerRead.hpa.maxpods }}
+  minReplicas: {{ .Values.pgbouncerRead.hpa.minReplicas | default .Values.pgbouncerRead.hpa.minpods }}
+  maxReplicas: {{ .Values.pgbouncerRead.hpa.maxReplicas | default .Values.pgbouncerRead.hpa.maxpods }}
   metrics:
-  {{- with .Values.pgbouncerRead.hpa.cputhreshold }}
+  {{- with .Values.pgbouncerRead.hpa.targetCPUUtilizationPercentage | default .Values.pgbouncerRead.hpa.cputhreshold }}
   - type: Resource
     resource:
       name: cpu

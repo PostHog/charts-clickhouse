@@ -11,10 +11,10 @@ spec:
     kind: Deployment
     apiVersion: apps/v1
     name: {{ template "posthog.fullname" $ }}-worker-{{ .name }}
-  minReplicas: {{ ( .hpa | default dict ).minpods | default $.Values.worker.hpa.minpods  }}
-  maxReplicas: {{ ( .hpa | default dict ).maxpods | default $.Values.worker.hpa.maxpods  }}
+  minReplicas: {{ ( .hpa | default dict ).minReplicas | default ( .hpa | default dict ).minpods | default $.Values.worker.hpa.minReplicas | default $.Values.worker.hpa.minpods }}
+  maxReplicas: {{ ( .hpa | default dict ).maxReplicas | default ( .hpa | default dict ).maxpods | default $.Values.worker.hpa.maxReplicas | default $.Values.worker.hpa.maxpods }}
   metrics:
-  {{- with $.Values.worker.hpa.cputhreshold }}
+  {{- with $.Values.worker.hpa.targetCPUUtilizationPercentage | default $.Values.worker.hpa.cputhreshold }}
   - type: Resource
     resource:
       name: cpu
@@ -22,7 +22,7 @@ spec:
         type: Utilization
         averageUtilization: {{ . }}
   {{- end }}
-  behavior: 
+  behavior:
     {{ toYaml $.Values.worker.hpa.behavior | nindent 4 }}
 {{- end }}
 {{- end }}
