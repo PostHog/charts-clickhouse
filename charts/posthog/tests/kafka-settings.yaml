@@ -194,3 +194,84 @@ tests:
           content:
             name: SESSION_RECORDING_KAFKA_SECURITY_PROTOCOL
             value: SSL
+
+  # Tests for Issue #595: SASL configuration support
+  - it: should set SASL configuration when externalKafka SASL is configured
+    templates:
+      - templates/web-deployment.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalKafka:
+        brokers:
+          - broker1:9092
+        securityProtocol: SASL_SSL
+        saslMechanism: SCRAM-SHA-512
+        saslUser: myuser
+        saslPassword: mypassword
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SECURITY_PROTOCOL
+            value: SASL_SSL
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SASL_MECHANISM
+            value: SCRAM-SHA-512
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SASL_USER
+            value: myuser
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SASL_PASSWORD
+            value: mypassword
+
+  - it: should use existingSecret for SASL password when configured
+    templates:
+      - templates/web-deployment.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalKafka:
+        brokers:
+          - broker1:9092
+        securityProtocol: SASL_SSL
+        saslMechanism: SCRAM-SHA-512
+        saslUser: myuser
+        existingSecret: my-kafka-secret
+        existingSecretPasswordKey: kafka-password
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SASL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: my-kafka-secret
+                key: kafka-password
+
+  - it: should use securityProtocol over legacy tls setting when both are set
+    templates:
+      - templates/web-deployment.yaml
+    set:
+      cloud: local
+      kafka:
+        enabled: false
+      externalKafka:
+        brokers:
+          - broker1:9092
+        tls: true
+        securityProtocol: SASL_PLAINTEXT
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: KAFKA_SECURITY_PROTOCOL
+            value: SASL_PLAINTEXT
