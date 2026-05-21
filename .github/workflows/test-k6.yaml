@@ -55,7 +55,7 @@ jobs:
             values: ci/values/k3s-plugin-server-split.yaml
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Setup k3s
         run: |
@@ -63,7 +63,7 @@ jobs:
           mkdir ~/.kube
           sudo k3s kubectl config view --raw > ~/.kube/config
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         if: matrix.test == 'upgrade'
         with:
           ref: main
@@ -86,7 +86,7 @@ jobs:
 
       - name: "(Upgrade) Await chart install"
         if: matrix.test == 'upgrade'
-        uses: jupyterhub/action-k8s-await-workloads@main
+        uses: jupyterhub/action-k8s-await-workloads@f2f60c4ab11cea683b3ac272a1476d0a6643c03b
         with:
           namespace: "posthog"
           timeout: 300
@@ -114,7 +114,7 @@ jobs:
         run: ./ci/wait_for_all_the_posthog_resources_to_be_ready.sh
 
       - name: Wait until all the resources are fully deployed in k8s
-        uses: jupyterhub/action-k8s-await-workloads@main
+        uses: jupyterhub/action-k8s-await-workloads@f2f60c4ab11cea683b3ac272a1476d0a6643c03b
         with:
           namespace: "posthog"
           timeout: 300
@@ -133,12 +133,12 @@ jobs:
           echo "SKIP_SOURCE_IP_ADDRESS_CHECK=true" | tee -a "$GITHUB_ENV"
 
       - name: Run ingestion test using k6
-        uses: k6io/action@v0.2.0
+        uses: k6io/action@55845c6c2e400af4356c84e5b514aeabb1bfdbd4 # v0.2.0
         with:
           filename: ci/k6/ingestion-test.js
 
       - name: Emit namespace report
-        uses: jupyterhub/action-k8s-namespace-report@v1
+        uses: jupyterhub/action-k8s-namespace-report@ccc0e3c37860245f3906e3857df01b0a53f9c3f8 # v1.2.0
         if: always()
         with:
           namespace: posthog

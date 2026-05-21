@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Run helm-docs
         run: |
@@ -19,7 +19,7 @@ jobs:
           rm ./helm-docs
 
       - name: Commit bump
-        uses: EndBug/add-and-commit@v7
+        uses: EndBug/add-and-commit@8c12ff729a98cfbcd3fe38b49f55eceb98a5ec02 # v7.5.0
         with:
             author_name: Max Hedgehog
             author_email: 127861667+max-hedgehog[bot]@users.noreply.github.com
