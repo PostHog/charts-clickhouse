@@ -9,10 +9,10 @@ spec:
     kind: Deployment
     apiVersion: apps/v1
     name: {{ template "posthog.fullname" . }}-recordings
-  minReplicas: {{ .Values.recordings.hpa.minpods }}
-  maxReplicas: {{ .Values.recordings.hpa.maxpods }}
+  minReplicas: {{ .Values.recordings.hpa.minReplicas | default .Values.recordings.hpa.minpods }}
+  maxReplicas: {{ .Values.recordings.hpa.maxReplicas | default .Values.recordings.hpa.maxpods }}
   metrics:
-  {{- with .Values.recordings.hpa.cputhreshold }}
+  {{- with .Values.recordings.hpa.targetCPUUtilizationPercentage | default .Values.recordings.hpa.cputhreshold }}
   - type: Resource
     resource:
       name: cpu
@@ -20,6 +20,6 @@ spec:
         type: Utilization
         averageUtilization: {{ . }}
   {{- end }}
-  behavior: 
+  behavior:
     {{ toYaml .Values.recordings.hpa.behavior | nindent 4 }}
 {{- end }}
