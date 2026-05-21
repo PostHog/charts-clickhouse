@@ -91,6 +91,13 @@ events:
   podSecurityContext:
     enabled: false
 
+  # -- Node labels for events stack deployment.
+  nodeSelector: {}
+  # -- Toleration labels for events stack deployment.
+  tolerations: []
+  # -- Affinity settings for events stack deployment.
+  affinity: {}
+
 recordings:
   # -- Whether to install the PostHog recordings stack or not.
   enabled: false

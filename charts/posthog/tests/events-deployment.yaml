@@ -251,5 +251,79 @@ tests:
           path: spec.template.spec.imagePullSecrets
           value: [name: secret]
 
+  # Tests for Issue #613: nodeSelector, tolerations, affinity support
+  - it: should set nodeSelector when specified for events
+    template: templates/events-deployment.yaml
+    set:
+      cloud: local
+      events:
+        nodeSelector:
+          disktype: ssd
+          region: us-east-1
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.nodeSelector.disktype
+          value: ssd
+      - equal:
+          path: spec.template.spec.nodeSelector.region
+          value: us-east-1
 
+  - it: should set tolerations when specified for events
+    template: templates/events-deployment.yaml
+    set:
+      cloud: local
+      events:
+        tolerations:
+          - key: "dedicated"
+            operator: "Equal"
+            value: "events"
+            effect: "NoSchedule"
+    asserts:
+      - hasDocuments:
+          count: 1
+      - contains:
+          path: spec.template.spec.tolerations
+          content:
+            key: dedicated
+            operator: Equal
+            value: events
+            effect: NoSchedule
 
+  - it: should set affinity when specified for events
+    template: templates/events-deployment.yaml
+    set:
+      cloud: local
+      events:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: topology.kubernetes.io/zone
+                      operator: In
+                      values:
+                        - us-east-1a
+    asserts:
+      - hasDocuments:
+          count: 1
+      - isNotEmpty:
+          path: spec.template.spec.affinity
+
+  - it: should not use web.nodeSelector for events (regression test)
+    template: templates/events-deployment.yaml
+    set:
+      cloud: local
+      web:
+        nodeSelector:
+          disktype: hdd
+      events:
+        nodeSelector:
+          disktype: ssd
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: spec.template.spec.nodeSelector.disktype
+          value: ssd
