@@ -2,16 +2,16 @@
 # Template Parameters:
 #
 # NAMESPACE={{ .Values.clickhouse.namespace | default .Release.Namespace }}
-# COMMENT=#
-# ROLE_KIND=ClusterRole
-# ROLE_NAME=clickhouse-operator-{{ .Values.clickhouse.namespace | default .Release.Namespace }}
-# ROLE_BINDING_KIND=ClusterRoleBinding
-# ROLE_BINDING_NAME=clickhouse-operator-{{ .Values.clickhouse.namespace | default .Release.Namespace }}
+# COMMENT=
+# ROLE_KIND=Role
+# ROLE_NAME=clickhouse-operator
+# ROLE_BINDING_KIND=RoleBinding
+# ROLE_BINDING_NAME=clickhouse-operator
 #
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
-  name: clickhouse-operator-{{ .Values.clickhouse.namespace | default .Release.Namespace }}
+  name: clickhouse-operator
   namespace: {{ .Values.clickhouse.namespace | default .Release.Namespace }}
   labels:
     clickhouse.altinity.com/chop: 0.18.4

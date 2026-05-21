@@ -18,13 +18,13 @@ TMP_FOLDER="$(mktemp -d)"
 trap 'rm -rf -- "$TMP_FOLDER"' EXIT
 
 CLICKHOUSE_OPERATOR_TAG="0.18.4"
-URL="https://raw.githubusercontent.com/Altinity/clickhouse-operator/${CLICKHOUSE_OPERATOR_TAG}/deploy/operator/clickhouse-operator-install-template.yaml"
+REPO_URL="https://github.com/Altinity/clickhouse-operator.git"
 
 #
-# Download the 'altinity/clickhouse-operator' definition and save it as temporary file.
+# Clone the 'altinity/clickhouse-operator' repo to temp folder.
 #
-# see: https://github.com/Altinity/clickhouse-operator/blob/master/docs/quick_start.md#in-case-you-can-not-run-scripts-from-internet-in-your-protected-environment
-#
+git clone --depth 1 --branch ${CLICKHOUSE_OPERATOR_TAG} ${REPO_URL} "${TMP_FOLDER}"
+
 OPERATOR_NAMESPACE="PLACEHOLDER"
 METRICS_EXPORTER_NAMESPACE="${OPERATOR_NAMESPACE}"
 # NOTE: we pin to 0.19.0 here which is different to the 0.16.1 manifest version.
@@ -35,12 +35,12 @@ METRICS_EXPORTER_NAMESPACE="${OPERATOR_NAMESPACE}"
 OPERATOR_IMAGE="${OPERATOR_IMAGE:-altinity/clickhouse-operator:0.19.0}"
 METRICS_EXPORTER_IMAGE="${METRICS_EXPORTER_IMAGE:-altinity/metrics-exporter:latest}"
 
-curl -s "${URL}" | \
-    OPERATOR_IMAGE="${OPERATOR_IMAGE}" \
-    OPERATOR_NAMESPACE="${OPERATOR_NAMESPACE}" \
-    METRICS_EXPORTER_IMAGE="${METRICS_EXPORTER_IMAGE}" \
-    METRICS_EXPORTER_NAMESPACE="${METRICS_EXPORTER_NAMESPACE}" \
-    envsubst > "$TMP_FOLDER/clickhouse-operator.yaml"
+OPERATOR_IMAGE="${OPERATOR_IMAGE}" \
+OPERATOR_NAMESPACE="${OPERATOR_NAMESPACE}" \
+METRICS_EXPORTER_IMAGE="${METRICS_EXPORTER_IMAGE}" \
+METRICS_EXPORTER_NAMESPACE="${METRICS_EXPORTER_NAMESPACE}" \
+MANIFEST_PRINT_RBAC_NAMESPACED=yes \
+"${TMP_FOLDER}/deploy/builder/cat-clickhouse-operator-install-yaml.sh" > "${TMP_FOLDER}/clickhouse-operator.yaml"
 
 #
 # Use 'altinity/clickhouse-operator' definition file we fetched and parsed and slice it
