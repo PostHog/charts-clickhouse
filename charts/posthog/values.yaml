@@ -1792,6 +1792,8 @@ clickhouse:
   secure: false
   # -- Whether to verify TLS certificate on connection to ClickHouse
   verify: false
+  # -- ClickHouse server log level. Options: trace, debug, information, warning, error
+  logLevel: "information"
   # -- List of external Zookeeper servers to use.
   # externalZookeeper:
   #   servers:
